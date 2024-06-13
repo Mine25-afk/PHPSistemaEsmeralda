@@ -30,7 +30,7 @@
   <div class="content-wrapper">
   <?php 
     if (isset($_GET["Pages"])) {
-      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas") {
+      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes") {
         include "Pages/". $_GET["Pages"] . ".php";
       }
     }

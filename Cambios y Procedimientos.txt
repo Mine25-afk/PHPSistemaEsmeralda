@@ -14,6 +14,7 @@
 ----Héctor-----
 ---------------
 
+1.
 DELIMITER $$
 CREATE PROCEDURE `SP_Joyas_listar`()
 BEGIN
@@ -22,6 +23,35 @@ LEFT JOIN gral_tbProveedores P ON P.Prov_Id = J.Prov_Id LEFT JOIN gral_tbMateria
 LEFT JOIN gral_tbCategorias C ON C.Cate_Id = J.Cate_Id
 WHERE Joya_Estado = 1;
 END $$
+DELIMITER ;
+
+2. Agregue campo Clie_esMayorista en clientes
+
+3.
+DELIMITER //
+create PROCEDURE SP_Clientes_listar()
+BEGIN
+  SELECT 
+    Clie_Id, 
+    CONCAT(Clie_Nombre, ' ', Clie_Apellido) AS  Clie_Nombre,
+    Clie_FechaNac, 
+    CASE Clie_Sexo WHEN 'M' THEN 'Masculino' ELSE 'Femenino' END AS Clie_Sexo, 
+   c.Muni_Codigo,
+   Clie_DNI,
+   mu.Muni_Municipio AS Municipio,
+    c.Esta_Id, 
+	e.Esta_EstadoCivil AS Estado_Civil,
+    Clie_UsuarioCreacion, 
+    Clie_FechaCreacion, 
+    Clie_UsuarioModificacion, 
+    Clie_FechaModificacion, 
+    Clie_Estado,
+     CASE Clie_esMayorista when 1 then 'Si' else 'No' END AS Clie_esMayorista
+  FROM gral_tbClientes c 
+  INNER JOIN gral_tbEstadosCiviles e on c.Esta_Id= e.Esta_Id 
+  INNER JOIN gral_tbMunicipios mu ON mu.Muni_Codigo =c.Muni_Codigo 
+  WHERE Clie_Estado = 1 AND Clie_DNI != '0000000000000';
+END//
 DELIMITER ;
 
 

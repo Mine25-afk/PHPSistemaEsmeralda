@@ -37,17 +37,17 @@ try {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($Joyas as $factura): ?>
+                    <?php foreach ($Joyas as $joyas): ?>
                         <tr>
-                            <td><?php echo $factura['Joya_Nombre']; ?></td>
-                            <td><?php echo $factura['Joya_PrecioCompra']; ?></td>
-                            <td><?php echo $factura['Joya_PrecioVenta']; ?></td>
-                            <td><?php echo $factura['Joya_Stock']; ?></td>
-                            <td><?php echo $factura['Joya_PrecioMayor']; ?></td>
-                            <td><?php echo $factura['Joya_Imagen']; ?></td>
-                            <td><?php echo $factura['Mate_Material']; ?></td>
-                            <td><?php echo $factura['Prov_Proveedor']; ?></td>
-                            <td><?php echo $factura['Cate_Categoria']; ?></td>
+                            <td><?php echo $joyas['Joya_Nombre']; ?></td>
+                            <td><?php echo $joyas['Joya_PrecioCompra']; ?></td>
+                            <td><?php echo $joyas['Joya_PrecioVenta']; ?></td>
+                            <td><?php echo $joyas['Joya_Stock']; ?></td>
+                            <td><?php echo $joyas['Joya_PrecioMayor']; ?></td>
+                            <td><?php echo $joyas['Joya_Imagen']; ?></td>
+                            <td><?php echo $joyas['Mate_Material']; ?></td>
+                            <td><?php echo $joyas['Prov_Proveedor']; ?></td>
+                            <td><?php echo $joyas['Cate_Categoria']; ?></td>
                             <td class="d-flex justify-content-center" style="gap:10px">
                                 <a class="btn btn-primary btn-sm abrir-editar"><i class="fas fa-edit"></i>Editar</a>
                                 <a class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i>Detalles</a>
