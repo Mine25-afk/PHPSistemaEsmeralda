@@ -102,7 +102,7 @@
                   <p>Empleados</p>
                 </a>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <a href="facturas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Facturas</p>
@@ -125,7 +125,7 @@
                   <i class="far fa-circle nav-icon"></i>
                   <p>Joyas</p>
                 </a>
-              </li>
+              </li> -->
             </ul>
           </li>
      
