@@ -46,7 +46,7 @@
       
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
+              <i class="nav-icon fas fa-key"></i> 
               <p>
                 Acceso
                 <i class="fas fa-angle-left right"></i>
