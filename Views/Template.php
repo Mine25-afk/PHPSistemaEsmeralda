@@ -25,7 +25,13 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
+  <?php 
+    if (isset($_GET["Pages"])) {
+      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario") {
+        include "Pages/". $_GET["Pages"] . ".php";
+      }
+    }
+  ?>
   
 
  
