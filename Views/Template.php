@@ -32,7 +32,21 @@
       }
     }
   ?>
-  
+    <?php 
+    if (isset($_GET["Pages"])) {
+      if ($_GET["Pages"] == "clientes" || $_GET["Pages"] == "clientes") {
+        include "Pages/". $_GET["Pages"] . ".php";
+      }
+    }
+  ?>
+
+  <?php 
+    if (isset($_GET["Pages"])) {
+      if ($_GET["Pages"] == "joyas" || $_GET["Pages"] == "joyas") {
+        include "Pages/". $_GET["Pages"] . ".php";
+      }
+    }
+  ?>
 
  
   </div>
