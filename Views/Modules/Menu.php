@@ -56,6 +56,55 @@
               <li class="nav-item">
                 <a href="facturas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
+                  <p>Usuarios</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="inventario" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Roles</p>
+                </a>
+              </li>
+             
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-envelope"></i>
+              <p>
+                Generales
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Clientes</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Marcas</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Proveedores</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Empleados</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
                   <p>Facturas</p>
                 </a>
               </li>
@@ -79,24 +128,6 @@
               </li>
             </ul>
           </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>
-                Generales
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="facturas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Facturas</p>
-                </a>
-              </li>             
-            </ul>
-          </li>
      
           <li class="nav-item">
             <a href="#" class="nav-link">
@@ -110,9 +141,40 @@
               <li class="nav-item">
                 <a href="facturas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
+                  <p>Joyas</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="inventario" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Maquillajes</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Reparaciones</p>
+                </a>
+              </li>
+          
+              <li class="nav-item">
+                <a href="clientes" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
                   <p>Facturas</p>
                 </a>
-              </li>             
+              </li>
+              <li class="nav-item">
+                <a href="joyas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Factura compra</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Transferencias</p>
+                </a>
+              </li>
             </ul>
           </li>
     
@@ -128,9 +190,27 @@
               <li class="nav-item">
                 <a href="facturas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Facturas</p>
+                  <p>Control de Stock</p>
                 </a>
-              </li>             
+              </li>    
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Caja</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Ventas por pago</p>
+                </a>
+              </li>     
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Reporte de ventas</p>
+                </a>
+              </li>    
             </ul>
           </li>
         
