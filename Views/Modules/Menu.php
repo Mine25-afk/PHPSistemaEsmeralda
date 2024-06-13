@@ -126,6 +126,31 @@
                   <p>Joyas</p>
                 </a>
               </li> -->
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-envelope"></i>
+              <p>
+                Generales
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="facturas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Facturas</p>
+                </a>
+              </li>   
+              <li class="nav-item">
+                <a href="marcas" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Marcas</p>
+                </a>
+              </li>            
             </ul>
           </li>
      
