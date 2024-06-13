@@ -1,0 +1,72 @@
+DELIMITER $$
+
+CREATE PROCEDURE `sp_Marcas_insertar` (
+    IN `Marc_Marca` VARCHAR(60),
+    IN `Marc_UsuarioCreacion` INT,
+    IN `Marc_FechaCreacion` DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Error handling
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Warning handling
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        INSERT INTO `gral_tbmarcas` 
+        (
+            `Marc_Marca`, 
+            `Marc_UsuarioCreacion`, 
+            `Marc_FechaCreacion`
+        )
+        VALUES 
+        (
+            Marc_Marca, 
+            Marc_UsuarioCreacion, 
+            Marc_FechaCreacion
+        );
+
+        COMMIT;
+        SELECT 1;
+    END;
+END$$
+
+DELIMITER ;
+
+CREATE PROCEDURE SP_Marcas_Listar ()
+BEGIN
+     SELECT 
+    Marc_Id, 
+    Marc_Marca, 
+    Marc_UsuarioCreacion, 
+    Marc_FechaCreacion, 
+    Marc_UsuarioModificacion, 
+    Marc_FechaModificacion
+  FROM gral_tbMarcas
+  WHERE Marc_Estado = 1; 
+END
+
+
+CREATE PROCEDURE SP_Factura_Listar()
+BEGIN
+    SELECT 
+        F.Fact_Id,
+        C.Clie_Nombre,
+        E.Empl_Nombre,
+        M.Mepa_Metodo,
+        F.Fact_Finalizado 
+    FROM vent_tbFactura F
+    LEFT JOIN gral_tbClientes C ON C.Clie_Id = F.Clie_Id
+    LEFT JOIN gral_tbEmpleados E ON E.Empl_Id = F.Empl_Id
+    LEFT JOIN gral_tbMetodosPago M ON M.Mepa_Id = F.Mepa_Id;
+END
+
