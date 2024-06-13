@@ -158,7 +158,7 @@
               </li>
           
               <li class="nav-item">
-                <a href="clientes" class="nav-link">
+                <a href="facturas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Facturas</p>
                 </a>
