@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="Views/Resources/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="Views/Resources/dist/css/adminlte.min.css">
-  <link rel="stylesheet" href="Views/Resources/css/DataTable.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="Views/Resources/css/IziToast.css">
     <script src="Views/Resources/js/JqueryVS3_7_1.js"></script>
   </head>
@@ -51,15 +51,17 @@
 
 <!-- jQuery -->
 
-<script src="Views/Resources/dist-layout/vendor/jquery/jquery.min.js"></script>
-<script src="Views/Resources/dist-layout/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <!-- AdminLTE App -->
 <script src="Views/Resources/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="Views/Resources/dist/js/demo.js"></script>
 <script src="Views/Resources/js/IziToast.js"></script>
 <script src="Views/Resources/js/site.js" ></script>
-<script src="Views/Resources/js/jquery-ui.js" ></script>
 <script>
   
   $(document).ready(function () {
