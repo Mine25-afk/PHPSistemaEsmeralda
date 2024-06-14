@@ -70,3 +70,6 @@ BEGIN
     LEFT JOIN gral_tbMetodosPago M ON M.Mepa_Id = F.Mepa_Id;
 END
 
+
+ALTER TABLE dbsistemaesmeralda.gral_tbmarcas
+MODIFY COLUMN Marc_Id INT AUTO_INCREMENT;
