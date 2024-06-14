@@ -153,7 +153,15 @@ $(document).ready(function () {
             success: function(response) {
                 console.log('Response from server:', response); // Verificar la respuesta del servidor en la consola
                 if (response == 1) {
-                    alert('Proveedor guardado exitosamente.');
+                    iziToast.success({
+                 title: 'Éxito',
+                 message: 'Subido con exito',
+                position: 'topRight',
+                 transitionIn: 'flipInX',
+                 transitionOut: 'flipOutX'
+
+
+             });
                     $('.CrearMostrar').hide();
                     $('.CrearOcultar').show();
                 } else {
@@ -162,7 +170,15 @@ $(document).ready(function () {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log('Error:', errorThrown); // Verificar el error en la consola
-                alert('Error en la comunicación con el servidor.');
+                iziToast.error({
+                 title: 'Error',
+                 message: 'Errro al momento de Guardar',
+                position: 'topRight',
+                 transitionIn: 'flipInX',   
+                 transitionOut: 'flipOutX'
+
+
+             });
             }
         });
     });
