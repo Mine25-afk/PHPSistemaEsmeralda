@@ -12,22 +12,20 @@ class ProveedoresController {
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedor_listar`()';
             $stmt = $this->pdo->prepare($sql);
-
-            if ($stmt === false) {
-                throw new PDOException('Error al preparar la declaración: ' . implode(", ", $this->pdo->errorInfo()));
-            }
-
             $stmt->execute();
             $result = $stmt->fetchAll();
-
-            if ($result === false) {
-                throw new PDOException('Error al obtener resultados: ' . implode(", ", $stmt->errorInfo()));
+            $data = array();
+            foreach ($result as $row) {
+                $data[] = array(
+                    'Prov_Id' => $row['Prov_Id'],
+                    'Prov_Proveedor' => $row['Prov_Proveedor'],
+                    'Prov_Telefono' => $row['Prov_Telefono'],
+                    'Muni_Municipio' => $row['Muni_Municipio']
+                );
             }
-
-            return $result;
-
-        } catch (PDOException $e) {
-            throw new Exception('Error al listar los Proveedores: ' . $e->getMessage());
+            echo json_encode(array('data' => $data));
+        } catch (Exception $e) {
+            throw new Exception('Error al listar proveedores: ' . $e->getMessage());
         }
     }
 
@@ -70,9 +68,9 @@ class ProveedoresController {
 
     public function buscarProveedor($Prov_Id) {
         try {
-            $sql = 'CALL SP_Proveedor_buscar(:Prov_Id)';
+            $sql = 'CALL SP_Proveedor_buscar(:ProvId_param)';
             $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':Prov_Id', $Prov_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':ProvId_param', $Prov_Id, PDO::PARAM_INT);
             $stmt->execute();
             
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -81,10 +79,10 @@ class ProveedoresController {
             throw new Exception('Error al buscar el Proveedor: ' . $e->getMessage());
         }
     }
+    
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    require_once __DIR__ . '/../config.php';
     $controller = new ProveedoresController($pdo);
 
     if ($_POST['action'] === 'insertar') {
@@ -106,11 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         $resultado = $controller->actualizarProveedor($Prov_Id, $Prov_Proveedor, $Prov_Telefono, $Muni_Codigo, $Prov_UsuarioModificacion, $Prov_FechaModificacion);
         echo $resultado;
+    } elseif ($_POST['action'] === 'listarProveedores') {
+        $controller->listarProveedores();
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'buscar') {
-    require_once __DIR__ . '/../config.php';
     $controller = new ProveedoresController($pdo);
 
     $Prov_Id = $_GET['Prov_Id'];
