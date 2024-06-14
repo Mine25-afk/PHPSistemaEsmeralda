@@ -2,18 +2,25 @@
 require_once __DIR__ . '/../config.php';
 
 class MarcaController {
-    public function listarMarcas() {
-        global $pdo;
-        try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Marcas_Listar`()';
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->fetchAll();
-            return $result;
-        } catch (Exception $e) {
-            throw new Exception('Error al listar marcas: ' . $e->getMessage());
+   public function listarMarcas() {
+    global $pdo;
+    try {
+        $sql = 'CALL `dbsistemaesmeralda`.`SP_Marcas_Listar`()';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+        $data = array();
+        foreach ($result as $row) {
+            $data[] = array(
+                'Marc_Id' => $row['Marc_Id'],
+                'Marc_Marca' => $row['Marc_Marca']
+            );
         }
+        echo json_encode(array('data' => $data));
+    } catch (Exception $e) {
+        throw new Exception('Error al listar marcas: ' . $e->getMessage());
     }
+}
 
     public function insertarMarca($Marc_Marca, $Marc_UsuarioCreacion, $Marc_FechaCreacion) {
         global $pdo;
@@ -38,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     require_once __DIR__ . '/../config.php';
     $controller = new MarcaController();
 
-    if ($_POST['action'] === 'insertar') {
+    if ($_POST['action'] === 'listarMarcas') {
+        $controller->listarMarcas();
+    } elseif ($_POST['action'] === 'insertar') {
         $Marc_Marca = $_POST['Marc_Marca'];
         $Marc_UsuarioCreacion = $_POST['Marc_UsuarioCreacion'];
         $Marc_FechaCreacion = $_POST['Marc_FechaCreacion'];
