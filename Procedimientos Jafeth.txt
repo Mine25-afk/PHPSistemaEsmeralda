@@ -1,0 +1,120 @@
+DELIMITER $$
+CREATE PROCEDURE `SP_Proveedor_listar`()
+BEGIN
+SELECT Prov_Id,Prov_Proveedor,Prov_Telefono,Muni_Municipio
+ FROM gral_tbproveedores P
+LEFT JOIN gral_tbmunicipios M ON P.Muni_Codigo = M.Muni_Codigo 
+WHERE Prov_Estado = 1;
+END $$
+DELIMITER ;
+
+CALL SP_Proveedor_listar();
+
+
+DELIMITER $$
+CREATE PROCEDURE `SP_Municipio_listar`()
+BEGIN
+SELECT Prov_Id,Prov_Proveedor,Prov_Telefono,Muni_Municipio
+ FROM gral_tbmunicipios M
+LEFT JOIN gral_tbdepartamentos d ON d. = p.Muni_Codigo 
+WHERE Prov_Estado = 1;
+END $$
+DELIMITER ; 
+
+
+USE dbsistemaesmeralda;
+
+DELIMITER $$
+
+CREATE PROCEDURE `sp_Proveedor_insertar` (
+    IN `Prov_Proveedor` VARCHAR(100),
+    IN `Prov_Telefono` VARCHAR(15),
+    IN `Muni_Codigo` VARCHAR(4),
+    IN `Prov_UsuarioCreacion` INT,
+    IN `Prov_FechaCreacion` DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        INSERT INTO `gral_tbproveedores` 
+        (
+            `Prov_Proveedor`, 
+            `Prov_Telefono`, 
+            `Muni_Codigo`, 
+            `Prov_Estado`, 
+            `Prov_UsuarioCreacion`, 
+            `Prov_FechaCreacion`
+        )
+        VALUES 
+        (
+            `Prov_Proveedor`, 
+            `Prov_Telefono`, 
+            `Muni_Codigo`, 
+            1, 
+            `Prov_UsuarioCreacion`, 
+            `Prov_FechaCreacion`
+        );
+
+        COMMIT;
+        SELECT 1 AS Resultado;
+    END;
+END$$
+
+DELIMITER ;
+
+CALL SP_Proveedor_insertar();
+
+USE dbsistemaesmeralda;
+
+DELIMITER $$
+
+CREATE PROCEDURE `SP_MunicipioporDepartamento_listar`(IN depa_Id Varchar(2))
+BEGIN
+    SELECT M.Muni_Municipio, D.Depa_Departamento
+    FROM gral_tbmunicipios M
+    LEFT JOIN gral_tbdepartamentos D ON D.Depa_Codigo = M.Depa_Codigo
+    WHERE D.Depa_Codigo = depa_Id;
+END $$
+
+DELIMITER ;
+
+CALL SP_MunicipioporDepartamento_listar(10);
+
+
+DELIMITER $$
+
+CREATE PROCEDURE `SP_Municipio_listar`()
+BEGIN
+    SELECT M.Muni_Municipio
+    FROM gral_tbmunicipios M;
+END $$
+
+DELIMITER ;
+
+CALL SP_Municipio_listar()
+
+DELIMITER $$
+
+CREATE PROCEDURE `SP_Roles_listar`()
+BEGIN
+    SELECT r.Role_Id,r.Role_Rol
+    FROM acce_tbroles r;
+END $$
+
+DELIMITER ;
+
+CALL SP_Roles_listar()
