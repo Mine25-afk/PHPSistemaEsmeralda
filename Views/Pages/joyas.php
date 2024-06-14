@@ -183,16 +183,16 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById('Joya_Id_Editar').value = data.joya.Joya_Id;
-                    document.getElementById('Joya_Nombre_Editar').value = data.joya.Joya_Nombre;
-                    document.getElementById('Joya_PrecioCompra_Editar').value = data.joya.Joya_PrecioCompra;
-                    document.getElementById('Joya_PrecioVenta_Editar').value = data.joya.Joya_PrecioVenta;
-                    document.getElementById('Joya_Stock_Editar').value = data.joya.Joya_Stock;
-                    document.getElementById('Joya_PrecioMayor_Editar').value = data.joya.Joya_PrecioMayor;
-                    document.getElementById('Joya_Imagen_Editar').value = data.joya.Joya_Imagen;
-                    document.getElementById('Mate_Id_Editar').value = data.joya.Mate_Id;
-                    document.getElementById('Prov_Id_Editar').value = data.joya.Prov_Id;
-                    document.getElementById('Cate_Id_Editar').value = data.joya.Cate_Id;
+                    document.getElementById('Joya_Id').value = data.joya.Joya_Id;
+                    document.getElementById('Joya_Nombre').value = data.joya.Joya_Nombre;
+                    document.getElementById('Joya_PrecioCompra').value = data.joya.Joya_PrecioCompra;
+                    document.getElementById('Joya_PrecioVenta').value = data.joya.Joya_PrecioVenta;
+                    document.getElementById('Joya_Stock').value = data.joya.Joya_Stock;
+                    document.getElementById('Joya_PrecioMayor').value = data.joya.Joya_PrecioMayor;
+                    document.getElementById('Joya_Imagen').value = data.joya.Joya_Imagen;
+                    document.getElementById('Mate_Id').value = data.joya.Mate_Id;
+                    document.getElementById('Prov_Id').value = data.joya.Prov_Id;
+                    document.getElementById('Cate_Id').value = data.joya.Cate_Id;
                     $('#collapseEditar').collapse('show');
                 } else {
                     alert('Error al obtener datos de la joya');
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // insertarJoya.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new JoyasController();
-    $data = $_POST; // Asegúrate de sanitizar los datos de entrada
+    $data = $_POST; 
     try {
         $result = $controller->insertarJoya($data);
         echo json_encode(['success' => true, 'data' => $result]);
@@ -290,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // actualizarJoya.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new JoyasController();
-    $data = $_POST; // Asegúrate de sanitizar los datos de entrada
+    $data = $_POST; 
     try {
         $result = $controller->actualizarJoya($data);
         echo json_encode(['success' => true, 'data' => $result]);
@@ -302,7 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // eliminarJoya.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new JoyasController();
-    $Joya_Id = $_POST['Joya_Id']; // Asegúrate de sanitizar los datos de entrada
+    $Joya_Id = $_POST['Joya_Id']; 
     try {
         $result = $controller->eliminarJoya($Joya_Id);
         echo json_encode(['success' => true, 'data' => $result]);
@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // obtenerJoya.php
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $controller = new JoyasController();
-    $Joya_Id = $_GET['Joya_Id']; // Asegúrate de sanitizar los datos de entrada
+    $Joya_Id = $_GET['Joya_Id']; 
     try {
         $result = $controller->obtenerJoya($Joya_Id);
         echo json_encode(['success' => true, 'joya' => $result]);
