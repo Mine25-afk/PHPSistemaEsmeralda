@@ -33,7 +33,7 @@ class ProveedoresController {
 
     public function insertarProveedor($Prov_Proveedor, $Prov_Telefono, $Muni_Codigo, $Prov_UsuarioCreacion, $Prov_FechaCreacion) {
         try {
-            $sql = 'CALL SP_Proveedor_insertar(:Prov_Proveedor, :Prov_Telefono, :Muni_Codigo, :Prov_UsuarioCreacion, :Prov_FechaCreacion)';
+            $sql = 'CALL SP_Proveedores_insertar(:Prov_Proveedor, :Prov_Telefono, :Muni_Codigo, :Prov_UsuarioCreacion, :Prov_FechaCreacion)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Prov_Proveedor', $Prov_Proveedor, PDO::PARAM_STR);
             $stmt->bindParam(':Prov_Telefono', $Prov_Telefono, PDO::PARAM_STR);
