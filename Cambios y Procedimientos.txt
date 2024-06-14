@@ -1,0 +1,57 @@
+***********Cambios y Procedimientos**********
+
+---------------
+----Eduardo----
+---------------
+
+
+
+
+
+
+
+---------------
+----Héctor-----
+---------------
+
+DELIMITER $$
+CREATE PROCEDURE `SP_Joyas_listar`()
+BEGIN
+SELECT Joya_Id,Joya_Nombre,Joya_PrecioCompra,Joya_PrecioVenta,Joya_Stock,Joya_PrecioMayor,Joya_Imagen,M.Mate_Material,P.Prov_Proveedor,C.Cate_Categoria FROM vent_tbJoyas J
+LEFT JOIN gral_tbProveedores P ON P.Prov_Id = J.Prov_Id LEFT JOIN gral_tbMateriales M ON M.Mate_Id = J.Mate_Id
+LEFT JOIN gral_tbCategorias C ON C.Cate_Id = J.Cate_Id
+WHERE Joya_Estado = 1;
+END $$
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+---------------
+------Sua------
+---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------
+----Yafeth-----
+---------------

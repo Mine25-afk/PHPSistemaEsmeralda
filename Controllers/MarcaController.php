@@ -15,23 +15,36 @@ class MarcaController {
         }
     }
 
-    public function insertarMarca($nombre) {
+    public function insertarMarca($Marc_Marca, $Marc_UsuarioCreacion, $Marc_FechaCreacion) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_Marcas_insertar`(:nombre, 1, :fecha)';
+            $sql = 'CALL sp_Marcas_insertar(:Marc_Marca, :Marc_UsuarioCreacion, :Marc_FechaCreacion)';
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':nombre', $nombre);
-            $stmt->bindParam(':fecha', date('Y-m-d')); // Puedes ajustar la fecha según sea necesario
+            $stmt->bindParam(':Marc_Marca', $Marc_Marca, PDO::PARAM_STR);
+            $stmt->bindParam(':Marc_UsuarioCreacion', $Marc_UsuarioCreacion, PDO::PARAM_INT);
+            $stmt->bindParam(':Marc_FechaCreacion', $Marc_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
-
-            $result = $stmt->fetch();
-            return $result['result']; // Suponiendo que el SP devuelve un campo "result"
-        } catch (Exception $e) {
-            throw new Exception('Error al insertar marca: ' . $e->getMessage());
+            
+            $result = $stmt->fetchColumn();
+            return $result; // 1 si es exitoso, 0 si no
+        } catch (PDOException $e) {
+            return 0; // Retornar 0 en caso de error
         }
     }
+}
 
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $controller = new MarcaController();
+
+    if ($_POST['action'] === 'insertar') {
+        $Marc_Marca = $_POST['Marc_Marca'];
+        $Marc_UsuarioCreacion = $_POST['Marc_UsuarioCreacion'];
+        $Marc_FechaCreacion = $_POST['Marc_FechaCreacion'];
+        
+        $resultado = $controller->insertarMarca($Marc_Marca, $Marc_UsuarioCreacion, $Marc_FechaCreacion);
+        echo $resultado;
+    }
 }
 
 ?>

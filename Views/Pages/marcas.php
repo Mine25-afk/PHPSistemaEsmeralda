@@ -13,7 +13,7 @@ try {
 <div class="card">
     <div class="card-body">
         <h2 class="text-center" style="font-size:34px !important">Marca</h2>
-        <div class="Crear">
+        <div class="CrearOcultar">
         <p class="btn btn-primary" id="AbrirModal">
             Nuevo
         </p>
@@ -42,67 +42,92 @@ try {
                 </tbody>
             </table>
         </div>
-        </div>
-        <div class="CrearMostrar">
-        <form id="marcaForm">
-    <div class="form-row">
-        <div class="col-md-6">
-            <label class="control-label">Marca</label>
-            <input name="Marca" id="Marca" class="form-control letras" />
-            <span class="text-danger"></span>
-        </div>
-    </div>
 
-    <div class="card-body">
-        <div class="form-row d-flex justify-content-end">
-            <div class="col-md-3">
-                <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-            </div>
-            <div class="col-md-3">
-                <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-            </div>
         </div>
+
+        <div class="CrearMostrar">
+        <form>
+
+
+<div class="form-row">
+    <div class="col-md-6">
+        <label class="control-label"></label>
+        <input name="Marca" class="form-control letras" />
+        <span class="text-danger"></span>
     </div>
-</form>
+</div>
+
+<div class="card-body">
+    <div class="form-row d-flex justify-content-end">
+
+        <div class="col-md-3">
+        <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+        </div>
+
+
+        <div class="col-md-3">
+            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
         </div>
     </div>
 </div>
 
+</form>
+        </div>
+        
+    </div>
+
+</div>
+
 <script>
-     $(document).ready(function() {
-        $('.Crear').show();
-        $('.CrearMostrar').hide();
-      
+   $(document).ready(function () {
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
     });
+
+   $('#AbrirModal').click(function() {
+    $('.CrearOcultar').hide();
+    $('.CrearMostrar').show();
+    });
+
+    $('#CerrarModal').click(function() {
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
+    });
+
 
     $('#guardarBtn').click(function() {
-        var marca = $('#Marca').val();
+            // Capturar los datos del formulario
+            var marca = $('#Marca').val();
 
-        $.ajax({
-            url: 'Controllers/AjaxController.php', // Asegúrate de que la URL sea correcta
-            type: 'POST',
-            data: { accion: 'insertar', Marca: marca },
-            success: function(response) {
-                try {
-                    var result = JSON.parse(response);
-                    if (result.status === 'success') {
-                        alert('Marca insertada correctamente');
-                        location.reload(); // Recargar la página para ver los cambios
+            // Enviar los datos mediante AJAX
+            $.ajax({
+                url: 'Controllers/MarcaController.php',
+                type: 'POST',
+                data: {
+                    action: 'insertar',
+                    Marc_Marca: marca,
+                    Marc_UsuarioCreacion: 1, // Puedes reemplazar esto con el ID del usuario real
+                    Marc_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                },
+                success: function(response) {
+                    console.log(response)
+                    console.log(data)
+                    if (response == 1) {
+                        alert('Marca guardada exitosamente.');
+                        // Ocultar la clase .Crear si la respuesta es exitosa
+                        $('.Crear').hide();
                     } else {
-                        alert('Error al insertar la marca: ' + result.message);
+                        alert('Error al guardar la marca.');
                     }
-                } catch (e) {
-                    alert('Error de formato en la respuesta del servidor.');
-                    console.log('Respuesta recibida:', response);
+                },
+                error: function() {
+                    alert('Error en la comunicación con el servidor.');
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(textStatus, errorThrown);
-            }
+            });
         });
-    });
-    $('#AbrirModal').click(function() {
-        $('.Crear').hide();
-        $('.CrearMostrar').show();
-    });
+                
+        
+
 </script>
+
+
