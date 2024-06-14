@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../config.php';
 
 class MarcaController {
     public function listarMarcas() {
@@ -10,9 +10,8 @@ class MarcaController {
             $stmt->execute();
             $result = $stmt->fetchAll();
             return $result;
-
         } catch (Exception $e) {
-            throw new Exception('Error al listar facturas: ' . $e->getMessage());
+            throw new Exception('Error al listar marcas: ' . $e->getMessage());
         }
     }
 
@@ -36,6 +35,7 @@ class MarcaController {
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    require_once __DIR__ . '/../config.php';
     $controller = new MarcaController();
 
     if ($_POST['action'] === 'insertar') {
@@ -47,4 +47,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo $resultado;
     }
 }
+
 ?>
