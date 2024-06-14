@@ -1,0 +1,54 @@
+CREATE DEFINER=root@localhost PROCEDURE SP_Empleado_Listar()
+BEGIN
+    SELECT 
+        Empl_DNI,
+        CONCAT(Empl_Nombre, ' ', Empl_Apellido) AS Empleado,
+        Empl_Correo,
+        CASE Empl_Sexo WHEN 'F' THEN 'Femenino' ELSE 'Masculino' END AS Empl_Sexo,
+        Empl_FechaNac,
+        M.Muni_Municipio,
+        C.Esta_EstadoCivil,
+        CA.Carg_Cargo,
+        S.Sucu_Nombre
+    FROM dbsistemaesmeralda.gral_tbempleados E
+    LEFT JOIN gral_tbmunicipios M ON M.Muni_Codigo = E.Muni_Codigo
+    LEFT JOIN gral_tbestadosciviles C ON C.Esta_Id = E.Esta_Id
+    LEFT JOIN gral_tbcargos CA ON CA.Carg_Id = E.Carg_Id
+    LEFT JOIN gral_tbsucursales S ON S.Sucu_Id = E.Sucu_Id
+    WHERE Empl_Estado = 1;
+END
+
+CREATE DEFINER=root@localhost PROCEDURE SP_FacturaCompra_Listar()
+BEGIN
+    SELECT
+		FaCE_Id,
+		P.Prov_Proveedor as nombreProveedor,
+		M.Mepa_Metodo as mepa_Metodo,
+		FaCE_fechafinalizacion as faCE_fechafinalizacion,
+		case FaCE_Finalizada when 0 then 'Si' ELSE 'No' END AS faCE_Finalizada
+	FROM dbsistemaesmeralda.vent_tbfacturacompraencabezado fe LEFT JOIN gral_tbproveedores P
+	ON P.Prov_Id = fe.Prov_Id left join gral_tbmetodospago M
+	ON M.Mepa_Id = fe.Mepa_Id
+	where FaCE_Etado = 1;
+END
+
+
+CREATE DEFINER=root@localhost PROCEDURE SP_Usuario_Listar()
+BEGIN
+    SELECT
+ Usua_Id, 
+    Usua_Usuario, 
+    Usua_Contraseña, 
+    CASE Usua_Administrador WHEN 1 THEN 'SI' ELSE 'NO' END AS Usua_Administradores, 
+	R.Role_Rol,
+    CONCAT(Empl_Nombre, ' ', Empl_Apellido) AS Empleado,
+    Usua_UsuarioCreacion, 
+    Usua_FechaCreacion, 
+    Usua_UsuarioModificacion, 
+    Usua_FechaModificacion, 
+    Usua_Estado
+  FROM dbsistemaesmeralda.acce_tbusuarios U
+  LEFT JOIN acce_tbroles R ON R.Role_Id = U.Role_Id
+  LEFT JOIN gral_tbempleados E ON E.Empl_Id = U.Empl_Id
+  WHERE Usua_Estado = 1;
+END
