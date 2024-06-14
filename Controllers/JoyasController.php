@@ -5,8 +5,6 @@ class JoyasController {
     public function listarJoyas() {
         global $pdo;
 
-    
-
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_listar`()';
             $stmt = $pdo->prepare($sql);
@@ -29,70 +27,93 @@ class JoyasController {
         }
     }
 
-    public function crearJoya($joya) {
+    public function insertarJoya($data) {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_crear`(:nombre, :precioCompra, :precioVenta, :stock, :precioMayor, :imagen, :material, :proveedor, :categoria)';
+            $sql = 'CALL `dbsistemaesmeralda`.`sp_Joyas_insertar`(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $stmt = $pdo->prepare($sql);
 
-            $stmt->bindParam(':nombre', $joya['nombre']);
-            $stmt->bindParam(':precioCompra', $joya['precioCompra']);
-            $stmt->bindParam(':precioVenta', $joya['precioVenta']);
-            $stmt->bindParam(':stock', $joya['stock']);
-            $stmt->bindParam(':precioMayor', $joya['precioMayor']);
-            $stmt->bindParam(':imagen', $joya['imagen']);
-            $stmt->bindParam(':material', $joya['material']);
-            $stmt->bindParam(':proveedor', $joya['proveedor']);
-            $stmt->bindParam(':categoria', $joya['categoria']);
+            if ($stmt === false) {
+                throw new Exception('Error al preparar la declaración: ' . implode(", ", $pdo->errorInfo()));
+            }
 
-            $stmt->execute();
+            $stmt->execute([
+                $data['Joya_Nombre'], $data['Joya_PrecioCompra'], $data['Joya_PrecioVenta'], $data['Joya_PrecioMayor'], $data['Joya_Imagen'], $data['Joya_Stock'], $data['Prov_Id'], $data['Mate_Id'], $data['Cate_Id'], $data['Joya_UsuarioCreacion'], $data['Joya_FechaCreacion']
+            ]);
+
+            return $stmt->fetch();
 
         } catch (Exception $e) {
-            throw new Exception('Error al crear Joya: ' . $e->getMessage());
+            throw new Exception('Error al insertar Joya: ' . $e->getMessage());
         }
     }
 
-    public function actualizarJoya($id, $joya) {
+    public function actualizarJoya($data) {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_actualizar`(:id, :nombre, :precioCompra, :precioVenta, :stock, :precioMayor, :imagen, :material, :proveedor, :categoria)';
+            $sql = 'CALL `dbsistemaesmeralda`.`sp_Joyas_actualizar`(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $stmt = $pdo->prepare($sql);
 
-            $stmt->bindParam(':id', $id);
-            $stmt->bindParam(':nombre', $joya['nombre']);
-            $stmt->bindParam(':precioCompra', $joya['precioCompra']);
-            $stmt->bindParam(':precioVenta', $joya['precioVenta']);
-            $stmt->bindParam(':stock', $joya['stock']);
-            $stmt->bindParam(':precioMayor', $joya['precioMayor']);
-            $stmt->bindParam(':imagen', $joya['imagen']);
-            $stmt->bindParam(':material', $joya['material']);
-            $stmt->bindParam(':proveedor', $joya['proveedor']);
-            $stmt->bindParam(':categoria', $joya['categoria']);
+            if ($stmt === false) {
+                throw new Exception('Error al preparar la declaración: ' . implode(", ", $pdo->errorInfo()));
+            }
 
-            $stmt->execute();
+            $stmt->execute([
+                $data['Joya_Nombre'], $data['Joya_PrecioCompra'], $data['Joya_PrecioVenta'], $data['Joya_PrecioMayor'], $data['Joya_Imagen'], $data['Joya_Stock'], $data['Prov_Id'], $data['Mate_Id'], $data['Cate_Id'], $data['Joya_UsuarioModificacion'], $data['Joya_FechaModificacion'], $data['Joya_Id']
+            ]);
+
+            return $stmt->fetch();
 
         } catch (Exception $e) {
             throw new Exception('Error al actualizar Joya: ' . $e->getMessage());
         }
     }
 
-    public function eliminarJoya($id) {
+    public function eliminarJoya($Joya_Id) {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_eliminar`(:id)';
+            $sql = 'CALL `dbsistemaesmeralda`.`sp_Joyas_eliminar`(?)';
             $stmt = $pdo->prepare($sql);
 
-            $stmt->bindParam(':id', $id);
+            if ($stmt === false) {
+                throw new Exception('Error al preparar la declaración: ' . implode(", ", $pdo->errorInfo()));
+            }
 
-            $stmt->execute();
+            $stmt->execute([$Joya_Id]);
+
+            return $stmt->fetch();
 
         } catch (Exception $e) {
             throw new Exception('Error al eliminar Joya: ' . $e->getMessage());
         }
     }
 
+    public function obtenerJoya($Joya_Id) {
+        global $pdo;
+
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`sp_Joyas_obtener`(?)';
+            $stmt = $pdo->prepare($sql);
+
+            if ($stmt === false) {
+                throw new Exception('Error al preparar la declaración: ' . implode(", ", $pdo->errorInfo()));
+            }
+
+            $stmt->execute([$Joya_Id]);
+            $result = $stmt->fetch();
+
+            if ($result === false) {
+                throw new Exception('Error al obtener datos de la joya: ' . implode(", ", $stmt->errorInfo()));
+            }
+
+            return $result;
+
+        } catch (Exception $e) {
+            throw new Exception('Error al obtener datos de la joya: ' . $e->getMessage());
+        }
+    }
 }
 ?>
