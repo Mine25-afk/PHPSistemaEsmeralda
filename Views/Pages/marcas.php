@@ -1,14 +1,3 @@
-<?php
-require_once 'Controllers/MarcaController.php';
-
-$controller = new MarcaController();
-try {
-    $Marcas = $controller->listarMarcas();
-} catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage();
-}
-
-?>
 
 <div class="card">
     <div class="card-body">
@@ -19,7 +8,7 @@ try {
         </p>
         <hr>
         <div class="table-responsive">
-            <table class="table table-striped table-hover" id="tablaOne">
+            <table class="table table-striped table-hover" id="TablaMarca">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -27,19 +16,6 @@ try {
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($Marcas as $marcas): ?>
-                        <tr>
-                            <td><?php echo $marcas['Marc_Id']; ?></td>
-                            <td><?php echo $marcas['Marc_Marca']; ?></td>
-                            <td class="d-flex justify-content-center" style="gap:10px">
-                                <a class="btn btn-primary btn-sm abrir-editar"><i class="fas fa-edit"></i>Editar</a>
-                                <a class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i>Detalles</a>
-                                <button class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
             </table>
         </div>
 
@@ -80,6 +56,27 @@ try {
 
 <script>
    $(document).ready(function () {
+   $('#TablaMarca').DataTable({
+        "ajax": {
+            "url": "Controllers/MarcaController.php",
+            "type": "POST",
+            "data": function(d) {
+                d.action = 'listarMarcas';
+            },
+            "dataSrc": function(json){
+                console.log(json)
+                return json.data;
+            }
+        },
+        "columns": [
+            { "data": "Marc_Id" },
+            { "data": "Marc_Marca" },
+            { 
+                "data": null, 
+                "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm'><i class='fas fa-eraser'></i> Eliminar</button>"
+            }
+        ]
+    });
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
     });
@@ -123,6 +120,7 @@ try {
 
 
              });
+             $('#TablaMarca').DataTable().ajax.reload();
                         $('.CrearOcultar').show();
                         $('.CrearMostrar').hide();
                     } else {
