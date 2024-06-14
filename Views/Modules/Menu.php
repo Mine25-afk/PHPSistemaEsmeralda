@@ -150,7 +150,19 @@
                   <i class="far fa-circle nav-icon"></i>
                   <p>Marcas</p>
                 </a>
-              </li>            
+              </li>   
+              <li class="nav-item">
+                <a href="empleados" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>empleados</p>
+                </a>
+              </li>    
+              <li class="nav-item">
+                <a href="facturacompra" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Factura Compra</p>
+                </a>
+              </li>     
             </ul>
           </li>
      
