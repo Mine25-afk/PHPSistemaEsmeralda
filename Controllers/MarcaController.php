@@ -38,6 +38,22 @@ class MarcaController {
             return 0; // Retornar 0 en caso de error
         }
     }
+
+    public function EliminarMarca($Marc_Codigo) {
+        global $pdo;
+        try {
+            $sql = 'CALL SP_Marcas_Eliminar(:Marc_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Marc_Codigo', $Marc_Codigo, PDO::PARAM_INT);
+
+            $stmt->execute();
+            
+            $result = $stmt->fetchColumn();
+            return $result; // 1 si es exitoso, 0 si no
+        } catch (PDOException $e) {
+            return 0; // Retornar 0 en caso de error
+        }
+    }
 }
 
 
@@ -53,6 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Marc_FechaCreacion = $_POST['Marc_FechaCreacion'];
         
         $resultado = $controller->insertarMarca($Marc_Marca, $Marc_UsuarioCreacion, $Marc_FechaCreacion);
+        echo $resultado;
+    }elseif ($_POST['action'] === 'eliminar') {
+        $Marc_Codigo = $_POST['Marc_Codigo'];
+        $resultado = $controller->EliminarMarca($Marc_Codigo);
         echo $resultado;
     }
 }
