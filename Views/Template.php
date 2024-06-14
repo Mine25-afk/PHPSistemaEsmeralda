@@ -27,7 +27,7 @@
   <div class="content-wrapper">
   <?php 
     if (isset($_GET["Pages"])) {
-      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario") {
+      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo") {
         include "Pages/". $_GET["Pages"] . ".php";
       }
     }
