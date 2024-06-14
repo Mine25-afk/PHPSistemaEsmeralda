@@ -54,7 +54,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="usuarios" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Usuarios</p>
                 </a>
@@ -97,7 +97,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="empleados" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Empleados</p>
                 </a>
