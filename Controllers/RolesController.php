@@ -8,7 +8,7 @@ class RolesController {
     
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Factura_Listar`()';
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Roles_listar`()';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
