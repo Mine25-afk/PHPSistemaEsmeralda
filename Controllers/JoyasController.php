@@ -120,15 +120,15 @@ class JoyasController {
 
 
 
-
+<!-- 
 <form id="formNuevo" enctype="multipart/form-data">
-    <!-- otros campos del formulario -->
-    <div class="form-group">
+ otros campos del formulario -->
+    <!-- <div class="form-group">
         <label for="Joya_Imagen">Imagen</label>
         <input type="file" class="form-control" id="Joya_Imagen" name="Joya_Imagen" required>
     </div>
     <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
+</form> -->
 
 
 // insertarJoya.php
@@ -184,7 +184,7 @@ class JoyasController {
 }
 
 
-<tbody>
+<!-- <tbody>
     <?php foreach ($Joyas as $joyas): ?>
         <tr>
             <td><?php echo $joyas['Joya_Nombre']; ?></td>
@@ -204,6 +204,6 @@ class JoyasController {
         </tr>
     <?php endforeach; ?>
 </tbody>
+ -->
 
-
-Asegúrate de cambiar path/to/your/upload/directory/ a la ruta correcta donde deseas guardar las imágenes en tu servidor. También, asegúrate de que esta carpeta tiene permisos de escritura adecuados.
+<!-- Asegúrate de cambiar path/to/your/upload/directory/ a la ruta correcta donde deseas guardar las imágenes en tu servidor. También, asegúrate de que esta carpeta tiene permisos de escritura adecuados. --> -->
