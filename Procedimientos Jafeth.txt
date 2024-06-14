@@ -25,9 +25,8 @@ DELIMITER ;
 USE dbsistemaesmeralda;
 
 DELIMITER $$
-
-CREATE PROCEDURE `sp_Proveedor_insertar` (
-    IN `Prov_Proveedor` VARCHAR(100),
+CREATE  PROCEDURE `SP_Proveedores_insertar` (
+     IN `Prov_Proveedor` VARCHAR(100),
     IN `Prov_Telefono` VARCHAR(15),
     IN `Muni_Codigo` VARCHAR(4),
     IN `Prov_UsuarioCreacion` INT,
@@ -36,41 +35,41 @@ CREATE PROCEDURE `sp_Proveedor_insertar` (
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Manejo de errores
+        -- Error handling
         ROLLBACK;
-        SELECT 0 AS Resultado;
+        SELECT 0;
     END;
 
     DECLARE EXIT HANDLER FOR SQLWARNING
     BEGIN
-        -- Manejo de advertencias
+        -- Warning handling
         ROLLBACK;
-        SELECT 0 AS Resultado;
+        SELECT 0;
     END;
 
     START TRANSACTION;
     BEGIN
-        INSERT INTO `gral_tbproveedores` 
+         INSERT INTO gral_tbproveedores 
         (
             `Prov_Proveedor`, 
             `Prov_Telefono`, 
             `Muni_Codigo`, 
-            `Prov_Estado`, 
+       
             `Prov_UsuarioCreacion`, 
             `Prov_FechaCreacion`
         )
         VALUES 
         (
-            `Prov_Proveedor`, 
-            `Prov_Telefono`, 
-            `Muni_Codigo`, 
-            1, 
-            `Prov_UsuarioCreacion`, 
-            `Prov_FechaCreacion`
+            Prov_Proveedor, 
+            Prov_Telefono, 
+            Muni_Codigo, 
+         
+            Prov_UsuarioCreacion, 
+            Prov_FechaCreacion
         );
 
         COMMIT;
-        SELECT 1 AS Resultado;
+        SELECT 1;
     END;
 END$$
 
@@ -118,3 +117,105 @@ END $$
 DELIMITER ;
 
 CALL SP_Roles_listar()
+
+
+------------------------14/6/2024
+CREATE TABLE `vent_tbreparaciones`(
+	Repa_Id INT PRIMARY KEY AUTO_INCREMENT,
+	Repa_Codigo VARCHAR(12),
+    Repa_Tipo_Reparacion VARCHAR(100),
+    Repa_UsuarioCreacion INT,
+    Repa_FechaCreacion DateTime,
+    Repa_UsuarioModifica INT,
+    Repa_FechaModifica Datetime,
+	Repa_Estado tinyint(1) DEFAULT 1,
+  
+CONSTRAINT `Fk_tbReparaciones_tbUsuarios_Repa_UsuarioCreacion` FOREIGN KEY (`Repa_UsuarioCreacion`) REFERENCES `acce_tbusuarios` (`Usua_Id`) ,
+  CONSTRAINT `Fk_tbReparaciones_tbUsuarios_Repa_UsuarioModifica` FOREIGN KEY (`Repa_UsuarioModifica`) REFERENCES `acce_tbusuarios` (`Usua_Id`) 
+)
+
+
+DELIMITER $$
+CREATE PROCEDURE `SP_Proveedor_actualizar` (
+    IN Prov_Id INT,
+    IN Prov_Proveedor VARCHAR(100),
+    IN Prov_Telefono VARCHAR(15),
+    IN Muni_Codigo VARCHAR(4),
+    IN Prov_UsuarioModificacion INT,
+    IN Prov_FechaModificacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        -- Actualizar los campos según el Prov_Id
+        UPDATE gral_tbproveedores
+        SET
+            Prov_Proveedor = Prov_Proveedor,
+                    Prov_Telefono = Prov_Telefono,
+                    Muni_Codigo = Muni_Codigo,
+                    Prov_UsuarioModificacion = Prov_UsuarioModificacion,
+                    Prov_FechaModificacion = Prov_FechaModificacion
+        WHERE
+            Prov_Id = Prov_Id;
+
+        COMMIT;
+        SELECT 1;
+    END;
+END$$
+
+
+DELIMITER ;
+
+
+DELIMITER $$
+
+CREATE PROCEDURE `SP_Proveedor_buscar` (
+    IN Prov_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        -- Consulta para obtener información según el Prov_Id
+        SELECT
+            Prov_Proveedor,
+            Prov_Telefono,
+            Muni_Codigo,
+            Prov_UsuarioModificacion,
+            Prov_FechaModificacion
+        FROM gral_tbproveedores 
+        WHERE Prov_Id = Prov_Id;
+
+        COMMIT;
+    END;
+END$$
+
+DELIMITER ;
+
