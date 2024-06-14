@@ -52,7 +52,7 @@ try {
 <div class="form-row">
     <div class="col-md-6">
         <label class="control-label"></label>
-        <input name="Marca" class="form-control letras" />
+        <input name="Marca" class="form-control letras" id="MarcaInput"/>
         <span class="text-danger"></span>
     </div>
 </div>
@@ -97,7 +97,8 @@ try {
 
     $('#guardarBtn').click(function() {
             // Capturar los datos del formulario
-            var marca = $('#Marca').val();
+            var marca = $('#MarcaInput').val();
+            console.log(marca)
 
             // Enviar los datos mediante AJAX
             $.ajax({
@@ -111,13 +112,21 @@ try {
                 },
                 success: function(response) {
                     console.log(response)
-                    console.log(data)
                     if (response == 1) {
-                        alert('Marca guardada exitosamente.');
-                        // Ocultar la clase .Crear si la respuesta es exitosa
-                        $('.Crear').hide();
+                        $('#MarcaInput').val(null);
+                        iziToast.success({
+                 title: 'Éxito',
+                 message: 'Subido con exito',
+                position: 'topRight',
+                 transitionIn: 'flipInX',
+                 transitionOut: 'flipOutX'
+
+
+             });
+                        $('.CrearOcultar').show();
+                        $('.CrearMostrar').hide();
                     } else {
-                        alert('Error al guardar la marca.');
+                       
                     }
                 },
                 error: function() {

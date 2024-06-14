@@ -91,7 +91,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="Proveedores" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Proveedores</p>
                 </a>
