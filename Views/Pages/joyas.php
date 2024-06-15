@@ -160,38 +160,39 @@
 <script>
 $(document).ready(function () {
     var table = $('#TablaJoya').DataTable({
-        "ajax": {
-            "url": "Controllers/JoyasController.php",
-            "type": "POST",
-            "data": function(d) {
-                d.action = 'listarJoyas';
-            },
-            "dataSrc": function(json){
-                return json.data;
+    "ajax": {
+        "url": "Controllers/JoyasController.php",
+        "type": "POST",
+        "data": function(d) {
+            d.action = 'listarJoyas';
+        },
+        "dataSrc": function(json){
+            return json.data;
+        }
+    },
+    "columns": [
+        { "data": "Joya_Id" },
+        { "data": "Joya_Nombre" },
+        { "data": "Joya_PrecioCompra" },
+        { "data": "Joya_PrecioVenta" },
+        { "data": "Joya_Stock" },
+        { "data": "Joya_PrecioMayor" },
+        {
+            "data": "Joya_Imagen",
+            "render": function (data, type, row) {
+                var imageUrl = '/PHPSistemaEsmeralda/Resources/uploads/joyas/' + encodeURIComponent(data);
+                return '<img src="' + imageUrl + '" alt="Imagen de Joya" width="50">';
             }
         },
-        "columns": [
-            { "data": "Joya_Id" },
-            { "data": "Joya_Nombre" },
-            { "data": "Joya_PrecioCompra" },
-            { "data": "Joya_PrecioVenta" },
-            { "data": "Joya_Stock" },
-            { "data": "Joya_PrecioMayor" },
-            {
-                "data": "Joya_Imagen",
-                "render": function (data, type, row) {
-                    return '<img src="' + data + '" alt="Imagen de Joya" width="50">';
-                }
-            },
-            { "data": "Mate_Material" },
-            { "data": "Prov_Proveedor" },
-            { "data": "Cate_Categoria" },
-            { 
-                "data": null, 
-                "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
-            }
-        ]
-    });
+        { "data": "Mate_Material" },
+        { "data": "Prov_Proveedor" },
+        { "data": "Cate_Categoria" },
+        { 
+            "data": null, 
+            "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
+        }
+    ]
+});
 
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
