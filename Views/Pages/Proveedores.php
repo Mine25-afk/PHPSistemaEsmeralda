@@ -1,7 +1,19 @@
-<div class="card">
-    <div class="card-body">
-        <h2 class="text-center" style="font-size:34px !important">Proveedor</h2>
-        <div class="CrearOcultar">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Proveedor</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="text-center" style="font-size:34px !important">Proveedor</h2>
+            <div class="CrearOcultar">
             <p class="btn btn-primary" id="AbrirModal">
                 Nuevo
             </p>
@@ -21,39 +33,83 @@
             </div>
         </div>
         <div class="CrearMostrar">
-            <form>
+            <form id="proveedorForm">
                 <input type="hidden" name="Prov_Id" id="Prov_Id">
                 <div class="form-row">
                     <div class="col-md-6">
                         <label class="control-label">Proveedor</label>
-                        <input name="Proveedor" id="Proveedor" class="form-control letras" />
-                        <span class="text-danger"></span>
+                        <input name="Proveedor" id="Proveedor" class="form-control letras" required />
+                        <span class="text-danger" id="ProveedorError"></span>
                     </div>
                     <div class="col-md-6">
                         <label class="control-label">Telefono</label>
-                        <input name="Telefono" id="Telefono" class="form-control letras" />
-                        <span class="text-danger"></span>
+                        <input name="Telefono" id="Telefono" class="form-control" required />
+                        <span class="text-danger" id="TelefonoError"></span>
                     </div>
                     <div class="col-md-6">
                         <label class="control-label">Municipio</label>
-                        <input name="Municipio" id="Municipio" class="form-control letras" />
-                        <span class="text-danger"></span>
+                        <input name="Municipio" id="Municipio" class="form-control" required />
+                        <span class="text-danger" id="MunicipioError"></span>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="form-row d-flex justify-content-end">
-                        <div class="col-md-3">
-                            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-                        </div>
-                        <div class="col-md-3">
-                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-                        </div>
-                    </div>
-                </div>
-            </form>
+    <div class="form-row d-flex justify-content-end">
+        <div class="col-md-3">
+            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+        </div>
+        <div class="col-md-3">
+            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
         </div>
     </div>
 </div>
+
+            </form>
+        </div>
+
+            <!-- Collapse Detalles -->
+            <div class="CrearDetalles collapse" id="detallesCollapse">
+                <div class="card card-body">
+                    <h5>Detalles de la Joya</h5>
+                    <p id="detallesContenido"></p>
+                    <div class="form-row d-flex justify-content-end">
+                        <div class="col-md-3">
+                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Volver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este proveedor?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
 
 <script>
 $(document).ready(function () {
@@ -80,10 +136,11 @@ $(document).ready(function () {
                         <a class='btn btn-primary btn-sm abrir-editar' data-id='${data.Prov_Id}'>
                             <i class='fas fa-edit'></i> Editar
                         </a> 
-                        <a class='btn btn-secondary btn-sm ver-detalles' data-id='${data.Prov_Id}'>
-                            <i class='fas fa-eye'></i> Detalles
-                        </a> 
-                        <button class='btn btn-danger btn-sm eliminar' data-id='${data.Prov_Id}'>
+                       <a class='btn btn-secondary btn-sm ver-detalles' data-id='${data.Prov_Id}'>
+    <i class='fas fa-eye'></i> Detalles
+</a>
+
+                        <button class='btn btn-danger btn-sm eliminar' data-id='${data.Prov_Id}' data-toggle='modal' data-target='#eliminarModal'>
                             <i class='fas fa-eraser'></i> Eliminar
                         </button>
                     `;
@@ -95,11 +152,154 @@ $(document).ready(function () {
 
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
+
+    $('#Proveedor').on('keypress', function (e) {
+        if (e.which >= 48 && e.which <= 57) {
+            e.preventDefault();
+        }
+    });
+
+    $('#Telefono').on('input', function () {
+        var telefono = $(this).val();
+        if (telefono.length > 8) {
+            $(this).val(telefono.slice(0, 8));
+        }
+    });
+
+    $('#guardarBtn').click(function() {
+        var proveedor = $('#Proveedor').val().trim();
+        var telefono = $('#Telefono').val().trim();
+        var municipio = $('#Municipio').val().trim();
+        var isValid = true;
+
+        if (proveedor === '') {
+            isValid = false;
+            $('#ProveedorError').text('Este campo es requerido.');
+        } else {
+            $('#ProveedorError').text('');
+        }
+
+        if (telefono === '') {
+            isValid = false;
+            $('#TelefonoError').text('Este campo es requerido.');
+        } else if (!/^\d{8}$/.test(telefono)) {
+            isValid = false;
+            $('#TelefonoError').text('El teléfono debe tener 8 dígitos.');
+        } else {
+            $('#TelefonoError').text('');
+        }
+
+        if (municipio === '') {
+            isValid = false;
+            $('#MunicipioError').text('Este campo es requerido.');
+        } else {
+            $('#MunicipioError').text('');
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        var action = $('#Prov_Id').val() ? 'actualizar' : 'insertar';
+        var provId = $('#Prov_Id').val();
+        var usuarioId = 1;
+        var fecha = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        $.ajax({
+            url: 'Controllers/ProveedorController.php',
+            type: 'POST',
+            data: {
+                action: action,
+                Prov_Id: provId,
+                Prov_Proveedor: proveedor,
+                Prov_Telefono: telefono,
+                Muni_Codigo: municipio,
+                Prov_UsuarioCreacion: usuarioId,
+                Prov_FechaCreacion: fecha,
+                Prov_UsuarioModificacion: usuarioId,
+                Prov_FechaModificacion: fecha
+            },
+            success: function(response) {
+                console.log('Response from server:', response);
+                if (response == 1) {
+                    alert('Proveedor guardado correctamente.');
+                    $('#TablaMarca').DataTable().ajax.reload();
+                    limpiarFormulario();
+                    $('.CrearMostrar').hide();
+                    $('.CrearOcultar').show();
+                } else {
+                    alert('Error al guardar el proveedor.');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('Error:', errorThrown);
+                alert('Error al guardar el proveedor.');
+            }
+        });
+    });
+
+    $('#CerrarModal').click(function() {
+        limpiarFormulario();
+        $('.CrearMostrar').hide();
+        $('.CrearOcultar').show();
+    });
+
+    function limpiarFormulario() {
+        $('#proveedorForm')[0].reset();
+        $('#ProveedorError').text('');
+        $('#TelefonoError').text('');
+        $('#MunicipioError').text('');
+    }
+
+    $('#AbrirModal').click(function() {
+        limpiarFormulario();
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').show();
+    
+    });
+    $('#CerrarDetalles').click(function() {
+    $('#detallesCollapse').collapse('hide'); // Ocultar el Collapse de detalles al hacer clic en Volver
+    $('.CrearOcultar').show();
 });
 
-$(document).on('click', '.abrir-editar', function () {
+
+
+    $(document).on('click', '.abrir-editar', function () {
+        var provId = $(this).data('id');
+        console.log('ID del proveedor:', provId);
+        $.ajax({
+            url: 'Controllers/ProveedorController.php',
+            type: 'GET',
+            data: {
+                action: 'buscar',
+                Prov_Id: provId
+            },
+            success: function (response) {
+                console.log('Response from server:', response);
+                try {
+                    var proveedor = JSON.parse(response);
+                    $('#Prov_Id').val(provId);
+                    $('#Proveedor').val(proveedor.Prov_Proveedor);
+                    $('#Telefono').val(proveedor.Prov_Telefono);
+                    $('#Municipio').val(proveedor.Muni_Codigo);
+                    $('.CrearOcultar').hide();
+                    $('.CrearMostrar').show();
+                } catch (e) {
+                    console.error('Error parsing JSON:', e);
+                    alert('Error parsing JSON response.');
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('Error:', errorThrown);
+                alert('Error fetching or parsing the response.');
+            }
+        });
+    });
+
+    $(document).on('click', '.ver-detalles', function() {
     var provId = $(this).data('id');
-    console.log('ID del proveedor:', provId); // Verifica el ID del proveedor en la consola
+    
+    // Realizar una solicitud AJAX para obtener los detalles del proveedor con el provId
     $.ajax({
         url: 'Controllers/ProveedorController.php',
         type: 'GET',
@@ -108,15 +308,11 @@ $(document).on('click', '.abrir-editar', function () {
             Prov_Id: provId
         },
         success: function (response) {
-            console.log('Response from server:', response); // Verifica la respuesta del servidor en la consola
+            console.log('Detalles del proveedor:', response);
             try {
-                var proveedor = JSON.parse(response);
-                $('#Prov_Id').val(provId);
-                $('#Proveedor').val(proveedor.Prov_Proveedor);
-                $('#Telefono').val(proveedor.Prov_Telefono);
-                $('#Municipio').val(proveedor.Muni_Codigo);
+                var detalles = JSON.parse(response);
+                mostrarDetalles(detalles);
                 $('.CrearOcultar').hide();
-                $('.CrearMostrar').show();
             } catch (e) {
                 console.error('Error parsing JSON:', e);
                 alert('Error parsing JSON response.');
@@ -128,61 +324,75 @@ $(document).on('click', '.abrir-editar', function () {
         }
     });
 });
+function mostrarDetalles(detalles) {
+    var datosProveedor;
+    if (typeof detalles === 'object') {
+        datosProveedor = detalles; // Si detalles ya es un objeto, úsalo directamente
+    } else {
+        try {
+            datosProveedor = JSON.parse(detalles); // Si detalles es una cadena JSON, conviértela en un objeto
+        } catch (error) {
+            console.error('Error al parsear JSON:', error);
+            $('#detallesContenido').html('<p>Error al cargar los detalles del proveedor.</p>');
+            $('#detallesCollapse').collapse('show'); // Mostrar el Collapse de detalles
+            return; // Salir de la función si hay un error al analizar JSON
+        }
+    }
 
-$('#guardarBtn').click(function() {
-    var action = $('#Prov_Id').val() ? 'actualizar' : 'insertar';
-    var provId = $('#Prov_Id').val();
-    console.log('Prov_Id enviado:', provId); // Verifica si se envía el ID del proveedor al servidor
-    var proveedor = $('#Proveedor').val();
-    var telefono = $('#Telefono').val();
-    var municipio = $('#Municipio').val();
-    var usuarioId = 1;
-    var fecha = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // Usar datosProveedor para mostrar los detalles del proveedor
+    var detallesHTML = `
+        <p><strong>Proveedor:</strong> ${datosProveedor.Prov_Proveedor}</p>
+        <p><strong>Teléfono:</strong> ${datosProveedor.Prov_Telefono}</p>
+        <p><strong>Municipio:</strong> ${datosProveedor.Muni_Codigo}</p>
+        <p><strong>Usuario de Modificación:</strong> ${datosProveedor.Prov_UsuarioModificacion}</p>
+        <p><strong>Fecha de Modificación:</strong> ${datosProveedor.Prov_FechaModificacion}</p>
+    `;
+    $('#detallesContenido').html(detallesHTML);
+    $('#detallesCollapse').collapse('show'); // Mostrar el Collapse de detalles
+}
 
-    $.ajax({
-        url: 'Controllers/ProveedorController.php',
-        type: 'POST',
-        data: {
-            action: action,
-            Prov_Id: provId,
-            Prov_Proveedor: proveedor,
-            Prov_Telefono: telefono,
-            Muni_Codigo: municipio,
-            Prov_UsuarioCreacion: usuarioId,
-            Prov_FechaCreacion: fecha,
-            Prov_UsuarioModificacion: usuarioId,
-            Prov_FechaModificacion: fecha
-        },
-        success: function(response) {
-            console.log('Response from server:', response);
-            if (response == 1) {
-                alert('Proveedor guardado correctamente.');
-                $('#TablaMarca').DataTable().ajax.reload();
-                $('.CrearMostrar').hide();
-                $('.CrearOcultar').show();
-            } else {
-                alert('Error al guardar el proveedor.');
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log('Error:', errorThrown);
-            alert('Error al guardar el proveedor.');
+
+    var provIdToDelete;
+
+    $(document).on('click', '.eliminar', function() {
+        provIdToDelete = $(this).data('id');
+        console.log('ID del proveedor:', provIdToDelete);
+        $('#eliminarModal').modal('show');
+    });
+
+    $('#confirmarEliminarBtn').click(function() {
+        if (provIdToDelete) {
+            $.ajax({
+                url: 'Controllers/ProveedorController.php',
+                type: 'POST',
+                data: {
+                    action: 'eliminar',
+                    Prov_Id: provIdToDelete
+                },
+                success: function(response) {
+                    console.log('Response from server:', response);
+                    if (response == 1) {
+                        iziToast.success({
+                        title: 'Éxito',
+                        message: 'Eliminado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                        $('#TablaMarca').DataTable().ajax.reload();
+                        $('#eliminarModal').modal('hide');
+                    } else {
+                        alert('Error al eliminar el proveedor.');
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log('Error:', errorThrown);
+                    alert('Error al eliminar el proveedor.');
+                }
+            });
         }
     });
-});
 
-$('#CerrarModal').click(function() {
-    $('.CrearMostrar').hide();
-    $('.CrearOcultar').show();
-});
-
-$(document).on('click', '.ver-detalles', function() {
-    var provId = $(this).data('id');
-    // Lógica para mostrar los detalles del proveedor con el provId
-});
-
-$(document).on('click', '.eliminar', function() {
-    var provId = $(this).data('id');
-    // Lógica para eliminar el proveedor con el provId
+    
 });
 </script>
