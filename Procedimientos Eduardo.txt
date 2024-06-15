@@ -73,3 +73,38 @@ END
 
 ALTER TABLE dbsistemaesmeralda.gral_tbmarcas
 MODIFY COLUMN Marc_Id INT AUTO_INCREMENT;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Marcas_Eliminar`(
+    IN `Marc_Codigo` INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Error handling
+        DECLARE error_message TEXT;
+        GET DIAGNOSTICS CONDITION 1
+            error_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT 0 AS result;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Warning handling
+        DECLARE warning_message TEXT;
+        GET DIAGNOSTICS CONDITION 1
+            warning_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT 0 AS result;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        UPDATE `gral_tbmarcas` 
+		SET Marc_Estado = 0
+        WHERE Marc_Id = Marc_Codigo;
+        COMMIT;
+        SELECT 1 AS result;
+    END;
+END
