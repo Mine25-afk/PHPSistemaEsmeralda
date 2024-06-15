@@ -14,6 +14,7 @@
 ----Héctor-----
 ---------------
 
+1.
 DELIMITER $$
 CREATE PROCEDURE `SP_Joyas_listar`()
 BEGIN
@@ -24,6 +25,238 @@ WHERE Joya_Estado = 1;
 END $$
 DELIMITER ;
 
+2. Agregue campo Clie_esMayorista en clientes
+
+3.
+DELIMITER //
+create PROCEDURE SP_Clientes_listar()
+BEGIN
+  SELECT 
+    Clie_Id, 
+    CONCAT(Clie_Nombre, ' ', Clie_Apellido) AS  Clie_Nombre,
+    Clie_FechaNac, 
+    CASE Clie_Sexo WHEN 'M' THEN 'Masculino' ELSE 'Femenino' END AS Clie_Sexo, 
+   c.Muni_Codigo,
+   Clie_DNI,
+   mu.Muni_Municipio AS Municipio,
+    c.Esta_Id, 
+	e.Esta_EstadoCivil AS Estado_Civil,
+    Clie_UsuarioCreacion, 
+    Clie_FechaCreacion, 
+    Clie_UsuarioModificacion, 
+    Clie_FechaModificacion, 
+    Clie_Estado,
+     CASE Clie_esMayorista when 1 then 'Si' else 'No' END AS Clie_esMayorista
+  FROM gral_tbClientes c 
+  INNER JOIN gral_tbEstadosCiviles e on c.Esta_Id= e.Esta_Id 
+  INNER JOIN gral_tbMunicipios mu ON mu.Muni_Codigo =c.Muni_Codigo 
+  WHERE Clie_Estado = 1 AND Clie_DNI != '0000000000000';
+END//
+DELIMITER ;
+
+3. DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Joyas_insertar`(
+    IN Joya_Nombre VARCHAR(60),
+    IN Joya_PrecioCompra DECIMAL(10,2),
+    IN Joya_PrecioVenta DECIMAL(10,2),
+    IN Joya_PrecioMayor DECIMAL(10,2),
+    IN Joya_Imagen VARCHAR(255),
+    IN Joya_Stock INT,
+    IN Prov_Id INT,
+    IN Mate_Id INT,
+    IN Cate_Id INT,
+    IN Joya_UsuarioCreacion INT,
+    IN Joya_FechaCreacion DATETIME
+)
+BEGIN
+    DECLARE estadoActual INT;
+    
+    SELECT Joya_Estado INTO estadoActual
+    FROM vent_tbjoyas
+    WHERE Joya_Nombre = Joya_Nombre;
+
+ 
+    BEGIN
+        SELECT 0;
+    END;
+
+    IF estadoActual IS NOT NULL THEN
+        IF estadoActual = 0 THEN
+            UPDATE vent_tbjoyas 
+            SET Joya_Estado = 1 
+            WHERE Joya_Nombre = Joya_Nombre;
+            SELECT 1;
+        ELSE
+            SELECT 0;
+        END IF;
+    ELSE
+        INSERT INTO vent_tbjoyas (
+            Joya_Nombre,
+            Joya_PrecioCompra,
+            Joya_PrecioVenta,
+            Joya_PrecioMayor,
+            Joya_Imagen,
+            Joya_Stock,
+            Prov_Id,
+            Mate_Id,
+            Cate_Id,
+            Joya_UsuarioCreacion,
+            Joya_FechaCreacion
+        ) VALUES (
+            Joya_Nombre,
+            Joya_PrecioCompra,
+            Joya_PrecioVenta,
+            Joya_PrecioMayor,
+            Joya_Imagen,
+            Joya_Stock,
+            Prov_Id,
+            Mate_Id,
+            Cate_Id,
+            Joya_UsuarioCreacion,
+            Joya_FechaCreacion
+        );
+        SELECT 1;
+    END IF;
+END$$
+DELIMITER ;
+
+
+4. DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Joyas_eliminar`(
+    IN Joya_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0 AS Resultado;
+    END;
+
+    UPDATE vent_tbjoyas SET Joya_Estado = 0 
+    WHERE Joya_Id = Joya_Id;
+
+    SELECT 1 AS Resultado;
+END$$
+DELIMITER ;
+
+
+5.DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Joyas_buscar`(
+    IN Joya_Id INT
+)
+BEGIN
+    SELECT 
+        J.Joya_Id,
+        J.Joya_Nombre,
+        J.Joya_PrecioCompra,
+        J.Joya_Stock,
+        J.Joya_PrecioMayor,
+        J.Joya_PrecioVenta,
+        J.Joya_Imagen,
+        P.Prov_Id,
+        P.Prov_Proveedor,
+        M.Mate_Id,
+        M.Mate_Material,
+        C.Cate_Id,
+        C.Cate_Categoria,
+        DATE_FORMAT(J.Joya_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(J.Joya_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        uCreacion.Usua_Usuario AS UsuarioCreacion,
+        uModificador.Usua_Usuario AS UsuarioModificacion 
+    FROM vent_tbjoyas J
+    LEFT JOIN acce_tbusuarios uCreacion ON uCreacion.Usua_Id = J.Joya_UsuarioCreacion
+    LEFT JOIN acce_tbusuarios uModificador ON uModificador.Usua_Id = J.Joya_UsuarioModificacion
+    LEFT JOIN gral_tbproveedores P ON P.Prov_Id = J.Prov_Id
+    LEFT JOIN gral_tbmateriales M ON M.Mate_Id = J.Mate_Id
+    LEFT JOIN gral_tbcategorias C ON C.Cate_Id = J.Cate_Id
+    WHERE J.Joya_Id = Joya_Id;
+END$$
+DELIMITER ;
+
+
+6. DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Joyas_buscar`(
+    IN Joya_Id INT
+)
+BEGIN
+    SELECT 
+        J.Joya_Id,
+        J.Joya_Nombre,
+        J.Joya_PrecioCompra,
+        J.Joya_Stock,
+        J.Joya_PrecioMayor,
+        J.Joya_PrecioVenta,
+        J.Joya_Imagen,
+        P.Prov_Id,
+        P.Prov_Proveedor,
+        M.Mate_Id,
+        M.Mate_Material,
+        C.Cate_Id,
+        C.Cate_Categoria,
+        DATE_FORMAT(J.Joya_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(J.Joya_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        uCreacion.Usua_Usuario AS UsuarioCreacion,
+        uModificador.Usua_Usuario AS UsuarioModificacion 
+    FROM vent_tbjoyas J
+    LEFT JOIN acce_tbusuarios uCreacion ON uCreacion.Usua_Id = J.Joya_UsuarioCreacion
+    LEFT JOIN acce_tbusuarios uModificador ON uModificador.Usua_Id = J.Joya_UsuarioModificacion
+    LEFT JOIN gral_tbproveedores P ON P.Prov_Id = J.Prov_Id
+    LEFT JOIN gral_tbmateriales M ON M.Mate_Id = J.Mate_Id
+    LEFT JOIN gral_tbcategorias C ON C.Cate_Id = J.Cate_Id
+    WHERE J.Joya_Id = Joya_Id;
+END$$DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Joyas_actualizar`(
+    IN Joya_Nombre VARCHAR(60),
+    IN Joya_PrecioCompra DECIMAL(10,2),
+    IN Joya_PrecioVenta DECIMAL(10,2),
+    IN Joya_PrecioMayor DECIMAL(10,2),
+    IN Joya_Imagen VARCHAR(255),
+    IN Joya_Stock INT,
+    IN Prov_Id INT,
+    IN Mate_Id INT,
+    IN Cate_Id INT,
+    IN Joya_UsuarioModificacion INT,
+    IN Joya_FechaModificacion DATETIME,
+    IN Joya_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0;
+    END;
+
+    UPDATE vent_tbjoyas 
+    SET 
+        Joya_Nombre = Joya_Nombre,
+        Joya_PrecioCompra = Joya_PrecioCompra,
+        Joya_PrecioVenta = Joya_PrecioVenta,
+        Joya_PrecioMayor = Joya_PrecioMayor,
+        Joya_Imagen = Joya_Imagen,
+        Joya_Stock = Joya_Stock,
+        Prov_Id = Prov_Id,
+        Mate_Id = Mate_Id,
+        Cate_Id = Cate_Id,
+        Joya_UsuarioModificacion = Joya_UsuarioModificacion,
+        Joya_FechaModificacion = Joya_FechaModificacion
+    WHERE Joya_Id = Joya_Id;
+
+    SELECT 1;
+END$$
+DELIMITER ;
+
+DELIMITER ;
+
+
+
+7. DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Joyas_listar`()
+BEGIN
+SELECT Joya_Id,Joya_Nombre,Joya_PrecioCompra,Joya_PrecioVenta,Joya_Stock,Joya_PrecioMayor,Joya_Imagen,M.Mate_Material,P.Prov_Proveedor,C.Cate_Categoria FROM vent_tbJoyas J
+LEFT JOIN gral_tbProveedores P ON P.Prov_Id = J.Prov_Id LEFT JOIN gral_tbMateriales M ON M.Mate_Id = J.Mate_Id
+LEFT JOIN gral_tbCategorias C ON C.Cate_Id = J.Cate_Id
+WHERE Joya_Estado = 1;
+END$$
+DELIMITER ;
+  
 
 
 

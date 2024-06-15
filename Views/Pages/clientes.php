@@ -1,39 +1,58 @@
-<p>
-  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-    Nuevo
-  </button>
-  <table class="table table-sm table-dark">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
-</p>
-<div class="collapse" id="collapseExample">
-  <div class="card card-body">
-   Messi
-  </div>
+<?php
+require_once 'Controllers/ClientesController.php';
+
+$controller = new ClientesController();
+try {
+    $Clientes = $controller->listarClientes();
+} catch (Exception $e) {
+    echo 'Error: ' . $e->getMessage();
+}
+
+?>
+
+
+
+<div class="card">
+    <div class="card-body">
+        <h2 class="text-center" style="font-size:34px !important">Clientes</h2>
+
+        <p class="btn btn-primary" id="AbrirModal">
+            Nuevo
+        </p>
+        <hr>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="tablaOne">
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>DNI</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Sexo</th>
+                        <th>Municipio</th>                      
+                        <th>Estado Civil</th>
+                        <th>Mayorista</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($Clientes as $clientes): ?>
+                        <tr>
+                            <td><?php echo $clientes['Clie_Nombre']; ?></td>
+                            <td><?php echo $clientes['Clie_DNI']; ?></td>
+                            <td><?php echo $clientes['Clie_FechaNac']; ?></td>
+                            <td><?php echo $clientes['Clie_Sexo']; ?></td>
+                            <td><?php echo $clientes['Municipio']; ?></td>
+                            <td><?php echo $clientes['Estado_Civil']; ?></td>
+                            <td><?php echo $clientes['Clie_esMayorista']; ?></td>
+                            <td class="d-flex justify-content-center" style="gap:10px">
+                                <a class="btn btn-primary btn-sm abrir-editar"><i class="fas fa-edit"></i>Editar</a>
+                                <a class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i>Detalles</a>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Eliminar</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
