@@ -119,3 +119,164 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+ALTER TABLE dbsistemaesmeralda.acce_tbusuarios
+MODIFY COLUMN Usua_Id INT AUTO_INCREMENT;
+
+DELIMITER $$
+
+CREATE PROCEDURE SP_Usuario_insertar(
+    IN p_Usua_Usuario VARCHAR(30),
+    IN p_Usua_Contraseña TEXT,
+    IN p_Usua_Administrador BOOLEAN,
+    IN p_Empl_Id INT,
+    IN p_Role_Id INT,
+    IN p_Usua_UsuarioCreacion INT,
+    IN p_Usua_FechaCreacion DATETIME
+)
+BEGIN
+    DECLARE v_estadoActual INT;
+
+    -- Handler para errores de SQL
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- En caso de excepción, retorna 0
+        SELECT 0;
+    END;
+
+    -- Verifica el estado actual del usuario
+    SELECT Usua_Estado INTO v_estadoActual
+    FROM acce_tbusuarios 
+    WHERE Usua_Usuario = p_Usua_Usuario;
+
+    -- Si el estado del usuario ya existe
+    IF v_estadoActual IS NOT NULL THEN
+        -- Si el usuario está inactivo (estado = 0)
+        IF v_estadoActual = 0 THEN
+            -- Actualiza el estado del usuario a activo
+            UPDATE acce_tbusuarios 
+            SET Usua_Estado = 1 
+            WHERE Usua_Usuario = p_Usua_Usuario;
+            -- Retorna 1 indicando éxito
+            SELECT 1;
+        ELSE
+            -- Retorna 0 si el usuario ya está activo
+            SELECT 0;
+        END IF;
+    ELSE
+        -- Inserta un nuevo usuario
+        INSERT INTO acce_tbusuarios (
+            Usua_Usuario,
+            Usua_Contraseña,
+            Usua_Administrador,
+            Empl_Id,
+            Role_Id,
+            Usua_UsuarioCreacion,
+            Usua_FechaCreacion
+        )
+        VALUES (
+            p_Usua_Usuario,
+            SHA2(p_Usua_Contraseña, 512),
+            p_Usua_Administrador,
+            p_Empl_Id,
+            p_Role_Id,
+            p_Usua_UsuarioCreacion,
+            p_Usua_FechaCreacion
+        );
+        -- Retorna 1 indicando éxito
+        SELECT 1;
+    END IF;
+END$$
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Municipios_MostrarPorDepartamento(
+    IN Depa_Codigo VARCHAR(2)
+)
+BEGIN
+    SELECT * FROM Gral_tbMunicipios
+    WHERE Depa_Codigo = Depa_Codigo;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Departamentos_listar()
+BEGIN
+    SELECT 
+        Depa_Codigo, 
+        Depa_Departamento, 
+        Depa_UsuarioCreacion, 
+        Depa_FechaCreacion, 
+        Depa_UsuarioModificacion,
+        Depa_FechaModificacion
+    FROM 
+        Gral_tbDepartamentos;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Cargos_listar()
+BEGIN
+    SELECT 
+        Carg_Id, 
+        Carg_Cargo, 
+        Carg_UsuarioCreacion, 
+        Carg_FechaCreacion, 
+        Carg_UsuarioModificacion, 
+        Carg_FechaModificacion, 
+        Carg_Estado
+    FROM 
+        Gral_tbCargos
+    WHERE 
+        Carg_Estado = 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Sucursales_listar()
+BEGIN
+    SELECT 
+        Sucu_Id, 
+        Sucu_Nombre, 
+        s.Muni_Codigo, 
+        m.Muni_Municipio,
+        Sucu_UsuarioCreacion, 
+        Sucu_FechaCreacion, 
+        Sucu_UsuarioModificacion, 
+        Sucu_FechaModificacion
+    FROM 
+        Gral_tbSucursales s 
+        INNER JOIN Gral_tbMunicipios m ON s.Muni_Codigo = m.Muni_Codigo
+    WHERE 
+        Sucu_Estado = 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_EstadosCiviles_listar()
+BEGIN
+    SELECT 
+        Esta_Id, 
+        Esta_EstadoCivil, 
+        Esta_UsuarioCreacion, 
+        Esta_FechaCreacion, 
+        Esta_UsuarioModificacion, 
+        Esta_FechaModificacion, 
+        Esta_Estado
+    FROM 
+        Gral_tbEstadosCiviles
+    WHERE 
+        Esta_Estado = 1;
+END //
+
+DELIMITER ;

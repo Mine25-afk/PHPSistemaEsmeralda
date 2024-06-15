@@ -4,7 +4,8 @@ $db = 'dbsistemaesmeralda';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
-$port = 3307;
+$port = 3306;
+// $port = 3307;
 
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
