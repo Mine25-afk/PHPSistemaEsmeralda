@@ -108,3 +108,69 @@ BEGIN
         SELECT 1 AS result;
     END;
 END
+
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Marcas_actualizar`(
+    IN Marc_Codigo INT,
+    IN Marc_Marca VARCHAR(60),
+    IN Marc_UsuarioModificacion INT,
+    IN Marc_FechaModificacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        DECLARE err_message TEXT;
+        DECLARE err_code INT;
+        
+        -- Capture error message and error code
+        GET DIAGNOSTICS CONDITION 1
+            err_message = MESSAGE_TEXT,
+            err_code = MYSQL_ERRNO;
+        
+        ROLLBACK;
+        -- Return the error message and error code
+        SELECT CONCAT('Error Code: ', err_code, ', Error Message: ', err_message) AS error_message;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE gral_tbMarcas
+    SET
+        Marc_Marca = Marc_Marca,
+        Marc_UsuarioModificacion = Marc_UsuarioModificacion,
+        Marc_FechaModificacion = Marc_FechaModificacion
+    WHERE
+        Marc_Id = Marc_Codigo;
+
+    SELECT 1;
+
+    COMMIT;
+END
+
+DELIMITER //
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Marcas_buscar`(
+    IN Marc_Codigo INT
+)
+BEGIN
+    SELECT 
+        Marc_Id,
+        Marc_Marca,
+        Marc_UsuarioCreacion,
+        Marc_FechaCreacion,
+        Marc_UsuarioModificacion,
+        Marc_FechaModificacion,
+        DATE_FORMAT(Marc_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(Marc_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        uCreacion.Usua_Usuario AS UsuarioCreacion, 
+        uModificador.Usua_Usuario AS UsuarioModificacion 
+    FROM 
+        gral_tbMarcas c 
+    LEFT JOIN acce_tbusuarios uCreacion ON uCreacion.Usua_Id = c.Marc_UsuarioCreacion
+    LEFT JOIN acce_tbusuarios uModificador ON uModificador.Usua_Id = c.Marc_UsuarioModificacion
+    WHERE
+        Marc_Id = Marc_Codigo;
+END //
+
+DELIMITER ;

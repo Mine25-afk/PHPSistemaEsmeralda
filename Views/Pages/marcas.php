@@ -54,55 +54,92 @@
 
 </div>
 
-<div class="modal fade" id="exampleModalEliminar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Modal Eliminar -->
+<div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Eliminar Registro</h5>
+                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-            <div class="form-row">
-        <p>Esta seguro que desea ELIMINAR el registro?</p>
-    </div>
-    <div class="row mt-3">
-        <div class="col-md-2">
-
-        </div>
-        <div class="col-md-1">
-
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="form-row mt-3 d-flex justify-content-end">
-
-            <div class="col-md-3">
-                <input type="button" name="valido" id="EliminarBtn" class="btn btn-danger btn-sm" />
+                ¿Estás seguro de que deseas eliminar esta Marca?
             </div>
-
-
-            <div class="col-md-3">
-
-                <a class="btn btn-secondary btn-sm" style="color:white">Volver</a>
-
-
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
             </div>
-        </div>
-    </div>
-            </div>
-
         </div>
     </div>
 </div>
+
+<div id="Detalles">
+    <div class="row" style="padding: 10px;">
+        <div class="col" style="font-weight:700">
+            ID
+        </div>
+        <div class="col" style="font-weight:700">
+            Marca
+        </div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">
+            <label for="" id="DetallesId"></label>
+        </div>
+        <div class="col">
+            <label for="" id="DetallesMarca"></label>
+        </div>
+    </div>
+
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <h5>Auditoria</h5>
+            <hr>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Insertar</td>
+                        <td>
+
+                        <label for="" id="DetallesUsuarioCreacion"></label>
+                        </td>
+                        <td><label for="" id="DetallesFechaCreacion"></label></td>
+                    </tr>
+                    <tr>
+                        <td>Modificar</td>
+                        <td> <label for="" id="DetallesUsuarioModificacion"></label> </td>
+                        <td>  <label for="" id="DetallesFechaModificacion"></label></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col d-flex justify-content-end m-3">
+    <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
+</div>
+</div>
+
 
 
 
 <script>
    $(document).ready(function () {
-    
-   $('#TablaMarca').DataTable({
+
+    sessionStorage.setItem('Marc_Id', "0");
+   var table = $('#TablaMarca').DataTable({
         "ajax": {
             "url": "Controllers/MarcaController.php",
             "type": "POST",
@@ -139,18 +176,19 @@
             { "data": "Marc_Marca" },
             { 
                 "data": null, 
-               "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a><a class='btn btn-secondary btn-sm'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm' onclick=\"eliminar('3')\"><i class='fas fa-eraser'></i> Eliminar</button>"
-
+                "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
             }
         ]
     });
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
-    });
+    $('#Detalles').hide();
 
-   $('#AbrirModal').click(function() {
+
+    $('#AbrirModal').click(function() {
     $('.CrearOcultar').hide();
     $('.CrearMostrar').show();
+    sessionStorage.setItem('Marc_Id', "0");
     });
 
     $('#CerrarModal').click(function() {
@@ -158,73 +196,95 @@
     $('.CrearMostrar').hide();
     });
 
-
-    $('#guardarBtn').click(function() {
-
-            var marca = $('#MarcaInput').val();
-            console.log(marca)
-
-    
-            $.ajax({
-                url: 'Controllers/MarcaController.php',
-                type: 'POST',
-                data: {
-                    action: 'insertar',
-                    Marc_Marca: marca,
-                    Marc_UsuarioCreacion: 1, 
-                    Marc_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
-                },
-                success: function(response) {
-                    console.log(response)
-                    if (response == 1) {
-                        $('#MarcaInput').val(null);
-                        iziToast.success({
-                 title: 'Éxito',
-                 message: 'Subido con exito',
-                position: 'topRight',
-                 transitionIn: 'flipInX',
-                 transitionOut: 'flipOutX'
-
-
-             });
-             $('#TablaMarca').DataTable().ajax.reload();
-                        $('.CrearOcultar').show();
-                        $('.CrearMostrar').hide();
-                    } else {
-                       
-                    }
-                },
-                error: function() {
-                    alert('Error en la comunicación con el servidor.');
-                }
-            });
+    $('#TablaMarca tbody').on('click', '.abrir-eliminar', function () {
+        var data = table.row($(this).parents('tr')).data();
+        console.log(data);
+        var Marc_Id = data.Marc_Id;
+        sessionStorage.setItem('Marc_Id', Marc_Id);
+        $('#eliminarModal').modal('show');
         });
 
-        $('#EliminarBtn').click(function() {
-        console.log("Entra")
-        var valor = sessionStorage.getItem('EliminarId');
-        console.log(valor)
+        $('#confirmarEliminarBtn').click(function() {
+        var Marca_Id = sessionStorage.getItem('Marc_Id');
+        $.ajax({
+            url: 'Controllers/MarcaController.php',
+            type: 'POST',
+            data: {
+                action: 'eliminar',
+                Marc_Codigo: Marca_Id
+            },
+            success: function(response) {
+                if (response == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Eliminado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    $('#TablaMarca').DataTable().ajax.reload();
+                    $('#eliminarModal').modal('hide');
+                    sessionStorage.setItem('Marc_Id', "0");
+                } else {
+                    alert('Error al eliminar joya.');
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+    });   
+    
+    $('#guardarBtn').click(function() {
+
+var marca = $('#MarcaInput').val();
+var Valor = sessionStorage.getItem('Marc_Id');
+var InsertarOActualizar = true
+if (Valor == "0") {
+    InsertarOActualizar = true
+}else{
+    InsertarOActualizar = false
+}
+
+console.log(Valor)
+console.log(InsertarOActualizar)
 
 $.ajax({
     url: 'Controllers/MarcaController.php',
     type: 'POST',
     data: {
-        action: 'eliminar',
-        Marc_Codigo: valor
+        action: InsertarOActualizar ? 'insertar' : 'actualizar',
+        Marc_Id: Valor,
+        Marc_Marca: marca,
+        Marc_UsuarioCreacion: 1, 
+        Marc_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
     },
     success: function(response) {
-    if (response == 1) {
-    iziToast.success({
-    title: 'Éxito',
-    message: 'Subido con exito',
+        console.log(response)
+        if (response == 1) {
+            $('#MarcaInput').val(null);
+            iziToast.success({
+     title: 'Éxito',
+     message: 'Subido con exito',
     position: 'topRight',
-    transitionIn: 'flipInX',
-    transitionOut: 'flipOutX'
-    });
+     transitionIn: 'flipInX',
+     transitionOut: 'flipOutX'
+
+
+ });
  $('#TablaMarca').DataTable().ajax.reload();
- $("#exampleModalEliminar").modal('hide');
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
         } else {
-           
+            iziToast.error({
+     title: 'Error',
+     message: 'No se pudo subir',
+    position: 'topRight',
+     transitionIn: 'flipInX',
+     transitionOut: 'flipOutX'
+
+
+ });
         }
     },
     error: function() {
@@ -232,13 +292,75 @@ $.ajax({
     }
 });
 });
-                
+
+    $('#TablaMarca tbody').on('click', '.abrir-editar', function () {
+        var data = table.row($(this).parents('tr')).data();
+        sessionStorage.setItem('Marc_Id', data.Marc_Id);
+        $('#MarcaInput').val(data.Marc_Marca);
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').show();
+    });
+
+    $('#TablaMarca tbody').on('click', '.abrir-detalles', function () {
+        var data = table.row($(this).parents('tr')).data();
+        var valor = data.Marc_Id;
+        $('#Detalles').show();
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').hide();
+
+        $.ajax({
+            url: 'Controllers/MarcaController.php',
+            method: 'POST',
+            data: {
+                action: 'buscar',
+                Marc_Id: valor
+            },
+            success: function(response) {
+                var data = JSON.parse(response);
+                var marca = data.data[0];
+                $('#DetallesId').text(marca.Marc_Id);
+                $('#DetallesMarca').text(marca.Marc_Marca);
+                $('#DetallesUsuarioCreacion').text(marca.UsuarioCreacion);
+                $('#DetallesUsuarioModificacion').text(marca.UsuarioModificacion);
+                $('#DetallesFechaModificacion').text(marca.FechaModificacion);
+                $('#DetallesFechaCreacion').text(marca.FechaCreacion);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    $('#VolverDetalles').click(function() {
+        $('#Detalles').hide();
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
+    });
+
+
+
+
+
+
+    });
+
+
+    
+
+  
+
+
+
+
+
+    
+    
+      
+
+    
         
 
-        function eliminar(id) {
-        $("#exampleModalEliminar").modal('show');
-        sessionStorage.setItem('EliminarId', id);
-        }
+
 </script>
 
 
