@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.875em;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -33,60 +39,69 @@
                                 <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
 
             <div class="CrearMostrar">
-                <form id="joyaForm">
+                <form id="joyaForm" enctype="multipart/form-data">
                     <input type="hidden" name="Joya_Id" id="Joya_Id">
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Nombre</label>
                             <input name="Joya_Nombre" class="form-control" id="Joya_Nombre" required/>
+                            <div class="error-message" id="Joya_Nombre_error"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Precio Compra</label>
                             <input name="Joya_PrecioCompra" class="form-control" id="Joya_PrecioCompra" required/>
+                            <div class="error-message" id="Joya_PrecioCompra_error"></div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Precio Venta</label>
                             <input name="Joya_PrecioVenta" class="form-control" id="Joya_PrecioVenta" required/>
+                            <div class="error-message" id="Joya_PrecioVenta_error"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Precio Mayorista</label>
                             <input name="Joya_PrecioMayor" class="form-control" id="Joya_PrecioMayor" required/>
+                            <div class="error-message" id="Joya_PrecioMayor_error"></div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Stock</label>
                             <input name="Joya_Stock" class="form-control" id="Joya_Stock" required/>
+                            <div class="error-message" id="Joya_Stock_error"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Imagen</label>
-                            <input name="Joya_Imagen" class="form-control" id="Joya_Imagen" required/>
+                            <input type="file" name="Joya_Imagen" class="form-control" id="Joya_Imagen" required/>
+                            <div class="error-message" id="Joya_Imagen_error"></div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Proveedor</label>
                             <select name="Prov_Id" class="form-control" id="Prov_Id" required></select>
+                            <div class="error-message" id="Prov_Id_error"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Material</label>
                             <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
+                            <div class="error-message" id="Mate_Id_error"></div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Categoría</label>
                             <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
+                            <div class="error-message" id="Cate_Id_error"></div>
                         </div>
                     </div>
-
 
                     <div class="card-body">
                         <div class="form-row d-flex justify-content-end">
@@ -113,7 +128,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -146,34 +160,39 @@
 <script>
 $(document).ready(function () {
     var table = $('#TablaJoya').DataTable({
-        "ajax": {
-            "url": "Controllers/JoyasController.php",
-            "type": "POST",
-            "data": function(d) {
-                d.action = 'listarJoyas';
-            },
-            "dataSrc": function(json){
-                console.log(json);
-                return json.data;
+    "ajax": {
+        "url": "Controllers/JoyasController.php",
+        "type": "POST",
+        "data": function(d) {
+            d.action = 'listarJoyas';
+        },
+        "dataSrc": function(json){
+            return json.data;
+        }
+    },
+    "columns": [
+        { "data": "Joya_Id" },
+        { "data": "Joya_Nombre" },
+        { "data": "Joya_PrecioCompra" },
+        { "data": "Joya_PrecioVenta" },
+        { "data": "Joya_Stock" },
+        { "data": "Joya_PrecioMayor" },
+        {
+            "data": "Joya_Imagen",
+            "render": function (data, type, row) {
+                var imageUrl = '/PHPSistemaEsmeralda/Resources/uploads/joyas/' + encodeURIComponent(data);
+                return '<img src="' + imageUrl + '" alt="Imagen de Joya" width="50">';
             }
         },
-        "columns": [
-            { "data": "Joya_Id" },
-            { "data": "Joya_Nombre" },
-            { "data": "Joya_PrecioCompra" },
-            { "data": "Joya_PrecioVenta" },
-            { "data": "Joya_Stock" },
-            { "data": "Joya_PrecioMayor" },
-            { "data": "Joya_Imagen" },
-            { "data": "Mate_Material" },
-            { "data": "Prov_Proveedor" },
-            { "data": "Cate_Categoria" },
-            { 
-                "data": null, 
-                "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
-            }
-        ]
-    });
+        { "data": "Mate_Material" },
+        { "data": "Prov_Proveedor" },
+        { "data": "Cate_Categoria" },
+        { 
+            "data": null, 
+            "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
+        }
+    ]
+});
 
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
@@ -181,7 +200,45 @@ $(document).ready(function () {
 
     function limpiarFormulario() {
         $('#joyaForm').trigger('reset');
+        $('.error-message').text('');
         $('#Joya_Id').val('');
+    }
+
+    async function cargarDropdowns(selectedData = {}) {
+        try {
+            const proveedores = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarProveedores' } });
+            const materiales = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarMateriales' } });
+            const categorias = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarCategorias' } });
+
+            const proveedorDropdown = $('#Prov_Id');
+            proveedorDropdown.empty();
+            JSON.parse(proveedores).data.forEach(proveedor => {
+                proveedorDropdown.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
+            });
+            if (selectedData.Prov_Id) {
+                $('#Prov_Id').val(selectedData.Prov_Id);
+            }
+
+            const materialDropdown = $('#Mate_Id');
+            materialDropdown.empty();
+            JSON.parse(materiales).data.forEach(material => {
+                materialDropdown.append('<option value="' + material.Mate_Id + '">' + material.Mate_Material + '</option>');
+            });
+            if (selectedData.Mate_Id) {
+                $('#Mate_Id').val(selectedData.Mate_Id);
+            }
+
+            const categoriaDropdown = $('#Cate_Id');
+            categoriaDropdown.empty();
+            JSON.parse(categorias).data.forEach(categoria => {
+                categoriaDropdown.append('<option value="' + categoria.Cate_Id + '">' + categoria.Cate_Categoria + '</option>');
+            });
+            if (selectedData.Cate_Id) {
+                $('#Cate_Id').val(selectedData.Cate_Id);
+            }
+        } catch (error) {
+            console.error('Error cargando dropdowns:', error);
+        }
     }
 
     $('#AbrirModal').click(function() {
@@ -203,31 +260,74 @@ $(document).ready(function () {
     });
 
     $('#guardarBtn').click(function() {
-        var joyaData = {
-            action: $('#Joya_Id').val() ? 'actualizar' : 'insertar',
-            Joya_Id: $('#Joya_Id').val(),
-            Joya_Nombre: $('#Joya_Nombre').val(),
-            Joya_PrecioCompra: $('#Joya_PrecioCompra').val(),
-            Joya_PrecioVenta: $('#Joya_PrecioVenta').val(),
-            Joya_PrecioMayor: $('#Joya_PrecioMayor').val(),
-            Joya_Imagen: $('#Joya_Imagen').val(),
-            Joya_Stock: $('#Joya_Stock').val(),
-            Prov_Id: $('#Prov_Id').val(),
-            Mate_Id: $('#Mate_Id').val(),
-            Cate_Id: $('#Cate_Id').val(),
-            Joya_UsuarioCreacion: 1,
-            Joya_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
-            Joya_UsuarioModificacion: 1,
-            Joya_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
-        };
+    $('.error-message').text('');
+    var isValid = true;
+
+    // Validar campos
+    if ($('#Joya_Nombre').val().trim() === '') {
+        $('#Joya_Nombre_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_PrecioCompra').val().trim() === '') {
+        $('#Joya_PrecioCompra_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_PrecioVenta').val().trim() === '') {
+        $('#Joya_PrecioVenta_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_PrecioMayor').val().trim() === '') {
+        $('#Joya_PrecioMayor_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_Stock').val().trim() === '') {
+        $('#Joya_Stock_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_Imagen').val().trim() === '') {
+        $('#Joya_Imagen_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Prov_Id').val() === null) {
+        $('#Prov_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Mate_Id').val() === null) {
+        $('#Mate_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Cate_Id').val() === null) {
+        $('#Cate_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
+
+    if (isValid) {
+        var joyaData = new FormData();
+        joyaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
+        joyaData.append('Joya_Id', $('#Joya_Id').val());
+        joyaData.append('Joya_Nombre', $('#Joya_Nombre').val());
+        joyaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
+        joyaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
+        joyaData.append('Joya_PrecioMayor', $('#Joya_PrecioMayor').val());
+        joyaData.append('Joya_Imagen', $('#Joya_Imagen')[0].files[0]);
+        joyaData.append('Joya_Stock', $('#Joya_Stock').val());
+        joyaData.append('Prov_Id', $('#Prov_Id').val());
+        joyaData.append('Mate_Id', $('#Mate_Id').val());
+        joyaData.append('Cate_Id', $('#Cate_Id').val());
+        joyaData.append('Joya_UsuarioCreacion', 1);
+        joyaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+        joyaData.append('Joya_UsuarioModificacion', 1);
+        joyaData.append('Joya_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
         $.ajax({
             url: 'Controllers/JoyasController.php',
             type: 'POST',
             data: joyaData,
+            contentType: false,
+            processData: false,
             success: function(response) {
-                console.log(response);
-                if (response == 1) {
+                response = JSON.parse(response);
+                if (response.result == 1) {
                     iziToast.success({
                         title: 'Éxito',
                         message: 'Subido con éxito',
@@ -240,14 +340,28 @@ $(document).ready(function () {
                     $('.CrearOcultar').show();
                     $('.CrearMostrar').hide();
                 } else {
-                    alert('Error al insertar/actualizar joya.');
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Error al insertar/actualizar joya. ' + (response.error ? response.error : ''),
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Error en la comunicación con el servidor.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
             }
         });
-    });
+    }
+});
+
 
     $('#TablaJoya tbody').on('click', '.abrir-eliminar', function () {
         var data = table.row($(this).parents('tr')).data();
@@ -266,7 +380,7 @@ $(document).ready(function () {
                 Joya_Id: joyaId
             },
             success: function(response) {
-                if (response == 1) {
+                if (response.result == 1) {
                     iziToast.success({
                         title: 'Éxito',
                         message: 'Eliminado con éxito',
@@ -277,11 +391,23 @@ $(document).ready(function () {
                     table.ajax.reload();
                     $('#eliminarModal').modal('hide');
                 } else {
-                    alert('Error al eliminar joya.');
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Error al eliminar joya.',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Error en la comunicación con el servidor.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
             }
         });
     });
@@ -294,7 +420,7 @@ $(document).ready(function () {
             <p><strong>Precio Venta:</strong> ${data.Joya_PrecioVenta}</p>
             <p><strong>Stock:</strong> ${data.Joya_Stock}</p>
             <p><strong>Precio Mayorista:</strong> ${data.Joya_PrecioMayor}</p>
-            <p><strong>Imagen:</strong> ${data.Joya_Imagen}</p>
+            <p><strong>Imagen:</strong> <img src="${data.Joya_Imagen}" alt="Imagen de Joya" width="50"></p>
             <p><strong>Material:</strong> ${data.Mate_Material}</p>
             <p><strong>Proveedor:</strong> ${data.Prov_Proveedor}</p>
             <p><strong>Categoría:</strong> ${data.Cate_Categoria}</p>
@@ -306,65 +432,24 @@ $(document).ready(function () {
 
     $('#TablaJoya tbody').on('click', '.abrir-editar', function () {
         var data = table.row($(this).parents('tr')).data();
+        limpiarFormulario();
+
+        // Cargar los dropdowns con los valores seleccionados
+        cargarDropdowns(data);
+
+        // Llenar el formulario con los valores existentes
         $('#Joya_Id').val(data.Joya_Id);
         $('#Joya_Nombre').val(data.Joya_Nombre);
         $('#Joya_PrecioCompra').val(data.Joya_PrecioCompra);
         $('#Joya_PrecioVenta').val(data.Joya_PrecioVenta);
         $('#Joya_PrecioMayor').val(data.Joya_PrecioMayor);
-        $('#Joya_Imagen').val(data.Joya_Imagen);
         $('#Joya_Stock').val(data.Joya_Stock);
-        $('#Prov_Id').val(data.Prov_Id);
-        $('#Mate_Id').val(data.Mate_Id);
-        $('#Cate_Id').val(data.Cate_Id);
 
+        // Mostrar el formulario de edición
         $('.CrearOcultar').hide();
         $('.CrearMostrar').show();
-        cargarDropdowns();
     });
 
-    function cargarDropdowns() {
-        $.ajax({
-            url: 'Controllers/JoyasController.php',
-            type: 'POST',
-            data: { action: 'listarProveedores' },
-            success: function(response) {
-                var proveedores = JSON.parse(response).data;
-                var proveedorDropdown = $('#Prov_Id');
-                proveedorDropdown.empty();
-                proveedores.forEach(function(proveedor) {
-                    proveedorDropdown.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
-                });
-            }
-        });
-
-        $.ajax({
-            url: 'Controllers/JoyasController.php',
-            type: 'POST',
-            data: { action: 'listarMateriales' },
-            success: function(response) {
-                var materiales = JSON.parse(response).data;
-                var materialDropdown = $('#Mate_Id');
-                materialDropdown.empty();
-                materiales.forEach(function(material) {
-                    materialDropdown.append('<option value="' + material.Mate_Id + '">' + material.Mate_Material + '</option>');
-                });
-            }
-        });
-
-        $.ajax({
-            url: 'Controllers/JoyasController.php',
-            type: 'POST',
-            data: { action: 'listarCategorias' },
-            success: function(response) {
-                var categorias = JSON.parse(response).data;
-                var categoriaDropdown = $('#Cate_Id');
-                categoriaDropdown.empty();
-                categorias.forEach(function(categoria) {
-                    categoriaDropdown.append('<option value="' + categoria.Cate_Id + '">' + categoria.Cate_Categoria + '</option>');
-                });
-            }
-        });
-    }
 });
 
 </script>
