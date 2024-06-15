@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
-
+session_start();
 class MarcaController {
    public function listarMarcas() {
     global $pdo;
@@ -29,7 +29,7 @@ class MarcaController {
             $sql = 'CALL sp_Marcas_insertar(:Marc_Marca, :Marc_UsuarioCreacion, :Marc_FechaCreacion)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Marc_Marca', $Marc_Marca, PDO::PARAM_STR);
-            $stmt->bindParam(':Marc_UsuarioCreacion', $Marc_UsuarioCreacion, PDO::PARAM_INT);
+            $stmt->bindParam(':Marc_UsuarioCreacion', $_SESSION['Usua_Id'], PDO::PARAM_INT);
             $stmt->bindParam(':Marc_FechaCreacion', $Marc_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
             
@@ -46,14 +46,14 @@ class MarcaController {
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Marc_Codigo', $Marc_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Marc_Marca', $Marc_Marca, PDO::PARAM_STR);
-            $stmt->bindParam(':Marc_UsuarioModificacion', $Marc_UsuarioCreacion, PDO::PARAM_INT);
+            $stmt->bindParam(':Marc_UsuarioModificacion', $_SESSION['Usua_Id'], PDO::PARAM_INT);
             $stmt->bindParam(':Marc_FechaModificacion', $Marc_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
             
             $result = $stmt->fetchColumn();
-            return $result; // 1 si es exitoso, 0 si no
+            return $result; 
         } catch (PDOException $e) {
-            return 0; // Retornar 0 en caso de error
+            return 0; 
         }
     }
 
@@ -67,9 +67,9 @@ class MarcaController {
             $stmt->execute();
             
             $result = $stmt->fetchColumn();
-            return $result; // 1 si es exitoso, 0 si no
+            return $result; 
         } catch (PDOException $e) {
-            return 0; // Retornar 0 en caso de error
+            return 0; 
         }
     }
 

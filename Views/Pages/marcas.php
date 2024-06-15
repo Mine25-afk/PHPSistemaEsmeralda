@@ -22,13 +22,13 @@
         </div>
 
         <div class="CrearMostrar">
-        <form>
+        <form id="quickForm">
 
 
 <div class="form-row">
     <div class="col-md-6">
         <label class="control-label"></label>
-        <input name="Marca" class="form-control letras" id="MarcaInput"/>
+        <input name="Marca" class="form-control letras" id="Marca"/>
         <span class="text-danger"></span>
     </div>
 </div>
@@ -37,7 +37,7 @@
     <div class="form-row d-flex justify-content-end">
 
         <div class="col-md-3">
-        <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+        <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
         </div>
 
 
@@ -134,12 +134,35 @@
 
 
 
-
 <script>
    $(document).ready(function () {
 
+    $('#quickForm').validate({
+        rules: {
+            Marca: {
+                required: true
+            }
+        },
+        messages: {
+            Marca: {
+                required: "Por favor ingrese su Marca"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.col-md-6').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+
     sessionStorage.setItem('Marc_Id', "0");
-   var table = $('#TablaMarca').DataTable({
+    var table = $('#TablaMarca').DataTable({
         "ajax": {
             "url": "Controllers/MarcaController.php",
             "type": "POST",
@@ -236,67 +259,68 @@
     });   
     
     $('#guardarBtn').click(function() {
-
-var marca = $('#MarcaInput').val();
-var Valor = sessionStorage.getItem('Marc_Id');
-var InsertarOActualizar = true
-if (Valor == "0") {
-    InsertarOActualizar = true
-}else{
-    InsertarOActualizar = false
-}
-
-console.log(Valor)
-console.log(InsertarOActualizar)
-
-$.ajax({
-    url: 'Controllers/MarcaController.php',
-    type: 'POST',
-    data: {
-        action: InsertarOActualizar ? 'insertar' : 'actualizar',
-        Marc_Id: Valor,
-        Marc_Marca: marca,
-        Marc_UsuarioCreacion: 1, 
-        Marc_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
-    },
-    success: function(response) {
-        console.log(response)
-        if (response == 1) {
-            $('#MarcaInput').val(null);
-            iziToast.success({
-     title: 'Éxito',
-     message: 'Subido con exito',
-    position: 'topRight',
-     transitionIn: 'flipInX',
-     transitionOut: 'flipOutX'
-
-
- });
- $('#TablaMarca').DataTable().ajax.reload();
-    $('.CrearOcultar').show();
-    $('.CrearMostrar').hide();
-        } else {
-            iziToast.error({
-     title: 'Error',
-     message: 'No se pudo subir',
-    position: 'topRight',
-     transitionIn: 'flipInX',
-     transitionOut: 'flipOutX'
-
-
- });
+    if ($('#quickForm').valid()) {
+        var marca = $('#Marca').val();
+        var Valor = sessionStorage.getItem('Marc_Id');
+        var InsertarOActualizar = true
+        if (Valor == "0") {
+            InsertarOActualizar = true
+        }else{
+            InsertarOActualizar = false
         }
-    },
-    error: function() {
-        alert('Error en la comunicación con el servidor.');
-    }
-});
+
+        console.log(Valor)
+        console.log(InsertarOActualizar)
+
+        $.ajax({
+            url: 'Controllers/MarcaController.php',
+            type: 'POST',
+            data: {
+                action: InsertarOActualizar ? 'insertar' : 'actualizar',
+                Marc_Id: Valor,
+                Marc_Marca: marca,
+                Marc_UsuarioCreacion: 1, 
+                Marc_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            },
+            success: function(response) {
+                console.log(response)
+                if (response == 1) {
+                    $('#Marca').val(null);
+                    iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+        $('#TablaMarca').DataTable().ajax.reload();
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se pudo subir',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+}
 });
 
     $('#TablaMarca tbody').on('click', '.abrir-editar', function () {
         var data = table.row($(this).parents('tr')).data();
         sessionStorage.setItem('Marc_Id', data.Marc_Id);
-        $('#MarcaInput').val(data.Marc_Marca);
+        $('#Marca').val(data.Marc_Marca);
         $('.CrearOcultar').hide();
         $('.CrearMostrar').show();
     });

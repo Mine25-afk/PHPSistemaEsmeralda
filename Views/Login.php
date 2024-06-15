@@ -1,10 +1,12 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../Views/Resources/dist/css/adminlte.min.css">
     <style>
         body {
     margin: 0;
@@ -127,20 +129,90 @@ button:hover {
                 <h1>Sistema Esmeralda</h1>
                 <p>¡Las mejores Joyas!</p>
             </div>
-            <form class="login-form">
+            <form id="quickForm">
                 <h2>Iniciar sesión</h2>
                 <div class="input-group">
-                    <input type="text" placeholder="Usuario" required>
+                    <input type="text" name="Usuario" placeholder="Usuario" required id="Usuario">
                 </div>
                 <div class="input-group">
-                    <input type="password" placeholder="Contraseña" required>
+                    <input type="password" name="Contraseña" placeholder="Contraseña" required id="Contraseña">
                 </div>
                 <div class="forgot-password">
                     <a href="#">No recuerdo mi contraseña</a>
                 </div>
-                <button type="submit">Ingresar</button>
+                <button type="button" id="GuardarBtn">Ingresar</button>
             </form>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+    <script>
+    $(document).ready(function () {  
+        $('#quickForm').validate({
+            rules: {
+                Usuario: {
+                    required: true
+                },
+                Contraseña: {
+                    required: true
+                }
+            },
+            messages: {
+                Usuario: {
+                    required: "Por favor ingrese su usuario"
+                },
+                Contraseña: {
+                    required: "Por favor ingrese su contraseña"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.input-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        $('#GuardarBtn').click(function() {
+            if ($('#quickForm').valid()) {
+                var Usuario = $('#Usuario').val();
+                var Contraseña = $('#Contraseña').val();
+                console.log(Contraseña);
+                $.ajax({
+                    url: 'LoginService.php',
+                    type: 'POST',
+                    data: {
+                        action: 'Login',
+                        Usuario: Usuario,
+                        Contra: Contraseña
+                    },
+                    success: function(response) {
+                        var data = JSON.parse(response); // Parse the JSON response
+                        console.log(data);
+                        console.log(data.data.length);
+                        if (data.data.length > 0) {
+                            window.location.href = '../index.php';
+                        } else {
+                            $('.invalid-feedback').remove();
+                            $('#Usuario').addClass('is-invalid').after('<span class="invalid-feedback">Usuario incorrecto</span>');
+                            $('#Contraseña').addClass('is-invalid').after('<span class="invalid-feedback">Contraseña incorrecta</span>');
+                        }
+                    },
+                    error: function() {
+                        alert('Error en la comunicación con el servidor.');
+                    }
+                });
+            }
+        });
+    });
+    </script>
 </body>
+
+
+
 </html>

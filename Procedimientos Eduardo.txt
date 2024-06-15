@@ -174,3 +174,48 @@ BEGIN
 END //
 
 DELIMITER ;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Restablecer_Contra`(
+    IN p_Usua_Id INT,
+    IN p_Contra VARCHAR(255)
+)
+BEGIN
+    UPDATE acce_tbusuarios
+    SET 
+        Usua_Contraseña = HEX(SHA2(p_Contra, 512))
+    WHERE 
+        Usua_Id = p_Usua_Id;
+END //
+
+DELIMITER ;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Usuarios_inicioSesion`(
+    IN p_Usuario VARCHAR(100),
+    IN p_Contra VARCHAR(255)
+)
+BEGIN
+    SELECT 
+        usu.Usua_Id AS Usua_Id,
+        usu.Usua_Usuario AS Usua_Usuario,
+        usu.Usua_Contraseña AS Usua_Contraseña,
+        CONCAT(emp.Empl_Nombre, ' ', emp.Empl_Apellido) AS Empl_Nombre,
+        emp.Empl_Id,
+        r.Role_Id,
+        p.pant_descripcion,
+        usu.Usua_Administrador,
+        S.Sucu_Id,
+        S.Sucu_Nombre,
+        ro.Role_Rol,
+        emp.Empl_Correo
+    FROM 
+        acce_tbusuarios AS usu 
+        LEFT JOIN gral_tbempleados AS emp ON usu.Empl_Id = emp.Empl_Id 
+        LEFT JOIN acce_tbpantallasporroles AS r ON r.Role_Id = usu.Role_Id 
+        LEFT JOIN acce_tbpantallas AS p ON p.Pant_Id = r.Pant_Id
+        LEFT JOIN gral_tbsucursales S ON S.Sucu_Id = emp.Sucu_Id 
+        LEFT JOIN acce_tbroles AS ro ON ro.Role_Id = usu.Role_Id
+    WHERE 
+        usu.Usua_Usuario = p_Usuario 
+        AND usu.Usua_Contraseña = HEX(SHA2(p_Contra, 512));
+END

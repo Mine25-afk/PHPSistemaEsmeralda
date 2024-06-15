@@ -1,9 +1,16 @@
 <?php
-    include "Controllers/Template.Controller.php";
+session_start();
 
-    $template = new ControllerTemplate;
+// Check if the user is logged in
+if (!isset($_SESSION['Usua_Id'])) {
+    // User is not logged in, redirect to the login page
+    header('Location: Views/Login.php');
+    exit();
+}
 
-    $template -> ControllerTemplate();
+// Include your main application template
+require_once 'Controllers/Template.Controller.php';
+
+$template = new ControllerTemplate();
+$template->ControllerTemplate();
 ?>
-
-
