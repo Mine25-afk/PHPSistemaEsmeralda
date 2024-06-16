@@ -20,13 +20,14 @@
         <div class="card-body">
             <h2 class="text-center" style="font-size:34px !important">Joyas</h2>
             <div class="CrearOcultar">
-                <p class="btn btn-primary" id="AbrirModal">Nuevo</p>
+            <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
                 <hr>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" id="TablaJoya">
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Codigo</th>
                                 <th>Descripción</th>
                                 <th>Precio Compra</th>
                                 <th>Precio Venta</th>
@@ -48,6 +49,11 @@
                 <form id="joyaForm" enctype="multipart/form-data">
                     <input type="hidden" name="Joya_Id" id="Joya_Id">
                     <div class="form-row">
+                    <div class="col-md-6">
+                            <label class="control-label">Precio Venta</label>
+                            <input name="Joya_Codigo" class="form-control" id="Joya_Codigo" required/>
+                            <div class="error-message" id="Joya_Codigo_error"></div>
+                        </div>
                         <div class="col-md-6">
                             <label class="control-label">Nombre</label>
                             <input name="Joya_Nombre" class="form-control" id="Joya_Nombre" required/>
@@ -72,11 +78,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-6">
-                            <label class="control-label">Stock</label>
-                            <input name="Joya_Stock" class="form-control" id="Joya_Stock" required/>
-                            <div class="error-message" id="Joya_Stock_error"></div>
-                        </div>
+                    
                         <div class="col-md-6">
                             <label class="control-label">Imagen</label>
                             <input type="file" name="Joya_Imagen" class="form-control" id="Joya_Imagen" required/>
@@ -172,6 +174,7 @@ $(document).ready(function () {
     },
     "columns": [
         { "data": "Joya_Id" },
+        { "data": "Joya_Codigo" },
         { "data": "Joya_Nombre" },
         { "data": "Joya_PrecioCompra" },
         { "data": "Joya_PrecioVenta" },
@@ -242,11 +245,13 @@ $(document).ready(function () {
     }
 
     $('#AbrirModal').click(function() {
-        limpiarFormulario();
-        $('.CrearOcultar').hide();
-        $('.CrearMostrar').show();
-        cargarDropdowns();
-    });
+    console.log('Botón Nuevo clickeado');
+    limpiarFormulario();
+    $('.CrearOcultar').hide();
+    $('.CrearMostrar').show();
+    cargarDropdowns();
+});
+
 
     $('#CerrarModal').click(function() {
         limpiarFormulario();
@@ -264,6 +269,10 @@ $(document).ready(function () {
     var isValid = true;
 
     // Validar campos
+    if ($('#Joya_Codigo').val().trim() === '') {
+        $('#Joya_Codigo_error').text('Este campo es requerido');
+        isValid = false;
+    }
     if ($('#Joya_Nombre').val().trim() === '') {
         $('#Joya_Nombre_error').text('Este campo es requerido');
         isValid = false;
@@ -278,10 +287,6 @@ $(document).ready(function () {
     }
     if ($('#Joya_PrecioMayor').val().trim() === '') {
         $('#Joya_PrecioMayor_error').text('Este campo es requerido');
-        isValid = false;
-    }
-    if ($('#Joya_Stock').val().trim() === '') {
-        $('#Joya_Stock_error').text('Este campo es requerido');
         isValid = false;
     }
     if ($('#Joya_Imagen').val().trim() === '') {
@@ -305,12 +310,13 @@ $(document).ready(function () {
         var joyaData = new FormData();
         joyaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
         joyaData.append('Joya_Id', $('#Joya_Id').val());
+        joyaData.append('Joya_Codigo', $('#Joya_Codigo').val());
         joyaData.append('Joya_Nombre', $('#Joya_Nombre').val());
         joyaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
         joyaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
         joyaData.append('Joya_PrecioMayor', $('#Joya_PrecioMayor').val());
         joyaData.append('Joya_Imagen', $('#Joya_Imagen')[0].files[0]);
-        joyaData.append('Joya_Stock', $('#Joya_Stock').val());
+        joyaData.append('Joya_Stock',1);
         joyaData.append('Prov_Id', $('#Prov_Id').val());
         joyaData.append('Mate_Id', $('#Mate_Id').val());
         joyaData.append('Cate_Id', $('#Cate_Id').val());
@@ -415,6 +421,7 @@ $(document).ready(function () {
     $('#TablaJoya tbody').on('click', '.abrir-detalles', function () {
         var data = table.row($(this).parents('tr')).data();
         var detalles = `
+           <p><strong>Codigo:</strong> ${data.Joya_Codigo}</p>
             <p><strong>Nombre:</strong> ${data.Joya_Nombre}</p>
             <p><strong>Precio Compra:</strong> ${data.Joya_PrecioCompra}</p>
             <p><strong>Precio Venta:</strong> ${data.Joya_PrecioVenta}</p>
@@ -439,11 +446,12 @@ $(document).ready(function () {
 
         // Llenar el formulario con los valores existentes
         $('#Joya_Id').val(data.Joya_Id);
+        $('#Joya_Codigo').val(data.Joya_Codigo);
         $('#Joya_Nombre').val(data.Joya_Nombre);
         $('#Joya_PrecioCompra').val(data.Joya_PrecioCompra);
         $('#Joya_PrecioVenta').val(data.Joya_PrecioVenta);
         $('#Joya_PrecioMayor').val(data.Joya_PrecioMayor);
-        $('#Joya_Stock').val(data.Joya_Stock);
+     
 
         // Mostrar el formulario de edición
         $('.CrearOcultar').hide();
