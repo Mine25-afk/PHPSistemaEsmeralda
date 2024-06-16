@@ -28,6 +28,18 @@ class ProveedoresController {
             throw new Exception('Error al listar proveedores: ' . $e->getMessage());
         }
     }
+    public function listarMunicipios() {
+        try {
+            $sql = 'CALL SP_Municipio_listar()';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(array('data' => $result));
+        } catch (PDOException $e) {
+            throw new Exception('Error al listar municipios: ' . $e->getMessage());
+        }
+    }
+    
 
     public function insertarProveedor($Prov_Proveedor, $Prov_Telefono, $Muni_Codigo, $Prov_UsuarioCreacion, $Prov_FechaCreacion) {
         try {
@@ -79,7 +91,20 @@ class ProveedoresController {
             throw new Exception('Error al buscar el Proveedor: ' . $e->getMessage());
         }
     }
-    
+
+    public function eliminarProveedor($Prov_Id) {
+        try {
+            $sql = 'CALL sp_Proveedores_eliminar(:p_Prov_Id)';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':p_Prov_Id', $Prov_Id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $result = $stmt->fetchColumn();
+            return $result; // 1 si es exitoso, 0 si no
+        } catch (PDOException $e) {
+            throw new Exception('Error al eliminar el Proveedor: ' . $e->getMessage());
+        }
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -106,7 +131,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo $resultado;
     } elseif ($_POST['action'] === 'listarProveedores') {
         $controller->listarProveedores();
+    } elseif ($_POST['action'] === 'eliminar') {
+        $Prov_Id = $_POST['Prov_Id'];
+        $resultado = $controller->eliminarProveedor($Prov_Id);
+        
+        // Manejar el resultado de la ejecución del procedimiento almacenado
+        if ($resultado === '0') {
+            throw new Exception('El procedimiento almacenado no tuvo efecto.');
+        } else {
+            echo $resultado; // Esto puede ser útil para depurar, pero considera cómo quieres mostrar la respuesta al usuario
+        }
     }
+    elseif ($_POST['action'] === 'listarMunicipios') {
+        $controller->listarMunicipios();
+    }
+    
+    
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'buscar') {
