@@ -3,7 +3,6 @@ require_once __DIR__ . '/../config.php';
 ini_set('log_errors', 1);
 ini_set('error_log', '/path/to/php-error.log');
 class JoyasController {
-    // Métodos existentes...
 
     public function listarJoyas() {
         global $pdo;
