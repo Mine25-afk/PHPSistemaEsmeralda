@@ -73,3 +73,149 @@ END
 
 ALTER TABLE dbsistemaesmeralda.gral_tbmarcas
 MODIFY COLUMN Marc_Id INT AUTO_INCREMENT;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Marcas_Eliminar`(
+    IN `Marc_Codigo` INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Error handling
+        DECLARE error_message TEXT;
+        GET DIAGNOSTICS CONDITION 1
+            error_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT 0 AS result;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Warning handling
+        DECLARE warning_message TEXT;
+        GET DIAGNOSTICS CONDITION 1
+            warning_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT 0 AS result;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        UPDATE `gral_tbmarcas` 
+		SET Marc_Estado = 0
+        WHERE Marc_Id = Marc_Codigo;
+        COMMIT;
+        SELECT 1 AS result;
+    END;
+END
+
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Marcas_actualizar`(
+    IN Marc_Codigo INT,
+    IN Marc_Marca VARCHAR(60),
+    IN Marc_UsuarioModificacion INT,
+    IN Marc_FechaModificacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        DECLARE err_message TEXT;
+        DECLARE err_code INT;
+        
+        -- Capture error message and error code
+        GET DIAGNOSTICS CONDITION 1
+            err_message = MESSAGE_TEXT,
+            err_code = MYSQL_ERRNO;
+        
+        ROLLBACK;
+        -- Return the error message and error code
+        SELECT CONCAT('Error Code: ', err_code, ', Error Message: ', err_message) AS error_message;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE gral_tbMarcas
+    SET
+        Marc_Marca = Marc_Marca,
+        Marc_UsuarioModificacion = Marc_UsuarioModificacion,
+        Marc_FechaModificacion = Marc_FechaModificacion
+    WHERE
+        Marc_Id = Marc_Codigo;
+
+    SELECT 1;
+
+    COMMIT;
+END
+
+DELIMITER //
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Marcas_buscar`(
+    IN Marc_Codigo INT
+)
+BEGIN
+    SELECT 
+        Marc_Id,
+        Marc_Marca,
+        Marc_UsuarioCreacion,
+        Marc_FechaCreacion,
+        Marc_UsuarioModificacion,
+        Marc_FechaModificacion,
+        DATE_FORMAT(Marc_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(Marc_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        uCreacion.Usua_Usuario AS UsuarioCreacion, 
+        uModificador.Usua_Usuario AS UsuarioModificacion 
+    FROM 
+        gral_tbMarcas c 
+    LEFT JOIN acce_tbusuarios uCreacion ON uCreacion.Usua_Id = c.Marc_UsuarioCreacion
+    LEFT JOIN acce_tbusuarios uModificador ON uModificador.Usua_Id = c.Marc_UsuarioModificacion
+    WHERE
+        Marc_Id = Marc_Codigo;
+END //
+
+DELIMITER ;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Restablecer_Contra`(
+    IN p_Usua_Id INT,
+    IN p_Contra VARCHAR(255)
+)
+BEGIN
+    UPDATE acce_tbusuarios
+    SET 
+        Usua_Contraseña = HEX(SHA2(p_Contra, 512))
+    WHERE 
+        Usua_Id = p_Usua_Id;
+END //
+
+DELIMITER ;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Usuarios_inicioSesion`(
+    IN p_Usuario VARCHAR(100),
+    IN p_Contra VARCHAR(255)
+)
+BEGIN
+    SELECT 
+        usu.Usua_Id AS Usua_Id,
+        usu.Usua_Usuario AS Usua_Usuario,
+        usu.Usua_Contraseña AS Usua_Contraseña,
+        CONCAT(emp.Empl_Nombre, ' ', emp.Empl_Apellido) AS Empl_Nombre,
+        emp.Empl_Id,
+        r.Role_Id,
+        p.pant_descripcion,
+        usu.Usua_Administrador,
+        S.Sucu_Id,
+        S.Sucu_Nombre,
+        ro.Role_Rol,
+        emp.Empl_Correo
+    FROM 
+        acce_tbusuarios AS usu 
+        LEFT JOIN gral_tbempleados AS emp ON usu.Empl_Id = emp.Empl_Id 
+        LEFT JOIN acce_tbpantallasporroles AS r ON r.Role_Id = usu.Role_Id 
+        LEFT JOIN acce_tbpantallas AS p ON p.Pant_Id = r.Pant_Id
+        LEFT JOIN gral_tbsucursales S ON S.Sucu_Id = emp.Sucu_Id 
+        LEFT JOIN acce_tbroles AS ro ON ro.Role_Id = usu.Role_Id
+    WHERE 
+        usu.Usua_Usuario = p_Usuario 
+        AND usu.Usua_Contraseña = HEX(SHA2(p_Contra, 512));
+END

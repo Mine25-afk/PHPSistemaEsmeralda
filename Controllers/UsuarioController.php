@@ -27,9 +27,11 @@ class UsuarioController {
         }
     }
     public function insertarUsuario($Usua_Usuario, $Usua_Contraseña, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioCreacion, $Usua_FechaCreacion) {
+        global $pdo;
         try {
+            
             $sql = 'CALL SP_Usuario_insertar(:Usua_Usuario, :Usua_Contraseña, :Usua_Administrador, :Empl_Id, :Role_Id, :Usua_UsuarioCreacion, :Usua_FechaCreacion)';
-            $stmt = $this->pdo->prepare($sql);
+            $stmt = $this->$pdo->prepare($sql);
             $stmt->bindParam(':Usua_Usuario', $Usua_Usuario, PDO::PARAM_STR);
             $stmt->bindParam(':Usua_Contraseña', $Usua_Contraseña, PDO::PARAM_STR);
             $stmt->bindParam(':Usua_Administrador', $Usua_Administrador, PDO::PARAM_STR);

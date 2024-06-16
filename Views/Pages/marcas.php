@@ -1,14 +1,3 @@
-<?php
-require_once 'Controllers/MarcaController.php';
-
-$controller = new MarcaController();
-try {
-    $Marcas = $controller->listarMarcas();
-} catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage();
-}
-
-?>
 
 <div class="card">
     <div class="card-body">
@@ -19,7 +8,7 @@ try {
         </p>
         <hr>
         <div class="table-responsive">
-            <table class="table table-striped table-hover" id="tablaOne">
+            <table class="table table-striped table-hover" id="TablaMarca">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -27,32 +16,19 @@ try {
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($Marcas as $marcas): ?>
-                        <tr>
-                            <td><?php echo $marcas['Marc_Id']; ?></td>
-                            <td><?php echo $marcas['Marc_Marca']; ?></td>
-                            <td class="d-flex justify-content-center" style="gap:10px">
-                                <a class="btn btn-primary btn-sm abrir-editar"><i class="fas fa-edit"></i>Editar</a>
-                                <a class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i>Detalles</a>
-                                <button class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
             </table>
         </div>
 
         </div>
 
         <div class="CrearMostrar">
-        <form>
+        <form id="quickForm">
 
 
 <div class="form-row">
     <div class="col-md-6">
         <label class="control-label"></label>
-        <input name="Marca" class="form-control letras" id="MarcaInput"/>
+        <input name="Marca" class="form-control letras" id="Marca"/>
         <span class="text-danger"></span>
     </div>
 </div>
@@ -61,7 +37,7 @@ try {
     <div class="form-row d-flex justify-content-end">
 
         <div class="col-md-3">
-        <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+        <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
         </div>
 
 
@@ -78,15 +54,164 @@ try {
 
 </div>
 
+<!-- Modal Eliminar -->
+<div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar esta Marca?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Detalles">
+    <div class="row" style="padding: 10px;">
+        <div class="col" style="font-weight:700">
+            ID
+        </div>
+        <div class="col" style="font-weight:700">
+            Marca
+        </div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">
+            <label for="" id="DetallesId"></label>
+        </div>
+        <div class="col">
+            <label for="" id="DetallesMarca"></label>
+        </div>
+    </div>
+
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <h5>Auditoria</h5>
+            <hr>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Insertar</td>
+                        <td>
+
+                        <label for="" id="DetallesUsuarioCreacion"></label>
+                        </td>
+                        <td><label for="" id="DetallesFechaCreacion"></label></td>
+                    </tr>
+                    <tr>
+                        <td>Modificar</td>
+                        <td> <label for="" id="DetallesUsuarioModificacion"></label> </td>
+                        <td>  <label for="" id="DetallesFechaModificacion"></label></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col d-flex justify-content-end m-3">
+    <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
+</div>
+</div>
+
+
+
 <script>
    $(document).ready(function () {
-    $('.CrearOcultar').show();
-    $('.CrearMostrar').hide();
+
+    $('#quickForm').validate({
+        rules: {
+            Marca: {
+                required: true
+            }
+        },
+        messages: {
+            Marca: {
+                required: "Por favor ingrese su Marca"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.col-md-6').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
     });
 
-   $('#AbrirModal').click(function() {
+    sessionStorage.setItem('Marc_Id', "0");
+    var table = $('#TablaMarca').DataTable({
+        "ajax": {
+            "url": "Controllers/MarcaController.php",
+            "type": "POST",
+            "data": function(d) {
+                d.action = 'listarMarcas';
+            },
+            "dataSrc": function(json){
+                console.log(json)
+                return json.data;
+            }
+        },language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+
+            },
+        "columns": [
+            { "data": "Marc_Id" },
+            { "data": "Marc_Marca" },
+            { 
+                "data": null, 
+                "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
+            }
+        ]
+    });
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
+    $('#Detalles').hide();
+
+
+    $('#AbrirModal').click(function() {
     $('.CrearOcultar').hide();
     $('.CrearMostrar').show();
+    sessionStorage.setItem('Marc_Id', "0");
     });
 
     $('#CerrarModal').click(function() {
@@ -94,49 +219,173 @@ try {
     $('.CrearMostrar').hide();
     });
 
-
-    $('#guardarBtn').click(function() {
-            // Capturar los datos del formulario
-            var marca = $('#MarcaInput').val();
-            console.log(marca)
-
-            // Enviar los datos mediante AJAX
-            $.ajax({
-                url: 'Controllers/MarcaController.php',
-                type: 'POST',
-                data: {
-                    action: 'insertar',
-                    Marc_Marca: marca,
-                    Marc_UsuarioCreacion: 1, // Puedes reemplazar esto con el ID del usuario real
-                    Marc_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
-                },
-                success: function(response) {
-                    console.log(response)
-                    if (response == 1) {
-                        $('#MarcaInput').val(null);
-                        iziToast.success({
-                 title: 'Éxito',
-                 message: 'Subido con exito',
-                position: 'topRight',
-                 transitionIn: 'flipInX',
-                 transitionOut: 'flipOutX'
-
-
-             });
-                        $('.CrearOcultar').show();
-                        $('.CrearMostrar').hide();
-                    } else {
-                       
-                    }
-                },
-                error: function() {
-                    alert('Error en la comunicación con el servidor.');
-                }
-            });
+    $('#TablaMarca tbody').on('click', '.abrir-eliminar', function () {
+        var data = table.row($(this).parents('tr')).data();
+        console.log(data);
+        var Marc_Id = data.Marc_Id;
+        sessionStorage.setItem('Marc_Id', Marc_Id);
+        $('#eliminarModal').modal('show');
         });
-                
+
+        $('#confirmarEliminarBtn').click(function() {
+        var Marca_Id = sessionStorage.getItem('Marc_Id');
+        $.ajax({
+            url: 'Controllers/MarcaController.php',
+            type: 'POST',
+            data: {
+                action: 'eliminar',
+                Marc_Codigo: Marca_Id
+            },
+            success: function(response) {
+                if (response == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Eliminado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    $('#TablaMarca').DataTable().ajax.reload();
+                    $('#eliminarModal').modal('hide');
+                    sessionStorage.setItem('Marc_Id', "0");
+                } else {
+                    alert('Error al eliminar joya.');
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+    });   
+    
+    $('#guardarBtn').click(function() {
+    if ($('#quickForm').valid()) {
+        var marca = $('#Marca').val();
+        var Valor = sessionStorage.getItem('Marc_Id');
+        var InsertarOActualizar = true
+        if (Valor == "0") {
+            InsertarOActualizar = true
+        }else{
+            InsertarOActualizar = false
+        }
+
+        console.log(Valor)
+        console.log(InsertarOActualizar)
+
+        $.ajax({
+            url: 'Controllers/MarcaController.php',
+            type: 'POST',
+            data: {
+                action: InsertarOActualizar ? 'insertar' : 'actualizar',
+                Marc_Id: Valor,
+                Marc_Marca: marca,
+                Marc_UsuarioCreacion: 1, 
+                Marc_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            },
+            success: function(response) {
+                console.log(response)
+                if (response == 1) {
+                    $('#Marca').val(null);
+                    iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+        $('#TablaMarca').DataTable().ajax.reload();
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se pudo subir',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+}
+});
+
+    $('#TablaMarca tbody').on('click', '.abrir-editar', function () {
+        var data = table.row($(this).parents('tr')).data();
+        sessionStorage.setItem('Marc_Id', data.Marc_Id);
+        $('#Marca').val(data.Marc_Marca);
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').show();
+    });
+
+    $('#TablaMarca tbody').on('click', '.abrir-detalles', function () {
+        var data = table.row($(this).parents('tr')).data();
+        var valor = data.Marc_Id;
+        $('#Detalles').show();
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').hide();
+
+        $.ajax({
+            url: 'Controllers/MarcaController.php',
+            method: 'POST',
+            data: {
+                action: 'buscar',
+                Marc_Id: valor
+            },
+            success: function(response) {
+                var data = JSON.parse(response);
+                var marca = data.data[0];
+                $('#DetallesId').text(marca.Marc_Id);
+                $('#DetallesMarca').text(marca.Marc_Marca);
+                $('#DetallesUsuarioCreacion').text(marca.UsuarioCreacion);
+                $('#DetallesUsuarioModificacion').text(marca.UsuarioModificacion);
+                $('#DetallesFechaModificacion').text(marca.FechaModificacion);
+                $('#DetallesFechaCreacion').text(marca.FechaCreacion);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    $('#VolverDetalles').click(function() {
+        $('#Detalles').hide();
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
+    });
+
+
+
+
+
+
+    });
+
+
+    
+
+  
+
+
+
+
+
+    
+    
+      
+
+    
         
 
+
 </script>
+
 
 
