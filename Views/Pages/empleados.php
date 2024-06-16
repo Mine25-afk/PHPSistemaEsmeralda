@@ -1,252 +1,504 @@
-<?php
-require_once 'Controllers/EmpleadoController.php';
-require_once 'Controllers/SucursalController.php';
-require_once 'Controllers/EstadoCivilController.php';
-require_once 'Controllers/CargoController.php';
-require_once 'Controllers/DepartamentoController.php';
-require_once 'Controllers/MunicipioController.php';
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-$controller = new EmpleadoController();
-$sucu = new SucursalController();
-$esta = new EstadoCivilController();
-$carg = new CargoController();
-$depa = new DepartamentoController();
-$muni = new MunicipioController();
-
-try {
-    $empleados = $controller->listarEmpleados();
-    $sucursales = $sucu->listarSucursals();
-    $estadosciviles = $esta->listarEstadoCivils();
-    $cargos = $carg->listarCargos();
-    $departamentos = $depa->listarDepartamentos();
-} catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage();
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_GET['action']) && $_GET['action'] == 'obtenerMunis' && isset($_POST['Depa_Codigo'])) {
-        $Depa_Codigo = $_POST['Depa_Codigo'];
-        try {
-            $municipios = $muni->listarMunicipiosPorDepartamento($Depa_Codigo);
-            header('Content-Type: application/json');
-            echo json_encode($municipios);
-            exit; 
-        } catch (Exception $e) {
-            header('Content-Type: application/json');
-            echo json_encode(['error' => $e->getMessage()]);
-            exit; 
-        }
-    } else {
-        try {
-            $data = [
-                'Nombres' => $_POST['Nombres'],
-                'Apellidos' => $_POST['Apellidos'],
-                'Sexo' => $_POST['Sexo'],
-                'FechaNac' => $_POST['FechaNac'],
-                'DNI' => $_POST['DNI'],
-                'Municipio' => $_POST['Municipio'],
-                'Sucursal' => $_POST['Sucursal'],
-                'EstadoCivil' => $_POST['EstadoCivil'],
-                'Cargo' => $_POST['Cargo'],
-                'Correo' => $_POST['Correo']
-            ];
-
-            $controller->insertarEmpleado($data);
-            echo 'Empleado insertado exitosamente.';
-        } catch (Exception $e) {
-            echo 'Error: ' . $e->getMessage();
-        }
-    }
-    exit;
-}
-?>
-
 <div class="card">
     <div class="card-body">
-    <div class="CrearOcultar">
-        <h2 class="text-center" style="font-size:34px !important">Empleados</h2>
+        <h2 class="text-center" style="font-size:34px !important">Empleado</h2>
+        <div class="CrearOcultar">
+            <p class="btn btn-primary" id="AbrirModal">Nuevo</p>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="TablaMarca">
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Empleado</th>
+                            <th>Correo</th>
+                            <th>Estado Civil</th>
+                            <th>Sucursal</th>
+                            <th>Cargo</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
 
-        <p class="btn btn-primary" id="AbrirModal">
-            Nuevo
-        </p>
-        <hr>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover" id="tablaOne">
+        <div class="CrearMostrar">
+            <form id="quickForm">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label class="control-label">DNI</label>
+                        <input name="DNI" class="form-control letras" id="DNI"/>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label">Correo</label>
+                        <input name="Correo" class="form-control letras" id="Correo"/>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label">Nombres</label>
+                        <input name="Nombres" class="form-control letras" id="Nombres"/>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label">Apellidos</label>
+                        <input name="Apellidos" class="form-control letras" id="Apellidos"/>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label">Fecha de Nacimiento</label>
+                        <input name="FechaNac" class="form-control letras" id="FechaNac"/>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Departamento</label>
+                            <select id="Departamento" name="Departamento" class="form-control select2" style="width: 100%;">
+                                <option selected="selected" value="">--Seleccione un Departamento--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Municipio</label>
+                            <select id="Municipio" name="Municipio" class="form-control select2" style="width: 100%;">
+                                <option selected="selected" value="">--Seleccione un Municipio--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Cargo</label>
+                            <select id="Cargo" name="Cargo" class="form-control select2" style="width: 100%;">
+                                <option selected="selected" value="">--Seleccione un Cargo--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Sucursal</label>
+                            <select id="Sucursal" name="Sucursal" class="form-control select2" style="width: 100%;">
+                                <option selected="selected" value="">--Seleccione una Sucursal--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Estado Civil</label>
+                            <select id="EstadoCivil" name="EstadoCivil" class="form-control select2" style="width: 100%;">
+                                <option selected="selected" value="">--Seleccione un Estado Civil--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Sexo</label>
+                        <div class="custom-control custom-radio">
+                            <input class="custom-control-input" type="radio" id="F" name="Sexo" value="F" checked>
+                            <label for="F" class="custom-control-label">Femenino</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input class="custom-control-input" type="radio" id="M" name="Sexo" value="M">
+                            <label for="M" class="custom-control-label">Masculino</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-row d-flex justify-content-end">
+                        <div class="col-md-3">
+                            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
+                        </div>
+                        <div class="col-md-3">
+                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este Empleado?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Detalles">
+    <div class="row" style="padding: 10px;">
+        <div class="col" style="font-weight:700">DNI</div>
+        <div class="col" style="font-weight:700">Empleado</div>
+        <div class="col" style="font-weight:700">Correo</div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col" style="font-weight:700">Sexo</div>
+        <div class="col" style="font-weight:700">Fecha de Nacimiento</div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col" style="font-weight:700">Municipio</div>
+        <div class="col" style="font-weight:700">Estado Civil</div>
+        <div class="col" style="font-weight:700">Cargo</div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col" style="font-weight:700">Sucursal</div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col"><label for="" id="DetallesId"></label></div>
+        <div class="col"><label for="" id="DetallesEmpleado"></label></div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <h5>Auditoría</h5>
+            <hr>
+            <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>DNI</th>
-                        <th>Empleado</th>
-                        <th>Correo</th>
-                        <th>Estado Civil</th>
-                        <th>Sucursal</th>
-                        <th>Cargo</th>
-                        <th class="text-center">Acciones</th>
+                        <th>Acciones</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($empleados as $empleado): ?>
-                        <tr>
-                            <td><?php echo $empleado['Empl_DNI']; ?></td>
-                            <td><?php echo $empleado['Empleado']; ?></td>
-                            <td><?php echo $empleado['Empl_Correo']; ?></td>
-                            <td><?php echo $empleado['Esta_EstadoCivil']; ?></td>
-                            <td><?php echo $empleado['Sucu_Nombre']; ?></td>
-                            <td><?php echo $empleado['Carg_Cargo']; ?></td>
-                            <td class="d-flex justify-content-center" style="gap:10px">
-                                <a class="btn btn-primary btn-sm abrir-editar"><i class="fas fa-edit"></i>Editar</a>
-                                <a class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i>Detalles</a>
-                                <button class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <tr>
+                        <td>Insertar</td>
+                        <td><label for="" id="DetallesUsuarioCreacion"></label></td>
+                        <td><label for="" id="DetallesFechaCreacion"></label></td>
+                    </tr>
+                    <tr>
+                        <td>Modificar</td>
+                        <td><label for="" id="DetallesUsuarioModificacion"></label></td>
+                        <td><label for="" id="DetallesFechaModificacion"></label></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="CrearMostrar">
-    <form id="empleadoForm" method="POST">
-    <div class="form-row">
-        <div class="col-md-6">
-            <label class="control-label">DNI</label>
-            <input name="DNI" id="DNI" class="form-control letras" />
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Correo</label>
-            <input name="Correo" id="Correo" class="form-control letras" />
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Nombres</label>
-            <input name="Nombres" id="Nombres" class="form-control letras" />
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Apellidos</label>
-            <input name="Apellidos" id="Apellidos" class="form-control letras" />
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Fecha de Nacimiento</label>
-            <input name="FechaNac" id="FechaNac" class="form-control letras" />
-        </div>
-        <div class="col-md-6">
-    <div class="form-group">
-        <label>Departamento</label>
-        <select id="Departamento" name="Departamento" class="form-control select2" style="width: 100%;">
-            <option selected="selected" value="">--Seleccione un Departamento--</option>
-            <?php foreach ($departamentos as $departamento): ?>
-                <option value="<?php echo $departamento['Depa_Codigo']; ?>"><?php echo $departamento['Depa_Departamento']; ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-</div>
-<div class="col-md-6">
-    <div class="form-group">
-        <label>Municipio</label>
-        <select id="Municipio" name="Municipio" class="form-control select2" style="width: 100%;">
-            <option selected="selected" value="">--Seleccione un Municipio--</option>
-        </select>
-    </div>
-</div>
-
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Cargo</label>
-                <select id="Cargo" name="Cargo" class="form-control select2" style="width: 100%;">
-                    <option selected="selected" value="">--Seleccione un Cargo--</option>
-                    <?php foreach ($cargos as $cargo): ?>
-                        <option value="<?php echo $cargo['Carg_Id']; ?>"><?php echo $cargo['Carg_Cargo']; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Sucursal</label>
-                <select id="Sucursal" name="Sucursal" class="form-control select2" style="width: 100%;">
-                    <option selected="selected" value="">--Seleccione una Sucursal--</option>
-                    <?php foreach ($sucursales as $sucursal): ?>
-                        <option value="<?php echo $sucursal['Sucu_Id']; ?>"><?php echo $sucursal['Sucu_Nombre']; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Estado Civil</label>
-                <select id="EstadoCivil" name="EstadoCivil" class="form-control select2" style="width: 100%;">
-                    <option selected="selected" value="">--Seleccione una Estado Civil--</option>
-                    <?php foreach ($estadosciviles as $estadocivil): ?>
-                        <option value="<?php echo $estadocivil['Esta_Id']; ?>"><?php echo $estadocivil['Esta_EstadoCivil']; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <label>Sexo</label>
-            <div class="custom-control custom-radio">
-                <input class="custom-control-input" type="radio" id="F" name="Sexo" value="F" checked>
-                <label for="F" class="custom-control-label">Femenino</label>
-            </div>
-            <div class="custom-control custom-radio">
-                <input class="custom-control-input" type="radio" id="M" name="Sexo" value="M">
-                <label for="M" class="custom-control-label">Masculino</label>
-            </div>
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="form-row d-flex justify-content-end">
-            <div class="col-md-3">
-                <input type="submit" value="Guardar" class="btn btn-primary" />
-            </div>
-            <div class="col-md-3">
-                <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-            </div>
-        </div>
-    </div>
-</form>
+    <div class="col d-flex justify-content-end m-3">
+        <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector('.CrearOcultar').style.display = 'block';
-        document.querySelector('.CrearMostrar').style.display = 'none';
+$(document).ready(function () {
+    $('#quickForm').validate({
+        rules: {
+            Empleado: {
+                required: true
+            }
+        },
+        messages: {
+            Empleado: {
+                required: "Por favor ingrese su Empleado"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.col-md-6').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
 
-        document.getElementById('AbrirModal').addEventListener('click', function() {
-            document.querySelector('.CrearOcultar').style.display = 'none';
-            document.querySelector('.CrearMostrar').style.display = 'block';
+    sessionStorage.setItem('Empl_Id', "0");
+    var table = $('#TablaMarca').DataTable({
+        "ajax": {
+            "url": "Controllers/EmpleadoController.php",
+            "type": "POST",
+            "data": function(d) {
+                d.action = 'listarEmpleados';
+            },
+            "dataSrc": function(json){
+                console.log(json)
+                return json.data;
+            }
+        },
+        language: {
+            "decimal": "",
+            "emptyTable": "No hay información",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+            "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ Entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "Sin resultados encontrados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        },
+        "columns": [
+            { "data": "Empl_DNI" },
+            { "data": "Empleado" },
+            { "data": "Empl_Correo" },
+            { "data": "Esta_EstadoCivil" },
+            { "data": "Sucu_Nombre" },
+            { "data": "Carg_Cargo" },
+            { 
+                "data": null, 
+                "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
+            }
+        ]
+    });
+
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
+    $('#Detalles').hide();
+
+    $('#AbrirModal').click(function() {
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').show();
+        sessionStorage.setItem('Empl_Id', "0");
+    });
+
+    $('#CerrarModal').click(function() {
+        $('.CrearOcultar').show();
+        $('.CrearMostrar').hide();
+    });
+
+    function cargarDatos() {
+        $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            type: 'POST',
+            data: { action: 'listarDepartamentos' },
+            success: function(response) {
+                var departamentos = JSON.parse(response);
+                var selectDepartamento = $('#Departamento');
+                selectDepartamento.empty().append('<option selected="selected" value="">--Seleccione un Departamento--</option>');
+                departamentos.forEach(function(departamento) {
+                    selectDepartamento.append('<option value="' + departamento.Depa_Codigo + '">' + departamento.Depa_Departamento + '</option>');
+                });
+            }
         });
 
-        document.getElementById('CerrarModal').addEventListener('click', function() {
-            document.querySelector('.CrearOcultar').style.display = 'block';
-            document.querySelector('.CrearMostrar').style.display = 'none';
+         $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            type: 'POST',
+            data: { action: 'listarCargos' },
+            success: function(response) {
+                var cargos = JSON.parse(response);
+                var selectCargo = $('#Cargo');
+                selectCargo.empty().append('<option selected="selected" value="">--Seleccione un Cargo--</option>');
+                cargos.forEach(function(cargo) {
+                    selectCargo.append('<option value="' + cargo.Carg_Id + '">' + cargo.Carg_Cargo + '</option>');
+                });
+            }
         });
 
-        document.getElementById('Departamento').addEventListener('change', function() {
-            var depaCodigo = this.value;
-            if (depaCodigo) {
-                fetch('Views/Pages/empleados.php?action=obtenerMunis', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({ Depa_Codigo: depaCodigo })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    var municipioSelect = document.getElementById('Municipio');
-                    municipioSelect.innerHTML = '<option selected="selected" value="">--Seleccione un Municipio--</option>';
-                    data.forEach(municipio => {
-                        var option = document.createElement('option');
-                        option.value = municipio.Muni_Codigo;
-                        option.textContent = municipio.Muni_Municipio;
-                        municipioSelect.appendChild(option);
+         $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            type: 'POST',
+            data: { action: 'listarEstadosCiviles' },
+            success: function(response) {
+                var estadosCiviles = JSON.parse(response);
+                var selectEstadoCivil = $('#EstadoCivil');
+                selectEstadoCivil.empty().append('<option selected="selected" value="">--Seleccione un Estado Civil--</option>');
+                estadosCiviles.forEach(function(estadoCivil) {
+                    selectEstadoCivil.append('<option value="' + estadoCivil.Esta_Id + '">' + estadoCivil.Esta_EstadoCivil + '</option>');
+                });
+            }
+        });
+
+         $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            type: 'POST',
+            data: { action: 'listarSucursales' },
+            success: function(response) {
+                var sucursales = JSON.parse(response);
+                var selectSucursal = $('#Sucursal');
+                selectSucursal.empty().append('<option selected="selected" value="">--Seleccione una Sucursal--</option>');
+                sucursales.forEach(function(sucursal) {
+                    selectSucursal.append('<option value="' + sucursal.Sucu_Id + '">' + sucursal.Sucu_Nombre + '</option>');
+                });
+            }
+        });
+    }
+
+     cargarDatos();
+
+    $('#TablaMarca tbody').on('click', '.abrir-eliminar', function () {
+        var data = table.row($(this).parents('tr')).data();
+        console.log(data);
+        var Empl_Id = data.Empl_Id;
+        sessionStorage.setItem('Empl_Id', Empl_Id);
+        $('#eliminarModal').modal('show');
+    });
+
+    $('#confirmarEliminarBtn').click(function() {
+        var Empl_Id = sessionStorage.getItem('Empl_Id');
+        $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            type: 'POST',
+            data: {
+                action: 'eliminar',
+                Empl_Id: Empl_Id
+            },
+            success: function(response) {
+                if (response == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Eliminado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
                     });
-                })
-                .catch(error => console.error('Error:', error));
+                    $('#TablaMarca').DataTable().ajax.reload();
+                    $('#eliminarModal').modal('hide');
+                    sessionStorage.setItem('Empl_Id', "0");
+                } else {
+                    alert('Error al eliminar empleado.');
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
             }
         });
     });
+
+    $('#guardarBtn').click(function() {
+        if ($('#quickForm').valid()) {
+            var empleadoData = {
+                DNI: $('#DNI').val(),
+                Correo: $('#Correo').val(),
+                Nombres: $('#Nombres').val(),
+                Apellidos: $('#Apellidos').val(),
+                FechaNac: $('#FechaNac').val(),
+                Departamento: $('#Departamento').val(),
+                Municipio: $('#Municipio').val(),
+                Cargo: $('#Cargo').val(),
+                Sucursal: $('#Sucursal').val(),
+                EstadoCivil: $('#EstadoCivil').val(),
+                Sexo: $('input[name="Sexo"]:checked').val()
+            };
+            var Valor = sessionStorage.getItem('Empl_Id');
+            var InsertarOActualizar = Valor == "0";
+
+            console.log(empleadoData);
+
+            $.ajax({
+                url: 'Controllers/EmpleadoController.php',
+                type: 'POST',
+                data: {
+                    action: InsertarOActualizar ? 'insertar' : 'actualizar',
+                    Empl_Id: Valor,
+                    ...empleadoData,
+                    Empl_UsuarioCreacion: 1, 
+                    Empl_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response == 1) {
+                        $('#quickForm')[0].reset();
+                        iziToast.success({
+                            title: 'Éxito',
+                            message: 'Empleado guardado con éxito',
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
+                        $('#TablaMarca').DataTable().ajax.reload();
+                        $('.CrearOcultar').show();
+                        $('.CrearMostrar').hide();
+                    } else {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'No se pudo guardar el empleado',
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
+                    }
+                },
+                error: function() {
+                    alert('Error en la comunicación con el servidor.');
+                }
+            });
+        }
+    });
+
+    $('#TablaMarca tbody').on('click', '.abrir-editar', function () {
+        var data = table.row($(this).parents('tr')).data();
+        sessionStorage.setItem('Empl_Id', data.Empl_Id);
+        $('#DNI').val(data.Empl_DNI);
+        $('#Correo').val(data.Empl_Correo);
+        $('#Nombres').val(data.Empl_Nombres);
+        $('#Apellidos').val(data.Empl_Apellidos);
+        $('#FechaNac').val(data.Empl_FechaNac);
+        $('#Departamento').val(data.Departamento).trigger('change');
+        $('#Municipio').val(data.Municipio).trigger('change');
+        $('#Cargo').val(data.Cargo).trigger('change');
+        $('#Sucursal').val(data.Sucursal).trigger('change');
+        $('#EstadoCivil').val(data.EstadoCivil).trigger('change');
+        $('input[name="Sexo"][value="' + data.Empl_Sexo + '"]').prop('checked', true);
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').show();
+    });
+
+    $('#TablaMarca tbody').on('click', '.abrir-detalles', function () {
+        var data = table.row($(this).parents('tr')).data();
+        var Empl_Id = data.Empl_Id;
+        $('#Detalles').show();
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').hide();
+
+        $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            method: 'POST',
+            data: {
+                action: 'buscar',
+                Empl_Id: Empl_Id
+            },
+            success: function(response) {
+                var data = JSON.parse(response).data[0];
+                $('#DetallesId').text(data.Empl_Id);
+                $('#DetallesEmpleado').text(data.Empleado);
+                $('#DetallesCorreo').text(data.Correo);
+                $('#DetallesSexo').text(data.Sexo);
+                $('#DetallesFechaNac').text(data.FechaNac);
+                $('#DetallesMunicipio').text(data.Municipio);
+                $('#DetallesEstadoCivil').text(data.EstadoCivil);
+                $('#DetallesCargo').text(data.Cargo);
+                $('#DetallesSucursal').text(data.Sucursal);
+                $('#DetallesUsuarioCreacion').text(data.UsuarioCreacion);
+                $('#DetallesFechaCreacion').text(data.FechaCreacion);
+                $('#DetallesUsuarioModificacion').text(data.UsuarioModificacion);
+                $('#DetallesFechaModificacion').text(data.FechaModificacion);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    $('#VolverDetalles').click(function() {
+        $('#Detalles').hide();
+        $('.CrearOcultar').show();
+        $('.CrearMostrar').hide();
+    });
+});
 </script>

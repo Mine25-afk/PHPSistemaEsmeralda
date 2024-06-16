@@ -62,62 +62,57 @@ END
 //
 delimiter ;
 
-DELIMITER $$
-CREATE PROCEDURE SP_Empleados_insertar(
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_insertar`(
     IN `Empl_Nombre` NVARCHAR(30),
     IN `Empl_Apellido` NVARCHAR(30),
     IN `Empl_Sexo` CHAR(1),
     IN `Empl_FechaNac` DATETIME,
-	IN `Empl_DNI` VARCHAR(13),
+    IN `Empl_DNI` VARCHAR(13),
     IN `Muni_Codigo` VARCHAR(4),
-	IN `Sucu_Id` INT,
+    IN `Sucu_Id` INT,
     IN `Esta_Id` INT,
     IN `Carg_Id` INT,
-	IN `Empl_Correo` Varchar(200),
+    IN `Empl_Correo` VARCHAR(200),
     IN `Empl_UsuarioCreacion` INT,
     IN `Empl_FechaCreacion` DATETIME
 )
 BEGIN
     START TRANSACTION;
-        BEGIN
-
-        INSERT INTO `gral_tbempleados`
-        (
+    BEGIN
+        INSERT INTO `gral_tbempleados` (
             `Empl_Nombre`, 
             `Empl_Apellido`, 
             `Empl_Sexo`, 
             `Empl_FechaNac`,
-			`Empl_DNI`,
+            `Empl_DNI`,
             `Muni_Codigo`, 
-			`Sucu_Id`,
+            `Sucu_Id`,
             `Esta_Id`, 
             `Carg_Id`, 
-			`Empl_Correo`,
+            `Empl_Correo`,
             `Empl_Estado`, 
             `Empl_UsuarioCreacion`, 
             `Empl_FechaCreacion`
-        )
-        VALUES 
-        (
-            `Empl_Nombre`, 
-            `Empl_Apellido`, 
-            `Empl_Sexo`, 
-            `Empl_FechaNac`, 
-			`Empl_DNI`,
-            `Muni_Codigo`,
-			`Sucu_Id`,
-            `Esta_Id`, 
-            `Carg_Id`, 
-			`Empl_Correo`,
+        ) VALUES (
+            Empl_Nombre, 
+            Empl_Apellido, 
+            Empl_Sexo, 
+            Empl_FechaNac, 
+            Empl_DNI,
+            Muni_Codigo,
+            Sucu_Id,
+            Esta_Id, 
+            Carg_Id, 
+            Empl_Correo,
             1,
-            `Empl_UsuarioCreacion`, 
-            `Empl_FechaCreacion`
+            Empl_UsuarioCreacion, 
+            Empl_FechaCreacion
         );
-         COMMIT;
+        COMMIT;
         SELECT 1 AS Resultado;
     END;
-END$$
-
+END;//
 DELIMITER ;
 
 ALTER TABLE dbsistemaesmeralda.acce_tbusuarios
@@ -292,3 +287,9 @@ BEGIN
 END //
 
 DELIMITER ;
+
+ALTER TABLE dbsistemaesmeralda.gral_tbempleados
+MODIFY COLUMN Empl_Id INT AUTO_INCREMENT;
+
+ALTER TABLE dbsistemaesmeralda.acce_tbusuarios
+MODIFY COLUMN Usua_Id INT AUTO_INCREMENT;
