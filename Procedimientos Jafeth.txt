@@ -219,3 +219,308 @@ END$$
 
 DELIMITER ;
 
+------------------------------------15/6/2024
+Procedimiento para hacer crud completo de roles 
+-------------------------------------------------
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Roles_listar()
+BEGIN
+    SELECT * FROM acce_tbroles
+    WHERE Role_Estado = 1;
+END //
+
+DELIMITER ;
+use dbsistemaesmeralda
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Roles_insertar(
+    IN p_Role_Rol VARCHAR(60),
+    IN p_Role_UsuarioCreacion INT,
+    IN p_Role_FechaCreacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0;
+    END;
+    
+    START TRANSACTION;
+    
+    INSERT INTO acce_tbroles (
+        Role_Rol, 
+        Role_UsuarioCreacion, 
+        Role_FechaCreacion
+    ) 
+    VALUES (
+        p_Role_Rol, 
+        p_Role_UsuarioCreacion, 
+        p_Role_FechaCreacion
+    );
+    
+    COMMIT;
+    SELECT 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Roles_eliminar(
+    IN p_Role_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+    
+    START TRANSACTION;
+    
+    DELETE FROM tbRoles
+    WHERE Role_Id = p_Role_Id;
+    
+    COMMIT;
+    SELECT 1 AS Resultado;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Roles_buscar(
+    IN p_Role_Id INT
+)
+BEGIN
+    SELECT 
+        c.Role_Id,
+        Role_Rol,
+        Role_UsuarioCreacion,
+        Role_UsuarioModificacion,
+        DATE_FORMAT(Role_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(Role_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        uCreacion.Usua_Usuario AS UsuarioCreacion,
+        uModificador.Usua_Usuario AS UsuarioModificacion,
+        Role_Estado
+    FROM 
+        acce_tbroles c
+        LEFT JOIN acce_tbusuarios uCreacion ON uCreacion.Usua_Id = c.Role_UsuarioCreacion
+        LEFT JOIN acce_tbusuarios uModificador ON uModificador.Usua_Id = c.Role_UsuarioModificacion
+    WHERE
+        c.Role_Id = p_Role_Id;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Roles_actualizar(
+    IN p_Role_Id INT,
+    IN p_Role_Rol VARCHAR(60),
+    IN p_Role_UsuarioModificacion INT,
+    IN p_Role_FechaModificacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0;
+    END;
+    
+    START TRANSACTION;
+    
+    UPDATE acce_tbroles
+    SET
+        Role_Rol = p_Role_Rol,
+        Role_UsuarioModificacion = p_Role_UsuarioModificacion,
+        Role_FechaModificacion = p_Role_FechaModificacion
+    WHERE
+        Role_Id = p_Role_Id;
+    
+    COMMIT;
+    SELECT 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_PantallasRoles_listar()
+BEGIN
+    SELECT 
+        PR.Pant_Id, 
+        P.Pant_Descripcion AS Pantalla, 
+        R.Role_Rol
+    FROM 
+       acce_tbpantallasporroles  PR
+    INNER JOIN acce_tbpantallas P ON PR.Pant_Id = P.Pant_Id
+    INNER JOIN acce_tbroles R ON PR.Role_Id = R.Role_Id;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_PantallasPorRoles_insertar(
+    IN p_Role_Id INT,
+    IN p_Pant_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0;
+    END;
+    
+    START TRANSACTION;
+    
+    INSERT INTO acce_tbpantallasporroles (
+        Role_Id, 
+        Pant_Id
+    ) 
+    VALUES (
+        p_Role_Id, 
+        p_Pant_Id
+    );
+    
+    COMMIT;
+    SELECT 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_PantallasPorRoles_eliminar(
+    IN p_Role_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+    
+    START TRANSACTION;
+    
+    DELETE FROM acce_tbpantallasporroles
+    WHERE Role_Id = p_Role_Id;
+    
+    COMMIT;
+    SELECT 1 AS Resultado;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_PantallasPorRoles_buscar(
+    IN p_Paxr_Id INT
+)
+BEGIN
+    SELECT 
+        Paxr_Id,
+        Role_Id,
+        Pant_Id
+    FROM 
+        acce_tbpantallasporroles
+    WHERE
+        Paxr_Id = p_Paxr_Id;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_PantallasPorRoles_actualizar(
+    IN p_Paxr_Id INT,
+    IN p_Role_Id INT,
+    IN p_Pant_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0;
+    END;
+    
+    START TRANSACTION;
+    
+    UPDATE acce_tbpantallasporroles
+    SET
+        Role_Id = p_Role_Id,
+        Pant_Id = p_Pant_Id
+    WHERE
+        Paxr_Id = p_Paxr_Id;
+    
+    COMMIT;
+    SELECT 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_PantallasPorRol2_buscar(
+    IN p_Role_Id INT
+)
+BEGIN
+    SELECT 
+        Paxr_Id,
+        Pant_Id,
+        paro.Role_Id,
+        Role_Rol,
+        'SI' AS Agregado 
+    FROM 
+        acce_tbpantallasporroles paro
+        JOIN acce_tbroles r ON paro.Role_Id = r.Role_Id
+    WHERE
+        paro.Role_Id = p_Role_Id;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE sp_PantallasPorRol_Pantallas(
+    IN p_Role_Id INT
+)
+BEGIN
+    SELECT P.Pant_Descripcion
+    FROM acce_tbpantallasporroles PR
+    INNER JOIN acce_tbroles R ON R.Role_Id = PR.Role_Id
+    INNER JOIN acce_tbpantallas P ON P.Pant_Id = PR.Pant_Id
+    WHERE R.Role_Id = p_Role_Id;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_Pantallas_listar()
+BEGIN
+    SELECT 
+        Pant_Id, 
+        Pant_Descripcion, 
+        Pant_UsuarioCreacion, 
+        Pant_FechaCreacion, 
+        Pant_UsuarioModificacion, 
+        Pant_FechaModificacion
+    FROM acce_tbpantallas
+    WHERE Pant_Estado = 1;
+END //
+
+DELIMITER ;
+
+------------------------fin de cruds de roles
+
+
+
+
