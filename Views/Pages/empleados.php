@@ -1,9 +1,14 @@
+<div class="container-fluid">
+        <div class="row mt-2">
+            <div class="col-12">
 <div class="card">
+<div class="card-header">
+                        <h3 class="text-center"><b>Empleados</b></h3>
+
+                    </div>
     <div class="card-body">
-        <h2 class="text-center" style="font-size:34px !important">Empleado</h2>
         <div class="CrearOcultar">
             <p class="btn btn-primary" id="AbrirModal">Nuevo</p>
-            <hr>
             <div class="table-responsive">
                 <table class="table table-striped table-hover" id="TablaMarca">
                     <thead>
@@ -91,24 +96,25 @@
                     </div>
                     <div class="col-sm-6">
                         <label>Sexo</label>
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="F" name="Sexo" value="F" checked>
-                            <label for="F" class="custom-control-label">Femenino</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="M" name="Sexo" value="M">
-                            <label for="M" class="custom-control-label">Masculino</label>
+                        <div class="d-flex align-items-center">
+                            <div class="custom-control custom-radio mr-3">
+                                <input class="custom-control-input" type="radio" id="F" name="Sexo" value="F" checked>
+                                <label for="F" class="custom-control-label">Femenino</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input class="custom-control-input" type="radio" id="M" name="Sexo" value="M">
+                                <label for="M" class="custom-control-label">Masculino</label>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <div class="form-row d-flex justify-content-end">
-                        <div class="col-md-3">
+                                    <div class="form-row d-flex justify-content-start">
+                        <div class="col-md-2">
                             <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
-                        </div>
-                        <div class="col-md-3">
                             <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+                        
                         </div>
                     </div>
                 </div>
@@ -116,6 +122,9 @@
         </div>
     </div>
 </div>
+</div>
+        </div>
+    </div>
 
 <!-- Modal Eliminar -->
 <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
@@ -139,27 +148,49 @@
 </div>
 
 <div id="Detalles">
-    <div class="row" style="padding: 10px;">
-        <div class="col" style="font-weight:700">DNI</div>
-        <div class="col" style="font-weight:700">Empleado</div>
-        <div class="col" style="font-weight:700">Correo</div>
+<div class="row" style="padding: 10px;">
+    <div class="col-md-4">
+        <strong>DNI</strong>
+        <p id="DetallesDNI"></p>
     </div>
-    <div class="row" style="padding: 10px;">
-        <div class="col" style="font-weight:700">Sexo</div>
-        <div class="col" style="font-weight:700">Fecha de Nacimiento</div>
+    <div class="col-md-4">
+        <strong>Empleado</strong>
+        <p id="DetallesEmpleado"></p>
     </div>
-    <div class="row" style="padding: 10px;">
-        <div class="col" style="font-weight:700">Municipio</div>
-        <div class="col" style="font-weight:700">Estado Civil</div>
-        <div class="col" style="font-weight:700">Cargo</div>
+    <div class="col-md-4">
+        <strong>Correo</strong>
+        <p id="DetallesCorreo"></p>
     </div>
-    <div class="row" style="padding: 10px;">
-        <div class="col" style="font-weight:700">Sucursal</div>
+</div>
+<div class="row" style="padding: 10px;">
+    <div class="col-md-4">
+        <strong>Fecha de Nacimiento</strong>
+        <p id="DetallesFechaNac"></p>
     </div>
-    <div class="row" style="padding: 10px;">
-        <div class="col"><label for="" id="DetallesId"></label></div>
-        <div class="col"><label for="" id="DetallesEmpleado"></label></div>
+    <div class="col-md-4">
+        <strong>Estado Civil</strong>
+        <p id="DetallesEstadoCivil"></p>
     </div>
+    <div class="col-md-4">
+        <strong>Sexo</strong>
+        <p id="DetallesSexo"></p>
+    </div>
+</div>
+<div class="row" style="padding: 10px;">
+    <div class="col-md-4">
+        <strong>Cargo</strong>
+        <p id="DetallesCargo"></p>
+    </div>
+    <div class="col-md-4">
+        <strong>Municipio</strong>
+        <p id="DetallesMunicipio"></p>
+    </div>
+    <div class="col-md-4">
+        <strong>Sucursal</strong>
+        <p id="DetallesSucursal"></p>
+    </div>
+</div>
+
 
     <div class="card mt-2">
         <div class="card-body">
@@ -197,12 +228,12 @@
 $(document).ready(function () {
     $('#quickForm').validate({
         rules: {
-            Empleado: {
+            DNI: {
                 required: true
             }
         },
         messages: {
-            Empleado: {
+            DNI: {
                 required: "Por favor ingrese su Empleado"
             }
         },
@@ -228,7 +259,6 @@ $(document).ready(function () {
                 d.action = 'listarEmpleados';
             },
             "dataSrc": function(json){
-                console.log(json)
                 return json.data;
             }
         },
@@ -341,6 +371,34 @@ $(document).ready(function () {
 
      cargarDatos();
 
+     $('#Departamento').change(function() {
+        var depaCodigo = $(this).val();
+        cargarMunicipios(depaCodigo);
+    });
+
+    function cargarMunicipios(depaCodigo) {
+        if(depaCodigo) {
+            $.ajax({
+                url: 'Controllers/EmpleadoController.php',
+                type: 'POST',
+                data: { 
+                    action: 'listarMunicipiosPorDepartamento', 
+                    depaCodigo: depaCodigo 
+                },
+                success: function(response) {
+                    var municipios = JSON.parse(response);
+                    var selectMunicipio = $('#Municipio');
+                    selectMunicipio.empty().append('<option selected="selected" value="">--Seleccione un Municipio--</option>');
+                    municipios.forEach(function(municipio) {
+                        selectMunicipio.append('<option value="' + municipio.Muni_Codigo + '">' + municipio.Muni_Municipio + '</option>');
+                    });
+                }
+            });
+        } else {
+            $('#Municipio').empty().append('<option selected="selected" value="">--Seleccione un Municipio--</option>');
+        }
+    }
+
     $('#TablaMarca tbody').on('click', '.abrir-eliminar', function () {
         var data = table.row($(this).parents('tr')).data();
         console.log(data);
@@ -381,82 +439,109 @@ $(document).ready(function () {
     });
 
     $('#guardarBtn').click(function() {
-        if ($('#quickForm').valid()) {
-            var empleadoData = {
-                DNI: $('#DNI').val(),
-                Correo: $('#Correo').val(),
-                Nombres: $('#Nombres').val(),
-                Apellidos: $('#Apellidos').val(),
-                FechaNac: $('#FechaNac').val(),
-                Departamento: $('#Departamento').val(),
-                Municipio: $('#Municipio').val(),
-                Cargo: $('#Cargo').val(),
-                Sucursal: $('#Sucursal').val(),
-                EstadoCivil: $('#EstadoCivil').val(),
-                Sexo: $('input[name="Sexo"]:checked').val()
-            };
-            var Valor = sessionStorage.getItem('Empl_Id');
-            var InsertarOActualizar = Valor == "0";
+    if ($('#quickForm').valid()) {
+        var empleadoData = {
+            DNI: $('#DNI').val(),
+            Correo: $('#Correo').val(),
+            Nombres: $('#Nombres').val(),
+            Apellidos: $('#Apellidos').val(),
+            FechaNac: $('#FechaNac').val(),
+            Departamento: $('#Departamento').val(),
+            Municipio: $('#Municipio').val(),
+            Cargo: $('#Cargo').val(),
+            Sucursal: $('#Sucursal').val(),
+            EstadoCivil: $('#EstadoCivil').val(),
+            Sexo: $('input[name="Sexo"]:checked').val()
+        };
+        var Valor = sessionStorage.getItem('Empl_Id');
+        var InsertarOActualizar = Valor == "0";
 
-            console.log(empleadoData);
+        console.log(empleadoData, Valor);
 
-            $.ajax({
-                url: 'Controllers/EmpleadoController.php',
-                type: 'POST',
-                data: {
-                    action: InsertarOActualizar ? 'insertar' : 'actualizar',
-                    Empl_Id: Valor,
-                    ...empleadoData,
-                    Empl_UsuarioCreacion: 1, 
-                    Empl_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
-                },
-                success: function(response) {
-                    console.log(response);
-                    if (response == 1) {
-                        $('#quickForm')[0].reset();
-                        iziToast.success({
-                            title: 'Éxito',
-                            message: 'Empleado guardado con éxito',
-                            position: 'topRight',
-                            transitionIn: 'flipInX',
-                            transitionOut: 'flipOutX'
-                        });
-                        $('#TablaMarca').DataTable().ajax.reload();
-                        $('.CrearOcultar').show();
-                        $('.CrearMostrar').hide();
-                    } else {
-                        iziToast.error({
-                            title: 'Error',
-                            message: 'No se pudo guardar el empleado',
-                            position: 'topRight',
-                            transitionIn: 'flipInX',
-                            transitionOut: 'flipOutX'
-                        });
-                    }
-                },
-                error: function() {
-                    alert('Error en la comunicación con el servidor.');
+        $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            type: 'POST',
+            data: {
+                action: InsertarOActualizar ? 'insertar' : 'actualizar',
+                Empl_Id: Valor,
+                Nombres: empleadoData.Nombres,
+                Apellidos: empleadoData.Apellidos,
+                Sexo: empleadoData.Sexo,
+                FechaNac: empleadoData.FechaNac,
+                DNI: empleadoData.DNI,
+                Municipio: empleadoData.Municipio,
+                Sucursal: empleadoData.Sucursal,
+                EstadoCivil: empleadoData.EstadoCivil,
+                Cargo: empleadoData.Cargo,
+                Correo: empleadoData.Correo,
+                Empl_UsuarioModificacion: 1, 
+                Empl_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            },
+            success: function(response) {
+                console.log(response);
+                if (response == 1) {
+                    $('#quickForm')[0].reset();
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Empleado guardado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    $('#TablaMarca').DataTable().ajax.reload();
+                    $('.CrearOcultar').show();
+                    $('.CrearMostrar').hide();
+                } else {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'No se pudo guardar el empleado',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
                 }
-            });
-        }
-    });
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+    }
+});
+
 
     $('#TablaMarca tbody').on('click', '.abrir-editar', function () {
         var data = table.row($(this).parents('tr')).data();
         sessionStorage.setItem('Empl_Id', data.Empl_Id);
-        $('#DNI').val(data.Empl_DNI);
-        $('#Correo').val(data.Empl_Correo);
-        $('#Nombres').val(data.Empl_Nombres);
-        $('#Apellidos').val(data.Empl_Apellidos);
-        $('#FechaNac').val(data.Empl_FechaNac);
-        $('#Departamento').val(data.Departamento).trigger('change');
-        $('#Municipio').val(data.Municipio).trigger('change');
-        $('#Cargo').val(data.Cargo).trigger('change');
-        $('#Sucursal').val(data.Sucursal).trigger('change');
-        $('#EstadoCivil').val(data.EstadoCivil).trigger('change');
-        $('input[name="Sexo"][value="' + data.Empl_Sexo + '"]').prop('checked', true);
-        $('.CrearOcultar').hide();
-        $('.CrearMostrar').show();
+
+        $.ajax({
+            url: 'Controllers/EmpleadoController.php',
+            method: 'POST',
+            data: {
+                action: 'buscar',
+                Empl_Id: data.Empl_Id
+            },
+            success: function(response) {
+                var data = JSON.parse(response).data[0];
+                $('#DNI').val(data.Empl_DNI);
+                $('#Correo').val(data.Empl_Correo);
+                $('#Nombres').val(data.Empl_Nombre);
+                $('#Apellidos').val(data.Empl_Apellido);
+                $('#FechaNac').val(data.Empl_FechaNac);
+                $('#Departamento').val(data.Depa_Codigo).trigger('change');
+                setTimeout(function() {
+                    $('#Municipio').val(data.Muni_Codigo);
+                }, 50);
+                $('#Cargo').val(data.Carg_Id).trigger('change');
+                $('#Sucursal').val(data.Sucu_Id).trigger('change');
+                $('#EstadoCivil').val(data.Esta_Id).trigger('change');
+                $('input[name="Sexo"][value="' + data.Empl_Sexo + '"]').prop('checked', true);
+                $('.CrearOcultar').hide();
+                $('.CrearMostrar').show();
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
     });
 
     $('#TablaMarca tbody').on('click', '.abrir-detalles', function () {
@@ -475,15 +560,15 @@ $(document).ready(function () {
             },
             success: function(response) {
                 var data = JSON.parse(response).data[0];
-                $('#DetallesId').text(data.Empl_Id);
-                $('#DetallesEmpleado').text(data.Empleado);
-                $('#DetallesCorreo').text(data.Correo);
+                $('#DetallesDNI').text(data.Empl_DNI);
+                $('#DetallesEmpleado').text(data.Empl_Nombre + ' ' + data.Empl_Apellido);
+                $('#DetallesCorreo').text(data.Empl_Correo);
                 $('#DetallesSexo').text(data.Sexo);
-                $('#DetallesFechaNac').text(data.FechaNac);
-                $('#DetallesMunicipio').text(data.Municipio);
-                $('#DetallesEstadoCivil').text(data.EstadoCivil);
-                $('#DetallesCargo').text(data.Cargo);
-                $('#DetallesSucursal').text(data.Sucursal);
+                $('#DetallesFechaNac').text(data.Empl_FechaNac);
+                $('#DetallesMunicipio').text(data.Muni_Municipio);
+                $('#DetallesEstadoCivil').text(data.Esta_EstadoCivil);
+                $('#DetallesCargo').text(data.Carg_Cargo);
+                $('#DetallesSucursal').text(data.Sucu_Nombre);
                 $('#DetallesUsuarioCreacion').text(data.UsuarioCreacion);
                 $('#DetallesFechaCreacion').text(data.FechaCreacion);
                 $('#DetallesUsuarioModificacion').text(data.UsuarioModificacion);

@@ -2,8 +2,10 @@
 require_once __DIR__ . '/../config.php';
 session_start();
 
-class EmpleadoController {
-    public function listarEmpleados() {
+class EmpleadoController
+{
+    public function listarEmpleados()
+    {
         global $pdo;
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Empleado_Listar`()';
@@ -30,7 +32,8 @@ class EmpleadoController {
             throw new Exception('Error al listar empleados: ' . $e->getMessage());
         }
     }
-    public function listarSucursales() {
+    public function listarSucursales()
+    {
         global $pdo;
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Sucursales_Listar`()';
@@ -41,7 +44,8 @@ class EmpleadoController {
             throw new Exception('Error al listar sucursales: ' . $e->getMessage());
         }
     }
-    public function listarEstadosCiviles() {
+    public function listarEstadosCiviles()
+    {
         global $pdo;
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_EstadosCiviles_Listar`()';
@@ -52,7 +56,8 @@ class EmpleadoController {
             throw new Exception('Error al listar estadosciviles: ' . $e->getMessage());
         }
     }
-    public function listarCargos() {
+    public function listarCargos()
+    {
         global $pdo;
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Cargos_Listar`()';
@@ -63,7 +68,8 @@ class EmpleadoController {
             throw new Exception('Error al listar cargos: ' . $e->getMessage());
         }
     }
-    public function listarDepartamentos() {
+    public function listarDepartamentos()
+    {
         global $pdo;
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Departamentos_Listar`()';
@@ -74,11 +80,13 @@ class EmpleadoController {
             throw new Exception('Error al listar departaments: ' . $e->getMessage());
         }
     }
-    public function listarMunicipiosPorDepartamento($depaCodigo) {
+    public function listarMunicipiosPorDepartamento($depaCodigo)
+    {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Municipios_MostrarPorDepartamento`()';
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Municipios_MostrarPorDepartamento`(:Depa_Codigo)';
             $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Depa_Codigo', $depaCodigo, PDO::PARAM_STR);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Exception $e) {
@@ -86,7 +94,8 @@ class EmpleadoController {
         }
     }
 
-    public function insertarEmpleado($Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioCreacion, $Empl_FechaCreacion) {
+    public function insertarEmpleado($Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioCreacion, $Empl_FechaCreacion)
+    {
         global $pdo;
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Empleados_insertar`(:Empl_Nombre, :Empl_Apellido, :Empl_Sexo, :Empl_FechaNac, :Empl_DNI, :Muni_Codigo, :Sucu_Id, :Esta_Id, :Carg_Id, :Empl_Correo, :Empl_UsuarioCreacion, :Empl_FechaCreacion)';
@@ -104,18 +113,19 @@ class EmpleadoController {
             $stmt->bindParam(':Empl_UsuarioCreacion', $_SESSION['Usua_Id'], PDO::PARAM_INT);
             $stmt->bindParam(':Empl_FechaCreacion', $Empl_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
-            
+
             $result = $stmt->fetchColumn();
             return $result;
         } catch (PDOException $e) {
-            return 0; 
+            return 0;
         }
     }
 
-    public function actualizarEmpleado($Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioModificacion, $Empl_FechaModificacion) {
+    public function actualizarEmpleado($Empl_Id, $Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioModificacion, $Empl_FechaModificacion)
+    {
         global $pdo;
         try {
-            $sql = 'CALL SP_Empleados_actualizar(:Empl_Id, :Empl_Nombre, :Empl_Apellido, :Empl_Sexo, :Empl_FechaNac, :Empl_DNI, :Muni_Codigo, :Sucu_Id, :Esta_Id, :Carg_Id, :Empl_Correo, :Empl_UsuarioModificacion, :Empl_FechaModificacion)';
+            $sql = 'CALL SP_Empleados_Actualizar(:Empl_Id, :Empl_Nombre, :Empl_Apellido, :Empl_Sexo, :Empl_FechaNac, :Empl_DNI, :Muni_Codigo, :Sucu_Id, :Esta_Id, :Carg_Id, :Empl_Correo, :Empl_UsuarioModificacion, :Empl_FechaModificacion)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Empl_Id', $Empl_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Empl_Nombre', $Empl_Nombre, PDO::PARAM_STR);
@@ -128,18 +138,20 @@ class EmpleadoController {
             $stmt->bindParam(':Esta_Id', $Esta_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Carg_Id', $Carg_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Empl_Correo', $Empl_Correo, PDO::PARAM_STR);
-            $stmt->bindParam(':Empl_UsuarioModificacion', $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Empl_UsuarioModificacion', $Empl_UsuarioModificacion, PDO::PARAM_INT);
             $stmt->bindParam(':Empl_FechaModificacion', $Empl_FechaModificacion, PDO::PARAM_STR);
             $stmt->execute();
-            
+
             $result = $stmt->fetchColumn();
-            return $result; 
+            return $result;
         } catch (PDOException $e) {
-            return 0; 
+            return 0;
         }
     }
 
-    public function eliminarEmpleado($Empl_Id) {
+
+    public function eliminarEmpleado($Empl_Id)
+    {
         global $pdo;
         try {
             $sql = 'CALL SP_Empleados_Eliminar(:Empl_Id)';
@@ -147,15 +159,16 @@ class EmpleadoController {
             $stmt->bindParam(':Empl_Id', $Empl_Id, PDO::PARAM_INT);
 
             $stmt->execute();
-            
+
             $result = $stmt->fetchColumn();
-            return $result; 
+            return $result;
         } catch (PDOException $e) {
-            return 0; 
+            return 0;
         }
     }
 
-    public function buscarEmpleadoPorCodigo($Empl_Id) {
+    public function buscarEmpleadoPorCodigo($Empl_Id)
+    {
         global $pdo;
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Empleados_buscar`(:Empl_Id)';
@@ -181,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Empl_Sexo = $_POST['Sexo'];
         $Empl_FechaNac = $_POST['FechaNac'];
         $Empl_DNI = $_POST['DNI'];
-        $Muni_Codigo = '01';
+        $Muni_Codigo = $_POST['Municipio'];
         $Sucu_Id = $_POST['Sucursal'];
         $Esta_Id = $_POST['EstadoCivil'];
         $Carg_Id = $_POST['Cargo'];
@@ -192,12 +205,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $resultado = $controller->insertarEmpleado($Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioCreacion, $Empl_FechaCreacion);
         echo $resultado;
     } elseif ($_POST['action'] === 'actualizar') {
+        $Empl_Id = $_POST['Empl_Id'];
         $Empl_Nombre = $_POST['Nombres'];
         $Empl_Apellido = $_POST['Apellidos'];
         $Empl_Sexo = $_POST['Sexo'];
         $Empl_FechaNac = $_POST['FechaNac'];
         $Empl_DNI = $_POST['DNI'];
-        $Muni_Codigo = '01';
+        $Muni_Codigo = $_POST['Municipio'];
         $Sucu_Id = $_POST['Sucursal'];
         $Esta_Id = $_POST['EstadoCivil'];
         $Carg_Id = $_POST['Cargo'];
@@ -205,7 +219,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Empl_UsuarioModificacion = $_SESSION['Usua_Id'];
         $Empl_FechaModificacion = (new DateTime())->format('Y-m-d H:i:s');
 
-        $resultado = $controller->actualizarEmpleado($Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioModificacion, $Empl_FechaModificacion);
+        $resultado = $controller->actualizarEmpleado(
+            $Empl_Id,
+            $Empl_Nombre,
+            $Empl_Apellido,
+            $Empl_Sexo,
+            $Empl_FechaNac,
+            $Empl_DNI,
+            $Muni_Codigo,
+            $Sucu_Id,
+            $Esta_Id,
+            $Carg_Id,
+            $Empl_Correo,
+            $Empl_UsuarioModificacion,
+            $Empl_FechaModificacion
+        );
         echo $resultado;
     } elseif ($_POST['action'] === 'eliminar') {
         $Empl_Id = $_POST['Empl_Id'];
@@ -223,6 +251,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo $controller->listarEstadosCiviles();
     } elseif ($_POST['action'] === 'listarSucursales') {
         echo $controller->listarSucursales();
+    } elseif ($_POST['action'] === 'listarMunicipiosPorDepartamento') {
+        $depaCodigo = $_POST['depaCodigo'];
+        echo $controller->listarMunicipiosPorDepartamento($depaCodigo);
     }
 }
-?>

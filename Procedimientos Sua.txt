@@ -293,3 +293,122 @@ MODIFY COLUMN Empl_Id INT AUTO_INCREMENT;
 
 ALTER TABLE dbsistemaesmeralda.acce_tbusuarios
 MODIFY COLUMN Usua_Id INT AUTO_INCREMENT;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_Actualizar`(
+    IN Empl_Id INT,
+    IN Empl_Nombre NVARCHAR(30),
+    IN Empl_Apellido NVARCHAR(30),
+    IN Empl_Sexo CHAR(1),
+    IN Empl_FechaNac DATETIME,
+    IN Empl_DNI VARCHAR(13),
+    IN Muni_Codigo VARCHAR(4),
+    IN Sucu_Id INT,
+    IN Esta_Id INT,
+    IN Carg_Id INT,
+    IN Empl_Correo VARCHAR(200),
+    IN Empl_UsuarioModificacion INT,
+    IN Empl_FechaModificacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    START TRANSACTION;
+    UPDATE Gral_tbempleados
+    SET
+        Empl_Nombre = Empl_Nombre,
+        Empl_Apellido = Empl_Apellido,
+        Empl_Sexo = Empl_Sexo,
+        Empl_FechaNac = Empl_FechaNac,
+        Empl_DNI = Empl_DNI,
+        Muni_Codigo = Muni_Codigo,
+        Sucu_Id = Sucu_Id,
+        Esta_Id = Esta_Id,
+        Carg_Id = Carg_Id,
+        Empl_Correo = Empl_Correo,
+        Empl_UsuarioModificacion = Empl_UsuarioModificacion,
+        Empl_FechaModificacion = Empl_FechaModificacion
+    WHERE
+        Empl_Id = Empl_Id;
+
+    COMMIT;
+    SELECT 1 AS Resultado;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_buscar`(
+    IN Empl_Id INT
+)
+BEGIN
+     SELECT 
+        em.Empl_Id,
+        em.Empl_Nombre,
+        em.Empl_Apellido,
+        em.Empl_Sexo,
+        CASE Empl_Sexo WHEN 'F' THEN 'Femenino' ELSE 'Masculino' END Sexo,
+        em.Empl_FechaNac,
+        em.Muni_Codigo,
+        em.Empl_DNI,
+        em.Sucu_Id,
+        su.Sucu_Nombre,
+        mu.Muni_Municipio,
+        em.Esta_Id,
+        e.Esta_EstadoCivil,
+        em.Carg_Id,
+        c.Carg_Cargo,
+        d.Depa_Codigo,
+        d.Depa_Departamento,
+        em.Empl_Correo,
+        DATE_FORMAT(em.Empl_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(em.Empl_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        em.Empl_Estado,
+        uCreacion.Usua_Usuario AS UsuarioCreacion,
+        uModificador.Usua_Usuario AS UsuarioModificacion 
+    FROM 
+        Gral_tbempleados em 
+    INNER JOIN 
+        Gral_tbEstadosCiviles e ON em.Esta_Id = e.Esta_Id  
+    INNER JOIN 
+        Gral_tbCargos c ON em.Carg_Id = c.Carg_Id 
+    INNER JOIN 
+        Gral_tbMunicipios mu ON mu.Muni_Codigo = em.Muni_Codigo 
+    LEFT JOIN 
+        Acce_tbUsuarios uCreacion ON uCreacion.Usua_Id = em.Empl_UsuarioCreacion
+    LEFT JOIN 
+        Acce_tbUsuarios uModificador ON uModificador.Usua_Id = em.Empl_UsuarioModificacion
+    LEFT JOIN 
+        Gral_tbDepartamentos d ON d.Depa_Codigo = mu.Depa_Codigo
+   LEFT JOIN  gral_tbsucursales su on su.sucu_Id = em.sucu_Id
+    WHERE
+        em.Empl_Id = Empl_Id;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_eliminar`(
+    IN Empl_Id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    START TRANSACTION;
+    UPDATE Gral_tbempleados
+    SET Empl_Estado = 0
+    WHERE Empl_Id = Empl_Id;
+
+    COMMIT;
+    SELECT 1 AS Resultado;
+END;
+//
+DELIMITER ;
