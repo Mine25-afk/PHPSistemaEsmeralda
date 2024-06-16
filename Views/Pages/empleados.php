@@ -28,17 +28,17 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['Depa_Codigo'])) {
+    if (isset($_GET['action']) && $_GET['action'] == 'obtenerMunis' && isset($_POST['Depa_Codigo'])) {
         $Depa_Codigo = $_POST['Depa_Codigo'];
         try {
             $municipios = $muni->listarMunicipiosPorDepartamento($Depa_Codigo);
-            header('Content-Type: application/json'); // Asegura que el contenido es JSON
+            header('Content-Type: application/json');
             echo json_encode($municipios);
-            exit;
+            exit; 
         } catch (Exception $e) {
             header('Content-Type: application/json');
             echo json_encode(['error' => $e->getMessage()]);
-            exit;
+            exit; 
         }
     } else {
         try {
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <select id="Departamento" name="Departamento" class="form-control select2" style="width: 100%;">
             <option selected="selected" value="">--Seleccione un Departamento--</option>
             <?php foreach ($departamentos as $departamento): ?>
-                <option value="<?php echo $departamento['Depa_Codigo']; ?>"><?php echo $departamento['Depa_Departamento']; ?></option> 
+                <option value="<?php echo $departamento['Depa_Codigo']; ?>"><?php echo $departamento['Depa_Departamento']; ?></option>
             <?php endforeach; ?>
         </select>
     </div>
@@ -155,9 +155,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label>Cargo</label>
                 <select id="Cargo" name="Cargo" class="form-control select2" style="width: 100%;">
                     <option selected="selected" value="">--Seleccione un Cargo--</option>
-                    <?php foreach ($cargos as $cargo):?>
-                        <option value="<?php echo $cargo['Carg_Id'];?>"><?php echo $cargo['Carg_Cargo']; ?></option> 
-                    <?php endforeach;?>
+                    <?php foreach ($cargos as $cargo): ?>
+                        <option value="<?php echo $cargo['Carg_Id']; ?>"><?php echo $cargo['Carg_Cargo']; ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
@@ -166,9 +166,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label>Sucursal</label>
                 <select id="Sucursal" name="Sucursal" class="form-control select2" style="width: 100%;">
                     <option selected="selected" value="">--Seleccione una Sucursal--</option>
-                    <?php foreach ($sucursales as $sucursal):?>
-                        <option value="<?php echo $sucursal['Sucu_Id'];?>"><?php echo $sucursal['Sucu_Nombre']; ?></option> 
-                    <?php endforeach;?>
+                    <?php foreach ($sucursales as $sucursal): ?>
+                        <option value="<?php echo $sucursal['Sucu_Id']; ?>"><?php echo $sucursal['Sucu_Nombre']; ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
@@ -177,9 +177,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label>Estado Civil</label>
                 <select id="EstadoCivil" name="EstadoCivil" class="form-control select2" style="width: 100%;">
                     <option selected="selected" value="">--Seleccione una Estado Civil--</option>
-                    <?php foreach ($estadosciviles as $estadocivil):?>
-                        <option value="<?php echo $estadocivil['Esta_Id'];?>"><?php echo $estadocivil['Esta_EstadoCivil']; ?></option> 
-                    <?php endforeach;?>
+                    <?php foreach ($estadosciviles as $estadocivil): ?>
+                        <option value="<?php echo $estadocivil['Esta_Id']; ?>"><?php echo $estadocivil['Esta_EstadoCivil']; ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
@@ -208,45 +208,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
     </div>
 </div>
+
 <script>
-    $(document).ready(function () {
-        $('.CrearOcultar').show();
-        $('.CrearMostrar').hide();
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('.CrearOcultar').style.display = 'block';
+        document.querySelector('.CrearMostrar').style.display = 'none';
 
-        $('#AbrirModal').click(function() {
-            $('.CrearOcultar').hide();
-            $('.CrearMostrar').show();
+        document.getElementById('AbrirModal').addEventListener('click', function() {
+            document.querySelector('.CrearOcultar').style.display = 'none';
+            document.querySelector('.CrearMostrar').style.display = 'block';
         });
 
-        $('#CerrarModal').click(function() {
-            $('.CrearOcultar').show();
-            $('.CrearMostrar').hide();
+        document.getElementById('CerrarModal').addEventListener('click', function() {
+            document.querySelector('.CrearOcultar').style.display = 'block';
+            document.querySelector('.CrearMostrar').style.display = 'none';
         });
 
-        $('#Departamento').change(function() {
-            var depaCodigo = $(this).val();
+        document.getElementById('Departamento').addEventListener('change', function() {
+            var depaCodigo = this.value;
             if (depaCodigo) {
-                $.ajax({
-                    type: 'POST',
-                    url: 'obtener_municipios.php', // Apunta al nuevo archivo PHP
-                    data: { Depa_Codigo: depaCodigo },
-                    success: function(response) {
-                        console.log('respuesta', response); // Revisa la respuesta en la consola
-                        try {
-                            var municipios = JSON.parse(response);
-                            $('#Municipio').empty();
-                            $('#Municipio').append('<option selected="selected" value="">--Seleccione un Municipio--</option>');
-                            $.each(municipios, function(index, municipio) {
-                                $('#Municipio').append('<option value="' + municipio.Muni_Codigo + '">' + municipio.Muni_Municipio + '</option>');
-                            });
-                        } catch (e) {
-                            console.log('Error parsing JSON:', e);
-                        }
+                fetch('Views/Pages/empleados.php?action=obtenerMunis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    error: function(error) {
-                        console.log('Error:', error);
-                    }
-                });
+                    body: new URLSearchParams({ Depa_Codigo: depaCodigo })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var municipioSelect = document.getElementById('Municipio');
+                    municipioSelect.innerHTML = '<option selected="selected" value="">--Seleccione un Municipio--</option>';
+                    data.forEach(municipio => {
+                        var option = document.createElement('option');
+                        option.value = municipio.Muni_Codigo;
+                        option.textContent = municipio.Muni_Municipio;
+                        municipioSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
             }
         });
     });

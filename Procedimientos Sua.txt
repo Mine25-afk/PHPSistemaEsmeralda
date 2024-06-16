@@ -280,3 +280,15 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Municipios_MostrarPorDepartamento`(
+    IN p_Depa_Codigo VARCHAR(2)
+)
+BEGIN
+    SELECT * FROM Gral_tbMunicipios
+    WHERE Depa_Codigo = p_Depa_Codigo;
+END //
+
+DELIMITER ;
