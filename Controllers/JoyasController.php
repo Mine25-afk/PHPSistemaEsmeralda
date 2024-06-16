@@ -22,7 +22,7 @@ class JoyasController {
     public function listarProveedores() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedores_listar`()';
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedor_listar`()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

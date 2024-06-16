@@ -102,30 +102,6 @@
                   <p>Empleados</p>
                 </a>
               </li>
-              <!-- <li class="nav-item">
-                <a href="facturas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Facturas</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="inventario" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Inventario</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="clientes" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Clientes</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="joyas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Joyas</p>
-                </a>
-              </li> -->
               </li>
             </ul>
           </li>
@@ -182,7 +158,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="inventario" class="nav-link">
+                <a href="maquillajes" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Maquillajes</p>
                 </a>
@@ -267,6 +243,24 @@
                 </a>
               </li>             
             </ul>
+            <li class="nav-item">
+                <a class="nav-link" id="AbrirCaja">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Abrir Caja</p>
+                </a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cerrar caja</p>
+                </a>
+              </li> 
+              <li class="nav-item">
+                <a href="" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Sacar Dinero</p>
+                </a>
+              </li> 
           </li>
           
        
@@ -276,3 +270,31 @@
     </div>
     <!-- /.sidebar -->
   </aside>
+
+  <div class="modal fade" id="AbrirModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar esta Marca?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+      $('#AbrirCaja').click(function() {
+        $('#AbrirModal').modal('show');
+      });
+
+    });
+</script>
