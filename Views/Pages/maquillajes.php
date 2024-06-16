@@ -218,6 +218,13 @@
 <script>
     $(document).ready(function () {
 
+        $('#AbrirModal').click(function() {
+        $('.CrearOcultar').hide();
+        $('.CrearMostrar').show();
+        $('#quickForm').trigger('reset');
+        $('#quickForm').validate().resetForm();
+        sessionStorage.setItem('Maqu_Id', "0");
+        });
         //DropDowns
         cargarDropdowns({ Prov_Id: 0, Marc_Id: 0 });
         async function cargarDropdowns(selectedData = {}) {
@@ -356,13 +363,7 @@
 
 
  //Abrir y Cerrar
-    $('#AbrirModal').click(function() {
-    $('.CrearOcultar').hide();
-    $('.CrearMostrar').show();
-    $('#quickForm').trigger('reset');
-    $('#quickForm').validate().resetForm();
-    sessionStorage.setItem('Maqu_Id', "0");
-    });
+   
 
     $('#CerrarModal').click(function() {
     $('.CrearOcultar').show();

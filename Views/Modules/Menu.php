@@ -271,7 +271,7 @@
     <!-- /.sidebar -->
   </aside>
 
-  <div class="modal fade" id="AbrirModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+  <div class="modal fade" id="AbrirCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -292,9 +292,9 @@
 </div>
 <script>
     $(document).ready(function () {
-      $('#AbrirCaja').click(function() {
-        $('#AbrirModal').modal('show');
+      $('#AbrirCajas').click(function() {
+        $('#AbrirCajaModal').modal('show');
       });
 
     });
-</script>
+</script> 
