@@ -1,223 +1,3 @@
-DELIMITER $$
-CREATE PROCEDURE `SP_Proveedor_listar`()
-BEGIN
-SELECT Prov_Id,Prov_Proveedor,Prov_Telefono,Muni_Municipio
- FROM gral_tbproveedores P
-LEFT JOIN gral_tbmunicipios M ON P.Muni_Codigo = M.Muni_Codigo 
-WHERE Prov_Estado = 1;
-END $$
-DELIMITER ;
-
-CALL SP_Proveedor_listar();
-
-
-DELIMITER $$
-CREATE PROCEDURE `SP_Municipio_listar`()
-BEGIN
-SELECT Prov_Id,Prov_Proveedor,Prov_Telefono,Muni_Municipio
- FROM gral_tbmunicipios M
-LEFT JOIN gral_tbdepartamentos d ON d. = p.Muni_Codigo 
-WHERE Prov_Estado = 1;
-END $$
-DELIMITER ; 
-
-
-USE dbsistemaesmeralda;
-
-DELIMITER $$
-CREATE  PROCEDURE `SP_Proveedores_insertar` (
-     IN `Prov_Proveedor` VARCHAR(100),
-    IN `Prov_Telefono` VARCHAR(15),
-    IN `Muni_Codigo` VARCHAR(4),
-    IN `Prov_UsuarioCreacion` INT,
-    IN `Prov_FechaCreacion` DATETIME
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        -- Error handling
-        ROLLBACK;
-        SELECT 0;
-    END;
-
-    DECLARE EXIT HANDLER FOR SQLWARNING
-    BEGIN
-        -- Warning handling
-        ROLLBACK;
-        SELECT 0;
-    END;
-
-    START TRANSACTION;
-    BEGIN
-         INSERT INTO gral_tbproveedores 
-        (
-            `Prov_Proveedor`, 
-            `Prov_Telefono`, 
-            `Muni_Codigo`, 
-       
-            `Prov_UsuarioCreacion`, 
-            `Prov_FechaCreacion`
-        )
-        VALUES 
-        (
-            Prov_Proveedor, 
-            Prov_Telefono, 
-            Muni_Codigo, 
-         
-            Prov_UsuarioCreacion, 
-            Prov_FechaCreacion
-        );
-
-        COMMIT;
-        SELECT 1;
-    END;
-END$$
-
-DELIMITER ;
-
-CALL SP_Proveedor_insertar();
-
-USE dbsistemaesmeralda;
-
-DELIMITER $$
-
-CREATE PROCEDURE `SP_MunicipioporDepartamento_listar`(IN depa_Id Varchar(2))
-BEGIN
-    SELECT M.Muni_Municipio, D.Depa_Departamento
-    FROM gral_tbmunicipios M
-    LEFT JOIN gral_tbdepartamentos D ON D.Depa_Codigo = M.Depa_Codigo
-    WHERE D.Depa_Codigo = depa_Id;
-END $$
-
-DELIMITER ;
-
-CALL SP_MunicipioporDepartamento_listar(10);
-
-
-DELIMITER $$
-
-CREATE PROCEDURE `SP_Municipio_listar`()
-BEGIN
-    SELECT M.Muni_Municipio
-    FROM gral_tbmunicipios M;
-END $$
-
-DELIMITER ;
-
-CALL SP_Municipio_listar()
-
-DELIMITER $$
-
-CREATE PROCEDURE `SP_Roles_listar`()
-BEGIN
-    SELECT r.Role_Id,r.Role_Rol
-    FROM acce_tbroles r;
-END $$
-
-DELIMITER ;
-
-CALL SP_Roles_listar()
-
-
-------------------------14/6/2024
-CREATE TABLE `vent_tbreparaciones`(
-	Repa_Id INT PRIMARY KEY AUTO_INCREMENT,
-	Repa_Codigo VARCHAR(12),
-    Repa_Tipo_Reparacion VARCHAR(100),
-    Repa_UsuarioCreacion INT,
-    Repa_FechaCreacion DateTime,
-    Repa_UsuarioModifica INT,
-    Repa_FechaModifica Datetime,
-	Repa_Estado tinyint(1) DEFAULT 1,
-  
-CONSTRAINT `Fk_tbReparaciones_tbUsuarios_Repa_UsuarioCreacion` FOREIGN KEY (`Repa_UsuarioCreacion`) REFERENCES `acce_tbusuarios` (`Usua_Id`) ,
-  CONSTRAINT `Fk_tbReparaciones_tbUsuarios_Repa_UsuarioModifica` FOREIGN KEY (`Repa_UsuarioModifica`) REFERENCES `acce_tbusuarios` (`Usua_Id`) 
-)
-
-
-DELIMITER $$
-CREATE PROCEDURE `SP_Proveedor_actualizar` (
-    IN Prov_Id INT,
-    IN Prov_Proveedor VARCHAR(100),
-    IN Prov_Telefono VARCHAR(15),
-    IN Muni_Codigo VARCHAR(4),
-    IN Prov_UsuarioModificacion INT,
-    IN Prov_FechaModificacion DATETIME
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        -- Manejo de errores
-        ROLLBACK;
-        SELECT 0;
-    END;
-
-    DECLARE EXIT HANDLER FOR SQLWARNING
-    BEGIN
-        -- Manejo de advertencias
-        ROLLBACK;
-        SELECT 0;
-    END;
-
-    START TRANSACTION;
-    BEGIN
-        -- Actualizar los campos según el Prov_Id
-        UPDATE gral_tbproveedores
-        SET
-            Prov_Proveedor = Prov_Proveedor,
-                    Prov_Telefono = Prov_Telefono,
-                    Muni_Codigo = Muni_Codigo,
-                    Prov_UsuarioModificacion = Prov_UsuarioModificacion,
-                    Prov_FechaModificacion = Prov_FechaModificacion
-        WHERE
-            Prov_Id = Prov_Id;
-
-        COMMIT;
-        SELECT 1;
-    END;
-END$$
-
-
-DELIMITER ;
-
-
-DELIMITER $$
-
-CREATE PROCEDURE `SP_Proveedor_buscar` (
-    IN Prov_Id INT
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        -- Manejo de errores
-        ROLLBACK;
-        SELECT 0;
-    END;
-
-    DECLARE EXIT HANDLER FOR SQLWARNING
-    BEGIN
-        -- Manejo de advertencias
-        ROLLBACK;
-        SELECT 0;
-    END;
-
-    START TRANSACTION;
-    BEGIN
-        -- Consulta para obtener información según el Prov_Id
-        SELECT
-            Prov_Proveedor,
-            Prov_Telefono,
-            Muni_Codigo,
-            Prov_UsuarioModificacion,
-            Prov_FechaModificacion
-        FROM gral_tbproveedores 
-        WHERE Prov_Id = Prov_Id;
-
-        COMMIT;
-    END;
-END$$
-
-DELIMITER ;
 
 ------------------------------------15/6/2024
 Procedimiento para hacer crud completo de roles 
@@ -523,4 +303,333 @@ DELIMITER ;
 
 
 
+-----------------------------------------------
+procedimientos de Proveedores 
+------------------------------------15/6/2024
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Proveedor_listar`()
+BEGIN
+SELECT Prov_Id,Prov_Proveedor,Prov_Telefono,Muni_Municipio
+ FROM gral_tbproveedores P
+LEFT JOIN gral_tbmunicipios M ON P.Muni_Codigo = M.Muni_Codigo 
+WHERE Prov_Estado = 1;
+END
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Municipio_listar`()
+BEGIN
+    SELECT Muni_Codigo,Muni_Municipio
+    FROM gral_tbmunicipios M;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Proveedores_insertar`(
+    IN `Prov_Proveedor` VARCHAR(100),
+    IN `Prov_Telefono` VARCHAR(8),
+    IN `Muni_Codigo` VARCHAR(4),
+    IN `Prov_UsuarioCreacion` INT,
+    IN `Prov_FechaCreacion` DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        INSERT INTO gral_tbproveedores
+        (
+            `Prov_Proveedor`, 
+            `Prov_Telefono`, 
+            `Muni_Codigo`, 
+            `Prov_Estado`, 
+            `Prov_UsuarioCreacion`, 
+            `Prov_FechaCreacion`
+        )
+        VALUES 
+        (
+            Prov_Proveedor, 
+            Prov_Telefono, 
+            Muni_Codigo, 
+            1, 
+            Prov_UsuarioCreacion, 
+            Prov_FechaCreacion
+        );
+
+        IF ROW_COUNT() = 0 THEN
+            ROLLBACK;
+            SELECT 0 AS Resultado;
+        ELSE
+            COMMIT;
+            SELECT 1 AS Resultado;
+        END IF;
+    END;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Proveedor_actualizar`(
+    IN p_Prov_Id INT,
+    IN p_Prov_Proveedor VARCHAR(100),
+    IN p_Prov_Telefono VARCHAR(15),
+    IN p_Muni_Codigo VARCHAR(4),
+    IN p_Prov_UsuarioModificacion INT,
+    IN p_Prov_FechaModificacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        -- Actualizar los campos según el Prov_Id
+        UPDATE gral_tbproveedores
+        SET
+            Prov_Proveedor = p_Prov_Proveedor,
+            Prov_Telefono = p_Prov_Telefono,
+            Muni_Codigo = p_Muni_Codigo,
+            Prov_UsuarioModificacion = p_Prov_UsuarioModificacion,
+            Prov_FechaModificacion = p_Prov_FechaModificacion
+        WHERE
+            Prov_Id = p_Prov_Id;
+
+        COMMIT;
+        SELECT 1;
+    END;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Proveedor_buscar`(
+    IN ProvId_param INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        -- Consulta para obtener información según el Prov_Id
+        SELECT
+            Prov_Proveedor,
+            Prov_Telefono,
+            P.Muni_Codigo,
+			m.Muni_Municipio,
+         Prov_UsuarioCreacion,
+         Prov_FechaCreacion,
+         Prov_UsuarioModificacion,
+            Prov_FechaModificacion
+        FROM gral_tbproveedores P INNER JOIN gral_tbmunicipios m
+        on p.Muni_Codigo = m.Muni_Codigo
+        WHERE Prov_Id = ProvId_param;
+
+        COMMIT;
+    END;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Proveedores_eliminar`(
+    IN p_Prov_Id INT
+)
+BEGIN
+    DECLARE error_message VARCHAR(255);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        GET DIAGNOSTICS CONDITION 1 error_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT CONCAT('Error: ', error_message) AS Resultado;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        GET DIAGNOSTICS CONDITION 1 error_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT CONCAT('Advertencia: ', error_message) AS Resultado;
+    END;
+
+    START TRANSACTION;
+    
+    -- Actualizar el estado del proveedor a inactivo
+    UPDATE gral_tbproveedores
+    SET Prov_Estado = 0
+    WHERE Prov_Id = p_Prov_Id;
+
+    IF ROW_COUNT() > 0 THEN
+        -- Si se actualizó al menos una fila, confirmar la transacción
+        COMMIT;
+        SELECT 1 AS Resultado;
+    ELSE
+        -- Si no se actualizó ninguna fila, revertir la transacción y devolver un mensaje de error
+        SET error_message = 'No se encontró ningún proveedor con el ID proporcionado.';
+        ROLLBACK;
+        SELECT error_message AS Resultado;
+    END IF;
+END
+----------------------------------fin procedimientos de proveedor
+
+
+------------------------------------------------------------------
+Procedimientos de Reparaciones 
+------------------------------------------------------------------
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Reparaciones_listar`()
+BEGIN
+    SELECT Repa_Id,Repa_Codigo,Repa_Tipo_Reparacion
+    FROM vent_tbreparaciones 
+    WHERE Repa_Estado = 1;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Reparaciones_insertar`(
+    IN `Repa_Codigo` VARCHAR(12),
+    IN `Repa_Tipo_Reparacion` VARCHAR(100),
+    IN `Repa_UsuarioCreacion` INT,
+    IN `Repa_FechaCreacion` DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        INSERT INTO vent_tbreparaciones 
+        (
+           `Repa_Codigo`, 
+            `Repa_Tipo_Reparacion`, 
+            `Repa_Estado`, 
+            `Repa_UsuarioCreacion`, 
+            `Repa_FechaCreacion`
+        )
+        VALUES 
+        (
+            Repa_Codigo, 
+            Repa_Tipo_Reparacion, 
+            1, 
+            Repa_UsuarioCreacion, 
+            Repa_FechaCreacion
+        );
+
+        IF ROW_COUNT() = 0 THEN
+            ROLLBACK;
+            SELECT 0 AS Resultado;
+        ELSE
+            COMMIT;
+            SELECT 1 AS Resultado;
+        END IF;
+    END;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_reparaciones_actualizar`(
+    IN r_Repa_Id INT,
+    IN r_Repa_Codigo VARCHAR(12),
+    IN r_Repa_Tipo_Reparacion VARCHAR(100),
+    IN r_Repa_UsuarioModifica INT,
+    IN r_Repa_FechaModifica DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        ROLLBACK;
+        SELECT 0;
+    END;
+
+    START TRANSACTION;
+    BEGIN
+        -- Actualizar los campos según el Repa_Id
+        UPDATE vent_tbreparaciones 
+        SET
+         Repa_Codigo = r_Repa_Codigo,
+         Repa_Tipo_Reparacion = r_Repa_Tipo_Reparacion,
+         Repa_UsuarioModifica = r_Repa_UsuarioModifica,
+		 Repa_FechaModifica = r_Repa_FechaModifica      
+        WHERE
+           Repa_Id  = r_Repa_Id;
+
+        COMMIT;
+        SELECT 1;
+    END;
+END
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Reparaciones_buscar`(
+IN RepaId_buscar int
+)
+BEGIN
+    SELECT Repa_Id,Repa_Codigo,Repa_Tipo_Reparacion,Repa_UsuarioCreacion,
+    Repa_FechaCreacion,Repa_UsuarioModifica,Repa_FechaModifica
+    FROM vent_tbreparaciones 
+    where Repa_Id = RepaId_buscar;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_reparaciones_eliminar`(
+    IN r_Repa_Id INT
+  
+)
+BEGIN
+    DECLARE error_message VARCHAR(255);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo de errores
+        GET DIAGNOSTICS CONDITION 1 error_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT CONCAT('Error: ', error_message) AS Resultado;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- Manejo de advertencias
+        GET DIAGNOSTICS CONDITION 1 error_message = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT CONCAT('Advertencia: ', error_message) AS Resultado;
+    END;
+
+    START TRANSACTION;
+    
+  
+    UPDATE vent_tbreparaciones
+    SET Repa_Estado = 0
+    WHERE Repa_Id = r_Repa_Id;
+
+    IF ROW_COUNT() > 0 THEN
+        -- Si se actualizó al menos una fila, confirmar la transacción
+        COMMIT;
+        SELECT 1 AS Resultado;
+    ELSE
+        -- Si no se actualizó ninguna fila, revertir la transacción y devolver un mensaje de error
+        SET error_message = 'No se encontró ningún proveedor con el ID proporcionado.';
+        ROLLBACK;
+        SELECT error_message AS Resultado;
+    END IF;
+END
+--------------------------------fin procedimientos de reparaciones 
