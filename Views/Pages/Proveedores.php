@@ -248,15 +248,21 @@ $(document).ready(function () {
                 if (response == 1) {
                     iziToast.success({
                     title: 'Éxito',
-                    message: 'Reparacion guardado correctamente.',
+                    message: 'Proveedor guardado correctamente.',
                 });
-                    alert('Proveedor guardado correctamente.');
+                
                     $('#TablaMarca').DataTable().ajax.reload();
                     limpiarFormulario();
                     $('.CrearMostrar').hide();
                     $('.CrearOcultar').show();
                 } else {
-                    alert('Error al guardar el proveedor.');
+                    iziToast.error({
+                    title: 'Error',
+                    message: 'Error al guadarar al proveedor.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
