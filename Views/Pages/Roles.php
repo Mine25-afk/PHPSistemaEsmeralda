@@ -69,7 +69,45 @@
 .tree li > ul > li input[type="checkbox"] {
     margin-right: 5px;
 }
+/* Remove default bullets */
+ul, #myUL {
+  list-style-type: none;
+}
 
+/* Remove margins and padding from the parent ul */
+#myUL {
+  margin: 0;
+  padding: 0;
+}
+
+/* Style the caret/arrow */
+.caret {
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.caret-down::before {
+  transform: rotate(90deg);
+}
+
+/* Hide the nested list */
+.nested {
+  display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.active {
+  display: block;
+}
 </style>
 
 </head>
@@ -189,9 +227,10 @@
                         // Clasificación manual basada en tus necesidades
                         if (pantalla.Pant_Descripcion.includes("Usuarios") || pantalla.Pant_Descripcion.includes("Roles")) {
                             categorias["Acceso"].push(pantalla);
-                        } else if (pantalla.Pant_Descripcion.includes("Cargos") || pantalla.Pant_Descripcion.includes("Categorias") || pantalla.Pant_Descripcion.includes("Clientes")) {
+                        } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados")) {
                             categorias["Generales"].push(pantalla);
-                        } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra")) {
+                        } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") || pantalla.Pant_Descripcion.includes("Maquillajes")|| pantalla.Pant_Descripcion.includes("Transferencias")
+                        || pantalla.Pant_Descripcion.includes("Control de stock")|| pantalla.Pant_Descripcion.includes("Reporte de caja")|| pantalla.Pant_Descripcion.includes("Ventas por pago"))  {
                             categorias["Ventas"].push(pantalla);
                         }
                     });
@@ -233,7 +272,11 @@
     $('.pantalla-checkbox:checked').each(function() {
         selectedPantallas.push($(this).data('id'));
     });
-
+    console.log('Datos a enviar:', {
+        Role_Rol: nombreRol,
+            Role_UsuarioCreacion: usuarioId,
+            Role_FechaCreacion: fecha
+});
     // Primera solicitud AJAX para insertar el rol
     $.ajax({
         url: 'Controllers/RolesController.php',
