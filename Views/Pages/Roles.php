@@ -8,26 +8,21 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
     <style>
- /* Estilos mejorados para el tree view */
+/* Estilos mejorados para el tree view */
 .tree ul {
     padding-left: 20px;
     list-style-type: none;
 }
-
 .tree li {
     margin: 5px 0;
     position: relative;
 }
-
 .tree input[type="checkbox"] {
     margin-right: 5px;
 }
-
 .tree label {
     cursor: pointer;
 }
-
-/* Estilo de las líneas */
 .tree li::before {
     content: '';
     position: absolute;
@@ -35,79 +30,60 @@
     left: -10px;
     width: 0;
     height: 100%;
-    border-left: 1px solid #ccc; /* Color de las líneas */
+    border-left: 1px solid #000000; /* Línea más fina */
+    border-bottom: 1px solid #ccc; /* Línea en la parte inferior */
 }
-
 .tree li:last-child::before {
     display: none; /* Ocultar la última línea */
 }
-
-/* Estilo para los íconos de expansión */
 .tree label::before {
     content: '+';
     margin-right: 5px;
     color: green; /* Color del ícono de expansión */
     font-weight: bold;
 }
-
-/* Estilo para los íconos de colapso */
 .tree li.expanded > label::before {
-    content: '-';
+    content: '>';
 }
-
-/* Estilo para las categorías */
 .tree > ul > li > label {
     font-weight: bold;
 }
-
-/* Estilo para las pantallas */
 .tree li > ul > li {
     margin-left: 20px; /* Espacio para las pantallas */
 }
-
-/* Estilo para los checkbox */
 .tree li > ul > li input[type="checkbox"] {
     margin-right: 5px;
 }
-/* Remove default bullets */
 ul, #myUL {
-  list-style-type: none;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
-/* Remove margins and padding from the parent ul */
-#myUL {
-  margin: 0;
-  padding: 0;
-}
-
-/* Style the caret/arrow */
 .caret {
-  cursor: pointer;
-  user-select: none; /* Prevent text selection */
+    cursor: pointer;
+    user-select: none;
 }
 
-/* Create the caret/arrow with a unicode, and style it */
 .caret::before {
-  content: "\25B6";
-  color: black;
-  display: inline-block;
-  margin-right: 6px;
+    content: "\25B6";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
 }
 
-/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
 .caret-down::before {
-  transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
-/* Hide the nested list */
 .nested {
-  display: none;
+    display: none;
 }
 
-/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
 .active {
-  display: block;
+    display: block;
 }
+
 </style>
 
 </head>
@@ -152,13 +128,11 @@ ul, #myUL {
             </div>
         </div>
     </div>
-
-
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
     <script>
+                var selectedPantallas = [];
         $(document).ready(function () {
             $('#tablaOne').DataTable({
                 "ajax": {
@@ -211,18 +185,14 @@ ul, #myUL {
                         console.error('La respuesta del servidor no es un JSON válido:', response);
                         return;
                     }
-
                     var data = response.data;
-
                     console.log('Datos recibidos:', data); // Verifica la estructura de los datos recibidos
-
                     // Clasificación de las pantallas bajo Acceso, Generales, y Ventas
                     var categorias = {
                         "Acceso": [],
                         "Generales": [],
                         "Ventas": []
                     };
-
                     data.forEach(function(pantalla) {
                         // Clasificación manual basada en tus necesidades
                         if (pantalla.Pant_Descripcion.includes("Usuarios") || pantalla.Pant_Descripcion.includes("Roles")) {
@@ -234,33 +204,47 @@ ul, #myUL {
                             categorias["Ventas"].push(pantalla);
                         }
                     });
-
                     var pantallasTreeView = $('#pantallasTreeView > ul');
-                    pantallasTreeView.empty();
+                pantallasTreeView.empty();
 
-                    Object.keys(categorias).forEach(function(categoria) {
-                        var categoriaItem = $(`
-                            <li>
-                                <label class="categoria-label">${categoria}</label>
-                                <ul class="categoria-ul"></ul>
-                            </li>
-                        `);
+                Object.keys(categorias).forEach(function(categoria) {
+                    var categoriaItem = $(`
+                        <li>
+                            <label class="categoria-label">${categoria}</label>
+                            <ul class="categoria-ul"></ul>
+                        </li>
+                    `);
                         pantallasTreeView.append(categoriaItem);
-                        categorias[categoria].forEach(function(pantalla) {
-                            categoriaItem.find('ul').append(
-                                '<li><input type="checkbox" class="pantalla-checkbox" data-id="' + pantalla.Pant_Id + '"><label>' + pantalla.Pant_Descripcion + '</label></li>'
-                            );
-                        });
+                    categorias[categoria].forEach(function(pantalla) {
+                        categoriaItem.find('ul').append(
+                            '<li><input type="checkbox" class="pantalla-checkbox" data-id="' + pantalla.Pant_Id + '"><label>' + pantalla.Pant_Descripcion + '</label></li>'
+                        );
                     });
-
+                    });
+            
                     $('.pantalla-checkbox').change(function() {
-                        console.log('Selected Pantalla ID:', $(this).data('id'));
-                    });
+        var checkbox = $(this);
+        var pantallaId = checkbox.data('id');
+        console.log('Selected Pantalla ID:', pantallaId);
 
-                    // Agregar funcionalidad de expandir/contraer
-                    $('.categoria-label').click(function() {
-                        $(this).next('.categoria-ul').toggle();
-                    });
+        if (checkbox.is(':checked')) {
+            checkbox.closest('li').addClass('selected');
+            selectedPantallas.push(pantallaId);
+        } else {
+            checkbox.closest('li').removeClass('selected');
+            var index = selectedPantallas.indexOf(pantallaId);
+            if (index !== -1) {
+                selectedPantallas.splice(index, 1);
+            }
+        }
+
+        console.log('Selected Pantallas:', selectedPantallas);
+    });
+
+                // Agregar funcionalidad de expandir/contraer
+                $('.categoria-label').click(function() {
+                    $(this).next('.categoria-ul').toggle();
+                });
                 }
             });
             $('#formNuevoRol').submit(function(e) {
@@ -271,13 +255,13 @@ ul, #myUL {
     var selectedPantallas = [];
     $('.pantalla-checkbox:checked').each(function() {
         selectedPantallas.push($(this).data('id'));
+        console.log('Selected Pantallas:', selectedPantallas);
     });
     console.log('Datos a enviar:', {
         Role_Rol: nombreRol,
             Role_UsuarioCreacion: usuarioId,
             Role_FechaCreacion: fecha
-});
-    // Primera solicitud AJAX para insertar el rol
+}); // Primera solicitud AJAX para insertar el rol
     $.ajax({
         url: 'Controllers/RolesController.php',
         type: 'POST',
@@ -292,39 +276,45 @@ ul, #myUL {
             console.log(response);
             try {
                 var jsonResponse = JSON.parse(response);
-                var roleId = jsonResponse.nuevoRolId; // Asumiendo que el ID del rol se devuelve en el campo 'nuevoRolId'
-
+    console.log('Respuesta JSON:', jsonResponse); // Verifica la estructura de la respuesta JSON
+    
+    var roleId = jsonResponse.nuevoRolId; // Asumiendo que el ID del rol se devuelve en el campo 'nuevoRolId'
+    console.log('ID del nuevo rol:', roleId); // Verifica que obtienes correctamente el ID del nuevo rol
+ // Asumiendo que el ID del rol se devuelve en el campo 'nuevoRolId'
                 // Segunda solicitud AJAX para insertar las pantallas por rol
+                console.log('Datos a enviar:', {
+                    Role_Id: roleId,
+                    Pantallas: selectedPantallas
+});
                 $.ajax({
                     url: 'Controllers/RolesController.php',
                     type: 'POST',
                     traditional: true, // Necesario para enviar arrays
-                    data: {
-                        action: 'insertarPantallaPorRol',
-                        Role_Id: roleId,
-                        Pantallas: selectedPantallas
-                    },
-                    success: function(response) {
-                        console.log(response);
+                    data:  {
+        action: 'insertarPantallaPorRol',
+        data: {
+            Role_Id: roleId, // roleId es el ID del rol
+            Pantallas: selectedPantallas // selectedPantallas es un array con los IDs de las pantallas seleccionadas
+        }
+    },
+    
+    success: function(response) {
+        console.log('Respuesta de insertarPantallaPorRol:', response);// Verifica la respuesta de la inserción de pantallas por rol
                         // Aquí puedes agregar la lógica para actualizar la tabla o mostrar un mensaje de éxito
                     }
                 });
             } catch (e) {
-                console.error("Error al parsear JSON: ", e);
-                console.error("Respuesta del servidor: ", response);
+                console.error('Error al parsear JSON:', e); // Imprime cualquier error al parsear JSON
+                console.error('Respuesta del servidor:', response); // Imprime la respuesta del servidor para investigar posibles problemas
             }
         },
-        error: function(xhr, status, error) {
-            console.error("Error en la solicitud AJAX: ", error);
-            console.error("Estado: ", status);
-            console.error("Respuesta completa: ", xhr.responseText);
+        error:  function(xhr, status, error) {
+        console.error("Error en la solicitud AJAX: ", error);
+        console.error("Estado: ", status);
+        console.error("Respuesta completa: ", xhr.responseText);
         }
     });
 });
-
-
-
-
         });
     </script>
 </body>
