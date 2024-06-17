@@ -73,12 +73,7 @@
             <div class="CrearMostrar">
     <form id="joyaForm" enctype="multipart/form-data">
         <input type="hidden" name="Joya_Id" id="Joya_Id">
-        <div class="form-row">
-            <div class="col-md-6">
-                <label class="control-label">Código</label>
-                <input name="Joya_Codigo" type="number" min=0 class="form-control" id="Joya_Codigo" required/>
-                <div class="error-message" id="Joya_Codigo_error"></div>
-            </div>
+        <div class="form-row">       
             <div class="col-md-6">
                 <label class="control-label">Nombre</label>
                 <input name="Joya_Nombre" class="form-control" id="Joya_Nombre" required/>
@@ -283,10 +278,40 @@
     </div>
 </div>
 
+<!-- Modal Código de Barras -->
+<div class="modal fade" id="codigoBarrasModal" tabindex="-1" aria-labelledby="codigoBarrasModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content d-flex justify-content-center align-items-center">
+            <div class="modal-header">
+                <h5 class="modal-title" id="codigoBarrasModalLabel">Código de Barras</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group text-center">
+                    <label for="cantidadCodigos">Cantidad de Códigos a Imprimir:</label>
+                    
+                        <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
+                    
+                </div>
+                <div class="barcode-container text-center" id="barcodeContainer"></div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" id="generarCodigos">Generar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-success" id="imprimirCodigos">Imprimir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 <script>
 $(document).ready(function () {
     var table = $('#TablaJoya').DataTable({
@@ -320,7 +345,7 @@ $(document).ready(function () {
         { "data": "Cate_Categoria" },
         {
             "data": null,
-            "defaultContent": "<div class='acciones-container'><a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button></div>"
+            "defaultContent": "<div class='acciones-container'><a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button></div> <button class='btn btn-info btn-sm abrir-generar-codigo'><i class='fas fa-barcode'></i> Generar Código de Barras</button>"
         }
 
 
@@ -432,13 +457,31 @@ $(document).ready(function () {
     var isValid = true;
 
 
-    if ($('#Joya_Codigo').val().trim() === '') {
-            $('#Joya_Codigo_error').text('Este campo es requerido');
-            isValid = false;
-        } else if (!$('#Joya_Codigo').val().startsWith('01')) {
-            $('#Joya_Codigo_error').text('El código debe comenzar con "01"');
+    // Captura el valor del material seleccionado
+    var materialSeleccionado = $('#Mate_Id option:selected').text();
+        console.log('Material seleccionado:', materialSeleccionado); // Debugging line
+
+        // Asegúrate de que el valor no sea undefined
+        if (materialSeleccionado === undefined) {
+            $('#Mate_Id_error').text('Este campo es requerido');
             isValid = false;
         }
+
+        // Extrae las primeras dos letras del material seleccionado
+        var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
+        console.log('Código del material:', codigoMaterial); // Debugging line
+
+        // Genera un código aleatorio
+        var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
+        console.log('Código aleatorio:', codigoAleatorio); // Debugging line
+
+        // Concatena las primeras dos letras del material con el código aleatorio para formar el Joya_Codigo
+        var joyaCodigo = codigoMaterial + codigoAleatorio;
+        console.log('Joya Código generado:', joyaCodigo); // Debugging line
+
+        // Asigna el Joya_Codigo generado al campo correspondiente
+        $('#Joya_Codigo').val(joyaCodigo);
+        
     if ($('#Joya_Nombre').val().trim() === '') {
         $('#Joya_Nombre_error').text('Este campo es requerido');
         isValid = false;
@@ -476,7 +519,7 @@ $(document).ready(function () {
             var joyaData = new FormData();
             joyaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
             joyaData.append('Joya_Id', $('#Joya_Id').val());
-            joyaData.append('Joya_Codigo', $('#Joya_Codigo').val());
+            joyaData.append('Joya_Codigo', joyaCodigo);
             joyaData.append('Joya_Nombre', $('#Joya_Nombre').val());
             joyaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
             joyaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
@@ -532,6 +575,70 @@ $(document).ready(function () {
                 }
             });
         }
+    });
+
+    $('#TablaJoya tbody').on('click', '.abrir-generar-codigo', function() {
+        var data = table.row($(this).parents('tr')).data();
+        var codigo = data.Joya_Codigo;
+
+        // Verificar si el código es válido y no está vacío
+        if (!codigo || codigo.length < 1) {
+            alert("El código es demasiado corto para generar un código de barras válido.");
+            return;
+        }
+
+        // Mostrar el modal
+        $('#codigoBarrasModal').modal('show');
+
+        // Guardar el código en el modal para uso posterior
+        $('#codigoBarrasModal').data('codigo', codigo);
+
+        // Generar automáticamente los códigos de barras al abrir el modal por primera vez
+        generarCodigosBarras(codigo);
+    });
+
+    // Función para generar los códigos de barras según la cantidad especificada
+    function generarCodigosBarras(codigo) {
+        var cantidad = parseInt($('#cantidadCodigos').val());
+
+        // Limpiar el contenedor de códigos de barras
+        $('#barcodeContainer').empty();
+
+        // Generar los códigos de barras
+        for (var i = 0; i < cantidad; i++) {
+            var svg = $('<svg class="barcode-item"></svg>');
+            JsBarcode(svg[0], codigo, {
+                format: "CODE128",
+                displayValue: true,
+                fontSize: 20,
+                text: codigo
+            });
+            $('#barcodeContainer').append(svg);
+        }
+    }
+
+    // Botón para generar los códigos de barras
+    $('#generarCodigos').click(function() {
+        var codigo = $('#codigoBarrasModal').data('codigo');
+        generarCodigosBarras(codigo);
+    });
+
+    // Botón para imprimir los códigos de barras
+    $('#imprimirCodigos').click(function() {
+        var printContents = document.getElementById('barcodeContainer').innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+
+        location.reload(); // Opcional: puedes refrescar la página después de imprimir
+    });
+
+    // Evento cuando se cambia la cantidad de códigos a generar
+    $('#cantidadCodigos').change(function() {
+        var codigo = $('#codigoBarrasModal').data('codigo');
+        generarCodigosBarras(codigo);
     });
 
 
