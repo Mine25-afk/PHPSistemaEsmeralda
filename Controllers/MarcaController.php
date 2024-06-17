@@ -12,15 +12,8 @@ class MarcaController {
         $data = array();
         foreach ($result as $row) {
             $data[] = array(
-                'Maqu_Codigo' => $row['Maqu_Codigo'],
-                'Maqu_Id'=> $row['Maqu_Id'],
-                'Maqu_Nombre' => $row['Maqu_Nombre'],
-                'Maqu_PrecioCompra' => $row['Maqu_PrecioCompra'],
-                'Maqu_PrecioVenta' => $row['Maqu_PrecioVenta'],
-                'Maqu_PrecioMayor' => $row['Maqu_PrecioMayor'],
-                'Maqu_Imagen' => $row['Maqu_Imagen'],
                 'Marc_Id' => $row['Marc_Id'],
-                'Prov_Id' => $row['Prov_Id'],
+                'Marc_Marca'=> $row['Marc_Marca']
             );
         }
         echo json_encode(array('data' => $data));

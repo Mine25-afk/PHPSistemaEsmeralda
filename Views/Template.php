@@ -13,7 +13,9 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="Views/Resources/dist/css/adminlte.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
     <link rel="stylesheet" href="Views/Resources/css/IziToast.css">
+    
     <script src="Views/Resources/js/JqueryVS3_7_1.js"></script>
   </head>
 <body class="hold-transition sidebar-mini">
