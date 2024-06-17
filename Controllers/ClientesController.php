@@ -46,30 +46,36 @@ class ClientesController {
         }
     }
 
-    public function insertarClientes($Clie_Nombre, $Clie_Apellido, $Clie_FechaNac, $Clie_Sexo, $Clie_DNI, $Muni_Codigo, $Esta_Id, $Clie_UsuarioCreacion, $Clie_FechaCreacion, $Clie_esMayorista) {
-        global $pdo;
-        try {
-            $sql = 'CALL SP_Clientes_insertar(:Clie_Nombre, :Clie_Apellido, :Clie_FechaNac, :Clie_Sexo, :Clie_DNI, :Muni_Codigo, :Esta_Id, :Clie_UsuarioCreacion, :Clie_FechaCreacion, :Clie_esMayorista)';
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':Clie_Nombre', $Clie_Nombre, PDO::PARAM_STR);
-            $stmt->bindParam(':Clie_Apellido', $Clie_Apellido, PDO::PARAM_STR);
-            $stmt->bindParam(':Clie_FechaNac', $Clie_FechaNac, PDO::PARAM_STR);
-            $stmt->bindParam(':Clie_Sexo', $Clie_Sexo, PDO::PARAM_STR);
-            $stmt->bindParam(':Clie_DNI', $Clie_DNI, PDO::PARAM_STR);
-            $stmt->bindParam(':Muni_Codigo', $Muni_Codigo, PDO::PARAM_STR);
-            $stmt->bindParam(':Esta_Id', $Esta_Id, PDO::PARAM_INT);
-            $stmt->bindParam(':Clie_UsuarioCreacion', $Clie_UsuarioCreacion, PDO::PARAM_INT);
-            $stmt->bindParam(':Clie_FechaCreacion', $Clie_FechaCreacion, PDO::PARAM_STR);
-            $stmt->bindParam(':Clie_esMayorista', $Clie_esMayorista, PDO::PARAM_BOOL);
-            $stmt->execute();
-
-            $result = $stmt->fetchColumn();
-            return $result;
-        } catch (Exception $e) {
-            error_log('Error al insertar cliente: ' . $e->getMessage());
-            return 0; 
+    function insertarCliente($conn) {
+        $Clie_Nombre = $_POST['Clie_Nombre'];
+        $Clie_Apellido = $_POST['Clie_Apellido'];
+        $Clie_DNI = $_POST['Clie_DNI'];
+        $Clie_FechaNac = $_POST['Clie_FechaNac'];
+        $Clie_Sexo = $_POST['Clie_Sexo'];
+        $Muni_Codigo = $_POST['Muni_Codigo'];
+        $Esta_Id = $_POST['Esta_Id'];
+        $Clie_esMayorista = $_POST['Clie_esMayorista'];
+        $Clie_UsuarioCreacion = $_POST['Clie_UsuarioCreacion'];
+        $Clie_FechaCreacion = $_POST['Clie_FechaCreacion'];
+        $Clie_UsuarioModificacion = $_POST['Clie_UsuarioModificacion'];
+        $Clie_FechaModificacion = $_POST['Clie_FechaModificacion'];
+    
+        $sql = "CALL sp_insertar_cliente(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssssiiiss", $Clie_Nombre, $Clie_Apellido, $Clie_DNI, $Clie_FechaNac, $Clie_Sexo, $Muni_Codigo, $Esta_Id, $Clie_esMayorista, $Clie_UsuarioCreacion, $Clie_FechaCreacion, $Clie_UsuarioModificacion, $Clie_FechaModificacion);
+    
+        if ($stmt->execute()) {
+            $response = array("result" => 1, "message" => "Cliente insertado exitosamente");
+        } else {
+            $response = array("result" => 0, "error" => $stmt->error);
         }
+    
+        echo json_encode($response);
+        $stmt->close();
+        $conn->close();
     }
+    
+    
 
     public function actualizarClientes($Clie_Nombre, $Clie_Apellido, $Clie_FechaNac, $Clie_Sexo, $Clie_DNI, $Muni_Codigo, $Esta_Id, $Clie_UsuarioModificacion, $Clie_FechaModificacion, $Clie_Id, $Clie_esMayorista) {
         global $pdo;

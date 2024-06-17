@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Joyas</title>
+    <title>CRUD Clientes</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -43,7 +43,7 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <h2 class="text-center" style="font-size:34px !important">Joyas</h2>
+            <h2 class="text-center" style="font-size:34px !important">Clientes</h2>
             <div class="CrearOcultar">
             <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
                 <hr>
@@ -276,7 +276,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar esta joya?
+                ¿Estás seguro de que deseas eliminar este cliente?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -387,6 +387,7 @@ $(document).ready(function () {
 
 
     $('#guardarBtn').click(function() {
+        console.log('Botón Guardar clickeado');
     $('.error-message').text('');
     var isValid = true;
 
@@ -400,10 +401,7 @@ $(document).ready(function () {
         $('#Clie_Apellido_error').text('Este campo es requerido');
         isValid = false;
     }
-    // if ($('#Clie_DNI').val().trim() === '') {
-    //     $('#Clie_DNI_error').text('Este campo es requerido');
-    //     isValid = false;
-    // }
+
     if ($('#Clie_FechaNac').val().trim() === '') {
         $('#Clie_FechaNac_error').text('Este campo es requerido');
         isValid = false;
@@ -421,10 +419,7 @@ $(document).ready(function () {
         $('#Esta_Id_error').text('Este campo es requerido');
         isValid = false;
     }
-    // if ($('#Clie_esMayorista').val() === null) {
-    //     $('#Clie_esMayorista_error').text('Este campo es requerido');
-    //     isValid = false;
-    // }
+ 
 
     if (isValid) {
             var clienteData = new FormData();
@@ -442,7 +437,7 @@ $(document).ready(function () {
             clienteData.append('Clie_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
             clienteData.append('Clie_UsuarioModificacion', 1);
             clienteData.append('Clie_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-            console.log('Datos a enviar:', clienteData); 
+            console.log('Datos a enviar:', clienteData);
             $.ajax({
     url: 'Controllers/ClientesController.php',
     type: 'POST',
@@ -468,7 +463,7 @@ $(document).ready(function () {
         } else {
             iziToast.error({
                 title: 'Error',
-                message: 'Error al insertar/actualizar joya. ' + (response.error ? response.error : ''),
+                message: 'Error al insertar/actualizar cliente. ' + (response.error ? response.error : ''),
                 position: 'topRight',
                 transitionIn: 'flipInX',
                 transitionOut: 'flipOutX'
@@ -494,19 +489,19 @@ $(document).ready(function () {
 
     $('#TablaCliente tbody').on('click', '.abrir-eliminar', function () {
         var data = table.row($(this).parents('tr')).data();
-        var joyaId = data.Clie_Id;
+        var clienteId = data.Clie_Id;
         $('#eliminarModal').modal('show');
-        $('#confirmarEliminarBtn').data('joya-id', joyaId);
+        $('#confirmarEliminarBtn').data('cliente-id', clienteId);
     });
 
     $('#confirmarEliminarBtn').click(function() {
-        var joyaId = $(this).data('joya-id');
+        var clienteId = $(this).data('cliente-id');
         $.ajax({
             url: 'Controllers/ClientesController.php',
             type: 'POST',
             data: {
                 action: 'eliminar',
-                Clie_Id: joyaId
+                Clie_Id: clienteId
             },
             success: function(response) {
                 if (response.result == 1) {
@@ -522,7 +517,7 @@ $(document).ready(function () {
                 } else {
                     iziToast.error({
                         title: 'Error',
-                        message: 'Error al eliminar joya.',
+                        message: 'Error al eliminar cliente.',
                         position: 'topRight',
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
