@@ -476,3 +476,47 @@ BEGIN
 END
 //
 DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_FacturaCompra_Buscar`(
+in p_FaCE_Id int)
+BEGIN
+	SELECT
+		fe.FaCE_Id as faCE_Id,
+		fe.Prov_Id,
+		faCD_Dif = 0,
+		P.Prov_Proveedor as nombreProveedor,
+		fe.Mepa_Id,
+		M.Mepa_Metodo,
+		fe.FaCE_fechafinalizacion,
+		s.Sucu_Id as sucu_Id,
+		s.Sucu_Nombre as sucu_Nombre
+	FROM vent_tbFacturaCompraEncabezado fe LEFT JOIN acce_tbUsuarios U1
+	ON fe.FeCE_UsuarioCreacion = U1.Usua_Id LEFT JOIN acce_tbUsuarios U2
+	ON fe.FaCE_UsuarioModificacion = U2.Usua_Id LEFT JOIN gral_proveedores P
+	ON P.Prov_Id = fe.Prov_Id left join gral_tbMetodosPago M
+	ON M.Mepa_Id = fe.Mepa_Id left join gral_tbSucursales s
+	on s.Sucu_Id = fe.Sucu_Id
+	where FaCE_Id = p_FaCE_Id and FaCE_Etado = 1;
+END 
+ $$
+DELIMITER ;
+
+DELIMITER $$
+create  procedure SP_FacturaCompra_Finalizar(
+in p_FaCE_Id int,
+IN p_FaCE_FechaFinal datetime
+)
+BEGIN
+	START TRANSACTION;
+
+		UPDATE vent_tbFacturaCompraEncabezado
+		SET
+		FaCE_Finalizada = 1,
+		FaCE_fechafinalizacion = p_FaCE_FechaFinal
+		where FaCE_Id = p_FaCE_Id;
+         COMMIT;
+    SELECT 1 AS Resultado;
+END
+ $$
+DELIMITER ;
