@@ -30,7 +30,7 @@
                                     <input name="Usuario" class="form-control letras" id="Usuario" />
                                     <span class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 contraseña-container">
                                     <label class="control-label">Contraseña</label>
                                     <input name="Contraseña" class="form-control letras" id="Contraseña" />
                                     <span class="text-danger"></span>
@@ -58,74 +58,73 @@
                                         <label class="custom-control-label" for="Administrador"></label>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="form-row d-flex justify-content-start">
-                                        <div class="col-md-2">
-                                            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-                                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="form-row mt-3">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary" id="guardarBtn">Guardar</button>
+                                    <a id="CerrarModal" class="btn btn-secondary ml-2" style="color:white">Volver</a>
                                 </div>
+                            </div>
                         </form>
                     </div>
-                    <div id="Detalles">
-                        <div class="row" style="padding: 10px;">
-                            <div class="col-md-4">
-                                <strong>Usuario</strong>
-                                <p id="DetallesUsuario"></p>
-                            </div>
-                            <div class="col-md-4">
-                                <strong>Empleado</strong>
-                                <p id="DetallesEmpleado"></p>
-                            </div>
-                            <div class="col-md-4">
-                                <strong>Rol</strong>
-                                <p id="DetallesRol"></p>
-                            </div>
+                </div>
+                <div id="Detalles">
+                    <div class="row" style="padding: 10px;">
+                        <div class="col-md-4">
+                            <strong>Usuario</strong>
+                            <p id="DetallesUsuario"></p>
                         </div>
-                        <div class="row" style="padding: 10px;">
-                            
-                            <div class="col-md-4">
-                                <strong>Administrador</strong>
-                                <p id="DetallesAdministrador"></p>
-                            </div>
+                        <div class="col-md-4">
+                            <strong>Empleado</strong>
+                            <p id="DetallesEmpleado"></p>
                         </div>
-                        <div class="card mt-2">
-                            <div class="card-body">
-                                <h5>Auditoría</h5>
-                                <hr>
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Acciones</th>
-                                            <th>Usuario</th>
-                                            <th>Fecha</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Insertar</td>
-                                            <td><label for="" id="DetallesUsuarioCreacion"></label></td>
-                                            <td><label for="" id="DetallesFechaCreacion"></label></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Modificar</td>
-                                            <td><label for="" id="DetallesUsuarioModificacion"></label></td>
-                                            <td><label for="" id="DetallesFechaModificacion"></label></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="col-md-4">
+                            <strong>Rol</strong>
+                            <p id="DetallesRol"></p>
                         </div>
-                        <div class="col d-flex justify-content-end m-3">
-                            <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
+                    </div>
+                    <div class="row" style="padding: 10px;">
+                        <div class="col-md-4">
+                            <strong>Administrador</strong>
+                            <p id="DetallesAdministrador"></p>
                         </div>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-body">
+                            <h5>Auditoría</h5>
+                            <hr>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Acciones</th>
+                                        <th>Usuario</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Insertar</td>
+                                        <td><label for="" id="DetallesUsuarioCreacion"></label></td>
+                                        <td><label for="" id="DetallesFechaCreacion"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Modificar</td>
+                                        <td><label for="" id="DetallesUsuarioModificacion"></label></td>
+                                        <td><label for="" id="DetallesFechaModificacion"></label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-end m-3">
+                        <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -146,6 +145,12 @@
         </div>
     </div>
 </div>
+
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
 
 <script>
     $(document).ready(function() {
@@ -182,10 +187,17 @@
                     d.action = 'listarUsuarios';
                 },
                 "dataSrc": function(json) {
-                    return json.data;
+                    console.log('Respuesta del servidor:', json);
+                    if (json.error) {
+                        console.error('Error:', json.error);
+                        alert('Error al listar usuarios: ' + json.error);
+                        return [];
+                    } else {
+                        return json.data;
+                    }
                 }
             },
-            language: {
+            "language": {
                 "decimal": "",
                 "emptyTable": "No hay información",
                 "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
@@ -204,11 +216,18 @@
                     "previous": "Anterior"
                 }
             },
-            "columns": [
-                { "data": "Usua_Usuario" },
-                { "data": "Usua_Administrador" },
-                { "data": "Empleado" },
-                { "data": "Role_Rol" },
+            "columns": [{
+                    "data": "Usua_Usuario"
+                },
+                {
+                    "data": "Usua_Administrador"
+                },
+                {
+                    "data": "Empleado"
+                },
+                {
+                    "data": "Role_Rol"
+                },
                 {
                     "data": null,
                     "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
@@ -224,12 +243,15 @@
             $('.CrearOcultar').hide();
             $('.CrearMostrar').show();
             sessionStorage.setItem('Usua_Id', "0");
+            $('.contraseña-container').removeClass('hidden');
         });
 
         $('#CerrarModal').click(function() {
-            $('.CrearOcultar').show();
-            $('.CrearMostrar').hide();
-        });
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
+    $('#quickForm')[0].reset(); 
+});
+
 
         function cargarDatos() {
             $.ajax({
@@ -269,14 +291,24 @@
 
         $('#TablaMarca tbody').on('click', '.abrir-eliminar', function() {
             var data = table.row($(this).parents('tr')).data();
-            console.log(data);
-            var Usua_Id = data.Usua_Id;
-            sessionStorage.setItem('Usua_Id', Usua_Id);
+            console.log('Datos para eliminar:', data);
+
+            if (!data.Usua_Id) {
+                console.error('Usua_Id está vacío o indefinido:', data);
+                return;
+            }
+
+            sessionStorage.setItem('Usua_Id', data.Usua_Id);
             $('#eliminarModal').modal('show');
         });
 
         $('#confirmarEliminarBtn').click(function() {
             var Usua_Id = sessionStorage.getItem('Usua_Id');
+            if (!Usua_Id) {
+                console.error('Usua_Id está vacío o indefinido:', Usua_Id);
+                return;
+            }
+
             $.ajax({
                 url: 'Controllers/UsuarioController.php',
                 type: 'POST',
@@ -309,16 +341,16 @@
         $('#guardarBtn').click(function() {
             if ($('#quickForm').valid()) {
                 var usuarioData = {
-                    Usuario: $('#Usuario').val(),
-                    Contraseña: $('#Contraseña').val(),
+                    Usuario: $('#Usuario').val() ? $('#Usuario').val() : 'sua',
+                    Contraseña: $('#Contraseña').val() ? $('#Contraseña').val() : 'sua',
                     Administrador: $('#Administrador').is(':checked') ? 1 : 0,
-                    Empleado: $('#Empleado').val(),
-                    Rol: $('#Rol').val()
+                    Empleado: $('#Empleado').val() ? $('#Empleado').val() : 4,
+                    Rol: $('#Rol').val() ? $('#Rol').val() : 7
                 };
                 var Valor = sessionStorage.getItem('Usua_Id');
                 var InsertarOActualizar = Valor == "0";
 
-                console.log(usuarioData, Valor);
+                console.log('Datos a enviar:', usuarioData, Valor);
 
                 $.ajax({
                     url: 'Controllers/UsuarioController.php',
@@ -326,12 +358,16 @@
                     data: {
                         action: InsertarOActualizar ? 'insertar' : 'actualizar',
                         Usua_Id: Valor,
-                        ...usuarioData,
+                        Usuario: usuarioData.Usuario,
+                        Contraseña: InsertarOActualizar ? usuarioData.Contraseña : '', 
+                        Administrador: usuarioData.Administrador,
+                        Empleado: usuarioData.Empleado,
+                        Rol: usuarioData.Rol,
                         Usua_UsuarioModificacion: 1,
                         Usua_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
                     },
                     success: function(response) {
-                        console.log(response);
+                        console.log('Respuesta del servidor:', response);
                         if (response == 1) {
                             $('#quickForm')[0].reset();
                             iziToast.success({
@@ -347,14 +383,15 @@
                         } else {
                             iziToast.error({
                                 title: 'Error',
-                                message: 'No se pudo guardar el usuario',
+                                message: 'No se pudo guardar el usuario: ' + response,
                                 position: 'topRight',
                                 transitionIn: 'flipInX',
                                 transitionOut: 'flipOutX'
                             });
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error('Error en la solicitud:', error);
                         alert('Error en la comunicación con el servidor.');
                     }
                 });
@@ -363,6 +400,13 @@
 
         $('#TablaMarca tbody').on('click', '.abrir-editar', function() {
             var data = table.row($(this).parents('tr')).data();
+            console.log('Datos para editar:', data);
+
+            if (!data.Usua_Id) {
+                console.error('Usua_Id está vacío o indefinido:', data);
+                return;
+            }
+
             sessionStorage.setItem('Usua_Id', data.Usua_Id);
 
             $.ajax({
@@ -373,13 +417,20 @@
                     Usua_Id: data.Usua_Id
                 },
                 success: function(response) {
-                    var data = JSON.parse(response).data[0];
-                    $('#Usuario').val(data.Usua_Usuario);
-                    $('#Empleado').val(data.Empl_Id).trigger('change');
-                    $('#Rol').val(data.Role_Id).trigger('change');
-                    $('#Administrador').prop('checked', data.Usua_Administrador == 1);
-                    $('.CrearOcultar').hide();
-                    $('.CrearMostrar').show();
+                    console.log('Buscar Response:', response);
+                    var parsedResponse = JSON.parse(response);
+                    if (parsedResponse.error) {
+                        console.error('Error:', parsedResponse.error);
+                    } else {
+                        var data = parsedResponse.data[0];
+                        $('#Usuario').val(data.Usua_Usuario);
+                        $('#Empleado').val(data.Empl_Id).trigger('change');
+                        $('#Rol').val(data.Role_Id).trigger('change');
+                        $('#Administrador').prop('checked', data.Usua_Administrador == 1);
+                        $('.CrearOcultar').hide();
+                        $('.CrearMostrar').show();
+                        $('.contraseña-container').addClass('hidden'); 
+                    }
                 },
                 error: function(error) {
                     console.error('Error:', error);
@@ -389,6 +440,7 @@
 
         $('#TablaMarca tbody').on('click', '.abrir-detalles', function() {
             var data = table.row($(this).parents('tr')).data();
+
             var Usua_Id = data.Usua_Id;
             $('#Detalles').show();
             $('.CrearOcultar').hide();
@@ -403,6 +455,7 @@
                 },
                 success: function(response) {
                     var data = JSON.parse(response).data[0];
+                    console.log(data);
                     $('#DetallesUsuario').text(data.Usua_Usuario);
                     $('#DetallesEmpleado').text(data.Empleado);
                     $('#DetallesRol').text(data.Role_Rol);
@@ -417,6 +470,7 @@
                 }
             });
         });
+
 
         $('#VolverDetalles').click(function() {
             $('#Detalles').hide();
