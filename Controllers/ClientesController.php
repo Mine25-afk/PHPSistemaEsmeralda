@@ -11,8 +11,7 @@ class ClientesController {
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $dniList = array_column($result, 'Clie_DNI');
-            echo json_encode($dniList);
+            echo json_encode(array('data' => $result));
         } catch (Exception $e) {
             error_log('Error al listar clientes: ' . $e->getMessage());
             echo json_encode(array('error' => 'Error al listar clientes: ' . $e->getMessage()));
@@ -56,9 +55,30 @@ class ClientesController {
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $codigosTemporales = array();
 
-          
-           
-        
+            if ($enviarCorreo) {
+                foreach ($result as $admin) {
+                    $mail = new PHPMailer(true);
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com';
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = getenv('MAIL_USERNAME');
+                    $mail->Password   = getenv('MAIL_PASSWORD');
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->Port       = 587;
+                    $mail->setFrom(getenv('MAIL_FROM'), 'Hector');
+                    $mail->addAddress($admin['email'], $admin['name']);
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Verificación de Código';
+                    $codigo = uniqid();
+                    $mail->Body    = 'Por favor ingrese el siguiente código para continuar: ' . $codigo;
+
+                    if ($mail->send()) {
+                        $codigosTemporales[$admin['email']] = $codigo;
+                    } else {
+                        error_log('Error al enviar correo a ' . $admin['email']);
+                    }
+                }
+            }
             echo json_encode(array('data' => $result, 'codigos_temporales' => $codigosTemporales));
         } catch (PDOException $e) {
             error_log('Error al listar correos de administradores: ' . $e->getMessage());

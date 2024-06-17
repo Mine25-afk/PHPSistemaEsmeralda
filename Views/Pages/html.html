@@ -133,123 +133,49 @@
   </div>
   <!-- Cierre de card-body -->
 </div>
-
-<!-- Modal Confirmar -->
-<div class="modal fade" id="ConfirmarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+  <!-- Modal Confirmar -->
+  <div
+    class="modal fade"
+    id="ConfirmarModal"
+    tabindex="-1"
+    aria-labelledby="eliminarModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eliminarModalLabel">Quieres confirmar este registro?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="SiesEfectivo" style="margin: 10px;">
-            <form id="ConfirmarPago" enctype="multipart/form-data">
-            <div class="form-row">
-                <div class="col-md-6">
-                <label class="control-label">Pago</label>
-                <input name="Pago" class="form-control letras" id="Pago"/>
-                <span class="text-danger"></span>
-                </div>
-            </div>
-            </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarFacturaBTN">Eliminar</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eliminarModalLabel">
+            Quieres confirmar este registro?
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <div class="SiesEfectivo" style="margin: 10px">
+          <form id="ConfirmarPago" enctype="multipart/form-data">
+            <div class="form-row">
+              <div class="col-md-6">
+                <label class="control-label">Pago</label>
+                <input name="Pago" class="form-control letras" id="Pago" />
+                <span class="text-danger"></span>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-danger" id="confirmarFacturaBTN">
+            Eliminar
+          </button>
+        </div>
+      </div>
     </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
-
-<script>
-$(document).ready(function() {
-    $('.CrearOcultar').show();
-    $('.CrearMostrar').hide();
-    var table = $('#tablaFactura').DataTable({
-        "ajax": {
-            "url": "Controllers/FacturaController.php",
-            "type": "POST",
-            "data": {
-                "action": 'listarFactura'
-            },
-            "dataSrc": function(json) {
-                return json.data;
-            }
-        },
-        "columns": [
-            { "data": "Fact_Id" },
-            { "data": "Clie_Nombre" },
-            { "data": "Mepa_Metodo" },
-            { "data": "Acciones" },
-        ]
-    });
-
-    $('#tablaFactura tbody').on('click', '.abrir-confirmar', function () {
-        var data = table.row($(this).parents('tr')).data();
-        var Fact_Id = data.Fact_Id;
-        sessionStorage.setItem('Fact_Id', Fact_Id);
-        $('#ConfirmarModal').modal('show');
-        });
-
-        $('#confirmarFacturaBTN').click(function() {
-        var Fact_Id = sessionStorage.getItem('Fact_Id');
-        $.ajax({
-            url: 'Controllers/FacturaController.php',
-            type: 'POST',
-            data: {
-                action: 'confirmar',
-                Fact_Codigo: Fact_Id,
-                Fact_FechaFinalizado:  new Date().toISOString().slice(0, 19).replace('T', ' '),
-                Fact_Pago: $("#Pago").val(),
-                Fact_Cambio:  $("#Pago").val()
-            },
-            success: function(response) {
-                if (response == 1) {
-                    iziToast.success({
-                        title: 'Éxito',
-                        message: 'Confirmado con éxito',
-                        position: 'topRight',
-                        transitionIn: 'flipInX',
-                        transitionOut: 'flipOutX'
-                    });
-                    $('#tablaFactura').DataTable().ajax.reload();
-                    $('#ConfirmarModal').modal('hide');
-                    sessionStorage.setItem('Fact_Id', "0");
-                } else {
-                    alert('Error al eliminar joya.');
-                }
-            },
-            error: function() {
-                alert('Error en la comunicación con el servidor.');
-            }
-        });
-    });   
-
-    
-
-    $('#tablaFactura tbody').on('click', '.abrir-detalles', function () {
-        console.log("HOLA")
-        var doc = new jsPDF();
-        doc.text('Hola, este es un PDF generado desde JavaScript con JsPdf', 10, 10);
-        doc.save('archivo.pdf');
-    });
-
-
-
-
-
-    $('#AbrirModal').click(function() {
-    $('.CrearOcultar').hide();
-    $('.CrearMostrar').show();
-    sessionStorage.setItem('Fact_Id', "0");
-    });
-});
-
-
-
-</script> 
+  </div>
 
