@@ -257,7 +257,7 @@ ALTER TABLE dbsistemaesmeralda.acce_tbusuarios
 MODIFY COLUMN Usua_Id INT AUTO_INCREMENT;
 
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_Actualizar`(
+CREATE DEFINER=root@localhost PROCEDURE SP_Empleados_Actualizar(
     IN p_Empl_Id INT,
     IN p_Empl_Nombre NVARCHAR(30),
     IN p_Empl_Apellido NVARCHAR(30),
@@ -305,8 +305,8 @@ DELIMITER ;
 
 
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_eliminar`(
-    IN Empl_Id INT
+CREATE DEFINER=root@localhost PROCEDURE SP_Empleados_eliminar(
+    IN p_Empl_Id INT
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -318,11 +318,11 @@ BEGIN
     START TRANSACTION;
     UPDATE Gral_tbempleados
     SET Empl_Estado = 0
-    WHERE Empl_Id = Empl_Id;
+    WHERE Empl_Id = p_Empl_Id;
 
     COMMIT;
     SELECT 1 AS Resultado;
-END;
+END
 //
 DELIMITER ;
 
