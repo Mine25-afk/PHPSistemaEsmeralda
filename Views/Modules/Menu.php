@@ -60,7 +60,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="inventario" class="nav-link">
+                <a href="Roles" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Roles</p>
                 </a>
@@ -164,7 +164,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="Reparaciones" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Reparaciones</p>
                 </a>
