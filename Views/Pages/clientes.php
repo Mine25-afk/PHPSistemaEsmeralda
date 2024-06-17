@@ -13,27 +13,27 @@
             font-size: 0.875em;
         }
 
-        /* Estilos para acciones */
+     
         .acciones-container {
             display: flex;
-            align-items: center; /* Alinear verticalmente en el centro */
-            justify-content: center; /* Alinear horizontalmente en el centro */
+            align-items: center;
+            justify-content: center; 
         }
 
         .acciones-container .btn {
-            margin: 2px; /* Espacio entre los botones */
+            margin: 2px; 
         }
 
-        /* Media query para pantallas más pequeñas */
+     
         @media (max-width: 768px) {
             .acciones-container {
-                flex-wrap: wrap; /* Envolver en múltiples líneas si es necesario */
-                justify-content: center; /* Alinear al centro */
+                flex-wrap: wrap; 
+                justify-content: center; 
             }
 
             .acciones-container .btn {
-                flex: 1 0 auto; /* Permitir que los botones crezcan y se ajusten */
-                margin: 5px; /* Ajustar el margen para mantenerlos separados */
+                flex: 1 0 auto; 
+                margin: 5px; 
             }
         }
     </style>
@@ -462,7 +462,7 @@ $('#enviarCodigoBtn').click(function() {
         isValid = false;
     }
 
-    console.log('Valor de Clie_Sexo:', sexo); // Verifica que esto imprima el valor seleccionado correctamente
+    console.log('Valor de Clie_Sexo:', sexo); 
 
 
 
