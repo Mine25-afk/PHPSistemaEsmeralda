@@ -12,56 +12,55 @@
             color: red;
             font-size: 0.875em;
         }
-/* Estilos para acciones */
-.acciones-container {
-    display: flex;
-    align-items: center; /* Alinear verticalmente en el centro */
-    justify-content: center; /* Alinear horizontalmente en el centro */
-}
 
-.acciones-container .btn {
-    margin: 2px; /* Espacio entre los botones */
-}
+        /* Estilos para acciones */
+        .acciones-container {
+            display: flex;
+            align-items: center; /* Alinear verticalmente en el centro */
+            justify-content: center; /* Alinear horizontalmente en el centro */
+        }
 
-/* Media query para pantallas más pequeñas */
-@media (max-width: 768px) {
-    .acciones-container {
-        flex-wrap: wrap; /* Envolver en múltiples líneas si es necesario */
-        justify-content: center; /* Alinear al centro */
-    }
+        .acciones-container .btn {
+            margin: 2px; /* Espacio entre los botones */
+        }
 
-    .acciones-container .btn {
-        flex: 1 0 auto; /* Permitir que los botones crezcan y se ajusten */
-        margin: 5px; /* Ajustar el margen para mantenerlos separados */
-    }
-}
+        /* Media query para pantallas más pequeñas */
+        @media (max-width: 768px) {
+            .acciones-container {
+                flex-wrap: wrap; /* Envolver en múltiples líneas si es necesario */
+                justify-content: center; /* Alinear al centro */
+            }
 
-
+            .acciones-container .btn {
+                flex: 1 0 auto; /* Permitir que los botones crezcan y se ajusten */
+                margin: 5px; /* Ajustar el margen para mantenerlos separados */
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <h2 class="text-center" style="font-size:34px !important">Clientes</h2>
+            <h2 class="text-center" style="font-size: 34px !important">Clientes</h2>
             <div class="CrearOcultar">
-            <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
+                <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
                 <hr>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" id="TablaCliente">
                         <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>DNI</th>
-                                <th>Fecha Nacimiento</th>
-                                <th>Sexo</th>
-                                <th>Municipio</th>
-                                <th>Estado Civil</th>
-                                <th>Es Mayorista</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>DNI</th>
+                            <th>Fecha Nacimiento</th>
+                            <th>Sexo</th>
+                            <th>Municipio</th>
+                            <th>Estado Civil</th>
+                            <th>Es Mayorista</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -69,153 +68,150 @@
             </div>
 
             <div class="CrearMostrar">
-            <form id="clienteForm" >
-    <input type="hidden" name="Clie_Id" id="Clie_Id">
+                <form id="clienteForm">
+                    <input type="hidden" name="Clie_Id" id="Clie_Id">
 
-    <div class="form-row">
-        <div class="col-md-6">
-        <label class="control-label" for="Clie_Nombre">Nombre</label>
-        <input name="Clie_Nombre" type="text" class="form-control" id="Clie_Nombre" required>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <label class="control-label" for="Clie_Nombre">Nombre</label>
+                            <input name="Clie_Nombre" type="text" class="form-control" id="Clie_Nombre" required>
+                            <div class="error-message" id="Clie_Nombre_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Apellido</label>
+                            <input name="Clie_Apellido" type="text" class="form-control" id="Clie_Apellido" required>
+                            <div class="error-message" id="Clie_Apellido_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">DNI</label>
+                            <input name="Clie_DNI" type="text" class="form-control" id="Clie_DNI" required>
+                            <div class="error-message" id="Clie_DNI_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Fecha Nacimiento</label>
+                            <input name="Clie_FechaNac" type="date" class="form-control" id="Clie_FechaNac" required>
+                            <div class="error-message" id="Clie_FechaNac_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Municipio</label>
+                            <select name="Muni_Codigo" class="form-control" id="Muni_Codigo" required></select>
+                            <div class="error-message" id="Muni_Codigo_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Estado Civil</label>
+                            <select name="Esta_Id" class="form-control" id="Esta_Id" required></select>
+                            <div class="error-message" id="Esta_Id_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Sexo</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Clie_Sexo" id="sexoMasculino" value="M" required>
+                                    <label class="form-check-label" for="sexoMasculino">Masculino</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Clie_Sexo" id="sexoFemenino" value="F" required>
+                                    <label class="form-check-label" for="sexoFemenino">Femenino</label>
+                                </div>
+                            </div>
+                            <div class="error-message" id="Clie_Sexo_error"></div>
+                        </div>
 
-            <div class="error-message" id="Clie_Nombre_error"></div>
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Apellido</label>
-            <input name="Clie_Apellido" type="text" class="form-control" id="Clie_Apellido" required>
-            <div class="error-message" id="Clie_Apellido_error"></div>
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">DNI</label>
-            <input name="Clie_DNI" type="text" class="form-control" id="Clie_DNI" required>
-            <div class="error-message" id="Clie_DNI_error"></div>
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Fecha Nacimiento</label>
-            <input name="Clie_FechaNac" type="date" class="form-control" id="Clie_FechaNac" required>
-            <div class="error-message" id="Clie_FechaNac_error"></div>
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Municipio</label>
-            <select name="Muni_Codigo" class="form-control" id="Muni_Codigo" required></select>
-            <div class="error-message" id="Muni_Codigo_error"></div>
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Estado Civil</label>
-            <select name="Esta_Id" class="form-control" id="Esta_Id" required></select>
-            <div class="error-message" id="Esta_Id_error"></div>
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">Sexo</label>
-            <div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Clie_Sexo" id="sexoMasculino" value="M" required>
-                    <label class="form-check-label" for="sexoMasculino">Masculino</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Clie_Sexo" id="sexoFemenino" value="F" required>
-                    <label class="form-check-label" for="sexoFemenino">Femenino</label>
-                </div>
+
+
+                        <div class="col-md-6">
+                            <label class="control-label">Es Mayorista</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaSi" value="true" required>
+                                    <label class="form-check-label" for="esMayoristaSi">Sí</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaNo" value="false" required>
+                                    <label class="form-check-label" for="esMayoristaNo">No</label>
+                                </div>
+                            </div>
+                            <div class="error-message" id="Clie_esMayorista_error"></div>
+                        </div>
+
+
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row d-flex justify-content-end">
+                            <div class="col-md-3">
+                                <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn">
+                            </div>
+                            <div class="col-md-3">
+                                <a id="CerrarModal" class="btn btn-secondary" style="color: white;">Volver</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="error-message" id="Clie_Sexo_error"></div>
-        </div>
-      
-        <div class="col-md-6">
-            <label class="control-label">Es Mayorista</label>
-            <div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaSi" value="1" required>
-                    <label class="form-check-label" for="esMayoristaSi">Sí</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaNo" value="0" required>
-                    <label class="form-check-label" for="esMayoristaNo">No</label>
-                </div>
-            </div>
-            <div class="error-message" id="Clie_esMayorista_error"></div>
-        </div>
-       
-    </div>
-
-    <div class="card-body">
-        <div class="form-row d-flex justify-content-end">
-            <div class="col-md-3">
-                <input type="submit" value="Guardar" class="btn btn-primary" id="guardarBtn">
-            </div>
-            <div class="col-md-3">
-                <a id="CerrarModal" class="btn btn-secondary" style="color: white;">Volver</a>
-            </div>
-        </div>
-    </div>
-</form>
-
-
-</div>
-
-
             <!-- Collapse Detalles -->
             <div class="CrearDetalles collapse" id="detallesCollapse">
     <div class="card card-body">
         <h5>Detalles de Clientes</h5>
         <div id="Detalles">
             <div class="row" style="padding: 10px;">
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     Nombre
                 </div>
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     Apellidos
                 </div>
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     Fecha de Nacimiento
                 </div>
             </div>
             <div class="row" style="padding: 10px;">
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesNombres"></label>
                 </div>
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesApellido"></label>
                 </div>
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesFechaNac"></label>
                 </div>
             </div>
 
             <div class="row" style="padding: 10px;">
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     DNI
                 </div>
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     Municipio
                 </div>
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     Estado Civil
                 </div>
             </div>
             <div class="row" style="padding: 10px;">
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesDNI"></label>
                 </div>
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesMunicipios"></label>
                 </div>
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesEstadoCivil"></label>
                 </div>
             </div>
 
             <div class="row" style="padding: 10px;">
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     Sexo
                 </div>
-                <div class="col" style="font-weight: 700;">
+                <div class="col-md-4" style="font-weight: 700;">
                     Es Mayorista
                 </div>
             </div>
             <div class="row" style="padding: 10px;">
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesSexo"></label>
                 </div>
-                <div class="col">
+                <div class="col-md-4">
                     <label for="" id="detallesMayorista"></label>
                 </div>
             </div>
@@ -257,13 +253,14 @@
             </div>
 
         </div>
-        <div class="form-row d-flex justify-content-end">
+        <div class="form-row d-flex justify-content-end mt-3">
             <div class="col-md-3">
                 <a id="CerrarDetalles" class="btn btn-secondary" style="color: white;">Volver</a>
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- Modal Eliminar -->
 <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
@@ -387,104 +384,130 @@ $(document).ready(function () {
 
 
     $('#guardarBtn').click(function() {
-        console.log('Botón Guardar clickeado');
+    console.log('Botón Guardar clickeado');
     $('.error-message').text('');
     var isValid = true;
 
-
-
-        if ($('#Clie_Nombre').val().trim() === '') {
+    var nombre = $('#Clie_Nombre').val();
+    console.log('Valor de Clie_Nombre:', nombre);
+    if (!nombre || nombre.trim() === '') {
         $('#Clie_Nombre_error').text('Este campo es requerido');
         isValid = false;
     }
-    if ($('#Clie_Apellido').val().trim() === '') {
+
+    var apellido = $('#Clie_Apellido').val();
+    console.log('Valor de Clie_Apellido:', apellido);
+    if (!apellido || apellido.trim() === '') {
         $('#Clie_Apellido_error').text('Este campo es requerido');
         isValid = false;
     }
 
-    if ($('#Clie_FechaNac').val().trim() === '') {
+    var fechaNac = $('#Clie_FechaNac').val();
+    console.log('Valor de Clie_FechaNac:', fechaNac);
+    if (!fechaNac || fechaNac.trim() === '') {
         $('#Clie_FechaNac_error').text('Este campo es requerido');
         isValid = false;
     }
-    if ($('#Clie_Sexo').val().trim() === '') {
-        $('#Clie_Sexo_error').text('Este campo es requerido');
+
+    var sexo = $('input[name="Clie_Sexo"]:checked').val();
+    if (!sexo) {
+        $('#Clie_Sexo_error').text('Selecciona una opción');
         isValid = false;
     }
 
-    if ($('#Muni_Codigo').val() === null) {
+    console.log('Valor de Clie_Sexo:', sexo); // Verifica que esto imprima el valor seleccionado correctamente
+
+
+
+      var esMayorista = $('input[name="Clie_esMayorista"]:checked').val() === "true";
+  
+
+      var municipio = $('#Muni_Codigo').val();
+    if (!municipio) {
         $('#Muni_Codigo_error').text('Este campo es requerido');
         isValid = false;
     }
-    if ($('#Esta_Id').val() === null) {
+
+    var estado = $('#Esta_Id').val();
+    if (!estado) {
         $('#Esta_Id_error').text('Este campo es requerido');
         isValid = false;
     }
- 
 
     if (isValid) {
-            var clienteData = new FormData();
-            clienteData.append('action', $('#Clie_Id').val() ? 'actualizar' : 'insertar');
-            clienteData.append('Clie_Id', $('#Clie_Id').val());
-            clienteData.append('Clie_Nombre', $('#Clie_Nombre').val());
-            clienteData.append('Clie_Apellido', $('#Clie_Apellido').val());
-            clienteData.append('Clie_DNI', $('#Clie_DNI').val());
-            clienteData.append('Clie_FechaNac', $('#Clie_FechaNac').val());
-            clienteData.append('Clie_Sexo', $('#Clie_Sexo').val());
-            clienteData.append('Muni_Codigo', $('#Muni_Codigo').val());
-            clienteData.append('Esta_Id', $('#Esta_Id').val());
-            clienteData.append('Clie_esMayorista', $('#Clie_esMayorista').val());
-            clienteData.append('Clie_UsuarioCreacion', 1);
-            clienteData.append('Clie_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-            clienteData.append('Clie_UsuarioModificacion', 1);
-            clienteData.append('Clie_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-            console.log('Datos a enviar:', clienteData);
-            $.ajax({
-    url: 'Controllers/ClientesController.php',
-    type: 'POST',
-    data: clienteData,
-    contentType: false,
-    processData: false,
-    success: function(response) {
-        console.log('Respuesta del servidor:', response); // Verifica la respuesta del servidor
+        var clienteData = new FormData();
+        clienteData.append('action', $('#Clie_Id').val() ? 'actualizar' : 'insertar');
+        clienteData.append('Clie_Id', $('#Clie_Id').val());
+        clienteData.append('Clie_Nombre', $('#Clie_Nombre').val());
+        clienteData.append('Clie_Apellido', $('#Clie_Apellido').val());
+        clienteData.append('Clie_DNI', $('#Clie_DNI').val());
+        clienteData.append('Clie_FechaNac', $('#Clie_FechaNac').val());
+        clienteData.append('Clie_Sexo', sexo);
 
-        response = JSON.parse(response);
-        if (response.result == 1) {
-            iziToast.success({
-                title: 'Éxito',
-                message: 'Subido con éxito',
-                position: 'topRight',
-                transitionIn: 'flipInX',
-                transitionOut: 'flipOutX'
-            });
-            table.ajax.reload();
-            limpiarFormulario();
-            $('.CrearOcultar').show();
-            $('.CrearMostrar').hide();
-        } else {
-            iziToast.error({
-                title: 'Error',
-                message: 'Error al insertar/actualizar cliente. ' + (response.error ? response.error : ''),
-                position: 'topRight',
-                transitionIn: 'flipInX',
-                transitionOut: 'flipOutX'
-            });
-        }
-    },
-    error: function(xhr, status, error) {
-        console.log('Error en la comunicación con el servidor:', error); // Verifica el error de comunicación
+        clienteData.append('Muni_Codigo', $('#Muni_Codigo').val());
+        clienteData.append('Esta_Id', $('#Esta_Id').val());
+        clienteData.append('Clie_esMayorista', esMayorista);
+        clienteData.append('Clie_UsuarioCreacion', 1);
+        clienteData.append('Clie_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+        clienteData.append('Clie_UsuarioModificacion', 1);
+        clienteData.append('Clie_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+        console.log('Datos a enviar:', clienteData);
 
-        iziToast.error({
-            title: 'Error',
-            message: 'Error en la comunicación con el servidor.',
-            position: 'topRight',
-            transitionIn: 'flipInX',
-            transitionOut: 'flipOutX'
+        $.ajax({
+            url: 'Controllers/ClientesController.php',
+            type: 'POST',
+            data: clienteData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log('Respuesta del servidor:', response);
+                try {
+                    response = JSON.parse(response);
+                    if (response.result == 1) {
+                        iziToast.success({
+                            title: 'Éxito',
+                            message: 'Subido con éxito',
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
+                        table.ajax.reload();
+                        limpiarFormulario();
+                        $('.CrearOcultar').show();
+                        $('.CrearMostrar').hide();
+                    } else {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Error al insertar/actualizar cliente. ' + (response.error ? response.error : ''),
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
+                    }
+                } catch (e) {
+                    console.log('Error al analizar la respuesta del servidor:', e);
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Respuesta inválida del servidor',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Error en la comunicación con el servidor:', error);
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Error en la comunicación con el servidor.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
+            }
         });
     }
 });
-
-        }
-    });
 
 
     $('#TablaCliente tbody').on('click', '.abrir-eliminar', function () {
@@ -569,11 +592,21 @@ $(document).ready(function () {
     $('#Clie_Apellido').val(data.Clie_Apellido);
     $('#Clie_DNI').val(data.Clie_DNI);
     $('#Clie_FechaNac').val(data.Clie_FechaNac);
-    $('#Clie_Sexo').val(data.Clie_Sexo);
+
+    if (data.Clie_Sexo) {
+        $('#sexoMasculino').prop('checked', true);
+    } else if (data.Clie_Sexo) {
+        $('#sexoFemenino').prop('checked', true);
+    }
+
     $('#Muni_Codigo').val(data.Muni_Codigo);
     $('#Esta_Id').val(data.Esta_Id);
-    $('#Clie_esMayorista').val(data.Clie_esMayorista);
 
+    if (data.Clie_esMayorista) {
+    $('#esMayoristaSi').prop('checked', true);
+    } else {
+        $('#esMayoristaNo').prop('checked', true);
+    }
 
 
     // Mostrar el formulario de edición
