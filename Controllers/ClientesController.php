@@ -1,5 +1,11 @@
 <?php
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../PHPMailer/Exception.php';
+require_once __DIR__ . '/../PHPMailer/PHPMailer.php';
+require_once __DIR__ . '/../PHPMailer/SMTP.php';
+
+
+
 ini_set('log_errors', 1);
 ini_set('error_log', '/path/to/php-error.log');
 class ClientesController {
@@ -61,21 +67,22 @@ class ClientesController {
                     $mail->isSMTP();
                     $mail->Host       = 'smtp.gmail.com';
                     $mail->SMTPAuth   = true;
-                    $mail->Username   = getenv('MAIL_USERNAME');
-                    $mail->Password   = getenv('MAIL_PASSWORD');
+                    $mail->SMTPSecure = 'tls';  
+                    $mail->Username   = 'enriquebarahonayt14@gmail.com';                     //SMTP username
+                    $mail->Password   = 'fulu kzft lgts kvte';   
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-                    $mail->Port       = 587;
-                    $mail->setFrom(getenv('MAIL_FROM'), 'Hector');
-                    $mail->addAddress($admin['email'], $admin['name']);
+                    $mail->Port       = 465;
+                    $mail->setFrom(getenv('enriquebarahonayt14@gmail.com'), 'Hector');
+                    $mail->addAddress($admin['enriquebarahonayt14@gmail.com'], $admin['Hector']);
                     $mail->isHTML(true);
                     $mail->Subject = 'Verificación de Código';
                     $codigo = uniqid();
                     $mail->Body    = 'Por favor ingrese el siguiente código para continuar: ' . $codigo;
 
                     if ($mail->send()) {
-                        $codigosTemporales[$admin['email']] = $codigo;
+                        $codigosTemporales[$admin['enriquebarahonayt14@gmail.com']] = $codigo;
                     } else {
-                        error_log('Error al enviar correo a ' . $admin['email']);
+                        error_log('Error al enviar correo a ' . $admin['enriquebarahonayt14@gmail.com']);
                     }
                 }
             }
