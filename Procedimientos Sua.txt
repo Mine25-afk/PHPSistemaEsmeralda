@@ -126,27 +126,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Usuario_insertar`(
     IN Empl_Id INT,
     IN Role_Id INT,
     IN Usua_UsuarioCreacion INT,
-    IN Usua_FechaCreacion TIMESTAMP
+    IN Usua_FechaCreacion DATETIME
 )
 BEGIN
-    DECLARE estadoActual INT;
-
-    -- Manejo de errores
-    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+START TRANSACTION;
     BEGIN
-        SELECT 0;
-    END;
-
-    SELECT Usua_Estado INTO estadoActual FROM Acce_tbUsuarios WHERE Usua_Usuario = Usua_Usuario;
-
-    IF estadoActual IS NOT NULL THEN
-        IF estadoActual = 0 THEN
-            UPDATE Acce_tbUsuarios SET Usua_Estado = 1 WHERE Usua_Usuario = Usua_Usuario;
-            SELECT 1;
-        ELSE
-            SELECT 0;
-        END IF;
-    ELSE
         INSERT INTO Acce_tbUsuarios (
             Usua_Usuario,
             Usua_Contraseña,
@@ -166,27 +150,16 @@ BEGIN
             Usua_UsuarioCreacion,
             Usua_FechaCreacion
         );
-        SELECT 1;
-    END IF;
+        COMMIT;
+        SELECT 1 AS Resultado;
+    END;
 END
 
 DELIMITER ;
 
-DELIMITER //
-
-CREATE PROCEDURE sp_Municipios_MostrarPorDepartamento(
-    IN Depa_Codigo VARCHAR(2)
-)
-BEGIN
-    SELECT * FROM Gral_tbMunicipios
-    WHERE Depa_Codigo = Depa_Codigo;
-END //
-
-DELIMITER ;
 
 DELIMITER //
-
-CREATE PROCEDURE sp_Departamentos_listar()
+CREATE DEFINER=root@localhost PROCEDURE SP_Departamentos_Listar()
 BEGIN
     SELECT 
         Depa_Codigo, 
@@ -197,13 +170,14 @@ BEGIN
         Depa_FechaModificacion
     FROM 
         Gral_tbDepartamentos;
-END //
-
+END
+//
 DELIMITER ;
 
-DELIMITER //
 
-CREATE PROCEDURE sp_Cargos_listar()
+
+DELIMITER //
+CREATE DEFINER=root@localhost PROCEDURE SP_Cargos_Listar()
 BEGIN
     SELECT 
         Carg_Id, 
@@ -217,9 +191,10 @@ BEGIN
         Gral_tbCargos
     WHERE 
         Carg_Estado = 1;
-END //
-
+END
+//
 DELIMITER ;
+
 
 DELIMITER //
 
@@ -283,19 +258,19 @@ MODIFY COLUMN Usua_Id INT AUTO_INCREMENT;
 
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_Actualizar`(
-    IN Empl_Id INT,
-    IN Empl_Nombre NVARCHAR(30),
-    IN Empl_Apellido NVARCHAR(30),
-    IN Empl_Sexo CHAR(1),
-    IN Empl_FechaNac DATETIME,
-    IN Empl_DNI VARCHAR(13),
-    IN Muni_Codigo VARCHAR(4),
-    IN Sucu_Id INT,
-    IN Esta_Id INT,
-    IN Carg_Id INT,
-    IN Empl_Correo VARCHAR(200),
-    IN Empl_UsuarioModificacion INT,
-    IN Empl_FechaModificacion DATETIME
+    IN p_Empl_Id INT,
+    IN p_Empl_Nombre NVARCHAR(30),
+    IN p_Empl_Apellido NVARCHAR(30),
+    IN p_Empl_Sexo CHAR(1),
+    IN p_Empl_FechaNac DATETIME,
+    IN p_Empl_DNI VARCHAR(13),
+    IN p_Muni_Codigo VARCHAR(4),
+    IN p_Sucu_Id INT,
+    IN p_Esta_Id INT,
+    IN p_Carg_Id INT,
+    IN p_Empl_Correo VARCHAR(200),
+    IN p_Empl_UsuarioModificacion INT,
+    IN p_Empl_FechaModificacion DATETIME
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -307,76 +282,27 @@ BEGIN
     START TRANSACTION;
     UPDATE Gral_tbempleados
     SET
-        Empl_Nombre = Empl_Nombre,
-        Empl_Apellido = Empl_Apellido,
-        Empl_Sexo = Empl_Sexo,
-        Empl_FechaNac = Empl_FechaNac,
-        Empl_DNI = Empl_DNI,
-        Muni_Codigo = Muni_Codigo,
-        Sucu_Id = Sucu_Id,
-        Esta_Id = Esta_Id,
-        Carg_Id = Carg_Id,
-        Empl_Correo = Empl_Correo,
-        Empl_UsuarioModificacion = Empl_UsuarioModificacion,
-        Empl_FechaModificacion = Empl_FechaModificacion
+        Empl_Nombre = p_Empl_Nombre,
+        Empl_Apellido = p_Empl_Apellido,
+        Empl_Sexo = p_Empl_Sexo,
+        Empl_FechaNac = p_Empl_FechaNac,
+        Empl_DNI = p_Empl_DNI,
+        Muni_Codigo = p_Muni_Codigo,
+        Sucu_Id = p_Sucu_Id,
+        Esta_Id = p_Esta_Id,
+        Carg_Id = p_Carg_Id,
+        Empl_Correo = p_Empl_Correo,
+        Empl_UsuarioModificacion = p_Empl_UsuarioModificacion,
+        Empl_FechaModificacion = p_Empl_FechaModificacion
     WHERE
-        Empl_Id = Empl_Id;
+        Empl_Id = p_Empl_Id;
 
     COMMIT;
     SELECT 1 AS Resultado;
-END;
+END
 //
 DELIMITER ;
 
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_buscar`(
-    IN Empl_Id INT
-)
-BEGIN
-     SELECT 
-        em.Empl_Id,
-        em.Empl_Nombre,
-        em.Empl_Apellido,
-        em.Empl_Sexo,
-        CASE Empl_Sexo WHEN 'F' THEN 'Femenino' ELSE 'Masculino' END Sexo,
-        em.Empl_FechaNac,
-        em.Muni_Codigo,
-        em.Empl_DNI,
-        em.Sucu_Id,
-        su.Sucu_Nombre,
-        mu.Muni_Municipio,
-        em.Esta_Id,
-        e.Esta_EstadoCivil,
-        em.Carg_Id,
-        c.Carg_Cargo,
-        d.Depa_Codigo,
-        d.Depa_Departamento,
-        em.Empl_Correo,
-        DATE_FORMAT(em.Empl_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
-        DATE_FORMAT(em.Empl_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
-        em.Empl_Estado,
-        uCreacion.Usua_Usuario AS UsuarioCreacion,
-        uModificador.Usua_Usuario AS UsuarioModificacion 
-    FROM 
-        Gral_tbempleados em 
-    INNER JOIN 
-        Gral_tbEstadosCiviles e ON em.Esta_Id = e.Esta_Id  
-    INNER JOIN 
-        Gral_tbCargos c ON em.Carg_Id = c.Carg_Id 
-    INNER JOIN 
-        Gral_tbMunicipios mu ON mu.Muni_Codigo = em.Muni_Codigo 
-    LEFT JOIN 
-        Acce_tbUsuarios uCreacion ON uCreacion.Usua_Id = em.Empl_UsuarioCreacion
-    LEFT JOIN 
-        Acce_tbUsuarios uModificador ON uModificador.Usua_Id = em.Empl_UsuarioModificacion
-    LEFT JOIN 
-        Gral_tbDepartamentos d ON d.Depa_Codigo = mu.Depa_Codigo
-   LEFT JOIN  gral_tbsucursales su on su.sucu_Id = em.sucu_Id
-    WHERE
-        em.Empl_Id = Empl_Id;
-END;
-//
-DELIMITER ;
 
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Empleados_eliminar`(
@@ -432,7 +358,6 @@ BEGIN
     COMMIT;
     SELECT 1 AS Resultado;
 END
-
 //
 DELIMITER ;
 
@@ -508,5 +433,46 @@ BEGIN
 END
 
 
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=root@localhost PROCEDURE SP_Usuarios_Buscar(
+    IN p_Usua_Id INT
+)
+BEGIN
+    SELECT 
+        u.Usua_Id,
+        u.Usua_Usuario,
+        u.Usua_Administrador,
+        u.Empl_Id,
+        CONCAT(em.Empl_Nombre, ' ', em.Empl_Apellido) Empleado,
+        u.Role_Id,
+        ro.Role_Rol,
+        u.Usua_Estado,
+        DATE_FORMAT(u.Usua_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(u.Usua_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        uCreacion.Usua_Usuario AS UsuarioCreacion,
+        uModificador.Usua_Usuario AS UsuarioModificacion 
+    FROM 
+        Acce_tbUsuarios u
+	LEFT JOIN gral_tbempleados em ON em.Empl_Id = u.Empl_Id
+    LEFT JOIN acce_tbroles ro ON ro.Role_Id = u.Role_Id
+    LEFT JOIN 
+        Acce_tbUsuarios uCreacion ON uCreacion.Usua_Id = u.Usua_UsuarioCreacion
+    LEFT JOIN 
+        Acce_tbUsuarios uModificador ON uModificador.Usua_Id = u.Usua_UsuarioModificacion
+    WHERE 
+        u.Usua_Id = p_Usua_Id;
+END
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=root@localhost PROCEDURE SP_Roles_listar()
+BEGIN
+    SELECT r.Role_Id,r.Role_Rol
+    FROM acce_tbroles r;
+END
 //
 DELIMITER ;
