@@ -219,3 +219,370 @@ BEGIN
         usu.Usua_Usuario = p_Usuario 
         AND usu.Usua_Contraseña = HEX(SHA2(p_Contra, 512));
 END
+
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS SP_Maquillajes_listar;
+
+CREATE PROCEDURE SP_Maquillajes_listar()
+BEGIN
+    SELECT 
+        M.Maqu_Id,
+        M.Maqu_Nombre,
+        M.Maqu_PrecioCompra,
+        M.Maqu_Stock,
+        M.Maqu_PrecioVenta,
+        M.Maqu_PrecioMayor,
+        M.Maqu_Imagen,
+        Mar.Marc_Marca,
+        P.Prov_Proveedor
+    FROM vent_tbmaquillajes M
+    LEFT JOIN gral_tbmarcas Mar ON M.Marc_Id = Mar.Marc_Id 
+    LEFT JOIN gral_tbproveedores P ON P.Prov_Id = M.Prov_Id
+    WHERE M.Maqu_Estado = 1;
+END //
+
+
+DELIMITER ;
+
+
+ALTER TABLE dbsistemaesmeralda.vent_tbmaquillajes
+MODIFY COLUMN Maqu_Id INT AUTO_INCREMENT;
+
+
+ALTER TABLE vent_tbmaquillajes
+MODIFY COLUMN Maqu_Stock INT DEFAULT 1;
+
+
+ALTER TABLE vent_tbmaquillajes
+ADD COLUMN Maqu_Codigo TEXT;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Maquillajes_listar`()
+BEGIN
+    SELECT 
+		M.Maqu_Codigo,
+        M.Maqu_Id,
+        M.Maqu_Nombre,
+        M.Maqu_PrecioCompra,
+        M.Maqu_Stock,
+        M.Maqu_PrecioVenta,
+        M.Maqu_PrecioMayor,
+        M.Maqu_Imagen,
+        Mar.Marc_Marca,
+        Mar.Marc_Id,
+        P.Prov_Id,
+        P.Prov_Proveedor
+    FROM vent_tbmaquillajes M
+    LEFT JOIN gral_tbmarcas Mar ON M.Marc_Id = Mar.Marc_Id 
+    LEFT JOIN gral_tbproveedores P ON P.Prov_Id = M.Prov_Id
+    WHERE M.Maqu_Estado = 1;
+END
+
+
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS SP_Maquillajes_insertar;
+
+CREATE PROCEDURE SP_Maquillajes_insertar(
+    IN Maqu_Nombre VARCHAR(60),
+    IN Maqu_Codigo VARCHAR(60),
+    IN Maqu_PrecioCompra DECIMAL(8,2),
+    IN Maqu_PrecioVenta DECIMAL(8,2),
+    IN Maqu_PrecioMayor DECIMAL(8,2),
+    IN Maqu_Stock INT,
+    IN Maqu_Imagen TEXT,
+    IN Prov_Id INT,
+    IN Marc_Id INT,
+    IN Maqu_UsuarioCreacion INT,
+    IN Maqu_FechaCreacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS result;
+    END;
+
+    START TRANSACTION;
+
+    INSERT INTO vent_tbmaquillajes 
+    (
+        Maqu_Nombre,
+        Maqu_Codigo,
+        Maqu_PrecioCompra,
+        Maqu_PrecioVenta,
+        Maqu_PrecioMayor,
+        Maqu_Stock,
+        Maqu_Imagen,
+        Prov_Id,
+        Marc_Id,
+        Maqu_UsuarioCreacion,
+        Maqu_FechaCreacion
+    )
+    VALUES 
+    (
+        Maqu_Nombre,
+        Maqu_Codigo,
+        Maqu_PrecioCompra,
+        Maqu_PrecioVenta,
+        Maqu_PrecioMayor,
+        Maqu_Stock,
+        Maqu_Imagen,
+        Prov_Id,
+        Marc_Id,
+        Maqu_UsuarioCreacion,
+        Maqu_FechaCreacion
+    );
+
+    SELECT 1 AS result;
+
+    COMMIT;
+END //
+
+DELIMITER ;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Maquillajes_actualizar`(
+    IN Maqu_Nombre VARCHAR(60),
+    IN Maqu_Codigo VARCHAR(255),
+    IN Maqu_PrecioCompra DECIMAL(8,2),
+    IN Maqu_PrecioVenta DECIMAL(8,2),
+    IN Maqu_PrecioMayor DECIMAL(8,2),
+    IN Maqu_Imagen TEXT,
+    IN Maqu_Stock INT,
+    IN Prov_Id INT,
+    IN Marc_Id INT,
+    IN Maqu_UsuarioModificacion INT,
+    IN Maqu_FechaModificacion DATETIME,
+    IN Maqu_Id_Codigo INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0 AS Resultado;
+    END;
+
+    UPDATE vent_tbmaquillajes 
+    SET 
+        Maqu_Nombre = Maqu_Nombre,
+        Maqu_Codigo = Maqu_Codigo,
+        Maqu_PrecioCompra = Maqu_PrecioCompra,
+        Maqu_PrecioVenta = Maqu_PrecioVenta,
+        Maqu_PrecioMayor = Maqu_PrecioMayor,
+        Maqu_Imagen = Maqu_Imagen,
+        Maqu_Stock = Maqu_Stock,
+        Prov_Id = Prov_Id,
+        Marc_Id = Marc_Id,
+        Maqu_UsuarioModificacion = Maqu_UsuarioModificacion,
+        Maqu_FechaModificacion = Maqu_FechaModificacion
+    WHERE 
+        Maqu_Id = Maqu_Id_Codigo;
+
+    SELECT 1 AS Resultado;
+END
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Maquillajes_buscar`(
+    IN Maqu_Codigo INT
+)
+BEGIN
+    SELECT 
+        MA.Maqu_Id,
+        MA.Maqu_Nombre,
+        MA.Maqu_PrecioCompra,
+        MA.Maqu_Stock,
+        MA.Maqu_PrecioVenta,
+        MA.Prov_Id,
+        MA.Marc_Id,
+        P.Prov_Proveedor,
+        Mar.Marc_Marca,
+        DATE_FORMAT(MA.Maqu_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
+        DATE_FORMAT(MA.Maqu_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
+        MA.Maqu_PrecioMayor,
+        MA.Maqu_Imagen,
+        uCreacion.Usua_Usuario AS UsuarioCreacion,
+        uModificador.Usua_Usuario AS UsuarioModificacion
+    FROM 
+        vent_tbmaquillajes MA
+        LEFT JOIN acce_tbusuarios uCreacion ON uCreacion.Usua_Id = MA.Maqu_UsuarioCreacion
+        LEFT JOIN acce_tbusuarios uModificador ON uModificador.Usua_Id = MA.Maqu_UsuarioModificacion
+        LEFT JOIN gral_tbmarcas Mar ON MA.Marc_Id = Mar.Marc_Id
+        LEFT JOIN gral_tbproveedores P ON P.Prov_Id = MA.Prov_Id
+    WHERE 
+        MA.Maqu_Id = Maqu_Codigo;
+END
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS SP_Maquillajes_eliminar;
+
+CREATE PROCEDURE SP_Maquillajes_eliminar(
+    IN Maqu_Codigo INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0 AS Resultado;
+    END;
+
+    UPDATE vent_tbmaquillajes 
+    SET Maqu_Estado = 0
+    WHERE Maqu_Id = Maqu_Codigo;
+
+    SELECT 1 AS Resultado;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS SP_Cajas_Validar;
+
+CREATE PROCEDURE SP_Cajas_Validar(
+    IN FechaHoy DATE,
+    IN Sucu_Codigo INT
+)
+BEGIN
+    SELECT *
+    FROM vent_tbcajas
+    WHERE 
+        DATE(caja_FechaApertura) = FechaHoy
+        AND Sucu_Id = Sucu_Codigo
+    LIMIT 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS SP_Cajas_Insertar;
+
+DELIMITER ;
+
+CREATE TABLE vent_tbcajaspordinero (
+    cadi_Id INT AUTO_INCREMENT PRIMARY KEY,
+    caja_Id INT,
+    cadi_Dinero DECIMAL(8,2),
+    cadi_Observaciones TEXT
+);
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS SP_CajaPorDinero_Insertar;
+
+CREATE PROCEDURE SP_CajaPorDinero_Insertar(
+    IN cadi_Dinero DECIMAL(8,2),
+    IN cadi_Observaciones TEXT,
+    IN FechaHoy DATE
+)
+BEGIN
+    DECLARE cajaId INT;
+
+    -- Get the caja_Id for the current date
+    SELECT caja_Id INTO cajaId
+    FROM vent_tbcajas
+    WHERE DATE(caja_FechaApertura) = FechaHoy
+    LIMIT 1;
+
+    -- Insert into Vent_tbCajasPorDinero
+    INSERT INTO vent_tbcajaspordinero (caja_Id, cadi_Dinero, cadi_Observaciones)
+    VALUES (cajaId, cadi_Dinero, cadi_Observaciones);
+END //
+
+DELIMITER ;
+
+ALTER TABLE dbsistemaesmeralda.vent_tbcajas
+MODIFY COLUMN caja_Id INT AUTO_INCREMENT;
+ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Cajas_Cierre`(
+    IN caja_UsuarioCierre INT,
+    IN caja_FechaCierre DATETIME,
+    IN caja_MontoInicial DECIMAL(8,2),
+    IN caja_MontoFinal DECIMAL(8,2),
+    IN caja_MontoSistema DECIMAL(8,2),
+    IN caja_Observacion TEXT,
+    IN caja_codigo INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0;
+    END;
+
+    UPDATE vent_tbcajas 
+    SET 
+        caja_UsuarioCierre = caja_UsuarioCierre, 
+        caja_MontoInicial = caja_MontoInicial,
+        caja_FechaCierre = caja_FechaCierre, 
+        caja_MontoFinal = caja_MontoFinal, 
+        caja_MontoSistema = caja_MontoSistema, 
+        caja_Observacion = caja_Observacion,
+        caja_Finalizado = 0
+    WHERE caja_Id = caja_codigo;
+
+    SELECT 1;
+END
+
+
+ALTER TABLE dbsistemaesmeralda.vent_tbcajaspordinero
+ADD cadi_Usuario INT;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_CajaPorDinero_Insertar`(
+    IN cadi_Dinero DECIMAL(8,2),
+    IN cadi_Observaciones TEXT,
+    IN FechaHoy DATE,
+    IN cadi_Usuario INT
+)
+BEGIN
+    DECLARE cajaId INT;
+
+    -- Get the caja_Id for the current date
+    SELECT caja_Id INTO cajaId
+    FROM vent_tbcajas
+    WHERE DATE(caja_FechaApertura) = FechaHoy
+    LIMIT 1;
+
+    -- Check if cajaId is NULL
+    IF cajaId IS NOT NULL THEN
+        -- Insert into Vent_tbCajasPorDinero
+        INSERT INTO vent_tbcajaspordinero (caja_Id, cadi_Dinero, cadi_Observaciones,cadi_Usuario)
+        VALUES (cajaId, cadi_Dinero, cadi_Observaciones,cadi_Usuario);
+
+        -- Return 1 if insertion was successful
+        SELECT 1;
+    ELSE
+        -- Return 0 if no open caja was found for the date
+        SELECT 0;
+    END IF;
+END
+
+
+DELIMITER //
+
+CREATE PROCEDURE sp_ConfirmarFactura (
+    IN Fact_Codigo INT,
+    IN Fact_FechaFinalizado DATETIME,
+    IN Fact_Pago DECIMAL(8,2),
+    IN Fact_Cambio DECIMAL(8,2)
+)
+BEGIN
+    DECLARE resultado INT;
+    
+    BEGIN
+        UPDATE vent_tbfactura
+        SET Fact_Finalizado = 0,
+            Fact_FechaFinalizado = Fact_FechaFinalizado,
+            Fact_Pago = Fact_Pago,
+            Fact_Cambio = Fact_Cambio
+        WHERE Fact_Id = Fact_Codigo;
+        
+        SET resultado = 1;
+    END;
+    
+    SELECT resultado;
+    
+END //
+
+DELIMITER ;

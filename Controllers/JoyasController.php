@@ -3,7 +3,6 @@ require_once __DIR__ . '/../config.php';
 ini_set('log_errors', 1);
 ini_set('error_log', '/path/to/php-error.log');
 class JoyasController {
-    // Métodos existentes...
 
     public function listarJoyas() {
         global $pdo;
@@ -22,7 +21,7 @@ class JoyasController {
     public function listarProveedores() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedores_listar`()';
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedor_listar`()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -61,7 +60,7 @@ class JoyasController {
         }
     }
 
-    public function insertarJoyas($Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
+    public function insertarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
         global $pdo;
         try {
             if (isset($Joya_Imagen['error']) && $Joya_Imagen['error'] == UPLOAD_ERR_OK) {
@@ -79,9 +78,10 @@ class JoyasController {
             } else {
                 throw new Exception('Error al subir el archivo: ' . $Joya_Imagen['error']);
             }
-    
-            $sql = 'CALL SP_Joyas_insertar(:Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioCreacion, :Joya_FechaCreacion)';
+
+            $sql = 'CALL SP_Joyas_insertar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioCreacion, :Joya_FechaCreacion)';
             $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Joya_Codigo', $Joya_Codigo, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_Nombre', $Joya_Nombre, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_PrecioCompra', $Joya_PrecioCompra, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_PrecioVenta', $Joya_PrecioVenta, PDO::PARAM_STR);
@@ -94,7 +94,7 @@ class JoyasController {
             $stmt->bindParam(':Joya_UsuarioCreacion', $Joya_UsuarioCreacion, PDO::PARAM_INT);
             $stmt->bindParam(':Joya_FechaCreacion', $Joya_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
-    
+
             $result = $stmt->fetchColumn();
             return $result;
         } catch (Exception $e) {
@@ -103,9 +103,8 @@ class JoyasController {
             return 0;
         }
     }
-    
-    
-    public function actualizarJoyas($Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioModificacion, $Joya_FechaModificacion, $Joya_Id) {
+
+    public function actualizarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioModificacion, $Joya_FechaModificacion, $Joya_Id) {
         global $pdo;
         try {
             if (isset($Joya_Imagen['error']) && $Joya_Imagen['error'] == UPLOAD_ERR_OK) {
@@ -125,9 +124,10 @@ class JoyasController {
                 $joya = $this->buscarJoya($Joya_Id);
                 $Joya_Imagen = $joya['Joya_Imagen'];
             }
-    
-            $sql = 'CALL SP_Joyas_actualizar(:Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioModificacion, :Joya_FechaModificacion, :Joya_Id)';
+
+            $sql = 'CALL SP_Joyas_actualizar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioModificacion, :Joya_FechaModificacion, :Joya_Id)';
             $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Joya_Codigo', $Joya_Codigo, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_Nombre', $Joya_Nombre, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_PrecioCompra', $Joya_PrecioCompra, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_PrecioVenta', $Joya_PrecioVenta, PDO::PARAM_STR);
@@ -141,7 +141,7 @@ class JoyasController {
             $stmt->bindParam(':Joya_FechaModificacion', $Joya_FechaModificacion, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_Id', $Joya_Id, PDO::PARAM_INT);
             $stmt->execute();
-    
+
             $result = $stmt->fetchColumn();
             return $result;
         } catch (Exception $e) {
@@ -149,7 +149,6 @@ class JoyasController {
             return 0;
         }
     }
-    
 
     public function eliminarJoyas($Joya_Id) {
         global $pdo;
@@ -201,6 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $controller->listarCategorias();
             break;
         case 'insertar':
+            $Joya_Codigo = $_POST['Joya_Codigo'];
             $Joya_Nombre = $_POST['Joya_Nombre'];
             $Joya_PrecioCompra = $_POST['Joya_PrecioCompra'];
             $Joya_PrecioVenta = $_POST['Joya_PrecioVenta'];
@@ -213,10 +213,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $Joya_UsuarioCreacion = $_POST['Joya_UsuarioCreacion'];
             $Joya_FechaCreacion = $_POST['Joya_FechaCreacion'];
 
-            $resultado = $controller->insertarJoyas($Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion);
+            $resultado = $controller->insertarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion);
             echo json_encode(array('result' => $resultado));
             break;
         case 'actualizar':
+            $Joya_Codigo = $_POST['Joya_Codigo'];
             $Joya_Nombre = $_POST['Joya_Nombre'];
             $Joya_PrecioCompra = $_POST['Joya_PrecioCompra'];
             $Joya_PrecioVenta = $_POST['Joya_PrecioVenta'];
@@ -230,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $Joya_FechaModificacion = $_POST['Joya_FechaModificacion'];
             $Joya_Id = $_POST['Joya_Id'];
 
-            $resultado = $controller->actualizarJoyas($Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioModificacion, $Joya_FechaModificacion, $Joya_Id);
+            $resultado = $controller->actualizarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioModificacion, $Joya_FechaModificacion, $Joya_Id);
             echo json_encode(array('result' => $resultado));
             break;
         case 'eliminar':

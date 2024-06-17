@@ -13,7 +13,7 @@ class MarcaController {
         foreach ($result as $row) {
             $data[] = array(
                 'Marc_Id' => $row['Marc_Id'],
-                'Marc_Marca' => $row['Marc_Marca']
+                'Marc_Marca'=> $row['Marc_Marca']
             );
         }
         echo json_encode(array('data' => $data));

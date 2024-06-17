@@ -12,12 +12,13 @@
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background: url('background.jpg') no-repeat center center fixed;
+    background: url('Fondo.png') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    
 }
 
 .login-container {
@@ -29,10 +30,10 @@
 }
 
 .login-box {
-    background-color: #fff;
+    background-color: #5D9E3E;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0px 8px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: row;
     max-width: 800px;
@@ -40,7 +41,8 @@
 }
 
 .login-logo {
-    background-color: #ff9800;
+    background: url('Logo.png') no-repeat center center;
+    background-size: contain;
     color: #fff;
     padding: 20px;
     border-radius: 8px 0 0 8px;
@@ -126,9 +128,9 @@ button:hover {
     <div class="login-container">
         <div class="login-box">
             <div class="login-logo">
-                <h1>Sistema Esmeralda</h1>
-                <p>¡Las mejores Joyas!</p>
+                
             </div>
+            <div class="login-form">
             <form id="quickForm">
                 <h2>Iniciar sesión</h2>
                 <div class="input-group">
@@ -140,8 +142,12 @@ button:hover {
                 <div class="forgot-password">
                     <a href="#">No recuerdo mi contraseña</a>
                 </div>
+                <div class="button" style="display:flex;justify-content: center;">
                 <button type="button" id="GuardarBtn">Ingresar</button>
+                </div>
             </form>
+            </div>
+           
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
