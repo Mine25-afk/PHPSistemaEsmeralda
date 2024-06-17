@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Proveedor</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
@@ -14,9 +13,7 @@
         <div class="card-body">
             <h2 class="text-center" style="font-size:34px !important">Proveedor</h2>
             <div class="CrearOcultar">
-            <p class="btn btn-primary" id="AbrirModal">
-                Nuevo
-            </p>
+            <p class="btn btn-primary" id="AbrirModal">Nuevo</p>
             <hr>
             <div class="table-responsive">
                 <table class="table table-striped table-hover" id="TablaMarca">
@@ -74,7 +71,7 @@
             <!-- Collapse Detalles -->
             <div class="CrearDetalles collapse" id="detallesCollapse">
                 <div class="card card-body">
-                    <h5>Detalles de la Joya</h5>
+                    <h5>Detalles del Proveedor</h5>
                     <p id="detallesContenido"></p>
                     <div class="form-row d-flex justify-content-end">
                         <div class="col-md-3">
@@ -115,7 +112,6 @@
 
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
 
@@ -248,15 +244,21 @@ $(document).ready(function () {
                 if (response == 1) {
                     iziToast.success({
                     title: 'Éxito',
-                    message: 'Reparacion guardado correctamente.',
+                    message: 'Proveedor guardado correctamente.',
                 });
-                    alert('Proveedor guardado correctamente.');
+                
                     $('#TablaMarca').DataTable().ajax.reload();
                     limpiarFormulario();
                     $('.CrearMostrar').hide();
                     $('.CrearOcultar').show();
                 } else {
-                    alert('Error al guardar el proveedor.');
+                    iziToast.error({
+                    title: 'Error',
+                    message: 'Error al guadarar al proveedor.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -285,6 +287,8 @@ $(document).ready(function () {
         $('.CrearMostrar').show();
         cargarMunicipios();
     });
+
+    
     $('#CerrarDetalles').click(function() {
     $('#detallesCollapse').collapse('hide'); // Ocultar el Collapse de detalles al hacer clic en Volver
     $('.CrearOcultar').show();
