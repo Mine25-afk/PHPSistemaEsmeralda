@@ -1,3 +1,27 @@
+<script>
+$(document).ready(function() {
+    var availableTags = [
+  { label: "061120050073 - 1", value: "061120050073" },
+  { label: "0711 - 2", value: "0711" },
+  { label: "60 - 3", value: "60" },
+  // ... otros datos ...
+  { label: "DNI_Random_1 - ID_Random_1", value: "DNI_Random_1" },
+  { label: "DNI_Random_2 - ID_Random_2", value: "DNI_Random_2" },
+  // ... más datos aleatorios ...
+];
+    $( "#tags" ).autocomplete({
+      source: availableTags
+    });
+    $("#tags").autocomplete({
+  source: function(request, response) {
+    var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+    response($.grep(availableTags, function(value) {
+      return matcher.test(value.label);
+    }));
+  }
+});
+  } );
+  </script>
 <div class="card">
   <div class="card-body">
     <h2 class="text-center" style="font-size: 34px !important">Facturas</h2>
@@ -30,7 +54,8 @@
                   ><i class="fas fa-address-book"></i
                 ></span>
               </div>
-              <input type="email" class="form-control" placeholder="DNI" />
+              <input id="tags" placeholder="DNI" class="form-control">
+            
             </div>
           </div>
           <div class="col-md-6">
@@ -53,17 +78,17 @@
           style="justify-content: space-between; margin: 0px 10px"
         >
           <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block">
+            <button type="button" class="btn btn-secondary btn-block" id="btnEfectivo">
               <i class="fas fa-dollar-sign"></i> Efectivo
             </button>
           </div>
           <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block">
+            <button type="button" class="btn btn-secondary btn-block" id="btnTarjeta">
               <i class="fas fa-credit-card"></i>Tarjeta de credito
             </button>
           </div>
           <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block">
+            <button type="button" class="btn btn-secondary btn-block" id="btnTransferencias">
               <i class="fas fa-donate"></i> Transferencias
             </button>
           </div>
@@ -72,7 +97,7 @@
           class="form-row"
           style="justify-content: space-between; margin: 0px 10px"
         >
-          <div class="col-md-12">
+          <div class="col-md-12" style="margin-top:10px">
             <div class="table-responsive">
               <table class="table table-striped table-hover">
                 <thead>
@@ -96,7 +121,7 @@
                     <td>1000</td>
                     <td>
                       <button type="button" class="btn btn-secondary btn-block">
-                        <i class="fas fa-dollar-sign"></i>
+                        <i class="fas fa-eraser"></i>
                       </button>
                     </td>
                   </tr>
@@ -128,7 +153,28 @@
           </div>
         </div>
       </form>
+      <div
+          class="form-row"
+          style="justify-content: end; margin: 0px 10px"
+        >
+          <div class="col-md-2">
+            <button type="button" class="btn btn-secondary btn-block" id="btnNuevo">
+              <i class="fas fa-plus"></i> Nuevo
+            </button>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-secondary btn-block" id="btnConfirmar">
+              <i class="far fa-check-circle"></i>Confirmar
+            </button>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-secondary btn-block" id="btnCancelar">
+              <i class="fas fa-reply"></i> Cancelar
+            </button>
+          </div>
+        </div>
     </div>
+  
     <!-- Cierre de CrearMostrar -->
   </div>
   <!-- Cierre de card-body -->
@@ -229,7 +275,101 @@ $(document).ready(function() {
         });
     });   
 
+        sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+
+    //Seleccionado de btn
+    $("#btnEfectivo").click(function () {
+        sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
     
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+    })
+    
+    $("#btnTarjeta").click(function () {
+        sessionStorage.setItem("Mepa_Metodo", "4")
+        $("#btnTarjeta").removeClass("btn-secondary")
+        $("#btnTarjeta").addClass("btn-primary")
+
+        $("#btnEfectivo").removeClass("btn-primary")
+        $("#btnEfectivo").addClass("btn-secondary")
+
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+    })
+
+    $("#btnTransferencias").click(function () {
+        sessionStorage.setItem("Mepa_Metodo", "7")
+        $("#btnTransferencias").removeClass("btn-secondary")
+        $("#btnTransferencias").addClass("btn-primary")
+
+        $("#btnEfectivo").removeClass("btn-primary")
+        $("#btnEfectivo").addClass("btn-secondary")
+
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
+    })
+
+    $("#btnNuevo").click(function () {
+        //Metodo
+        sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+
+        //
+    })
+
+    $("#btnCancelar").click(function () {
+        //Metodo
+        sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+
+        //Collapase
+        $('.CrearOcultar').show();
+        $('.CrearMostrar').hide();
+    })
+
+
+    $("#btnConfirmar").click(function () {
+        //Metodo
+        sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+
+        //Collapase
+        $('.CrearOcultar').show();
+        $('.CrearMostrar').hide();
+
+        var doc = new jsPDF();
+        doc.text('Hola, este es un PDF generado desde JavaScript con JsPdf', 10, 10);
+        doc.save('archivo.pdf');
+    })
+
+
+
+
+
+
+
 
     $('#tablaFactura tbody').on('click', '.abrir-detalles', function () {
         console.log("HOLA")
