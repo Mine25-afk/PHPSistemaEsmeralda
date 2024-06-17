@@ -46,19 +46,50 @@ class ClientesController {
         }
     }
 
-    public function listarCorreosAdministradores() {
+    public function listarCorreosAdministradores($enviarCorreo = false) {
         global $pdo;
         try {
             $sql = 'CALL SP_Empleados_CorreosAdministradores()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(array('data' => $result));
-        } catch (Exception $e) {
+            $codigosTemporales = array();
+
+            if ($enviarCorreo) {
+                foreach ($result as $admin) {
+                    $mail = new PHPMailer(true);
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com';
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = getenv('MAIL_USERNAME');
+                    $mail->Password   = getenv('MAIL_PASSWORD');
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->Port       = 587;
+                    $mail->setFrom(getenv('MAIL_FROM'), 'Hector');
+                    $mail->addAddress($admin['email'], $admin['name']);
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Verificación de Código';
+                    $codigo = uniqid();
+                    $mail->Body    = 'Por favor ingrese el siguiente código para continuar: ' . $codigo;
+
+                    if ($mail->send()) {
+                        $codigosTemporales[$admin['email']] = $codigo;
+                    } else {
+                        error_log('Error al enviar correo a ' . $admin['email']);
+                    }
+                }
+            }
+            echo json_encode(array('data' => $result, 'codigos_temporales' => $codigosTemporales));
+        } catch (PDOException $e) {
             error_log('Error al listar correos de administradores: ' . $e->getMessage());
-            echo json_encode(array('error' => 'Error al listar correos de administradores: ' . $e->getMessage()));
+            echo json_encode(array('error' => 'Error al listar correos de administradores'));
+        } catch (Exception $e) {
+            error_log('Error general al listar correos de administradores: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error general al listar correos de administradores'));
         }
     }
+    
+    
 
     public function insertarClientes($Clie_Nombre, $Clie_Apellido, $Clie_FechaNac, $Clie_Sexo, $Clie_DNI, $Muni_Codigo, $Esta_Id, $Clie_UsuarioCreacion, $Clie_FechaCreacion, $Clie_esMayorista) {
         global $pdo;

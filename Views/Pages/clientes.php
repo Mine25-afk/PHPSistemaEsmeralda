@@ -123,7 +123,7 @@
                             <label class="control-label">Es Mayorista</label>
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaSi" value="true" required>
+                                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaSi" value="true" required data-toggle="modal" data-target="#modalAutorizacion">
                                     <label class="form-check-label" for="esMayoristaSi">Sí</label>
                                 </div>
                                 <div class="form-check form-check-inline">
@@ -133,6 +133,7 @@
                             </div>
                             <div class="error-message" id="Clie_esMayorista_error"></div>
                         </div>
+
 
 
                     </div>
@@ -283,6 +284,30 @@
     </div>
 </div>
 
+<!-- Modal para ingresar código de autorización -->
+<div class="modal fade" id="modalAutorizacion" tabindex="-1" aria-labelledby="modalAutorizacionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAutorizacionLabel">Código de Autorización</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formCodigoAutorizacion">
+                    <div class="form-group">
+                        <label for="codigoAutorizacion">Ingrese el código de autorización:</label>
+                        <input type="text" class="form-control" id="codigoAutorizacion" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="enviarCodigoBtn">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
@@ -318,6 +343,28 @@ $(document).ready(function () {
 
     ]
 });
+
+$('#enviarCodigoBtn').click(function() {
+    var codigo = $('#codigoAutorizacion').val();
+
+    $.ajax({
+        url: 'Controllers/ClientesController.php',
+        type: 'POST',
+        data: { codigo: codigo },
+        dataType: 'json', 
+        success: function(response) {
+            if (response.result === 'enviado') {
+                $('#modalAutorizacion').modal('hide');
+            } else {
+                alert('Error al enviar el código. Intente nuevamente.');
+            }
+        },
+        error: function() {
+            alert('Error en la comunicación con el servidor.');
+        }
+    });
+});
+
 
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
