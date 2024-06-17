@@ -15,7 +15,8 @@ class ClientesController {
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(array('data' => $result));
+            $dniList = array_column($result, 'Clie_DNI');
+            echo json_encode($dniList);
         } catch (Exception $e) {
             error_log('Error al listar clientes: ' . $e->getMessage());
             echo json_encode(array('error' => 'Error al listar clientes: ' . $e->getMessage()));
@@ -57,7 +58,15 @@ class ClientesController {
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(array('data' => $result));
+            $codigosTemporales = array();
+
+          
+           
+        
+            echo json_encode(array('data' => $result, 'codigos_temporales' => $codigosTemporales));
+        } catch (PDOException $e) {
+            error_log('Error al listar correos de administradores: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al listar correos de administradores'));
         } catch (Exception $e) {
             error_log('Error al listar clientes: ' . $e->getMessage());
             echo json_encode(array('error' => 'Error al listar Correos: ' . $e->getMessage()));
