@@ -475,27 +475,27 @@ $(document).ready(function () {
 
     // Captura el valor del material seleccionado
     var materialSeleccionado = $('#Mate_Id option:selected').text();
-        console.log('Material seleccionado:', materialSeleccionado); // Debugging line
+        console.log('Material seleccionado:', materialSeleccionado); 
 
-        // Asegúrate de que el valor no sea undefined
+       
         if (materialSeleccionado === undefined) {
             $('#Mate_Id_error').text('Este campo es requerido');
             isValid = false;
         }
 
-        // Extrae las primeras dos letras del material seleccionado
+        //primeras dos letras del material 
         var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
-        console.log('Código del material:', codigoMaterial); // Debugging line
+        console.log('Código del material:', codigoMaterial);
 
-        // Genera un código aleatorio
+        //codigo aleatorio
         var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
-        console.log('Código aleatorio:', codigoAleatorio); // Debugging line
+        console.log('Código aleatorio:', codigoAleatorio); 
 
-        // Concatena las primeras dos letras del material con el código aleatorio para formar el Joya_Codigo
+    
         var joyaCodigo = codigoMaterial + codigoAleatorio;
-        console.log('Joya Código generado:', joyaCodigo); // Debugging line
+        console.log('Joya Código generado:', joyaCodigo); 
 
-        // Asigna el Joya_Codigo generado al campo correspondiente
+     
         $('#Joya_Codigo').val(joyaCodigo);
         
     if ($('#Joya_Nombre').val().trim() === '') {
@@ -597,30 +597,30 @@ $(document).ready(function () {
         var data = table.row($(this).parents('tr')).data();
         var codigo = data.Joya_Codigo;
 
-        // Verificar si el código es válido y no está vacío
+        // Verifica si el Codigoo es valido y no esta vacio
         if (!codigo || codigo.length < 1) {
             alert("El código es demasiado corto para generar un código de barras válido.");
             return;
         }
 
-        // Mostrar el modal
+
         $('#codigoBarrasModal').modal('show');
 
-        // Guardar el código en el modal para uso posterior
+        // Guardar el codigo en el modal 
         $('#codigoBarrasModal').data('codigo', codigo);
 
-        // Generar automáticamente los códigos de barras al abrir el modal por primera vez
+      
         generarCodigosBarras(codigo);
     });
 
-    // Función para generar los códigos de barras según la cantidad especificada
+    // codigos segun cantidad
     function generarCodigosBarras(codigo) {
         var cantidad = parseInt($('#cantidadCodigos').val());
 
-        // Limpiar el contenedor de códigos de barras
+        // Limpiar el contenedor de codigos de barras
         $('#barcodeContainer').empty();
 
-        // Generar los códigos de barras
+        // generar codigos automaticos
         for (var i = 0; i < cantidad; i++) {
             var svg = $('<svg class="barcode-item"></svg>');
             JsBarcode(svg[0], codigo, {
@@ -633,13 +633,13 @@ $(document).ready(function () {
         }
     }
 
-    // Botón para generar los códigos de barras
+    
     $('#generarCodigos').click(function() {
         var codigo = $('#codigoBarrasModal').data('codigo');
         generarCodigosBarras(codigo);
     });
 
-    // Botón para imprimir los códigos de barras
+   
     $('#imprimirCodigos').click(function() {
         var printContents = document.getElementById('barcodeContainer').innerHTML;
         var originalContents = document.body.innerHTML;
@@ -648,10 +648,10 @@ $(document).ready(function () {
         window.print();
         document.body.innerHTML = originalContents;
 
-        location.reload(); // Opcional: puedes refrescar la página después de imprimir
+        location.reload(); 
     });
 
-    // Evento cuando se cambia la cantidad de códigos a generar
+
     $('#cantidadCodigos').change(function() {
         var codigo = $('#codigoBarrasModal').data('codigo');
         generarCodigosBarras(codigo);
