@@ -108,6 +108,15 @@
 .tree li > label:hover {
     background-color: var(--hover-background-color);
 }
+#nuevoRolCollapse .card-header {
+    background-color: #007bff; /* Cambia el color del encabezado */
+    color: #fff;
+}
+
+#nuevoRolCollapse .btn {
+    margin-top: 10px; /* Añade margen superior a los botones */
+}
+
 </style>
 
 
@@ -116,6 +125,7 @@
     <div class="card">
         <div class="card-body">
             <h2 class="text-center" style="font-size:34px !important">Roles</h2>
+            <div class="CrearOcultar">
             <p class="btn btn-primary" id="AbrirCollapse">
                 Nuevo
             </p>
@@ -131,38 +141,89 @@
                     </thead>
                 </table>
             </div>
+            </div>
             <div class="collapse" id="nuevoRolCollapse">
-                <div class="card card-body">
-                    <h5>Crear Nuevo Rol</h5>
-                    <form id="formNuevoRol">
-                    <input type="hidden" id="Role_Id" name="Role_Id">
-
-                        <div class="form-group">
-                            <label for="Role_Rol">Nombre del Rol</label>
-                            <input type="text" class="form-control" id="Role_Rol" name="Role_Rol" required>
-                        </div>
-                        <div id="pantallasTreeView">
-                    <ul></ul>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5>Crear Nuevo Rol</h5>
+        </div>
+        <div class="card-body">
+            <form id="formNuevoRol">
+                <input type="hidden" id="Role_Id" name="Role_Id">
+                
+                <div class="form-group">
+                    <label for="Role_Rol">Nombre del Rol</label>
+                    <input type="text" class="form-control" id="Role_Rol" name="Role_Rol" required>
                 </div>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </form>
+                
+                <div class="form-group">
+                    <label for="pantallasTreeView">Permisos</label>
+                    <div id="pantallasTreeView" class="border p-2">
+                        <ul></ul>
+                    </div>
                 </div>
+                
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                    </div>
+                    <div class="col-md-6">
+                        <a id="CerrarModal" class="btn btn-secondary btn-block text-white">Volver</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card d-flex flex-column" id="Detalles">
+    <div class="card-body">
+        <h5 class="card-title">Detalles de Roles</h5>
+        <div class="row">
+            <div class="col">
+                <strong>ID:</strong>
+                <span id="DetallesId"></span>
+            </div>
+            <div class="col">
+                <strong>Marca:</strong>
+                <span id="DetallesRol"></span>
             </div>
         </div>
     </div>
-    
+    <div class="card-body mt-2">
+        
+        <hr>
+        <h5 class="card-title">Auditoria</h5>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Acciones</th>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Insertar</td>
+                    <td><span id="DetallesUsuarioCreacion"></span></td>
+                    <td><span id="DetallesFechaCreacion"></span></td>
+                </tr>
+                <tr>
+                    <td>Modificar</td>
+                    <td><span id="DetallesUsuarioModificacion"></span></td>
+                    <td><span id="DetallesFechaModificacion"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="text-end mt-3">
+        <a class="btn btn-secondary" id="VolverDetalles">Cancelar</a>
+    </div>
+</div>
 
-    <div class="CrearDetalles collapse" id="detallesCollapse">
-              
-                    <h5>Detalles de la Reparaciones</h5>
-                    <p id="detallesContenido"></p>
-                    <div class="form-row d-flex justify-content-end">
-                        <div class="col-md-3">
-                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Volver</a>
-                        </div>
-                    </div>
-          
-            </div>
+
+        </div>
+     
+  
 
             <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -193,7 +254,7 @@ var selectedPantallas = {};
 $(document).ready(function () {
 
   
-    $('#tablaRol').DataTable({
+    var table =  $('#tablaRol').DataTable({
         "ajax": {
             "url": "Services/RolesService.php",
             "type": "POST",
@@ -211,15 +272,24 @@ $(document).ready(function () {
                 "data": null,
                 "render": function (data, type, row) {
                     return `
-                        <a class='btn btn-primary btn-sm abrir-editar' data-id='${data.Role_Id}'>
+                       <div class='text-center'>
+    <div class='btn-group'>
+        <button type='button' class='btn btn-default dropdown-toggle dropdown-icon' data-toggle='dropdown'>
+            <i class="fas fa-cogs"></i> Acciones
+        </button>
+        <div class='dropdown-menu'>
+         <a class='dropdown-item  abrir-editar' data-id='${data.Role_Id}'>
                             <i class='fas fa-edit'></i> Editar
                         </a> 
-                        <a class='btn btn-secondary btn-sm ver-detalles' data-id='${data.Role_Id}'>
+                        <a class='dropdown-item  ver-detalles' data-id='${data.Role_Id}'>
                             <i class='fas fa-eye'></i> Detalles
                         </a>
-                        <button class='btn btn-danger btn-sm eliminar' data-id='${data.Role_Id}' data-toggle='modal' data-target='#eliminarModal'>
+                        <button class='dropdown-item  eliminar' data-id='${data.Role_Id}' data-toggle='modal' data-target='#eliminarModal'>
                             <i class='fas fa-eraser'></i> Eliminar
                         </button>
+        </div>
+    </div>
+</div>
                     `;
                 },
                 "defaultContent": ""
@@ -231,9 +301,15 @@ $(document).ready(function () {
         $('#tablaContainer').toggle();
         $('#nuevoRolCollapse').collapse('toggle');
     });
-    $('#CerrarDetalles').click(function() {
+    $('#CerrarModal').click(function() {
         $('#tablaContainer').toggle();
         $('#nuevoRolCollapse').collapse('hide');
+        limpiarFormulario();
+    });
+    $('#CerrarDetalles').click(function() {
+        $('#tablaContainer').toggle();
+        $('.CrearOcultar').show();
+        $('.detallesContenido').hide();
     });
     // Datos estáticos de las pantallas
     var pantallas = [
@@ -381,7 +457,7 @@ $(document).ready(function () {
                     console.log('Datos de pantallas a enviar:', datosPantallasRol);
 
                     $.ajax({
-                        url: 'Controllers/RolesService.php',
+                        url: 'Services/RolesService.php',
                         type: 'POST',
                         data: datosPantallasRol,
                         success: function(response) {
@@ -455,168 +531,39 @@ $(document).on('click', '.abrir-editar', function () {
     var roleId = $(this).data('id');
     obtenerDatosCompletosRol(roleId);
 });
+$('#tablaRol tbody').on('click', '.ver-detalles', function () {
+        var data = table.row($(this).parents('tr')).data();
+        var valor = data.Role_Id;
+        $('#Detalles').show();
+        $('.CrearOcultar').hide();
+        $('#tablaContainer').toggle();
 
- 
-  $(document).on('click', '.ver-detalles', function() {
-    var roleId = $(this).data('id');
         $.ajax({
             url: 'Services/RolesService.php',
-            type: 'PoSt',
+            method: 'POST',
             data: {
-                action: 'buscarDatosCompletosRol',
-                Role_Id: roleId
+                action: 'buscarRol',
+                Role_Id: valor
             },
-            success: function (response) {
-                try {
-                    console.log('Respuesta del servidor:', response);
-                    var detalles = JSON.parse(response);
-                    mostrarDetalles(detalles);
-                    console.log(detalles)
-                    $('#tablaContainer').toggle();
-                } catch (e) {
-                    alert('Error parsing JSON response.');
-                }
+            success: function(response) {
+    console.log('Respuesta del servidor:', response);
+    var data = JSON.parse(response);
+    console.log('Datos parseados:', data);
+   
+$('#DetallesId').text(data.Role_Id);
+$('#DetallesRol').text(data.Role_Rol);
+$('#DetallesUsuarioCreacion').text(data.UsuarioCreacion);
+$('#DetallesUsuarioModificacion').text(data.UsuarioModificacion);
+$('#DetallesFechaModificacion').text(data.FechaModificacion);
+$('#DetallesFechaCreacion').text(data.FechaCreacion);
+
             },
-            error: function () {
-                alert('Error fetching or parsing the response.');
+            error: function(error) {
+                console.error('Error:', error);
             }
         });
     });
-    function mostrarDetalles(detalles) {
-    var datosGeneralesHTML = '';
-    var datosAuditoriaHTML = '';
 
-    if (typeof detalles === 'object') {
-        
-        datosGeneralesHTML += `
-            <div class="row">
-                <div class="col-md-4">
-                    <p><strong>Repa_Id:</strong> ${detalles.Role_Id}</p>
-                </div>
-                <div class="col-md-4">
-                    <p><strong>Repa_Codigo:</strong> ${detalles.Role_Rol}</p>
-                </div>
-                <div class="col-md-4">
-                    <p><strong>Repa_Tipo_Reparacion:</strong> ${detalles.Pant_Descripcion}</p>
-                </div>
-            </div>
-        `;
-
-     
-        datosAuditoriaHTML += `
-            <div class="card mt-2">
-                <div class="card-body">
-                    <h5>Auditoria</h5>
-                    <hr>
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Acciones</th>
-                                <th>Usuario</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Insertar</td>
-                                <td>
-                                    <label for="" ${detalles.UsuarioCreacion}></label>
-                                </td>
-                                <td>
-                                    <label for="" ${detalles.FechaCreacion}></label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Modificar</td>
-                                <td>
-                                    <label for="" ${detalles.UsuarioModificacion}></label>
-                                </td>
-                                <td>
-                                    <label for="" ${detalles.FechaModificacion}></label>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    } else {
-        try {
-            var datos = JSON.parse(detalles);
-
-            datosGeneralesHTML += `
-                <div class="row">
-                <div class="col-md-4">
-                    <p><strong>Repa_Id:</strong> ${detalles.Role_Id}</p>
-                </div>
-                <div class="col-md-4">
-                    <p><strong>Repa_Codigo:</strong> ${detalles.Role_Rol}</p>
-                </div>
-                <div class="col-md-4">
-                    <p><strong>Repa_Tipo_Reparacion:</strong> ${detalles.Pant_Descripcion}</p>
-                </div>
-            </div>
-            `;
-
-    
-            datosAuditoriaHTML += `
-                 <div class="card mt-2">
-                <div class="card-body">
-                    <h5>Auditoria</h5>
-                    <hr>
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Acciones</th>
-                                <th>Usuario</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Insertar</td>
-                                <td>
-                                    <label for="" ${detalles.UsuarioCreacion}></label>
-                                </td>
-                                <td>
-                                    <label for="" ${detalles.FechaCreacion}></label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Modificar</td>
-                                <td>
-                                    <label for="" ${detalles.UsuarioModificacion}></label>
-                                </td>
-                                <td>
-                                    <label for="" ${detalles.FechaModificacion}></label>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            `;
-        } catch (error) {
-            $('#detallesContenido').html('<p>Error al cargar los detalles de la reparación.</p>');
-            $('#detallesCollapse').collapse('show');
-            return;
-        }
-    }
-
-    var detallesHTML = `
-        <div class="datos-generales">
-            <h4>Datos Generales</h4>
-            ${datosGeneralesHTML}
-        </div>
-        <div class="datos-auditoria">
-            <h4>Datos de Auditoría</h4>
-            ${datosAuditoriaHTML}
-        </div>
-    `;
-
-    $('#detallesContenido').html(detallesHTML);
-    $('#detallesCollapse').collapse('show');
-}
 var roleId; // Variable global para almacenar el ID del proveedor a eliminar
 
 $(document).on('click', '.eliminar', function() {
@@ -670,8 +617,12 @@ $('#confirmarEliminarBtn').click(function() {
         });
     }
 });
-
-
+$('#Detalles').hide();
+$('#VolverDetalles').click(function() {
+        $('#Detalles').hide();
+        $('#tablaContainer').toggle();
+        $('.CrearOcultar').show();
+    });
 });
 </script>
 
