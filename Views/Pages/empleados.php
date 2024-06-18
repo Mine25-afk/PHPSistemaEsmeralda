@@ -307,7 +307,7 @@
         sessionStorage.setItem('Empl_Id', "0");
         var table = $('#TablaMarca').DataTable({
             "ajax": {
-                "url": "Controllers/EmpleadoController.php",
+                "url": "Services/EmpleadoService.php",
                 "type": "POST",
                 "data": function(d) {
                     d.action = 'listarEmpleados';
@@ -380,7 +380,7 @@
 
         function cargarDatos() {
             $.ajax({
-                url: 'Controllers/EmpleadoController.php',
+                url: 'Services/EmpleadoService.php',
                 type: 'POST',
                 data: {
                     action: 'listarDepartamentos'
@@ -396,7 +396,7 @@
             });
 
             $.ajax({
-                url: 'Controllers/EmpleadoController.php',
+                url: 'Services/EmpleadoService.php',
                 type: 'POST',
                 data: {
                     action: 'listarCargos'
@@ -412,7 +412,7 @@
             });
 
             $.ajax({
-                url: 'Controllers/EmpleadoController.php',
+                url: 'Services/EmpleadoService.php',
                 type: 'POST',
                 data: {
                     action: 'listarEstadosCiviles'
@@ -428,7 +428,7 @@
             });
 
             $.ajax({
-                url: 'Controllers/EmpleadoController.php',
+                url: 'Services/EmpleadoService.php',
                 type: 'POST',
                 data: {
                     action: 'listarSucursales'
@@ -454,7 +454,7 @@
         function cargarMunicipios(depaCodigo) {
             if (depaCodigo) {
                 $.ajax({
-                    url: 'Controllers/EmpleadoController.php',
+                    url: 'Services/EmpleadoService.php',
                     type: 'POST',
                     data: {
                         action: 'listarMunicipiosPorDepartamento',
@@ -485,7 +485,7 @@
         $('#confirmarEliminarBtn').click(function() {
             var Empl_Id = sessionStorage.getItem('Empl_Id');
             $.ajax({
-                url: 'Controllers/EmpleadoController.php',
+                url: 'Services/EmpleadoService.php',
                 type: 'POST',
                 data: {
                     action: 'eliminar',
@@ -534,7 +534,7 @@
                 console.log(empleadoData, Valor);
 
                 $.ajax({
-                    url: 'Controllers/EmpleadoController.php',
+                    url: 'Services/EmpleadoService.php',
                     type: 'POST',
                     data: {
                         action: InsertarOActualizar ? 'insertar' : 'actualizar',
@@ -589,7 +589,7 @@
             sessionStorage.setItem('Empl_Id', data.Empl_Id);
 
             $.ajax({
-                url: 'Controllers/EmpleadoController.php',
+                url: 'Services/EmpleadoService.php',
                 method: 'POST',
                 data: {
                     action: 'buscar',
@@ -628,7 +628,7 @@
             $('.CrearMostrar').hide();
 
             $.ajax({
-                url: 'Controllers/EmpleadoController.php',
+                url: 'Services/EmpleadoService.php',
                 method: 'POST',
                 data: {
                     action: 'buscar',

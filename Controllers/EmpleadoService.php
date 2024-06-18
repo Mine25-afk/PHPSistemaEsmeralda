@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config.php';
 session_start();
 
-class EmpleadoController
+class EmpleadoService
 {
     public function listarEmpleados()
     {
@@ -184,10 +184,10 @@ class EmpleadoController
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $controller = new EmpleadoController();
+    $service = new EmpleadoService();
 
     if ($_POST['action'] === 'listarEmpleados') {
-        $controller->listarEmpleados();
+        $service->listarEmpleados();
     } elseif ($_POST['action'] === 'insertar') {
         $Empl_Nombre = $_POST['Nombres'];
         $Empl_Apellido = $_POST['Apellidos'];
@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Empl_UsuarioCreacion = $_SESSION['Usua_Id'];
         $Empl_FechaCreacion = (new DateTime())->format('Y-m-d H:i:s');
 
-        $resultado = $controller->insertarEmpleado($Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioCreacion, $Empl_FechaCreacion);
+        $resultado = $service->insertarEmpleado($Empl_Nombre, $Empl_Apellido, $Empl_Sexo, $Empl_FechaNac, $Empl_DNI, $Muni_Codigo, $Sucu_Id, $Esta_Id, $Carg_Id, $Empl_Correo, $Empl_UsuarioCreacion, $Empl_FechaCreacion);
         echo $resultado;
     } elseif ($_POST['action'] === 'actualizar') {
         $Empl_Id = $_POST['Empl_Id'];
@@ -219,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Empl_UsuarioModificacion = $_SESSION['Usua_Id'];
         $Empl_FechaModificacion = (new DateTime())->format('Y-m-d H:i:s');
 
-        $resultado = $controller->actualizarEmpleado(
+        $resultado = $service->actualizarEmpleado(
             $Empl_Id,
             $Empl_Nombre,
             $Empl_Apellido,
@@ -237,22 +237,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo $resultado;
     } elseif ($_POST['action'] === 'eliminar') {
         $Empl_Id = $_POST['Empl_Id'];
-        $resultado = $controller->eliminarEmpleado($Empl_Id);
+        $resultado = $service->eliminarEmpleado($Empl_Id);
         echo $resultado;
     } elseif ($_POST['action'] === 'buscar') {
         $Empl_Id = $_POST['Empl_Id'];
-        $resultado = $controller->buscarEmpleadoPorCodigo($Empl_Id);
+        $resultado = $service->buscarEmpleadoPorCodigo($Empl_Id);
         echo $resultado;
     } elseif ($_POST['action'] === 'listarDepartamentos') {
-        echo $controller->listarDepartamentos();
+        echo $service->listarDepartamentos();
     } elseif ($_POST['action'] === 'listarCargos') {
-        echo $controller->listarCargos();
+        echo $service->listarCargos();
     } elseif ($_POST['action'] === 'listarEstadosCiviles') {
-        echo $controller->listarEstadosCiviles();
+        echo $service->listarEstadosCiviles();
     } elseif ($_POST['action'] === 'listarSucursales') {
-        echo $controller->listarSucursales();
+        echo $service->listarSucursales();
     } elseif ($_POST['action'] === 'listarMunicipiosPorDepartamento') {
         $depaCodigo = $_POST['depaCodigo'];
-        echo $controller->listarMunicipiosPorDepartamento($depaCodigo);
+        echo $service->listarMunicipiosPorDepartamento($depaCodigo);
     }
 }

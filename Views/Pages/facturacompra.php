@@ -165,8 +165,10 @@
                                                         </td>
                                                         <td><input type="text" class="form-control" name="producto" /></td>
                                                         <td><input type="number" class="form-control" name="cantidad" /></td>
-                                                        <td><input type="text" class="form-control" name="precio_compra" oninput="validateNumber(this)" /></td>
-                                                        <td><input type="text" class="form-control" name="precio_venta" oninput="validateNumber(this)" /></td>
+                                                        <td><input type="text" class="form-control" id="precio_compra" name="precio_compra" oninput="validateNumber(this)" /></td>
+                                                        <td>
+                                                            <p id="precio_venta">0.00</p>
+                                                        </td>
                                                         <td>
                                                             <p id="precio_mayorista">0.00</p>
                                                         </td>
@@ -207,7 +209,11 @@
             var row = button.closest('tr');
             row.remove();
         }
+        $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+        $(this).closest('tr').find('input[name="cantidad"]').val('1');
+
         $(document).ready(function() {
+
             $('input[name="cantidad"]').on('input', function() {
                 this.value = this.value.replace(/[^0-9]/g, '');
             });
@@ -297,8 +303,11 @@
                         var selectedItem = ui.item.data;
                         console.log(selectedItem);
                         let preciom = selectedItem.Mayor;
-                        console.log('precio m', preciom);
+                        let preciov = selectedItem.Venta;
+                        console.log(preciov);
                         $(this).closest('tr').find('#precio_mayorista').text(preciom);
+                        $(this).closest('tr').find('#precio_venta').text(preciov);
+                        $(this).closest('tr').find('input[name="precio_compra"]').val(selectedItem.Joya_PrecioCompra || selectedItem.Maqu_PrecioCompra);
                         if (selectedItem.Joya_Codigo) {
                 $(this).closest('tr').find('#categoria').text('Joya');
             } else {
@@ -326,14 +335,24 @@
                                     var item = data[0];
                                     console.log(item, 'item');
                                     var precioMayorista = item.Maqu_PrecioMayor;
+                                    let preciov = item.Maqu_PrecioVenta;
                                     $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                    $(this).closest('tr').find('#precio_venta').text(preciov);
                                     $(this).closest('tr').find('#categoria').text('Maquillaje');
+                                    $(this).closest('tr').find('input[name="precio_compra"]').val(item.Maqu_PrecioCompra);
+
                                 } else {
                                     $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                                    $(this).closest('tr').find('#precio_venta').text('0.00');
+                                    $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+
                                 }
                             }.bind(this),
                             error: function() {
                                 $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                                $(this).closest('tr').find('#precio_venta').text('0.00');
+                                $(this).closest('tr').find('input[name="precio_compra"]').val('0,00');
+
                             }.bind(this)
                         });
                     } else {
@@ -350,14 +369,24 @@
                                     var item = data[0];
                                     console.log(item, 'item');
                                     var precioMayorista = item.Joya_PrecioMayor;
+                                    let preciov = item.Joya_PrecioVenta;
                                     $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                    $(this).closest('tr').find('#precio_venta').text(preciov);
                                     $(this).closest('tr').find('#categoria').text('Joya');
+                                    $(this).closest('tr').find('input[name="precio_compra"]').val(item.Joya_PrecioCompra);
+
                                 } else {
                                     $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                                    $(this).closest('tr').find('#precio_venta').text('0.00');
+                                    $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+
                                 }
                             }.bind(this),
                             error: function() {
                                 $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                                $(this).closest('tr').find('#precio_venta').text('0.00');
+                                $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+
                             }.bind(this)
                         });
                     }

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config.php';
 session_start();
 
-class UsuarioController
+class UsuarioService
 {
     public function listarUsuarios()
     {
@@ -147,10 +147,10 @@ class UsuarioController
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $controller = new UsuarioController();
+    $Service = new UsuarioService();
 
     if ($_POST['action'] === 'listarUsuarios') {
-        $controller->listarUsuarios();
+        $service->listarUsuarios();
     } elseif ($_POST['action'] === 'insertar') {
         $Usua_Usuario = $_POST['Usuario'];
         $Usua_Contraseña = $_POST['Contraseña'];
@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         error_log('Datos recibidos en insertar: ' . json_encode(compact('Usua_Usuario', 'Usua_Contraseña', 'Usua_Administrador', 'Empl_Id', 'Role_Id', 'Usua_UsuarioCreacion', 'Usua_FechaCreacion')));
 
-        $resultado = $controller->insertarUsuario($Usua_Usuario, $Usua_Contraseña, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioCreacion, $Usua_FechaCreacion);
+        $resultado = $service->insertarUsuario($Usua_Usuario, $Usua_Contraseña, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioCreacion, $Usua_FechaCreacion);
         echo $resultado;
     } elseif ($_POST['action'] === 'actualizar') {
         $Usua_Id = $_POST['Usua_Id'];
@@ -176,23 +176,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Usua_UsuarioModificacion = $_SESSION['Usua_Id'];
         $Usua_FechaModificacion = (new DateTime())->format('Y-m-d H:i:s');
 
-        $resultado = $controller->actualizarUsuario($Usua_Id, $Usua_Usuario, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioModificacion, $Usua_FechaModificacion);
+        $resultado = $service->actualizarUsuario($Usua_Id, $Usua_Usuario, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioModificacion, $Usua_FechaModificacion);
         echo $resultado;
     } elseif ($_POST['action'] === 'eliminar') {
         $Usua_Id = $_POST['Usua_Id'];
         if (empty($Usua_Id)) {
             error_log('Usua_Id está vacío en eliminar');
         }
-        $resultado = $controller->eliminarUsuario($Usua_Id);
+        $resultado = $service->eliminarUsuario($Usua_Id);
         echo $resultado;
     } elseif ($_POST['action'] === 'buscar') {
         $Usua_Id = $_POST['Usua_Id'];
-        $resultado = $controller->buscarUsuarioPorId($Usua_Id);
+        $resultado = $service->buscarUsuarioPorId($Usua_Id);
         echo $resultado;
     } elseif ($_POST['action'] === 'listarRoles') {
-        echo $controller->listarRoles();
+        echo $service->listarRoles();
     } elseif ($_POST['action'] === 'listarEmpleados') {
-        echo $controller->listarEmpleados();
+        echo $service->listarEmpleados();
     }
 }
 ?>
