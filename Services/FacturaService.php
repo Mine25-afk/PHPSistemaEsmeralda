@@ -113,6 +113,26 @@ class FacturaController {
             throw new Exception('Error al buscar la marca: ' . $e->getMessage());
         }
     }
+
+    public function listarTarjetas()
+    {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Tarjetas_Listar`()';
+            $stmt = $pdo->prepare($sql);
+            $result = $stmt->execute();
+            $data = array();
+            foreach ($result as $row) {
+                $data[] = array(
+                    'tarj_id' => $row['tarj_Id'],
+                    'tarj_Descripcion'=> $row['tarj_Descripcion']
+                );
+            }
+            echo json_encode(array('data' => $data));
+        } catch (Exception $e) {
+            throw new Exception('Error al listar cargos: ' . $e->getMessage());
+        }
+    }
 }
 
 // Main logic
@@ -138,6 +158,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Codigo = $_POST['Codigo'];
         $resultado = $controller->buscarProductoPorCodigo($Codigo);
         echo $resultado;
+    }elseif ($_POST['action'] === 'listartarjetas') {
+    $controller->listarTarjetas();
+   
     }
 }
 ?>

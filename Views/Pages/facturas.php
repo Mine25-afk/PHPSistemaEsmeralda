@@ -217,7 +217,7 @@ $(document).ready(function() {
     $('.CrearMostrar').hide();
     var table = $('#tablaFactura').DataTable({
         "ajax": {
-            "url": "Controllers/FacturaController.php",
+            "url": "Services/FacturaService.php",
             "type": "POST",
             "data": {
                 "action": 'listarFactura'
