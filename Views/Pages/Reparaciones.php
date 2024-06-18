@@ -112,7 +112,7 @@ $(document).ready(function () {
     // Inicializar DataTable
     $('#Tablaone').DataTable({
         "ajax": {
-            "url": "Controllers/ReparacionesController.php",
+            "url": "Services/ReparacionesService.php",
             "type": "POST",
             "data": function(d) {
                 d.action = 'listarReparaciones';
@@ -191,7 +191,7 @@ $('#Repa_Codigo').on('input', function () {
         console.log('Repa_Id:', RepaId);
 
         $.ajax({
-            url: 'Controllers/ReparacionesController.php',
+            url: 'Services/ReparacionesController.php',
             type: 'POST',
             data: {
                 action: action,
@@ -252,7 +252,7 @@ $('#Repa_Codigo').on('input', function () {
         var RepaId = $(this).data('id');
         console.log('Edit Repa_Id:', RepaId); // Añadir console.log para depurar
         $.ajax({
-            url: 'Controllers/ReparacionesController.php',
+            url: 'Services/ReparacionesService.php',
             type: 'GET',
             data: {
                 action: 'buscar',
@@ -281,7 +281,7 @@ $('#Repa_Codigo').on('input', function () {
     $(document).on('click', '.ver-detalles', function() {
         var RepaId = $(this).data('id');
         $.ajax({
-            url: 'Controllers/ReparacionesController.php',
+            url: 'Services/ReparacionesService.php',
             type: 'GET',
             data: {
                 action: 'buscar',
@@ -412,7 +412,7 @@ $('#confirmarEliminarBtn').click(function () {
 // Función para eliminar el proveedor
 function eliminarProveedor() {
     $.ajax({
-        url: 'Controllers/ReparacionesController.php',
+        url: 'Services/ReparacionesService.php',
         type: 'POST',
         data: {
             action: 'eliminar',

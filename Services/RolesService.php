@@ -81,12 +81,13 @@ class RolesController {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Role_Id', $Role_Id, PDO::PARAM_INT);
             $stmt->execute();
-
-            return $stmt->fetchColumn(); // 1 si es exitoso, 0 si no
+    
+            return $stmt->fetchColumn(); 
         } catch (PDOException $e) {
             throw new Exception('Error al eliminar el rol: ' . $e->getMessage());
         }
     }
+    
 
     public function listarPantallasRoles() {
         try {
@@ -217,11 +218,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $resultado = $controller->actualizarRol($Role_Id, $Role_Rol, $Role_UsuarioModificacion, $Role_FechaModificacion);
             echo json_encode(['resultado' => $resultado]);
             break;
-        case 'eliminarRol':
-            $Role_Id = $_POST['Role_Id'];
-            $resultado = $controller->eliminarRol($Role_Id);
-            echo json_encode(['resultado' => $resultado]);
-            break;
+            case 'eliminarRol':
+                $Role_Id = $_POST['Role_Id'];
+                $resultado = $controller->eliminarRol($Role_Id);
+                echo json_encode(['resultado' => $resultado]);
+                break;
+            
         case 'listarRoles':
             $controller->listarRoles();
             break;
@@ -229,21 +231,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $controller->listarPantallas();
             break;
             case 'insertarPantallasPorRol':
-                // Recibimos los datos directamente de $_POST
+              
                 $data = $_POST;
             
-                // Verificar los datos después de decodificar el JSON
+           
                 error_log("Datos recibidos en insertarPantallasPorRol: " . print_r($data, true));
             
-                // Obtenemos el Role_Id necesario para la inserción de pantallas por rol
+              
                 $roleID = isset($data['Role_Id']) ? $data['Role_Id'] : null;
                 $pantallas = isset($data['Pantallas']) ? explode(',', $data['Pantallas']) : [];
             
-                // Verificar el contenido de los datos recibidos
+              
                 error_log("Role_ID recibido: " . $roleID);
                 error_log("Pantallas recibidas: " . print_r($pantallas, true));
             
-                // Verificamos la presencia de los datos requeridos
+               
                 if ($roleID === null) {
                     $errorMessage = "Datos incompletos: Role_Id faltante.";
                     error_log($errorMessage);
@@ -251,7 +253,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     exit;
                 }
             
-                // Si el Role_Id se recibió correctamente, puedes continuar con el proceso de inserción de pantallas por rol
                 try {
                     $resultado = $controller->insertarPantallaPorRol($roleID, $pantallas);
                     if ($resultado) {
@@ -285,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 case 'buscarDatosCompletosRol':
                     $Role_Id = $_POST['Role_Id'];
                     $rol = $controller->buscarRol($Role_Id);
-                    $pantallas = $controller->buscarPantallaPorRol($Role_Id); // Asegúrate de que el nombre del método y parámetro sean correctos
+                    $pantallas = $controller->buscarPantallaPorRol($Role_Id); 
                     echo json_encode(['rol' => $rol, 'pantallas' => $pantallas]);
                     break;
                 

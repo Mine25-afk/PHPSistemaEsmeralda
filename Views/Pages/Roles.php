@@ -150,6 +150,40 @@
             </div>
         </div>
     </div>
+    
+
+    <div class="CrearDetalles collapse" id="detallesCollapse">
+              
+                    <h5>Detalles de la Reparaciones</h5>
+                    <p id="detallesContenido"></p>
+                    <div class="form-row d-flex justify-content-end">
+                        <div class="col-md-3">
+                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Volver</a>
+                        </div>
+                    </div>
+          
+            </div>
+
+            <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">¿Estás seguro de que deseas eliminar este Rol?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
@@ -157,12 +191,11 @@
 var selectedPantallas = {};
 
 $(document).ready(function () {
-    if ($.fn.DataTable.isDataTable('#tablaRol')) {
-        $('#tablaRol').DataTable().destroy();
-    }
+
+  
     $('#tablaRol').DataTable({
         "ajax": {
-            "url": "Controllers/RolesController.php",
+            "url": "Services/RolesService.php",
             "type": "POST",
             "data": function(d) {
                 d.action = 'listarRoles';
@@ -198,7 +231,10 @@ $(document).ready(function () {
         $('#tablaContainer').toggle();
         $('#nuevoRolCollapse').collapse('toggle');
     });
-
+    $('#CerrarDetalles').click(function() {
+        $('#tablaContainer').toggle();
+        $('#nuevoRolCollapse').collapse('hide');
+    });
     // Datos estáticos de las pantallas
     var pantallas = [
                 { Pant_Id: 1, Pant_Descripcion: "Usuarios" },
@@ -287,86 +323,105 @@ $(document).ready(function () {
                 categoriaCheckbox.prop('checked', allChecked);
             });
             function limpiarFormulario() {
-    // Limpiar el campo de texto del formulario
+  
     $('#Role_Rol').val('');
 
-    // Deseleccionar todos los checkboxes
+   
     $('#pantallasTreeView input[type="checkbox"]').prop('checked', false);
 
-    // Colapsar todas las categorías del tree view
+   
     $('#pantallasTreeView .categoria').removeClass('expanded');
     $('#pantallasTreeView .categoria-ul').hide();
 }
 
-    // Parte del cliente (JavaScript)
+
     $('#formNuevoRol').submit(function(e) {
     e.preventDefault();
-    var roleId = $('#Role_Id').val();
+
+    console.log('Formulario enviado');
+
     var nombreRol = $('#Role_Rol').val();
-    var usuarioId = 1; // Suponiendo que el ID del usuario que crea el rol es 1
+    var usuarioId = 1; 
     var fecha = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
     var datosAEnviar = {
-        action: roleId ? 'actualizarRol' : 'insertarRol',
-        Role_Id: roleId,
+        action: 'insertarRol',
         Role_Rol: nombreRol,
         Role_UsuarioCreacion: usuarioId,
         Role_FechaCreacion: fecha
     };
 
+    console.log('Datos a enviar:', datosAEnviar);
+
     $.ajax({
-        url: 'Controllers/RolesController.php',
+        url: 'Services/RolesService.php',
         type: 'POST',
         data: datosAEnviar,
         success: function(response) {
-            var result = JSON.parse(response);
-            if (result.resultado) {
-                var roleId = result.nuevoRolId || roleId;
-                var selectedPantallas = $('.pantalla-checkbox:checked').map(function() {
-                    return $(this).data('id');
-                }).get();
+            console.log('Respuesta del servidor (insertarRol):', response);
+            try {
+                var result = JSON.parse(response);
+                console.log('Resultado parseado:', result);
+                
+                
+                if (result.nuevoRolId) {
+                    var roleId = result.nuevoRolId;
+                    console.log('Role ID:', roleId);
+                    var selectedPantallas = $('.pantalla-checkbox:checked').map(function() {
+                        return $(this).data('id');
+                    }).get();
+                    console.log('Pantallas seleccionadas:', selectedPantallas);
 
-                var datosPantallasRol = {
-                    action: 'insertarPantallasPorRol',
-                    Role_Id: roleId,
-                    Pantallas: selectedPantallas.join(',')
-                };
+                    var datosPantallasRol = {
+                        action: 'insertarPantallasPorRol',
+                        Role_Id: roleId,
+                        Pantallas: selectedPantallas.join(',')
+                    };
 
-                $.ajax({
-                    url: 'Controllers/RolesController.php',
-                    type: 'POST',
-                    data: datosPantallasRol,
-                    success: function(response) {
-                        iziToast.success({
-                            title: 'Éxito',
-                            message: 'Proveedor guardado correctamente.',
-                        });
-                        $('#tablaRol').DataTable().ajax.reload();
-                        $('#tablaContainer').toggle();
-                        $('#nuevoRolCollapse').collapse('hide');
-                        limpiarFormulario();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al insertar pantallas por rol:", error);
-                    }
-                });
+                    console.log('Datos de pantallas a enviar:', datosPantallasRol);
+
+                    $.ajax({
+                        url: 'Controllers/RolesService.php',
+                        type: 'POST',
+                        data: datosPantallasRol,
+                        success: function(response) {
+                            console.log('Respuesta del servidor (insertarPantallasPorRol):', response);
+                            iziToast.success({
+                                title: 'Éxito',
+                                message: 'Proveedor guardado correctamente.',
+                            });
+                            $('#tablaRol').DataTable().ajax.reload();
+                            $('#tablaContainer').toggle();
+                            $('#nuevoRolCollapse').collapse('hide');
+                            limpiarFormulario();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error al insertar pantallas por rol:", xhr.responseText, status, error);
+                        }
+                    });
+                } else {
+                    console.error('Resultado no exitoso: la respuesta no contiene nuevoRolId válido', result);
+                }
+            } catch (e) {
+                console.error('Error al parsear JSON:', e, response);
             }
         },
         error: function(xhr, status, error) {
-            console.error("Error al insertar/actualizar rol:", error);
+            console.error("Error al insertar/actualizar rol:", xhr.responseText, status, error);
         }
     });
 });
+
 function obtenerDatosCompletosRol(roleId) {
     $.ajax({
-        url: 'Controllers/RolesController.php',
+        url: 'Services/RolesService.php',
         type: 'POST',
         data: {
             action: 'buscarDatosCompletosRol',
             Role_Id: roleId
         },
         success: function(response) {
-            console.log('Respuesta del servidor:', response); // Para depuración
+            console.log('Respuesta del servidor:', response); 
             try {
                 var data = JSON.parse(response);
                 if (data.rol && data.pantallas) {
@@ -376,7 +431,7 @@ function obtenerDatosCompletosRol(roleId) {
                     $('#Role_Id').val(rol.Role_Id);
                     $('#Role_Rol').val(rol.Role_Rol);
 
-                    $('#pantallasTreeView input[type="checkbox"]').prop('checked', false); // Deseleccionar todos los checkboxes
+                    $('#pantallasTreeView input[type="checkbox"]').prop('checked', false); 
                     pantallas.forEach(function(pantalla) {
                         $('#pantallasTreeView input[data-id="' + pantalla.Pant_Id + '"]').prop('checked', true);
                     });
@@ -400,6 +455,222 @@ $(document).on('click', '.abrir-editar', function () {
     var roleId = $(this).data('id');
     obtenerDatosCompletosRol(roleId);
 });
+
+ 
+  $(document).on('click', '.ver-detalles', function() {
+    var roleId = $(this).data('id');
+        $.ajax({
+            url: 'Services/RolesService.php',
+            type: 'PoSt',
+            data: {
+                action: 'buscarDatosCompletosRol',
+                Role_Id: roleId
+            },
+            success: function (response) {
+                try {
+                    console.log('Respuesta del servidor:', response);
+                    var detalles = JSON.parse(response);
+                    mostrarDetalles(detalles);
+                    console.log(detalles)
+                    $('#tablaContainer').toggle();
+                } catch (e) {
+                    alert('Error parsing JSON response.');
+                }
+            },
+            error: function () {
+                alert('Error fetching or parsing the response.');
+            }
+        });
+    });
+    function mostrarDetalles(detalles) {
+    var datosGeneralesHTML = '';
+    var datosAuditoriaHTML = '';
+
+    if (typeof detalles === 'object') {
+        
+        datosGeneralesHTML += `
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Repa_Id:</strong> ${detalles.Role_Id}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Repa_Codigo:</strong> ${detalles.Role_Rol}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Repa_Tipo_Reparacion:</strong> ${detalles.Pant_Descripcion}</p>
+                </div>
+            </div>
+        `;
+
+     
+        datosAuditoriaHTML += `
+            <div class="card mt-2">
+                <div class="card-body">
+                    <h5>Auditoria</h5>
+                    <hr>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Acciones</th>
+                                <th>Usuario</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Insertar</td>
+                                <td>
+                                    <label for="" ${detalles.UsuarioCreacion}></label>
+                                </td>
+                                <td>
+                                    <label for="" ${detalles.FechaCreacion}></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Modificar</td>
+                                <td>
+                                    <label for="" ${detalles.UsuarioModificacion}></label>
+                                </td>
+                                <td>
+                                    <label for="" ${detalles.FechaModificacion}></label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    } else {
+        try {
+            var datos = JSON.parse(detalles);
+
+            datosGeneralesHTML += `
+                <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Repa_Id:</strong> ${detalles.Role_Id}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Repa_Codigo:</strong> ${detalles.Role_Rol}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Repa_Tipo_Reparacion:</strong> ${detalles.Pant_Descripcion}</p>
+                </div>
+            </div>
+            `;
+
+    
+            datosAuditoriaHTML += `
+                 <div class="card mt-2">
+                <div class="card-body">
+                    <h5>Auditoria</h5>
+                    <hr>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Acciones</th>
+                                <th>Usuario</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Insertar</td>
+                                <td>
+                                    <label for="" ${detalles.UsuarioCreacion}></label>
+                                </td>
+                                <td>
+                                    <label for="" ${detalles.FechaCreacion}></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Modificar</td>
+                                <td>
+                                    <label for="" ${detalles.UsuarioModificacion}></label>
+                                </td>
+                                <td>
+                                    <label for="" ${detalles.FechaModificacion}></label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            `;
+        } catch (error) {
+            $('#detallesContenido').html('<p>Error al cargar los detalles de la reparación.</p>');
+            $('#detallesCollapse').collapse('show');
+            return;
+        }
+    }
+
+    var detallesHTML = `
+        <div class="datos-generales">
+            <h4>Datos Generales</h4>
+            ${datosGeneralesHTML}
+        </div>
+        <div class="datos-auditoria">
+            <h4>Datos de Auditoría</h4>
+            ${datosAuditoriaHTML}
+        </div>
+    `;
+
+    $('#detallesContenido').html(detallesHTML);
+    $('#detallesCollapse').collapse('show');
+}
+var roleId; // Variable global para almacenar el ID del proveedor a eliminar
+
+$(document).on('click', '.eliminar', function() {
+    roleId = $(this).data('id'); // Actualización de la variable global sin redeclararla
+    console.log('ID del proveedor:', roleId);
+    $('#eliminarModal').modal('show');
+});
+
+$('#confirmarEliminarBtn').click(function() {
+    if (roleId) {
+        $.ajax({
+            url: 'Services/RolesService.php',
+            type: 'POST',
+            data: {
+                action: 'eliminarRol',
+                Role_Id: roleId
+            },
+            success: function(response) {
+                console.log('Response from server:', response);
+                var result = JSON.parse(response);
+                if (result.resultado == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Rol eliminado correctamente.',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    $('#tablaRol').DataTable().ajax.reload();
+                    $('#eliminarModal').modal('hide');
+                } else {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Error al eliminar el rol.',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('Error:', errorThrown);
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Error al eliminar el rol.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
+            }
+        });
+    }
+});
+
 
 });
 </script>
