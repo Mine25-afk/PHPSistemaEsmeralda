@@ -9,12 +9,12 @@ require_once __DIR__ . '/../PHPMailer/SMTP.php';
 
 session_start();
 
-// Función para enviar el correo con el código de verificación
+
 function enviarCorreo($verificationCode) {
     $mail = new PHPMailer(true);
 
     try {
-        // Configuración del servidor SMTP
+  
         $mail->SMTPDebug = 0;                      // Desactivar salida de depuración verbose
         $mail->isSMTP();                                            // Enviar usando SMTP
         $mail->Host       = 'smtp.gmail.com';                     // Configurar el servidor SMTP
@@ -25,7 +25,7 @@ function enviarCorreo($verificationCode) {
         $mail->Password   = 'fulu kzft lgts kvte';                 // Contraseña SMTP
         $mail->Port       = 587;                                   // Puerto TCP para conectar
 
-        // Remitente
+      
         $mail->setFrom('enriquebarahonayt14@gmail.com', 'Hector');
         
         // Obtener correos de administradores desde la base de datos
@@ -41,12 +41,12 @@ function enviarCorreo($verificationCode) {
             }
         }
 
-        // Contenido del correo
+  
         $mail->isHTML(true);                                  // Formato del correo HTML
         $mail->Subject = 'Verificacion de Codigo';
         $mail->Body    = 'Ingrese el código para habilitar al Cliente Mayorista: ' . $verificationCode;
 
-        // Envío del correo
+      
         $mail->send();
         echo 'Enviado correctamente. Código de verificación: ' . $verificationCode;
     } catch (Exception $e) {
