@@ -161,7 +161,7 @@
                                                 <tbody id="detalleFactura">
                                                     <tr>
                                                         <td>
-                                                            <p>Maquillaje</p>
+                                                            <p id="categoria"></p>
                                                         </td>
                                                         <td><input type="text" class="form-control" name="producto" /></td>
                                                         <td><input type="number" class="form-control" name="cantidad" /></td>
@@ -263,11 +263,13 @@
                                 response($.map(filteredData, function(item) {
                                     return {
                                         label: item.Joya_Nombre ? item.Joya_Nombre + ' - ' + item.Joya_Codigo : item.Maqu_Nombre + ' - ' + item.Maqu_Codigo,
-                                        value: item.Joya_Codigo || item.Maqu_Codigo
+                                        value: item.Joya_Codigo || item.Maqu_Codigo,
+                                        data: item
                                     };
                                 }));
                             });
                         } else if (/^[0-9]+/.test(term)) {
+                            $(this).closest('tr').find('#categoria').text('Maquillaje');
                             $.ajax({
                                 url: 'Controllers/FacturaCompraController.php',
                                 type: 'POST',
@@ -282,16 +284,79 @@
                                     response($.map(filteredData, function(item) {
                                         return {
                                             label: item.Maqu_Nombre + ' - ' + item.Maqu_Codigo,
-                                            value: item.Maqu_Codigo
+                                            value: item.Maqu_Codigo,
+                                            data: item
                                         };
                                     }));
                                 }
                             });
                         }
                     },
-                    minLength: 1
+                    minLength: 1,
+                    select: function(event, ui) {
+                        var selectedItem = ui.item.data;
+                        console.log(selectedItem);
+                        let preciom = selectedItem.Mayor;
+                        console.log('precio m', preciom);
+                        $(this).closest('tr').find('#precio_mayorista').text(preciom);
+                    }
+                });
+
+                $('input[name="producto"]').on('blur', function() {
+                    var term = $(this).val();
+                    var isNumber = /^[0-9]+$/.test(term);
+                    var isAlpha = /^[a-zA-Z]+$/.test(term);
+
+                    if (isNumber || isAlpha) {
+                        $.ajax({
+                            url: 'Controllers/FacturaCompraController.php',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                action: 'buscarMaquillajePorCodigo',
+                                codigo: term
+                            },
+                            success: function(data) {
+                                if (data.length > 0) {
+                                    var item = data[0];
+                                    console.log(item, 'item');
+                                    var precioMayorista = item.Maqu_PrecioMayor;
+                                    $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                } else {
+                                    $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                                }
+                            }.bind(this),
+                            error: function() {
+                                $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                            }.bind(this)
+                        });
+                    } else {
+                        $.ajax({
+                            url: 'Controllers/FacturaCompraController.php',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                action: 'buscarJoyaPorCodigo',
+                                codigo: term
+                            },
+                            success: function(data) {
+                                if (data.length > 0) {
+                                    var item = data[0];
+                                    console.log(item, 'item');
+                                    var precioMayorista = item.Joya_PrecioMayor;
+                                    $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                } else {
+                                    $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                                }
+                            }.bind(this),
+                            error: function() {
+                                $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                            }.bind(this)
+                        });
+                    }
                 });
             });
+
 
 
             $('#FacturaCompraForm').validate({

@@ -97,6 +97,37 @@ class FacturaCompraController
             echo json_encode(array('error' => 'Error al listar maquillajes para autocompletado: ' . $e->getMessage()));
         }
     }
+
+    public function buscarMaquillajePorCodigo($codigo)
+{
+    global $pdo;
+    try {
+        $sql = 'CALL `dbsistemaesmeralda`.`SP_Maquillajes_Buscarr`(:codigo)';
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($result);
+    } catch (Exception $e) {
+        echo json_encode(array('error' => 'Error al buscar maquillaje por código: ' . $e->getMessage()));
+    }
+}
+
+public function buscarJoyaPorCodigo($codigo)
+{
+    global $pdo;
+    try {
+        $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_Buscarr`(:codigo)';
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($result);
+    } catch (Exception $e) {
+        echo json_encode(array('error' => 'Error al buscar joya por código: ' . $e->getMessage()));
+    }
+}
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -118,5 +149,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     } elseif ($_POST['action'] === 'listarMaquillajesAutoCompletado') {
         $term = $_POST['term'];
         echo $controller->listarMaquillajesAutoCompletado($term);
+    }elseif ($_POST['action'] === 'buscarMaquillajePorCodigo') {
+        $codigo = $_POST['codigo'];
+        echo $controller->buscarMaquillajePorCodigo($codigo);
+    } elseif ($_POST['action'] === 'buscarJoyaPorCodigo') {
+        $codigo = $_POST['codigo'];
+        echo $controller->buscarJoyaPorCodigo($codigo);
     }
 }
