@@ -1,15 +1,15 @@
 <?php
-session_start();
+// session_start();
 
-// Check if the user is logged in
-if (!isset($_SESSION['Usua_Id'])) {
-    // User is not logged in, redirect to the login page
-    header('Location: Views/Login.php');
-    exit();
-}
+// // Check if the user is logged in
+// if (!isset($_SESSION['Usua_Id'])) {
+//     // User is not logged in, redirect to the login page
+//     header('Location: Views/Login.php');
+//     exit();
+// }
 
 // Include your main application template
-require_once 'Controllers/Template.Controller.php';
+require_once 'Services/Template.services.php';
 
 $template = new ControllerTemplate();
 $template->ControllerTemplate();

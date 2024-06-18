@@ -30,7 +30,7 @@
 }
 
 .login-box {
-    background-color: #5D9E3E;
+    background-color: #fdddca;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0px 8px rgba(0, 0, 0, 0.5);
@@ -43,7 +43,7 @@
 .login-logo {
     background: url('Logo.png') no-repeat center center;
     background-size: contain;
-    color: #fff;
+    color: #000;
     padding: 20px;
     border-radius: 8px 0 0 8px;
     display: flex;
@@ -52,6 +52,8 @@
     justify-content: center;
     text-align: center;
     width: 50%;
+    border-right: solid 1px;
+
 }
 
 .login-logo img {

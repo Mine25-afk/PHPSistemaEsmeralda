@@ -119,7 +119,7 @@
 $(document).ready(function () {
     $('#TablaMarca').DataTable({
         "ajax": {
-            "url": "Controllers/ProveedorController.php",
+            "url": "Services/ProveedorService.php",
             "type": "POST",
             "data": function(d) {
                 d.action = 'listarProveedores';
@@ -226,7 +226,7 @@ $(document).ready(function () {
     Prov_FechaModificacion: fecha
 });
         $.ajax({
-            url: 'Controllers/ProveedorController.php',
+            url: 'Services/ProveedorService.php',
             type: 'POST',
             data: {
                 action: action,
@@ -299,7 +299,7 @@ $(document).on('click', '.abrir-editar', function () {
     
     console.log('ID del proveedor:', provId);
     $.ajax({
-        url: 'Controllers/ProveedorController.php',
+        url: 'Services/ProveedorService.php',
         type: 'GET',
         data: {
             action: 'buscar',
@@ -344,7 +344,7 @@ $(document).on('click', '.abrir-editar', function () {
     
     // Realizar una solicitud AJAX para obtener los detalles del proveedor con el provId
     $.ajax({
-        url: 'Controllers/ProveedorController.php',
+        url: 'Services/ProveedorService.php',
         type: 'GET',
         data: {
             action: 'buscar',
@@ -425,7 +425,7 @@ $(document).on('click', '.eliminar', function() {
 $('#confirmarEliminarBtn').click(function() {
     if (provIdToDelete) {
         $.ajax({
-            url: 'Controllers/ProveedorController.php',
+            url: 'Services/ProveedorService.php',
             type: 'POST',
             data: {
                 action: 'eliminar',
@@ -470,7 +470,7 @@ $('#confirmarEliminarBtn').click(function() {
 
 function cargarMunicipios() {
         $.ajax({
-            url: 'Controllers/ProveedorController.php',
+            url: 'Services/ProveedorService.php',
             type: 'POST',
             data: { action: 'listarMunicipios' }, // Acción para listar los municipios
             success: function(response) {

@@ -85,7 +85,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="marcas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Marcas</p>
                 </a>
@@ -219,6 +219,11 @@
                 <a class="nav-link" id="CerrarCajas">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Cerrar caja</p>
+                </a>
+              </li>  <li class="nav-item">
+                <a class="nav-link"  href="FacturaVenta" >
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Factura Venta</p>
                 </a>
               </li> 
               <li class="nav-item">

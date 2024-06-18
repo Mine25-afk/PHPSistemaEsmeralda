@@ -181,7 +181,7 @@
         sessionStorage.setItem('Usua_Id', "0");
         var table = $('#TablaMarca').DataTable({
             "ajax": {
-                "url": "Controllers/UsuarioController.php",
+                "url": "Services/UsuarioService.php",
                 "type": "POST",
                 "data": function(d) {
                     d.action = 'listarUsuarios';
@@ -255,7 +255,7 @@
 
         function cargarDatos() {
             $.ajax({
-                url: 'Controllers/UsuarioController.php',
+                url: 'Services/UsuarioService.php',
                 type: 'POST',
                 data: {
                     action: 'listarEmpleados'
@@ -271,7 +271,7 @@
             });
 
             $.ajax({
-                url: 'Controllers/UsuarioController.php',
+                url: 'Services/UsuarioService.php',
                 type: 'POST',
                 data: {
                     action: 'listarRoles'
@@ -310,7 +310,7 @@
             }
 
             $.ajax({
-                url: 'Controllers/UsuarioController.php',
+                url: 'Services/UsuarioService.php',
                 type: 'POST',
                 data: {
                     action: 'eliminar',
@@ -353,7 +353,7 @@
                 console.log('Datos a enviar:', usuarioData, Valor);
 
                 $.ajax({
-                    url: 'Controllers/UsuarioController.php',
+                    url: 'Services/UsuarioService.php',
                     type: 'POST',
                     data: {
                         action: InsertarOActualizar ? 'insertar' : 'actualizar',
@@ -410,7 +410,7 @@
             sessionStorage.setItem('Usua_Id', data.Usua_Id);
 
             $.ajax({
-                url: 'Controllers/UsuarioController.php',
+                url: 'Services/UsuarioService.php',
                 method: 'POST',
                 data: {
                     action: 'buscar',
@@ -447,7 +447,7 @@
             $('.CrearMostrar').hide();
 
             $.ajax({
-                url: 'Controllers/UsuarioController.php',
+                url: 'Services/UsuarioService.php',
                 method: 'POST',
                 data: {
                     action: 'buscar',
