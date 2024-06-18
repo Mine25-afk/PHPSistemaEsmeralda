@@ -103,17 +103,18 @@
                             <div class="error-message" id="Esta_Id_error"></div>
                         </div>
                         <div class="col-md-6">
-                            <label class="control-label">Sexo</label>
-                            <div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Clie_Sexo" id="sexoMasculino" value="M" required>
-                                    <label class="form-check-label" for="sexoMasculino">Masculino</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Clie_Sexo" id="sexoFemenino" value="F" required>
-                                    <label class="form-check-label" for="sexoFemenino">Femenino</label>
-                                </div>
-                            </div>
+                                  <label>Sexo</label>
+                                    <div class="d-flex align-items-center">
+                                        <div class="custom-control custom-radio mr-3">
+                                            <input class="custom-control-input" type="radio" id="F" name="Sexo" value="F" checked>
+                                            
+                                            <label for="F" class="custom-control-label">Femenino</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input class="custom-control-input" type="radio" id="M" name="Sexo" value="M" checked>
+                                            <label for="M" class="custom-control-label">Masculino</label>
+                                        </div>
+                                    </div>
                             <div class="error-message" id="Clie_Sexo_error"></div>
                         </div>
 
@@ -438,7 +439,7 @@ $(document).ready(function () {
         isValid = false;
     }
 
-    var sexo = $('input[name="Clie_Sexo"]:checked').val();
+    var sexo = $('input[name="Sexo"]:checked').val();
     if (!sexo) {
         $('#Clie_Sexo_error').text('Selecciona una opción');
         isValid = false;
@@ -598,9 +599,9 @@ $(document).ready(function () {
     $('#detallesMunicipios').text(data.Municipio);
     $('#detallesEstadoCivil').text(data.Estado_Civil);
     $('#detallesUsuarioCreacion').text(data.UsuarioCreacion);
-    $('#detallesFechaCreacion').text(data.FechaCreacion);
+    $('#detallesFechaCreacion').text(data.Clie_FechaCreacion);
     $('#detallesUsuarioModificacion').text(data.UsuarioModificacion);
-    $('#detallesFechaModificacion').text(data.FechaModificacion);
+    $('#detallesFechaModificacion').text(data.Clie_FechaModificacion);
 
     $('.CrearOcultar').hide();
     $('.CrearDetalles').show();
@@ -669,22 +670,36 @@ $('input[name="Clie_esMayorista"]').change(function() {
     $('#Clie_Nombre').val(data.Clie_Nombre);
     $('#Clie_Apellido').val(data.Clie_Apellido);
     $('#Clie_DNI').val(data.Clie_DNI);
-    $('#Clie_FechaNac').val(data.Clie_FechaNac);
 
-    if (data.Clie_Sexo) {
-        $('#sexoMasculino').prop('checked', true);
-    } else if (data.Clie_Sexo) {
-        $('#sexoFemenino').prop('checked', true);
+    var formattedDate = new Date(data.Clie_FechaNac).toISOString().split('T')[0];
+    $('#Clie_FechaNac').val(formattedDate);
+
+
+    if (data.Sexo === 'F') {
+        $('input[name="Sexo"][value="F"]').prop('checked', true);
+    } else if (data.Sexo === 'M') {
+        $('input[name="Sexo"][value="M"]').prop('checked', true);
     }
+
+ 
 
     $('#Muni_Codigo').val(data.Muni_Codigo);
     $('#Esta_Id').val(data.Esta_Id);
 
-    if (data.Clie_esMayorista) {
+
+// Asegura que data.Clie_esMayorista sea tratado como un booleano explícito
+var esMayorista = Boolean(data.Mayoristaa);
+
+// Selecciona el radio button correspondiente
+if (esMayorista === true) {
     $('#esMayoristaSi').prop('checked', true);
-    } else {
-        $('#esMayoristaNo').prop('checked', true);
-    }
+} else {
+    $('#esMayoristaNo').prop('checked', true);
+}
+
+
+
+
 
 
     // Mostrar el formulario de edición
