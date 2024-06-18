@@ -9,7 +9,7 @@ if (!isset($_SESSION['Usua_Id'])) {
 }
 
 // Include your main application template
-require_once 'Controllers/Template.Controller.php';
+require_once 'Services/Template.services.php';
 
 $template = new ControllerTemplate();
 $template->ControllerTemplate();
