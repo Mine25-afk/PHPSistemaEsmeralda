@@ -337,7 +337,7 @@
 $(document).ready(function () {
     var table = $('#TablaJoya').DataTable({
     "ajax": {
-        "url": "Controllers/JoyasController.php",
+        "url": "Services/JoyasServices.php",
         "type": "POST",
         "data": function(d) {
             d.action = 'listarJoyas';
@@ -400,9 +400,9 @@ $(document).ready(function () {
 
     async function cargarDropdowns(selectedData = {}) {
         try {
-            const proveedores = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarProveedores' } });
-            const materiales = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarMateriales' } });
-            const categorias = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarCategorias' } });
+            const proveedores = await $.ajax({ url: 'Services/JoyasServices.php', type: 'POST', data: { action: 'listarProveedores' } });
+            const materiales = await $.ajax({ url: 'Services/JoyasServices.php', type: 'POST', data: { action: 'listarMateriales' } });
+            const categorias = await $.ajax({ url: 'Services/JoyasServices.php', type: 'POST', data: { action: 'listarCategorias' } });
 
             const proveedorDropdown = $('#Prov_Id');
             proveedorDropdown.empty();
@@ -556,7 +556,7 @@ $(document).ready(function () {
             joyaData.append('Joya_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
             $.ajax({
-                url: 'Controllers/JoyasController.php',
+                url: 'Services/JoyasServices.php',
                 type: 'POST',
                 data: joyaData,
                 contentType: false,
@@ -684,7 +684,7 @@ $('#cantidadCodigos').change(function() {
     $('#confirmarEliminarBtn').click(function() {
         var joyaId = $(this).data('joya-id');
         $.ajax({
-            url: 'Controllers/JoyasController.php',
+            url: 'Services/JoyasServices.php',
             type: 'POST',
             data: {
                 action: 'eliminar',

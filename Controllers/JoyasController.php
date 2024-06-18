@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config.php';
 ini_set('log_errors', 1);
 ini_set('error_log', '/path/to/php-error.log');
-class JoyasController {
+class JoyasServices {
 
     public function listarJoyas() {
         global $pdo;
@@ -184,7 +184,7 @@ class JoyasController {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $controller = new JoyasController();
+    $controller = new JoyasServices();
 
     switch ($_POST['action']) {
         case 'listarJoyas':

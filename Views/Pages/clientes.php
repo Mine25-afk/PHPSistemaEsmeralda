@@ -319,7 +319,7 @@
 $(document).ready(function () {
     var table = $('#TablaCliente').DataTable({
     "ajax": {
-        "url": "Controllers/ClientesController.php",
+        "url": "Services/ClientesServices.php",
         "type": "POST",
         "data": function(d) {
             d.action = 'listarClientes';
@@ -363,8 +363,8 @@ $(document).ready(function () {
 
     async function cargarDropdowns(selectedData = {}) {
         try {
-            const municipios = await $.ajax({ url: 'Controllers/ClientesController.php', type: 'POST', data: { action: 'listarMunicipios' } });
-            const estadosCiviles = await $.ajax({ url: 'Controllers/ClientesController.php', type: 'POST', data: { action: 'listarEstadosCiviles' } });
+            const municipios = await $.ajax({ url: 'Services/ClientesServices.php', type: 'POST', data: { action: 'listarMunicipios' } });
+            const estadosCiviles = await $.ajax({ url: 'Services/ClientesServices.php', type: 'POST', data: { action: 'listarEstadosCiviles' } });
           
 
             const municipiosDropdown = $('#Muni_Codigo');
@@ -498,7 +498,7 @@ if (esMayorista && !codigoVerificado) {
         console.log('Datos a enviar:', clienteData);
 
         $.ajax({
-            url: 'Controllers/ClientesController.php',
+            url: 'Services/ClientesServices.php',
             type: 'POST',
             data: clienteData,
             contentType: false,
@@ -569,7 +569,7 @@ if (esMayorista && !codigoVerificado) {
         $('#confirmarEliminarBtn').click(function() {
         var Clie_Id = sessionStorage.getItem('Clie_Id');
         $.ajax({
-            url: 'Controllers/ClientesController.php',
+            url: 'Services/ClientesServices.php',
             type: 'POST',
             data: {
                 action: 'eliminar',
