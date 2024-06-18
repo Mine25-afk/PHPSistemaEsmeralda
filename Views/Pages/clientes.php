@@ -633,13 +633,19 @@ $('input[name="Clie_esMayorista"]').change(function() {
         }
     });
 
-    // Función para enviar el correo electrónico
+    //enviar el correo electrónico
     function enviarCorreo() {
         $.ajax({
             type: 'POST',
             url: 'Services/EnviarCorreo.php',
             success: function(response) {
-                console.log('Correo enviado:', response);
+                iziToast.success({
+                    title: 'Éxito',
+                    message: 'Correo Enviado',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
             },
             error: function(xhr, status, error) {
                 console.error('Error al enviar correo:', error);
@@ -650,7 +656,7 @@ $('input[name="Clie_esMayorista"]').change(function() {
   // Variable para almacenar si el código ha sido verificado
 var codigoVerificado = false;
 
-// Función para verificar el código de autorización
+
 $('#verificarCodigoBtn').click(function() {
     var codigo = $('#codigoAutorizacion').val();
 
@@ -669,11 +675,11 @@ $('#verificarCodigoBtn').click(function() {
                     transitionOut: 'flipOutX'
                 });
                 $('#modalAutorizacion').modal('hide');
-                codigoVerificado = true; // Marcar como verificado
-                puedeGuardar(); // Evaluar si se puede guardar después de verificar
+                codigoVerificado = true; 
+                puedeGuardar(); 
                 setTimeout(function() {
                     location.reload();
-                }, 1000); // Recargar después de 1 segundo (ajusta el tiempo según sea necesario)
+                }, 1000); // Recargar 1 segundo despues
             } else {
                 $('#codigoAutorizacion_error').text('Código incorrecto. Por favor, intente de nuevo.');
             }
