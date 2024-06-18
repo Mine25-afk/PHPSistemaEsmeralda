@@ -8,6 +8,7 @@ ini_set('log_errors', 1);
 ini_set('error_log', '/path/to/php-error.log');
 class ClientesController {
 
+
     public function listarClientes() {
         global $pdo;
         try {
@@ -15,8 +16,7 @@ class ClientesController {
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $dniList = array_column($result, 'Clie_DNI');
-            echo json_encode($dniList);
+            echo json_encode(array('data' => $result));
         } catch (Exception $e) {
             error_log('Error al listar clientes: ' . $e->getMessage());
             echo json_encode(array('error' => 'Error al listar clientes: ' . $e->getMessage()));

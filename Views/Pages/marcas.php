@@ -36,12 +36,12 @@
 <div class="card-body">
     <div class="form-row d-flex justify-content-end">
 
-        <div class="col-md-3">
+        <div class="col-md-1" style="margin: 0px 10px;">
         <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
         </div>
 
 
-        <div class="col-md-3">
+        <div class="col-md-1">
             <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
         </div>
     </div>
@@ -199,7 +199,30 @@
             { "data": "Marc_Marca" },
             { 
                 "data": null, 
-                "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
+               
+                         
+                         
+                        
+                "defaultContent": `
+<div class='text-center'>
+    <div class='btn-group'>
+        <button type='button' class='btn btn-default dropdown-toggle dropdown-icon' data-toggle='dropdown'>
+            <i class="fas fa-cogs"></i> Acciones
+        </button>
+        <div class='dropdown-menu'>
+            <a class='dropdown-item abrir-editar'>
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a class='dropdown-item abrir-detalles'>
+                <i class="fas fa-info-circle"></i> Detalles
+            </a>
+            <a class='dropdown-item abrir-eliminar'>
+                <i class="fas fa-trash-alt"></i> Eliminar
+            </a>
+        </div>
+    </div>
+</div>
+`
             }
         ]
     });
@@ -211,6 +234,7 @@
     $('#AbrirModal').click(function() {
     $('.CrearOcultar').hide();
     $('.CrearMostrar').show();
+    $('#Marca').val(null);
     sessionStorage.setItem('Marc_Id', "0");
     });
 
@@ -249,7 +273,14 @@
                     $('#eliminarModal').modal('hide');
                     sessionStorage.setItem('Marc_Id', "0");
                 } else {
-                    alert('Error al eliminar joya.');
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Problemas',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    $('#eliminarModal').modal('hide');
                 }
             },
             error: function() {

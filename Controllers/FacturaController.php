@@ -31,6 +31,57 @@ class FacturaController {
         }
     }
 
+    public function listarClientes() {
+        global $pdo;
+        try {
+            $sql = 'CALL `SP_Clientes_listar`()';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+       
+            $data = [];
+            foreach ($result as $row) {
+                $data[] = [
+                    'label' => $row['Clie_DNI'] . ' - ' . $row['NombreCompleto'],
+                    'value' => $row['Clie_DNI'],
+                    'id' => $row['Clie_Id'],
+                    'nombre' => $row['NombreCompleto'],
+                    'mayorista' => $row['Clie_esMayorista']
+                ];
+            }
+            
+            echo json_encode(['data' => $data]);
+        } catch (Exception $e) {
+            error_log('Error al listar clientes: ' . $e->getMessage());
+            echo json_encode(['error' => 'Error al listar clientes: ' . $e->getMessage()]);
+        }
+    }
+    public function ListarProductos() {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursales`()';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(); // Asegúrate de obtener los datos como un array asociativo
+            $data = array();
+            foreach ($result as $row) {
+                $data[] = array(
+                    'Categoria' => $row['Categoria'],
+                    'Stock'=> $row['Stock'],
+                    'Codigo' => $row['Codigo'],
+                    'Producto'=> $row['Producto'],
+                    'PrecioVenta'=> $row['PrecioVenta'], 
+                    'PrecioMayorista'=> $row['PrecioMayorista'] // Nota: Asegúrate de que el nombre del campo coincide con el devuelto por el procedimiento
+                );
+            }
+            echo json_encode(array('data' => $data));
+
+        } catch (Exception $e) {
+            throw new Exception('Error al listar facturas: ' . $e->getMessage());
+        }
+    }
+
     public function ConfirmarFactura($Fact_Codigo, $Fact_FechaFinalizado,$Fact_Pago, $Fact_Cambio) {
         global $pdo;
         try {
@@ -65,6 +116,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         
         $resultado = $controller->ConfirmarFactura($Fact_Codigo,$Fact_FechaFinalizado, $Fact_Pago, $Fact_Cambio);
         echo $resultado;
+    }elseif ($_POST['action'] === 'listarProductos') {
+        $controller->ListarProductos();
+    }elseif ($_POST['action'] === 'listarClientes') {
+        $controller->listarClientes();
     }
 }
 ?>

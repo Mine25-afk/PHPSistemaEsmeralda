@@ -11,7 +11,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="Views/Resources/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="Views/Resources/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="Views/Resources/dist/css/adminlte.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 
     <link rel="stylesheet" href="Views/Resources/css/IziToast.css">
@@ -29,11 +29,11 @@
   <?php include "Modules/Menu.php"?>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div class="content-wrapper" style="padding: 0px 10px;">
   <?php 
     if (isset($_GET["Pages"])) {
 
-      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles") {
+      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles"|| $_GET["Pages"] == "FacturaVenta") {
 
         include "Pages/". $_GET["Pages"] . ".php";
       }
