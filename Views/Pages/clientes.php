@@ -123,7 +123,7 @@
                             <label class="control-label">Es Mayorista</label>
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaSi" value="true" required data-toggle="modal" data-target="#modalAutorizacion">
+                                    <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaSi" value="true" required>
                                     <label class="form-check-label" for="esMayoristaSi">Sí</label>
                                 </div>
                                 <div class="form-check form-check-inline">
@@ -133,6 +133,7 @@
                             </div>
                             <div class="error-message" id="Clie_esMayorista_error"></div>
                         </div>
+
 
 
 
@@ -274,7 +275,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar este cliente?
+                ¿Estás seguro de que deseas eliminar este CLiente?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -300,7 +301,8 @@
                         <label for="codigoAutorizacion">Ingrese el código de autorización:</label>
                         <input type="text" class="form-control" id="codigoAutorizacion" required>
                     </div>
-                    <button type="button" class="btn btn-primary" id="enviarCodigoBtn">Enviar</button>
+                    <div id="codigoAutorizacion_error" class="error-message"></div>
+                    <button type="button" class="btn btn-primary" id="verificarCodigoBtn">Verificar</button>
                 </form>
             </div>
         </div>
@@ -344,26 +346,6 @@ $(document).ready(function () {
     ]
 });
 
-$('#enviarCodigoBtn').click(function() {
-    var codigo = $('#codigoAutorizacion').val();
-
-    $.ajax({
-        url: 'Controllers/ClientesController.php',
-        type: 'POST',
-        data: { codigo: codigo },
-        dataType: 'json', 
-        success: function(response) {
-            if (response.result === 'enviado') {
-                $('#modalAutorizacion').modal('hide');
-            } else {
-                alert('Error al enviar el código. Intente nuevamente.');
-            }
-        },
-        error: function() {
-            alert('Error en la comunicación con el servidor.');
-        }
-    });
-});
 
 
     $('.CrearOcultar').show();
@@ -559,22 +541,23 @@ $('#enviarCodigoBtn').click(function() {
 
     $('#TablaCliente tbody').on('click', '.abrir-eliminar', function () {
         var data = table.row($(this).parents('tr')).data();
-        var clienteId = data.Clie_Id;
+        console.log(data);
+        var Clie_Id = data.Clie_Id;
+        sessionStorage.setItem('Clie_Id', Clie_Id);
         $('#eliminarModal').modal('show');
-        $('#confirmarEliminarBtn').data('cliente-id', clienteId);
-    });
+        });
 
-    $('#confirmarEliminarBtn').click(function() {
-        var clienteId = $(this).data('cliente-id');
+        $('#confirmarEliminarBtn').click(function() {
+        var Clie_Id = sessionStorage.getItem('Clie_Id');
         $.ajax({
             url: 'Controllers/ClientesController.php',
             type: 'POST',
             data: {
                 action: 'eliminar',
-                Clie_Id: clienteId
+                Clie_Id: Clie_Id
             },
             success: function(response) {
-                if (response.result == 1) {
+                if (response == 1) {
                     iziToast.success({
                         title: 'Éxito',
                         message: 'Eliminado con éxito',
@@ -582,29 +565,27 @@ $('#enviarCodigoBtn').click(function() {
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
                     });
-                    table.ajax.reload();
+                    $('#TablaCliente').DataTable().ajax.reload();
                     $('#eliminarModal').modal('hide');
+                    sessionStorage.setItem('Clie_Id', "0");
                 } else {
-                    iziToast.error({
-                        title: 'Error',
-                        message: 'Error al eliminar cliente.',
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Eliminado con éxito',
                         position: 'topRight',
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
                     });
+                    $('#TablaCliente').DataTable().ajax.reload();
+                    $('#eliminarModal').modal('hide');
+                    sessionStorage.setItem('Clie_Id', "0");
                 }
             },
             error: function() {
-                iziToast.error({
-                    title: 'Error',
-                    message: 'Error en la comunicación con el servidor.',
-                    position: 'topRight',
-                    transitionIn: 'flipInX',
-                    transitionOut: 'flipOutX'
-                });
+                alert('Error en la comunicación con el servidor.');
             }
         });
-    });
+    });  
 
     $('#TablaCliente tbody').on('click', '.abrir-detalles', function () {
     var data = table.row($(this).parents('tr')).data();
@@ -625,6 +606,56 @@ $('#enviarCodigoBtn').click(function() {
     $('.CrearDetalles').show();
 });
 
+
+$('input[name="Clie_esMayorista"]').change(function() {
+        if ($(this).val() === 'true') {
+            $('#modalAutorizacion').modal('show'); // Mostrar el modal de autorización
+            enviarCorreo(); // Llamar a la función para enviar el correo inmediatamente
+        }
+    });
+
+    // Función para enviar el correo electrónico
+    function enviarCorreo() {
+        $.ajax({
+            type: 'POST',
+            url: 'Controllers/EnviarCorreo.php',
+            success: function(response) {
+                console.log('Correo enviado:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al enviar correo:', error);
+            }
+        });
+    }
+
+    // Manejar la verificación del código en el modal
+    $('#verificarCodigoBtn').click(function() {
+        var codigo = $('#codigoAutorizacion').val();
+
+        $.ajax({
+            type: 'POST',
+            url: 'Controllers/verificar_codigo.php',
+            data: { codigo: codigo },
+            dataType: 'json',
+            success: function(response) {
+                if (response.valid) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Codigo Verificado',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    $('#modalAutorizacion').modal('hide');
+                } else {
+                    $('#codigoAutorizacion_error').text('Código incorrecto. Por favor, intente de nuevo.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al verificar código:', error);
+            }
+        });
+    });
 
     $('#TablaCliente tbody').on('click', '.abrir-editar', function () {
     var data = table.row($(this).parents('tr')).data();

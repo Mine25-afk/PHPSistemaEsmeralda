@@ -80,20 +80,36 @@
                 <div class="error-message" id="Joya_Nombre_error"></div>
             </div>
             <div class="col-md-6">
-                <label class="control-label">Precio Compra</label>
-                <input name="Joya_PrecioCompra" type="number" min=0 class="form-control" id="Joya_PrecioCompra" required/>
-                <div class="error-message" id="Joya_PrecioCompra_error"></div>
+            <label class="control-label">Precio Compra</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">LPS</span>
+                </div>
+                <input name="Joya_PrecioCompra" type="number" min="0" class="form-control" id="Joya_PrecioCompra" required/>
             </div>
-            <div class="col-md-6">
-                <label class="control-label">Precio Venta</label>
-                <input name="Joya_PrecioVenta" type="number" min=0 class="form-control" id="Joya_PrecioVenta" required/>
-                <div class="error-message" id="Joya_PrecioVenta_error"></div>
+            <div class="error-message" id="Joya_PrecioCompra_error"></div>
+        </div>
+        <div class="col-md-6">
+            <label class="control-label">Precio Venta</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">LPS</span>
+                </div>
+                <input name="Joya_PrecioVenta" type="number" min="0" class="form-control" id="Joya_PrecioVenta" required/>
             </div>
-            <div class="col-md-6">
-                <label class="control-label">Precio Mayorista</label>
-                <input name="Joya_PrecioMayor" type="number" min=0 class="form-control" id="Joya_PrecioMayor" required/>
-                <div class="error-message" id="Joya_PrecioMayor_error"></div>
+            <div class="error-message" id="Joya_PrecioVenta_error"></div>
+        </div>
+        <div class="col-md-6">
+            <label class="control-label">Precio Mayorista</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">LPS</span>
+                </div>
+                <input name="Joya_PrecioMayor" type="number" min="0" class="form-control" id="Joya_PrecioMayor" required/>
             </div>
+            <div class="error-message" id="Joya_PrecioMayor_error"></div>
+        </div>
+
             <div class="col-md-6">
                 <label class="control-label">Proveedor</label>
                 <select name="Prov_Id" class="form-control" id="Prov_Id" required></select>
@@ -670,13 +686,15 @@ $(document).ready(function () {
                     table.ajax.reload();
                     $('#eliminarModal').modal('hide');
                 } else {
-                    iziToast.error({
-                        title: 'Error',
-                        message: 'Error al eliminar joya.',
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Eliminado con éxito',
                         position: 'topRight',
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
                     });
+                    table.ajax.reload();
+                    $('#eliminarModal').modal('hide');
                 }
             },
             error: function() {

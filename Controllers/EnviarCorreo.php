@@ -1,71 +1,81 @@
 <?php
-// Import PHPMailer classes into the global namespace
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../config.php'; // Asegúrate de incluir tu archivo de configuración correctamente
 require_once __DIR__ . '/../PHPMailer/Exception.php';
 require_once __DIR__ . '/../PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/../PHPMailer/SMTP.php';
 
-class EnviarCorreo {
-    public function listarCorreosAdministradores() {
-        global $pdo;
-        try {
-            $sql = 'CALL SP_Empleados_CorreosAdministradores()';
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $result;  
-        } catch (Exception $e) {
-            error_log('Error al listar clientes: ' . $e->getMessage());
-            return array('error' => 'Error al listar Correos: ' . $e->getMessage());
+session_start();
+
+// Función para enviar el correo con el código de verificación
+function enviarCorreo($verificationCode) {
+    $mail = new PHPMailer(true);
+
+    try {
+        // Configuración del servidor SMTP
+        $mail->SMTPDebug = 0;                      // Desactivar salida de depuración verbose
+        $mail->isSMTP();                                            // Enviar usando SMTP
+        $mail->Host       = 'smtp.gmail.com';                     // Configurar el servidor SMTP
+        $mail->SMTPAuth   = true;  
+        $mail->SMTPSecure = 'tls';   
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;       // Habilitar autenticación SMTP
+        $mail->Username   = 'enriquebarahonayt14@gmail.com';       // Nombre de usuario SMTP
+        $mail->Password   = 'fulu kzft lgts kvte';                 // Contraseña SMTP
+        $mail->Port       = 587;                                   // Puerto TCP para conectar
+
+        // Remitente
+        $mail->setFrom('enriquebarahonayt14@gmail.com', 'Hector');
+        
+        // Obtener correos de administradores desde la base de datos
+        $emails = listarCorreosAdministradores(); 
+        if (isset($emails['error'])) {
+            echo json_encode($emails); 
+            return;
         }
-    }
 
-    public function enviarCorreoVerificacion() {
-        $mail = new PHPMailer(true);
-        $verificationCode = rand(100000, 999999);
-
-        try {
-            // Server settings
-            $mail->SMTPDebug = 0;                      // Disable verbose debug output
-            $mail->isSMTP();                                            // Send using SMTP
-            $mail->Host       = 'smtp.gmail.com';                     // Set the SMTP server to send through
-            $mail->SMTPAuth   = true;  
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;       // Enable SMTP authentication
-            $mail->Username   = 'enriquebarahonayt14@gmail.com';       // SMTP username
-            $mail->Password   = 'fulu kzft lgts kvte';                 // SMTP password
-            $mail->Port       = 587;                                   // TCP port to connect to
-
-            // Recipients
-            $mail->setFrom('enriquebarahonayt14@gmail.com', 'Hector');
-            
-            $emails = $this->listarCorreosAdministradores(); 
-            if (isset($emails['error'])) {
-                echo json_encode($emails); 
-                return;
+        foreach ($emails as $email) {
+            if (!empty($email['Empl_Correo'])) {
+                $mail->addAddress($email['Empl_Correo']);  
             }
-            foreach ($emails as $email) {
-                if (!empty($email['Empl_Correo'])) {
-                    $mail->addAddress($email['Empl_Correo']);  
-                }
-            }
-
-            // Content
-            $mail->isHTML(true);                                  // Set email format to HTML
-            $mail->Subject = 'Verificacion de Codigo';
-            $mail->Body    = 'Ingrese el código para habilitar al Cliente Mayorista: ' . $verificationCode;
-
-            $mail->send();
-            echo 'Enviado correctamente. Código de verificación: ' . $verificationCode;
-        } catch (Exception $e) {
-            echo "Error al enviar: {$mail->ErrorInfo}";
         }
+
+        // Contenido del correo
+        $mail->isHTML(true);                                  // Formato del correo HTML
+        $mail->Subject = 'Verificacion de Codigo';
+        $mail->Body    = 'Ingrese el código para habilitar al Cliente Mayorista: ' . $verificationCode;
+
+        // Envío del correo
+        $mail->send();
+        echo 'Enviado correctamente. Código de verificación: ' . $verificationCode;
+    } catch (Exception $e) {
+        echo "Error al enviar: {$mail->ErrorInfo}";
     }
 }
 
+// Función para listar correos de administradores
+function listarCorreosAdministradores() {
+    global $pdo;
 
-$correo = new EnviarCorreo();
-$correo->enviarCorreoVerificacion();
+    try {
+        $sql = 'CALL SP_Empleados_CorreosAdministradores()';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;  
+    } catch (Exception $e) {
+        error_log('Error al listar correos de administradores: ' . $e->getMessage());
+        return array('error' => 'Error al listar Correos: ' . $e->getMessage());
+    }
+}
+
+// Generar un código de verificación aleatorio
+$verificationCode = rand(100000, 999999);
+
+// Guardar el código en una variable de sesión para verificar posteriormente
+$_SESSION['verification_code'] = $verificationCode;
+
+// Llamada a la función para enviar el correo con el código de verificación
+enviarCorreo($verificationCode);
 ?>

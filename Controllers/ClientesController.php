@@ -1,9 +1,5 @@
 <?php
 require_once __DIR__ . '/../config.php';
-
-require_once __DIR__ . '/../PHPMailer/Exception.php';
-require_once __DIR__ . '/../PHPMailer/PHPMailer.php';
-require_once __DIR__ . '/../PHPMailer/SMTP.php';
 ini_set('log_errors', 1);
 ini_set('error_log', '/path/to/php-error.log');
 class ClientesController {
@@ -15,8 +11,7 @@ class ClientesController {
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $dniList = array_column($result, 'Clie_DNI');
-            echo json_encode($dniList);
+            echo json_encode(array('data' => $result));
         } catch (Exception $e) {
             error_log('Error al listar clientes: ' . $e->getMessage());
             echo json_encode(array('error' => 'Error al listar clientes: ' . $e->getMessage()));
@@ -51,27 +46,6 @@ class ClientesController {
         }
     }
 
-    public function listarCorreosAdministradores() {
-        global $pdo;
-        try {
-            $sql = 'CALL `SP_Empleados_CorreosAdministradores`()';
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $codigosTemporales = array();
-
-          
-           
-        
-            echo json_encode(array('data' => $result, 'codigos_temporales' => $codigosTemporales));
-        } catch (PDOException $e) {
-            error_log('Error al listar correos de administradores: ' . $e->getMessage());
-            echo json_encode(array('error' => 'Error al listar correos de administradores'));
-        } catch (Exception $e) {
-            error_log('Error al listar clientes: ' . $e->getMessage());
-            echo json_encode(array('error' => 'Error al listar Correos: ' . $e->getMessage()));
-        }
-    }
 
     public function insertarClientes($Clie_Nombre, $Clie_Apellido, $Clie_FechaNac, $Clie_Sexo, $Clie_DNI, $Muni_Codigo, $Esta_Id, $Clie_UsuarioCreacion, $Clie_FechaCreacion, $Clie_esMayorista) {
         global $pdo;
