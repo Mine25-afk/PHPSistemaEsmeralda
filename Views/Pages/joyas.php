@@ -73,32 +73,43 @@
             <div class="CrearMostrar">
     <form id="joyaForm" enctype="multipart/form-data">
         <input type="hidden" name="Joya_Id" id="Joya_Id">
-        <div class="form-row">
-            <div class="col-md-6">
-                <label class="control-label">Código</label>
-                <input name="Joya_Codigo" type="number" min=0 class="form-control" id="Joya_Codigo" required/>
-                <div class="error-message" id="Joya_Codigo_error"></div>
-            </div>
+        <div class="form-row">       
             <div class="col-md-6">
                 <label class="control-label">Nombre</label>
                 <input name="Joya_Nombre" class="form-control" id="Joya_Nombre" required/>
                 <div class="error-message" id="Joya_Nombre_error"></div>
             </div>
             <div class="col-md-6">
-                <label class="control-label">Precio Compra</label>
-                <input name="Joya_PrecioCompra" type="number" min=0 class="form-control" id="Joya_PrecioCompra" required/>
-                <div class="error-message" id="Joya_PrecioCompra_error"></div>
+            <label class="control-label">Precio Compra</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">LPS</span>
+                </div>
+                <input name="Joya_PrecioCompra" type="number" min="0" class="form-control" id="Joya_PrecioCompra" required/>
             </div>
-            <div class="col-md-6">
-                <label class="control-label">Precio Venta</label>
-                <input name="Joya_PrecioVenta" type="number" min=0 class="form-control" id="Joya_PrecioVenta" required/>
-                <div class="error-message" id="Joya_PrecioVenta_error"></div>
+            <div class="error-message" id="Joya_PrecioCompra_error"></div>
+        </div>
+        <div class="col-md-6">
+            <label class="control-label">Precio Venta</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">LPS</span>
+                </div>
+                <input name="Joya_PrecioVenta" type="number" min="0" class="form-control" id="Joya_PrecioVenta" required/>
             </div>
-            <div class="col-md-6">
-                <label class="control-label">Precio Mayorista</label>
-                <input name="Joya_PrecioMayor" type="number" min=0 class="form-control" id="Joya_PrecioMayor" required/>
-                <div class="error-message" id="Joya_PrecioMayor_error"></div>
+            <div class="error-message" id="Joya_PrecioVenta_error"></div>
+        </div>
+        <div class="col-md-6">
+            <label class="control-label">Precio Mayorista</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">LPS</span>
+                </div>
+                <input name="Joya_PrecioMayor" type="number" min="0" class="form-control" id="Joya_PrecioMayor" required/>
             </div>
+            <div class="error-message" id="Joya_PrecioMayor_error"></div>
+        </div>
+
             <div class="col-md-6">
                 <label class="control-label">Proveedor</label>
                 <select name="Prov_Id" class="form-control" id="Prov_Id" required></select>
@@ -283,15 +294,50 @@
     </div>
 </div>
 
+<!-- Modal Código de Barras -->
+<div class="modal fade" id="codigoBarrasModal" tabindex="-1" aria-labelledby="codigoBarrasModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content d-flex justify-content-center align-items-center">
+            <div class="modal-header">
+                <h5 class="modal-title" id="codigoBarrasModalLabel">Código de Barras</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group text-center">
+                    <label for="cantidadCodigos">Cantidad de Códigos a Imprimir:</label>
+                    <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
+                </div>
+                <div class="barcode-container text-center" id="barcodeContainer">
+                    <!-- Aquí se generan dinámicamente los códigos de barras -->
+                </div>
+                <div class="joya-nombre mt-3 text-center">
+                    <!-- Aquí se mostrará el nombre de la joya -->
+                    <h5 id="nombreJoya"></h5>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" id="generarCodigos">Generar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-success" id="imprimirCodigos">Imprimir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 <script>
 $(document).ready(function () {
     var table = $('#TablaJoya').DataTable({
     "ajax": {
-        "url": "Controllers/JoyasController.php",
+        "url": "Services/JoyasServices.php",
         "type": "POST",
         "data": function(d) {
             d.action = 'listarJoyas';
@@ -320,7 +366,7 @@ $(document).ready(function () {
         { "data": "Cate_Categoria" },
         {
             "data": null,
-            "defaultContent": "<div class='acciones-container'><a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button></div>"
+            "defaultContent": "<div class='acciones-container'><a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button></div> <button class='btn btn-info btn-sm abrir-generar-codigo'><i class='fas fa-barcode'></i> Generar Código de Barras</button>"
         }
 
 
@@ -354,9 +400,9 @@ $(document).ready(function () {
 
     async function cargarDropdowns(selectedData = {}) {
         try {
-            const proveedores = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarProveedores' } });
-            const materiales = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarMateriales' } });
-            const categorias = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarCategorias' } });
+            const proveedores = await $.ajax({ url: 'Services/JoyasServices.php', type: 'POST', data: { action: 'listarProveedores' } });
+            const materiales = await $.ajax({ url: 'Services/JoyasServices.php', type: 'POST', data: { action: 'listarMateriales' } });
+            const categorias = await $.ajax({ url: 'Services/JoyasServices.php', type: 'POST', data: { action: 'listarCategorias' } });
 
             const proveedorDropdown = $('#Prov_Id');
             proveedorDropdown.empty();
@@ -432,13 +478,31 @@ $(document).ready(function () {
     var isValid = true;
 
 
-    if ($('#Joya_Codigo').val().trim() === '') {
-            $('#Joya_Codigo_error').text('Este campo es requerido');
-            isValid = false;
-        } else if (!$('#Joya_Codigo').val().startsWith('01')) {
-            $('#Joya_Codigo_error').text('El código debe comenzar con "01"');
+    // Captura el valor del material seleccionado
+    var materialSeleccionado = $('#Mate_Id option:selected').text();
+        console.log('Material seleccionado:', materialSeleccionado); 
+
+       
+        if (materialSeleccionado === undefined) {
+            $('#Mate_Id_error').text('Este campo es requerido');
             isValid = false;
         }
+
+        //primeras dos letras del material 
+        var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
+        console.log('Código del material:', codigoMaterial);
+
+        //codigo aleatorio
+        var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
+        console.log('Código aleatorio:', codigoAleatorio); 
+
+    
+        var joyaCodigo = codigoMaterial + codigoAleatorio;
+        console.log('Joya Código generado:', joyaCodigo); 
+
+     
+        $('#Joya_Codigo').val(joyaCodigo);
+        
     if ($('#Joya_Nombre').val().trim() === '') {
         $('#Joya_Nombre_error').text('Este campo es requerido');
         isValid = false;
@@ -476,7 +540,7 @@ $(document).ready(function () {
             var joyaData = new FormData();
             joyaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
             joyaData.append('Joya_Id', $('#Joya_Id').val());
-            joyaData.append('Joya_Codigo', $('#Joya_Codigo').val());
+            joyaData.append('Joya_Codigo', joyaCodigo);
             joyaData.append('Joya_Nombre', $('#Joya_Nombre').val());
             joyaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
             joyaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
@@ -492,7 +556,7 @@ $(document).ready(function () {
             joyaData.append('Joya_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
             $.ajax({
-                url: 'Controllers/JoyasController.php',
+                url: 'Services/JoyasServices.php',
                 type: 'POST',
                 data: joyaData,
                 contentType: false,
@@ -534,6 +598,81 @@ $(document).ready(function () {
         }
     });
 
+    $('#TablaJoya tbody').on('click', '.abrir-generar-codigo', function() {
+    var data = table.row($(this).parents('tr')).data();
+    var codigo = data.Joya_Codigo;
+    var nombre = data.Joya_Nombre; // Obtener el nombre de la joya
+
+    // Verificar si el código es válido y no está vacío
+    if (!codigo || codigo.length < 1) {
+        alert("El código es demasiado corto para generar un código de barras válido.");
+        return;
+    }
+
+    // Mostrar el modal
+    $('#codigoBarrasModal').modal('show');
+
+    // Guardar el código y el nombre en el modal
+    $('#codigoBarrasModal').data('codigo', codigo);
+    $('#codigoBarrasModal').data('nombre', nombre);
+
+    // Actualizar el nombre en el modal
+    $('#nombreJoya').text(nombre);
+
+    // Generar los códigos de barras inicialmente
+    generarCodigosBarras(codigo, nombre);
+});
+
+
+// Función para generar códigos de barras
+function generarCodigosBarras(codigo, nombre) {
+    var cantidad = parseInt($('#cantidadCodigos').val());
+
+    // Limpiar el contenedor de códigos de barras
+    $('#barcodeContainer').empty();
+
+    // Generar códigos automáticos según la cantidad
+    for (var i = 0; i < cantidad; i++) {
+        var svg = $('<svg class="barcode-item"></svg>');
+        JsBarcode(svg[0], codigo, {
+            format: "CODE128",
+            displayValue: true,
+            fontSize: 20,
+            text: codigo
+        });
+        $('#barcodeContainer').append(svg);
+
+        // Aquí puedes usar 'nombre' si necesitas hacer algo con el nombre de la joya
+        console.log('Generando código de barras para ' + nombre);
+    }
+}
+
+// Evento para generar códigos de barras al hacer clic en el botón
+$('#generarCodigos').click(function() {
+    var codigo = $('#codigoBarrasModal').data('codigo');
+    var nombre = $('#codigoBarrasModal').data('nombre');
+    generarCodigosBarras(codigo, nombre);
+});
+
+// Evento para imprimir códigos de barras
+$('#imprimirCodigos').click(function() {
+    var printContents = document.getElementById('barcodeContainer').innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+
+    location.reload(); // Recargar la página original
+});
+
+// Evento para cambiar la cantidad de códigos y regenerarlos
+$('#cantidadCodigos').change(function() {
+    var codigo = $('#codigoBarrasModal').data('codigo');
+    var nombre = $('#codigoBarrasModal').data('nombre');
+    generarCodigosBarras(codigo, nombre);
+});
+
 
     $('#TablaJoya tbody').on('click', '.abrir-eliminar', function () {
         var data = table.row($(this).parents('tr')).data();
@@ -545,7 +684,7 @@ $(document).ready(function () {
     $('#confirmarEliminarBtn').click(function() {
         var joyaId = $(this).data('joya-id');
         $.ajax({
-            url: 'Controllers/JoyasController.php',
+            url: 'Services/JoyasServices.php',
             type: 'POST',
             data: {
                 action: 'eliminar',
@@ -563,13 +702,15 @@ $(document).ready(function () {
                     table.ajax.reload();
                     $('#eliminarModal').modal('hide');
                 } else {
-                    iziToast.error({
-                        title: 'Error',
-                        message: 'Error al eliminar joya.',
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Eliminado con éxito',
                         position: 'topRight',
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
                     });
+                    table.ajax.reload();
+                    $('#eliminarModal').modal('hide');
                 }
             },
             error: function() {
@@ -624,6 +765,7 @@ $(document).ready(function () {
     $('#Prov_Id').val(data.Prov_Id);
     $('#Mate_Id').val(data.Mate_Id);
     $('#Cate_Id').val(data.Cate_Id);
+    // $('#Joya_Imagen').val(data.Joya_Imagen);
 
     // Cargar imagen actual
     cargarImagenActual(data.Joya_Imagen);

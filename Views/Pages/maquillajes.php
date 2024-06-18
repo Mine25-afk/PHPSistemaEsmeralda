@@ -1,3 +1,7 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+   
 <div class="card">
     <div class="card-body">
         <h2 class="text-center" style="font-size:34px !important">Maquillajes</h2>
@@ -129,6 +133,38 @@
     </div>
 </div>
 
+<!-- Modal Código de Barras -->
+<div class="modal fade" id="codigoBarrasModal" tabindex="-1" aria-labelledby="codigoBarrasModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content d-flex justify-content-center align-items-center">
+            <div class="modal-header">
+                <h5 class="modal-title" id="codigoBarrasModalLabel">Código de Barras</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group text-center">
+                    <label for="cantidadCodigos">Cantidad de Códigos a Imprimir:</label>
+                    <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
+                </div>
+                <div class="barcode-container text-center" id="barcodeContainer">
+                    <!-- Aquí se generan dinámicamente los códigos de barras -->
+                </div>
+                <div class="joya-nombre mt-3 text-center">
+                    <!-- Aquí se mostrará el nombre de la joya -->
+                    <h5 id="nombreJoya"></h5>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" id="generarCodigos">Generar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-success" id="imprimirCodigos">Imprimir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="Detalles">
     <div class="row" style="padding: 10px;">
         <div class="col" style="font-weight:700">
@@ -214,7 +250,11 @@
     <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
 </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 <script>
     $(document).ready(function () {
 
@@ -353,12 +393,79 @@
         { "data": "Maqu_PrecioMayor" },
         { 
             "data": null, 
-            "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
+            "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button><button class='btn btn-info btn-sm abrir-generar-codigo'><i class='fas fa-barcode'></i> Generar Código de Barras</button>"
         }
     ]
     });
 
+    $('#TablaMaquillaje tbody').on('click', '.abrir-generar-codigo', function() {
+    var data = table.row($(this).parents('tr')).data();
+    var codigo = data.Maqu_Codigo;
+    var nombre = data.Maqu_Nombre; 
 
+    
+    if (!codigo || codigo.length < 1) {
+        alert("El código es demasiado corto para generar un código de barras válido.");
+        return;
+    }
+
+  
+    $('#codigoBarrasModal').modal('show');
+
+
+    $('#codigoBarrasModal').data('codigo', codigo);
+    $('#codigoBarrasModal').data('nombre', nombre);
+
+
+    $('#nombreJoya').text(nombre);
+
+
+    generarCodigosBarras(codigo, nombre);
+});
+
+
+    function generarCodigosBarras(codigo) {
+        var cantidad = parseInt($('#cantidadCodigos').val());
+
+       
+        $('#barcodeContainer').empty();
+
+        // Generar los codigOs de barras
+        for (var i = 0; i < cantidad; i++) {
+            var svg = $('<svg class="barcode-item"></svg>');
+            JsBarcode(svg[0], codigo, {
+                format: "CODE128",
+                displayValue: true,
+                fontSize: 20,
+                text: codigo
+            });
+            $('#barcodeContainer').append(svg);
+        }
+    }
+
+    // boton codigos barras
+    $('#generarCodigos').click(function() {
+        var codigo = $('#codigoBarrasModal').data('codigo');
+        generarCodigosBarras(codigo);
+    });
+
+    // imprimir
+    $('#imprimirCodigos').click(function() {
+        var printContents = document.getElementById('barcodeContainer').innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+
+        location.reload(); 
+    });
+
+    //cambia la cantidad de codigos
+    $('#cantidadCodigos').change(function() {
+        var codigo = $('#codigoBarrasModal').data('codigo');
+        generarCodigosBarras(codigo);
+    });
 
 
 
