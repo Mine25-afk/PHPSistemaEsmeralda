@@ -42,7 +42,7 @@ function enviarCorreo($verificationCode) {
         }
 
   
-        $mail->isHTML(true);                                  // Formato del correo HTML
+        $mail->isHTML(true);                                  
         $mail->Subject = 'Verificacion de Codigo';
         $mail->Body    = 'Ingrese el código para habilitar al Cliente Mayorista: ' . $verificationCode;
 
@@ -54,7 +54,6 @@ function enviarCorreo($verificationCode) {
     }
 }
 
-// Función para listar correos de administradores
 function listarCorreosAdministradores() {
     global $pdo;
 
@@ -70,12 +69,12 @@ function listarCorreosAdministradores() {
     }
 }
 
-// Generar un código de verificación aleatorio
+
 $verificationCode = rand(100000, 999999);
 
-// Guardar el código en una variable de sesión para verificar posteriormente
+
 $_SESSION['verification_code'] = $verificationCode;
 
-// Llamada a la función para enviar el correo con el código de verificación
+
 enviarCorreo($verificationCode);
 ?>

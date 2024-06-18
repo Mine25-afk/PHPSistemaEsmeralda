@@ -426,15 +426,22 @@ $(document).ready(function () {
     }
 
     var nombre = $('#Clie_DNI').val();
-    console.log('Valor de Clie_DNI:', nombre);
-    if (nombre.trim() < 13 ) {
-       
-        if ( nombre.trim() === '') {
-            isValid = true;
+        console.log('Valor de Clie_DNI:', nombre);
+
+        if (!nombre || nombre.trim() === '') {         
+            isValid = true;         
         }
-        $('#Clie_DNI_error').text('Debe tener 13 Digitos');
-        isValid = false;
-    }
+        else {
+            $('#Clie_DNI_error').text('Debe tener 13 dígitos');
+        
+            if (nombre.length === 13) {
+                isValid = true;
+            }    
+            else {
+                isValid = false;
+            }
+ 
+        }   
 
 
     var apellido = $('#Clie_Apellido').val();
