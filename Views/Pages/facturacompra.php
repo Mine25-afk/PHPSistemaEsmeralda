@@ -247,13 +247,13 @@
                         if (/^[a-zA-Z]+/.test(term)) {
                             $.when(
                                 $.ajax({
-                                    url: 'Controllers/FacturaCompraController.php',
+                                    url: 'Services/FacturaCompraService.php',
                                     type: 'POST',
                                     dataType: 'json',
                                     data: ajaxDataJoyas
                                 }),
                                 $.ajax({
-                                    url: 'Controllers/FacturaCompraController.php',
+                                    url: 'Services/FacturaCompraService.php',
                                     type: 'POST',
                                     dataType: 'json',
                                     data: ajaxDataMaquillajes
@@ -277,7 +277,7 @@
                         } else if (/^[0-9]+/.test(term)) {
                             $(this).closest('tr').find('#categoria').text('Maquillaje');
                             $.ajax({
-                                url: 'Controllers/FacturaCompraController.php',
+                                url: 'Services/FacturaCompraService.php',
                                 type: 'POST',
                                 dataType: 'json',
                                 data: ajaxDataMaquillajes,
@@ -323,7 +323,7 @@
 
                     if (isNumber || isAlpha) {
                         $.ajax({
-                            url: 'Controllers/FacturaCompraController.php',
+                            url: 'Services/FacturaCompraService.php',
                             type: 'POST',
                             dataType: 'json',
                             data: {
@@ -357,7 +357,7 @@
                         });
                     } else {
                         $.ajax({
-                            url: 'Controllers/FacturaCompraController.php',
+                            url: 'Services/FacturaCompraService.php',
                             type: 'POST',
                             dataType: 'json',
                             data: {
@@ -429,7 +429,7 @@
             sessionStorage.setItem('FaCE_Id', "0");
             var table = $('#TablaFacturaCompra').DataTable({
                 "ajax": {
-                    "url": "Controllers/FacturaCompraController.php",
+                    "url": "Services/FacturaCompraService.php",
                     "type": "POST",
                     "data": function(d) {
                         d.action = 'listarFacturaCompras';
@@ -496,7 +496,7 @@
 
             function cargarDatos() {
                 $.ajax({
-                    url: 'Controllers/FacturaCompraController.php',
+                    url: 'Services/FacturaCompraService.php',
                     type: 'POST',
                     data: {
                         action: 'listarProveedores'
@@ -512,7 +512,7 @@
                 });
 
                 $.ajax({
-                    url: 'Controllers/FacturaCompraController.php',
+                    url: 'Services/FacturaCompraService.php',
                     type: 'POST',
                     data: {
                         action: 'listarSucursales'
@@ -535,7 +535,7 @@
                 sessionStorage.setItem('FaCE_Id', data.FaCE_Id);
 
                 $.ajax({
-                    url: 'Controllers/FacturaCompraController.php',
+                    url: 'Services/FacturaCompraService.php',
                     method: 'POST',
                     data: {
                         action: 'buscar',
