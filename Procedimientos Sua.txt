@@ -520,3 +520,109 @@ BEGIN
 END
  $$
 DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE SP_Maquillajes_listarAutoCompletado1()
+BEGIN
+    SELECT 
+        MIN(M.Maqu_Id) AS Maqu_Id, 
+        MIN(M.Maqu_Codigo) AS Maqu_Codigo,
+        M.Maqu_Nombre AS Maqu_Nombre,
+        MIN(M.Maqu_PrecioCompra) AS Maqu_PrecioCompra,
+        MIN(M.Maqu_Stock) AS Maqu_Stock,
+        MIN(M.Maqu_PrecioVenta) AS Venta,
+        MIN(M.Maqu_PrecioMayor) AS Mayor,
+        MIN(M.Maqu_Imagen) AS Maqu_Imagen,
+        MIN(Mar.Marc_Marca) AS Marc_Marca,
+        MIN(P.Prov_Proveedor) AS Prov_Proveedor
+    FROM Vent_tbMaquillajes M
+    LEFT JOIN Gral_tbMarcas Mar ON M.Marc_Id = Mar.Marc_Id
+    LEFT JOIN Gral_tbProveedores P ON P.Prov_Id = M.Prov_Id
+    WHERE M.Maqu_Estado = 1
+    GROUP BY M.Maqu_Nombre;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE SP_Joyas_listarAutoCompletado1()
+BEGIN
+    SELECT 
+        MIN(J.Joya_Id) AS Joya_Id,
+        MIN(J.Joya_Codigo) AS Joya_Codigo,
+        J.Joya_Nombre AS Joya_Nombre,
+        MIN(J.Joya_PrecioCompra) AS Joya_PrecioCompra,
+        MIN(J.Joya_PrecioVenta) AS Venta,
+        MIN(J.Joya_Stock) AS Joya_Stock,
+        MIN(J.Joya_PrecioMayor) AS Mayor,
+        MIN(J.Joya_Imagen) AS Joya_Imagen,
+        MIN(M.Mate_Material) AS Mate_Material,
+        MIN(P.Prov_Proveedor) AS Prov_Proveedor,
+        MIN(C.Cate_Categoria) AS Cate_Categoria
+    FROM Vent_tbJoyas J
+    LEFT JOIN Gral_tbProveedores P ON P.Prov_Id = J.Prov_Id
+    LEFT JOIN Gral_tbMateriales M ON M.Mate_Id = J.Mate_Id
+    LEFT JOIN Gral_tbCategorias C ON C.Cate_Id = J.Cate_Id
+    WHERE J.Joya_Estado = 1
+    GROUP BY J.Joya_Nombre;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE SP_Maquillajes_Buscarr(
+   IN p_Maqu_Codigo VARCHAR(50)
+)
+BEGIN
+    SELECT 
+         MA.Maqu_Id,
+         MA.Maqu_Codigo,
+        MA.Maqu_Nombre,
+        MA.Maqu_PrecioCompra,
+        MA.Maqu_Stock,
+        MA.Maqu_PrecioVenta,
+        MA.Prov_Id,
+        MA.Marc_Id,
+        P.Prov_Proveedor,
+        Mar.Marc_Marca,
+        MA.Maqu_PrecioMayor,
+        MA.Maqu_Imagen
+    FROM 
+        vent_tbmaquillajes MA
+        LEFT JOIN gral_tbmarcas Mar ON MA.Marc_Id = Mar.Marc_Id
+        LEFT JOIN gral_tbproveedores P ON P.Prov_Id = MA.Prov_Id
+    WHERE 
+        MA.Maqu_Codigo = Maqu_Codigo;
+END //
+
+DELIMITER ;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Joyas_Buscarr`(
+   IN p_Joya_Codigo VARCHAR(50)
+)
+BEGIN
+    SELECT 
+        J.Joya_Id,
+        J.Joya_Codigo,
+        J.Joya_Nombre,
+        J.Joya_PrecioCompra,
+        J.Joya_Stock,
+        J.Joya_PrecioMayor,
+        J.Joya_PrecioVenta,
+        J.Joya_Imagen,
+        P.Prov_Id,
+        P.Prov_Proveedor,
+        M.Mate_Id,
+        M.Mate_Material,
+        C.Cate_Id,
+        C.Cate_Categoria
+    FROM vent_tbjoyas J
+    LEFT JOIN gral_tbproveedores P ON P.Prov_Id = J.Prov_Id
+    LEFT JOIN gral_tbmateriales M ON M.Mate_Id = J.Mate_Id
+    LEFT JOIN gral_tbcategorias C ON C.Cate_Id = J.Cate_Id
+    WHERE J.Joya_Codigo = p_Joya_Codigo;
+END
