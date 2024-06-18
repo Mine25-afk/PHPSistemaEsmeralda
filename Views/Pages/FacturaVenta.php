@@ -1,16 +1,23 @@
 <style>
         .dataTables_wrapper .dataTables_filter {
             width: 100%;
-            text-align: left;
+            text-align: center;
+            display: flex;
+            justify-content: center;
         }
 
         .dataTables_wrapper .dataTables_filter input {
-            width: 100%; /* Ajusta el ancho del input del buscador */
+            width: 100%;
         }
 
         .dataTables_wrapper .dataTables_filter label {
-            width: 80%; /* Ajusta el ancho del input del buscador */
+            width: 80%; 
         }
+
+        .ui-autocomplete {
+        z-index: 1050; 
+        }
+
     </style>
  <script>
         $(document).ready(function() {
@@ -53,7 +60,7 @@
     <h2 class="text-center" style="font-size: 34px !important">Facturas</h2>
 
     <div style="height:91px; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
-        <span style="color:#5d9e3e;font-size:40px; text-shadow:0px 10px 10px #2f46c2;font-weight:900" id="txtTotal">00.0</h2>
+        <span style="color:#17358D;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
     </div>
 
     <div class="CrearMostrar">
@@ -76,26 +83,7 @@
           </div>
        
         </div>
-        <div
-          class="form-row"
-          style="justify-content: space-between; margin: 0px 10px"
-        >
-          <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnEfectivo">
-              <i class="fas fa-dollar-sign"></i> Efectivo
-            </button>
-          </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnTarjeta">
-              <i class="fas fa-credit-card"></i>Tarjeta de credito
-            </button>
-          </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnTransferencias">
-              <i class="fas fa-donate"></i> Transferencias
-            </button>
-          </div>
-        </div>
+       
         <div
           class="form-row"
           style="justify-content: space-between; margin: 0px 10px"
@@ -129,29 +117,6 @@
                     </td>
                   </tr>
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <td>Categoria</td>
-                    <td>
-                      <input
-                        name="Marca"
-                        class="form-control letras"
-                        id="tags"
-                        
-                      />
-                    </td>
-                    <td>
-                      <input
-                        name="Marca"
-                        class="form-control letras"
-                        id="Marca"
-                      />
-                    </td>
-                    <td>100</td>
-                    <td>3</td>
-                    <td>300</td>
-                  </tr>
-                </tfoot>
               </table>
             </div>
           </div>
@@ -193,14 +158,14 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-     
-                <table class="table table-striped table-hover" id="tablaProductos">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="tablaProductos" style="width: 100%;">
                 <thead>
                   <tr>
                     <th>Categoria</th>
                     <th>Codigo</th>
                     <th>Producto</th>
-                    <th>Precio Venta</th>
+                    <th>Precio</th>
                     <th>Stock</th>
                     <th class="text-center">Acciones</th>
                   </tr>
@@ -209,11 +174,35 @@
                 </tbody>
             
               </table>
-      
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarFacturaBTN">Eliminar</button>
+      </div>
+      <div style="height: 20px; width:10px"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalConfirmar" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <!-- Add modal-lg class here -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Total a pagar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <div style="padding: 0px 10px;">
+              <div style="height:91px; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
+                  <span style="color:#17358D;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
+              </div>
+            <div class="form-row">  
+              <div class="col-md-6">
+                  <label class="control-label">Cliente</label>
+                  <input name="clientes" class="form-control letras" id="tags"/>
+                </div>
+            </div>
+
+
+           </div>
+      <div style="height: 20px; width:10px"></div>
         </div>
     </div>
 </div>
@@ -227,7 +216,31 @@ $(document).ready(function() {
                 if (e.key === 'Tab') {
                     e.preventDefault(); // Evita que el navegador realice la acción predeterminada de la tecla Tab
                     // Ejecuta la acción deseada
-                    alert('Tab key pressed! Action executed.');
+                    console.log($('#auto').val())
+                    $.ajax({
+            url: 'Controllers/FacturaController.php',
+            method: 'POST',
+            data: {
+                action: 'buscarCodigo',
+                Codigo: $('#auto').val()
+            },
+            success: function(response) {
+              var data = JSON.parse(response);
+              console.log(data); 
+
+              if (data && data.data && data.data.length > 0) {
+                  alert("Hay datos")
+                  var marca = data.data[0];
+                 
+              } else {
+                alert("No hay datos")
+              }
+
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
                     // Puedes agregar aquí cualquier otra acción que desees ejecutar
                 }
             });
@@ -259,13 +272,29 @@ $(document).ready(function() {
         { "data": "Stock" },
         { 
             "data": null, 
-            "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a>"
+            "defaultContent": "<div class='text-center'><a class='btn btn-primary btn-sm añadir-item' style='border-radius: 20px;'><i class='fas fa-plus'></i></a></div>"
+
         }
     ],
     "dom": '<"top"f>rt<"bottom"p><"clear">' // Ubica el buscador en la parte superior
 });
 
+$('#tablaProductos tbody').on('click', '.añadir-item', function () {
+        var data = table.row($(this).parents('tr')).data();
+        console.log(data);
 
+        
+       
+  
+
+       
+       
+    });   
+
+
+  $("#btnConfirmar").click(function () {
+    $("#ModalConfirmar").modal("show");
+  })
 
 
 });

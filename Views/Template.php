@@ -29,7 +29,7 @@
   <?php include "Modules/Menu.php"?>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper" style="padding: 0px 10px;">
+  <div class="content-wrapper" style="padding: 0px 20px;">
   <?php 
     if (isset($_GET["Pages"])) {
 

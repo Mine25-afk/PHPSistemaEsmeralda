@@ -229,8 +229,8 @@
         cargarDropdowns({ Prov_Id: 0, Marc_Id: 0 });
         async function cargarDropdowns(selectedData = {}) {
         try {
-            const proveedores = await $.ajax({ url: 'Controllers/JoyasController.php', type: 'POST', data: { action: 'listarProveedores' } });
-            const marcas = await $.ajax({ url: 'Controllers/MaquillajeService.php', type: 'POST', data: { action: 'listarMarcas' } });
+            const proveedores = await $.ajax({ url: 'Services/JoyasService.php', type: 'POST', data: { action: 'listarProveedores' } });
+            const marcas = await $.ajax({ url: 'Services/MaquillajeService.php', type: 'POST', data: { action: 'listarMarcas' } });
             console.log(proveedores)
             const proveedorDropdown = $('#Prov_Id');
             const MarcaDropdown = $('#Marc_Id');
@@ -328,7 +328,7 @@
     //Datatable
     var table = $('#TablaMaquillaje').DataTable({
     "ajax": {
-        "url": "Controllers/MaquillajeService.php",
+        "url": "Services/MaquillajeService.php",
         "type": "POST",
         "data": function(d) {
             d.action = 'listarMaquillaje';
@@ -412,7 +412,7 @@
         console.log(key + ': ' + value);
     });
         $.ajax({
-            url: 'Controllers/MaquillajeService.php',
+            url: 'Services/MaquillajeService.php',
             type: 'POST',
             data: MaquillajeData,
             contentType: false,
@@ -487,7 +487,7 @@
         $('.CrearMostrar').hide();
 
         $.ajax({
-            url: 'Controllers/MaquillajeService.php',
+            url: 'Services/MaquillajeService.php',
             method: 'POST',
             data: {
                 action: 'buscar',
@@ -529,7 +529,7 @@
         $('#confirmarEliminarBtn').click(function() {
         var Maqu_Id = sessionStorage.getItem('Maqu_Id');
         $.ajax({
-            url: 'Controllers/MaquillajeService.php',
+            url: 'Services/MaquillajeService.php',
             type: 'POST',
             data: {
                 action: 'eliminar',

@@ -244,7 +244,7 @@ $(document).ready(function() {
         $('#confirmarFacturaBTN').click(function() {
         var Fact_Id = sessionStorage.getItem('Fact_Id');
         $.ajax({
-            url: 'Controllers/FacturaController.php',
+            url: 'Services/FacturaService.php',
             type: 'POST',
             data: {
                 action: 'confirmar',

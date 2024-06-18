@@ -99,6 +99,20 @@ class FacturaController {
             return 0; // Retornar 0 en caso de error
         }
     }
+
+    public function buscarProductoPorCodigo($Codigo) {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursalesPorCodigo`(:Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Codigo', $Codigo, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return json_encode(array('data' => $result));
+        } catch (Exception $e) {
+            throw new Exception('Error al buscar la marca: ' . $e->getMessage());
+        }
+    }
 }
 
 // Main logic
@@ -120,6 +134,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $controller->ListarProductos();
     }elseif ($_POST['action'] === 'listarClientes') {
         $controller->listarClientes();
+    }elseif ($_POST['action'] === 'buscarCodigo') {
+        $Codigo = $_POST['Codigo'];
+        $resultado = $controller->buscarProductoPorCodigo($Codigo);
+        echo $resultado;
     }
 }
 ?>

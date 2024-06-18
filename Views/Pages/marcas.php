@@ -164,7 +164,7 @@
     sessionStorage.setItem('Marc_Id', "0");
     var table = $('#TablaMarca').DataTable({
         "ajax": {
-            "url": "Controllers/MarcaController.php",
+            "url": "Services/MarcaService.php",
             "type": "POST",
             "data": function(d) {
                 d.action = 'listarMarcas';
@@ -254,7 +254,7 @@
         $('#confirmarEliminarBtn').click(function() {
         var Marca_Id = sessionStorage.getItem('Marc_Id');
         $.ajax({
-            url: 'Controllers/MarcaController.php',
+            url: 'Services/MarcaService.php',
             type: 'POST',
             data: {
                 action: 'eliminar',
@@ -304,7 +304,7 @@
         console.log(InsertarOActualizar)
 
         $.ajax({
-            url: 'Controllers/MarcaController.php',
+            url: 'Services/MarcaService.php',
             type: 'POST',
             data: {
                 action: InsertarOActualizar ? 'insertar' : 'actualizar',
@@ -364,7 +364,7 @@
         $('.CrearMostrar').hide();
 
         $.ajax({
-            url: 'Controllers/MarcaController.php',
+            url: 'Services/MarcaService.php',
             method: 'POST',
             data: {
                 action: 'buscar',
