@@ -146,11 +146,15 @@
             <div class="modal-body">
                 <div class="form-group text-center">
                     <label for="cantidadCodigos">Cantidad de Códigos a Imprimir:</label>
-                    
-                        <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
-                    
+                    <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
                 </div>
-                <div class="barcode-container text-center" id="barcodeContainer"></div>
+                <div class="barcode-container text-center" id="barcodeContainer">
+                    <!-- Aquí se generan dinámicamente los códigos de barras -->
+                </div>
+                <div class="joya-nombre mt-3 text-center">
+                    <!-- Aquí se mostrará el nombre de la joya -->
+                    <h5 id="nombreJoya"></h5>
+                </div>
             </div>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-primary" id="generarCodigos">Generar</button>
@@ -395,24 +399,29 @@
     });
 
     $('#TablaMaquillaje tbody').on('click', '.abrir-generar-codigo', function() {
-        var data = table.row($(this).parents('tr')).data();
-        var codigo = data.Maqu_Codigo;
+    var data = table.row($(this).parents('tr')).data();
+    var codigo = data.Maqu_Codigo;
+    var nombre = data.Maqu_Nombre; 
 
- 
-        if (!codigo || codigo.length < 1) {
-            alert("El código es demasiado corto para generar un código de barras válido.");
-            return;
-        }
+    
+    if (!codigo || codigo.length < 1) {
+        alert("El código es demasiado corto para generar un código de barras válido.");
+        return;
+    }
 
- 
-        $('#codigoBarrasModal').modal('show');
+  
+    $('#codigoBarrasModal').modal('show');
 
-   
-        $('#codigoBarrasModal').data('codigo', codigo);
 
-       
-        generarCodigosBarras(codigo);
-    });
+    $('#codigoBarrasModal').data('codigo', codigo);
+    $('#codigoBarrasModal').data('nombre', nombre);
+
+
+    $('#nombreJoya').text(nombre);
+
+
+    generarCodigosBarras(codigo, nombre);
+});
 
 
     function generarCodigosBarras(codigo) {

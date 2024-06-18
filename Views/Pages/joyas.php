@@ -307,11 +307,15 @@
             <div class="modal-body">
                 <div class="form-group text-center">
                     <label for="cantidadCodigos">Cantidad de Códigos a Imprimir:</label>
-                    
-                        <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
-                    
+                    <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
                 </div>
-                <div class="barcode-container text-center" id="barcodeContainer"></div>
+                <div class="barcode-container text-center" id="barcodeContainer">
+                    <!-- Aquí se generan dinámicamente los códigos de barras -->
+                </div>
+                <div class="joya-nombre mt-3 text-center">
+                    <!-- Aquí se mostrará el nombre de la joya -->
+                    <h5 id="nombreJoya"></h5>
+                </div>
             </div>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-primary" id="generarCodigos">Generar</button>
@@ -321,6 +325,7 @@
         </div>
     </div>
 </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -594,68 +599,79 @@ $(document).ready(function () {
     });
 
     $('#TablaJoya tbody').on('click', '.abrir-generar-codigo', function() {
-        var data = table.row($(this).parents('tr')).data();
-        var codigo = data.Joya_Codigo;
+    var data = table.row($(this).parents('tr')).data();
+    var codigo = data.Joya_Codigo;
+    var nombre = data.Joya_Nombre; // Obtener el nombre de la joya
 
-        // Verifica si el Codigoo es valido y no esta vacio
-        if (!codigo || codigo.length < 1) {
-            alert("El código es demasiado corto para generar un código de barras válido.");
-            return;
-        }
-
-
-        $('#codigoBarrasModal').modal('show');
-
-        // Guardar el codigo en el modal 
-        $('#codigoBarrasModal').data('codigo', codigo);
-
-      
-        generarCodigosBarras(codigo);
-    });
-
-    // codigos segun cantidad
-    function generarCodigosBarras(codigo) {
-        var cantidad = parseInt($('#cantidadCodigos').val());
-
-        // Limpiar el contenedor de codigos de barras
-        $('#barcodeContainer').empty();
-
-        // generar codigos automaticos
-        for (var i = 0; i < cantidad; i++) {
-            var svg = $('<svg class="barcode-item"></svg>');
-            JsBarcode(svg[0], codigo, {
-                format: "CODE128",
-                displayValue: true,
-                fontSize: 20,
-                text: codigo
-            });
-            $('#barcodeContainer').append(svg);
-        }
+    // Verificar si el código es válido y no está vacío
+    if (!codigo || codigo.length < 1) {
+        alert("El código es demasiado corto para generar un código de barras válido.");
+        return;
     }
 
-    
-    $('#generarCodigos').click(function() {
-        var codigo = $('#codigoBarrasModal').data('codigo');
-        generarCodigosBarras(codigo);
-    });
+    // Mostrar el modal
+    $('#codigoBarrasModal').modal('show');
 
-   
-    $('#imprimirCodigos').click(function() {
-        var printContents = document.getElementById('barcodeContainer').innerHTML;
-        var originalContents = document.body.innerHTML;
+    // Guardar el código y el nombre en el modal
+    $('#codigoBarrasModal').data('codigo', codigo);
+    $('#codigoBarrasModal').data('nombre', nombre);
 
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
+    // Actualizar el nombre en el modal
+    $('#nombreJoya').text(nombre);
 
-        location.reload(); 
-    });
+    // Generar los códigos de barras inicialmente
+    generarCodigosBarras(codigo, nombre);
+});
 
 
-    $('#cantidadCodigos').change(function() {
-        var codigo = $('#codigoBarrasModal').data('codigo');
-        generarCodigosBarras(codigo);
-    });
+// Función para generar códigos de barras
+function generarCodigosBarras(codigo, nombre) {
+    var cantidad = parseInt($('#cantidadCodigos').val());
+
+    // Limpiar el contenedor de códigos de barras
+    $('#barcodeContainer').empty();
+
+    // Generar códigos automáticos según la cantidad
+    for (var i = 0; i < cantidad; i++) {
+        var svg = $('<svg class="barcode-item"></svg>');
+        JsBarcode(svg[0], codigo, {
+            format: "CODE128",
+            displayValue: true,
+            fontSize: 20,
+            text: codigo
+        });
+        $('#barcodeContainer').append(svg);
+
+        // Aquí puedes usar 'nombre' si necesitas hacer algo con el nombre de la joya
+        console.log('Generando código de barras para ' + nombre);
+    }
+}
+
+// Evento para generar códigos de barras al hacer clic en el botón
+$('#generarCodigos').click(function() {
+    var codigo = $('#codigoBarrasModal').data('codigo');
+    var nombre = $('#codigoBarrasModal').data('nombre');
+    generarCodigosBarras(codigo, nombre);
+});
+
+// Evento para imprimir códigos de barras
+$('#imprimirCodigos').click(function() {
+    var printContents = document.getElementById('barcodeContainer').innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+
+    location.reload(); // Recargar la página original
+});
+
+// Evento para cambiar la cantidad de códigos y regenerarlos
+$('#cantidadCodigos').change(function() {
+    var codigo = $('#codigoBarrasModal').data('codigo');
+    var nombre = $('#codigoBarrasModal').data('nombre');
+    generarCodigosBarras(codigo, nombre);
+});
 
 
     $('#TablaJoya tbody').on('click', '.abrir-eliminar', function () {
@@ -749,6 +765,7 @@ $(document).ready(function () {
     $('#Prov_Id').val(data.Prov_Id);
     $('#Mate_Id').val(data.Mate_Id);
     $('#Cate_Id').val(data.Cate_Id);
+    // $('#Joya_Imagen').val(data.Joya_Imagen);
 
     // Cargar imagen actual
     cargarImagenActual(data.Joya_Imagen);
