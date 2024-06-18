@@ -84,7 +84,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">DNI</label>
-                            <input name="Clie_DNI" type="text" class="form-control" id="Clie_DNI" required>
+                            <input maxlength="13" name="Clie_DNI" type="text" class="form-control" id="Clie_DNI" required>
                             <div class="error-message" id="Clie_DNI_error"></div>
                         </div>
                         <div class="col-md-6">
@@ -424,6 +424,18 @@ $(document).ready(function () {
         $('#Clie_Nombre_error').text('Este campo es requerido');
         isValid = false;
     }
+
+    var nombre = $('#Clie_DNI').val();
+    console.log('Valor de Clie_DNI:', nombre);
+    if (nombre.trim() < 13 ) {
+       
+        if ( nombre.trim() === '') {
+            isValid = true;
+        }
+        $('#Clie_DNI_error').text('Debe tener 13 Digitos');
+        isValid = false;
+    }
+
 
     var apellido = $('#Clie_Apellido').val();
     console.log('Valor de Clie_Apellido:', apellido);
