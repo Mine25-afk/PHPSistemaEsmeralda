@@ -106,12 +106,12 @@
                                   <label>Sexo</label>
                                     <div class="d-flex align-items-center">
                                         <div class="custom-control custom-radio mr-3">
-                                            <input class="custom-control-input" type="radio" id="F" name="Sexo" value="F" checked>
+                                            <input class="custom-control-input" type="radio" id="F" name="Sexo" value="F" >
                                             
                                             <label for="F" class="custom-control-label">Femenino</label>
                                         </div>
                                         <div class="custom-control custom-radio">
-                                            <input class="custom-control-input" type="radio" id="M" name="Sexo" value="M" checked>
+                                            <input class="custom-control-input" type="radio" id="M" name="Sexo" value="M" >
                                             <label for="M" class="custom-control-label">Masculino</label>
                                         </div>
                                     </div>
@@ -449,7 +449,20 @@ $(document).ready(function () {
 
 
 
-      var esMayorista = $('input[name="Clie_esMayorista"]:checked').val() === "true";
+    var esMayorista = $('input[name="Clie_esMayorista"]:checked').val() === "true";
+
+// Verificar si es mayorista y el código no está verificado
+if (esMayorista && !codigoVerificado) {
+    // Mostrar mensaje de error y no permitir guardar
+    iziToast.error({
+        title: 'Error',
+        message: 'Por favor, ingrese el código de autorización primero.',
+        position: 'topRight',
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+    });
+    isValid = false;
+}
   
 
       var municipio = $('#Muni_Codigo').val();
@@ -463,6 +476,7 @@ $(document).ready(function () {
         $('#Esta_Id_error').text('Este campo es requerido');
         isValid = false;
     }
+  
 
     if (isValid) {
         var clienteData = new FormData();
@@ -505,6 +519,9 @@ $(document).ready(function () {
                         limpiarFormulario();
                         $('.CrearOcultar').show();
                         $('.CrearMostrar').hide();
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000); // Recargar después de 1 segundo (ajusta el tiempo según sea necesario)
                     } else {
                         iziToast.error({
                             title: 'Error',
@@ -537,6 +554,7 @@ $(document).ready(function () {
             }
         });
     }
+
 });
 
 
@@ -629,34 +647,43 @@ $('input[name="Clie_esMayorista"]').change(function() {
         });
     }
 
-    // Manejar la verificación del código en el modal
-    $('#verificarCodigoBtn').click(function() {
-        var codigo = $('#codigoAutorizacion').val();
+  // Variable para almacenar si el código ha sido verificado
+var codigoVerificado = false;
 
-        $.ajax({
-            type: 'POST',
-            url: 'Controllers/verificar_codigo.php',
-            data: { codigo: codigo },
-            dataType: 'json',
-            success: function(response) {
-                if (response.valid) {
-                    iziToast.success({
-                        title: 'Éxito',
-                        message: 'Codigo Verificado',
-                        position: 'topRight',
-                        transitionIn: 'flipInX',
-                        transitionOut: 'flipOutX'
-                    });
-                    $('#modalAutorizacion').modal('hide');
-                } else {
-                    $('#codigoAutorizacion_error').text('Código incorrecto. Por favor, intente de nuevo.');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error al verificar código:', error);
+// Función para verificar el código de autorización
+$('#verificarCodigoBtn').click(function() {
+    var codigo = $('#codigoAutorizacion').val();
+
+    $.ajax({
+        type: 'POST',
+        url: 'Controllers/verificar_codigo.php',
+        data: { codigo: codigo },
+        dataType: 'json',
+        success: function(response) {
+            if (response.valid) {
+                iziToast.success({
+                    title: 'Éxito',
+                    message: 'Código Verificado',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
+                $('#modalAutorizacion').modal('hide');
+                codigoVerificado = true; // Marcar como verificado
+                puedeGuardar(); // Evaluar si se puede guardar después de verificar
+                setTimeout(function() {
+                    location.reload();
+                }, 1000); // Recargar después de 1 segundo (ajusta el tiempo según sea necesario)
+            } else {
+                $('#codigoAutorizacion_error').text('Código incorrecto. Por favor, intente de nuevo.');
             }
-        });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al verificar código:', error);
+        }
     });
+});
+
 
     $('#TablaCliente tbody').on('click', '.abrir-editar', function () {
     var data = table.row($(this).parents('tr')).data();
