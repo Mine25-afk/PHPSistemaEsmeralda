@@ -299,6 +299,11 @@
                         let preciom = selectedItem.Mayor;
                         console.log('precio m', preciom);
                         $(this).closest('tr').find('#precio_mayorista').text(preciom);
+                        if (selectedItem.Joya_Codigo) {
+                $(this).closest('tr').find('#categoria').text('Joya');
+            } else {
+                $(this).closest('tr').find('#categoria').text('Maquillaje');
+            }
                     }
                 });
 
@@ -322,6 +327,7 @@
                                     console.log(item, 'item');
                                     var precioMayorista = item.Maqu_PrecioMayor;
                                     $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                    $(this).closest('tr').find('#categoria').text('Maquillaje');
                                 } else {
                                     $(this).closest('tr').find('#precio_mayorista').text('0.00');
                                 }
@@ -345,6 +351,7 @@
                                     console.log(item, 'item');
                                     var precioMayorista = item.Joya_PrecioMayor;
                                     $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                    $(this).closest('tr').find('#categoria').text('Joya');
                                 } else {
                                     $(this).closest('tr').find('#precio_mayorista').text('0.00');
                                 }
