@@ -521,7 +521,7 @@ if (esMayorista && !codigoVerificado) {
                         $('.CrearMostrar').hide();
                         setTimeout(function() {
                             location.reload();
-                        }, 1000); // Recargar después de 1 segundo (ajusta el tiempo según sea necesario)
+                        }, 1000);
                     } else {
                         iziToast.error({
                             title: 'Error',
@@ -628,8 +628,8 @@ if (esMayorista && !codigoVerificado) {
 
 $('input[name="Clie_esMayorista"]').change(function() {
         if ($(this).val() === 'true') {
-            $('#modalAutorizacion').modal('show'); // Mostrar el modal de autorización
-            enviarCorreo(); // Llamar a la función para enviar el correo inmediatamente
+            $('#modalAutorizacion').modal('show'); 
+            enviarCorreo(); 
         }
     });
 
@@ -637,7 +637,7 @@ $('input[name="Clie_esMayorista"]').change(function() {
     function enviarCorreo() {
         $.ajax({
             type: 'POST',
-            url: 'Controllers/EnviarCorreo.php',
+            url: 'Services/EnviarCorreo.php',
             success: function(response) {
                 console.log('Correo enviado:', response);
             },
@@ -656,7 +656,7 @@ $('#verificarCodigoBtn').click(function() {
 
     $.ajax({
         type: 'POST',
-        url: 'Controllers/verificar_codigo.php',
+        url: 'Services/verificar_codigo.php',
         data: { codigo: codigo },
         dataType: 'json',
         success: function(response) {

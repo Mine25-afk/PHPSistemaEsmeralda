@@ -2,7 +2,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../config.php'; // Asegúrate de incluir tu archivo de configuración correctamente
+require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../PHPMailer/Exception.php';
 require_once __DIR__ . '/../PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/../PHPMailer/SMTP.php';
@@ -28,7 +28,7 @@ function enviarCorreo($verificationCode) {
       
         $mail->setFrom('enriquebarahonayt14@gmail.com', 'Hector');
         
-        // Obtener correos de administradores desde la base de datos
+
         $emails = listarCorreosAdministradores(); 
         if (isset($emails['error'])) {
             echo json_encode($emails); 
