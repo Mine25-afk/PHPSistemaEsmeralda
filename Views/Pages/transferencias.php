@@ -161,8 +161,8 @@
                                 
                                 </td>
                                 <td>
-                                    <input type="text" id="Pro_Codigo_" name="Pro_Codigo_" autocomplete="off" onblur="buscarProductoPorCodigo()">
-                                    <small id="Pro_Codigo_Error" style="color: red; display: none;">Código vacío.</small>
+                                    <input type="text" id="Prod_Id" name="Prod_Id" autocomplete="off" onblur="buscarProductoPorCodigo()">
+                                    <small id="Prod_IdError" style="color: red; display: none;">Código vacío.</small>
                                 </td>
                                 <td>
                                     <input type="text" id="Prod_Nombre_" name="Prod_Nombre_" autocomplete="off" oninput="debounceBuscarProductoPorNombre()">
@@ -428,10 +428,7 @@
                 $('#SucursalRecibido_error').text('Seleccione una sucursal de recibido').show();
                 esValido = false;
             }
-            if (!data.Pro_Codigo_) {
-                $('#Pro_Codigo_Error').text('Producto vacío').show();
-                esValido = false;
-            }
+      
             if (!data.Prod_Nombre_) {
                 $('#Prod_Nombre_Error').text('Producto vacío').show();
                 esValido = false;
