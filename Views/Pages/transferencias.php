@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transferencias</title>
     <style>
-        /* Estilos generales */
+       
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            overflow-y: scroll; /* Añadido para siempre mostrar la barra de desplazamiento vertical */
+            overflow-y: scroll; 
         }
 
         .container {
@@ -31,8 +31,8 @@
 
         .card-body {
             padding: 20px;
-            max-height: 500px; /* Ajusta la altura máxima según sea necesario */
-            overflow-y: auto; /* Añade una barra de desplazamiento vertical */
+            max-height: 500px;
+            overflow-y: auto; 
         }
 
         .grid {
@@ -116,7 +116,7 @@
             width: 100%;
         }
     </style>
-    <!-- Incluye jQuery -->
+   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -132,12 +132,12 @@
                         <div class="col-md-6">
                             <label class="control-label">Sucursal Envío</label>
                             <select name="SucursalEnvio" class="form-control" id="SucursalEnvio" required></select>
-                            <div class="error-message" id="SucursalEnvio_error"></div>
+                            <small id="SucursalEnvio_error" style="color: red; display: none;">Seleccione una opcion.</small>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Sucursal Recibido</label>
                             <select name="SucursalRecibido" class="form-control" id="SucursalRecibido" required></select>
-                            <div class="error-message" id="SucursalRecibido_error"></div>
+                            <small id="SucursalRecibido_error" style="color: red; display: none;">Seleccione una opcion.</small>
                         </div>
                     </div>
                     <table id="ProductoDetalle" class="data-table">
@@ -168,15 +168,16 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <input type="text" id="Prod_Id" name="Prod_Id" autocomplete="off" onblur="buscarProductoPorCodigo()">
-                                    <small id="Prod_IdError" style="color: red; display: none;">Código vacío.</small>
+                                    <input type="text" id="Pro_Codigo_" name="Pro_Codigo_" autocomplete="off" onblur="buscarProductoPorCodigo()">
+                                    <small id="Pro_Codigo_Error" style="color: red; display: none;">Código vacío.</small>
                                 </td>
                                 <td>
                                     <input type="text" id="Prod_Nombre_" name="Prod_Nombre_" autocomplete="off" oninput="debounceBuscarProductoPorNombre()">
-                                    <small id="Prod_Nombre_Error" style="color: red; display: none;">Producto vacío.</small>
+                                    <small id="Prod_Nombre_Error" style="color: red; display: none;">Codigo vacío.</small>
                                 </td>
                                 <td>
                                     <input type="number" id="Prsx_Stock_" name="Prsx_Stock_" required min="1">
+                                    <br>
                                     <small id="Prsx_Stock_Error" style="color: red; display: none;">Cantidad vacía o debe ser mayor que 0.</small>
                                 </td>
                                
@@ -213,11 +214,11 @@
             });
         });
 
-
+            //Tab
         $('#Prsx_Stock_').keydown(function(event) {
-        if (event.keyCode === 9) { // 9 es el código de la tecla 'Tab'
-            event.preventDefault(); // Prevenir el comportamiento por defecto de la tecla 'Tab'
-            submitForm(); // Llamar a la función que envía el formulario
+        if (event.keyCode === 9) { 
+            event.preventDefault(); 
+            submitForm(); 
         }
     });
     
@@ -398,7 +399,7 @@
                                                     transitionOut: 'flipOutX'
                                                 });
                 }
-                // Reload the page after a timeout regardless of success
+              
                 setTimeout(function() {
                     location.reload();
                 }, 1000);
@@ -412,7 +413,7 @@
                                                     transitionIn: 'flipInX',
                                                     transitionOut: 'flipOutX'
                                                 });
-                // Reload the page after a timeout when there is an error
+          
                 setTimeout(function() {
                     location.reload();
                 }, 1000);
@@ -424,14 +425,19 @@
 
         function validarFormulario(data) {
             var esValido = true;
-            $('#SucursalEnvio_error, #SucursalRecibido_error, #Prod_Nombre_Error, #Prsx_Stock_Error').hide(); // Ocultar todos los errores
+            $('#SucursalEnvio_error, #SucursalRecibido_error,#Prod_Nombre_Error, #Prod_Nombre_Error, #Prsx_Stock_Error').hide(); 
 
             if (!data.Sucu_EnviadoId_) {
                 $('#SucursalEnvio_error').text('Seleccione una sucursal de envío').show();
+                
                 esValido = false;
             }
             if (!data.Sucu_RecibidoId_) {
                 $('#SucursalRecibido_error').text('Seleccione una sucursal de recibido').show();
+                esValido = false;
+            }
+            if (!data.Pro_Codigo_) {
+                $('#Pro_Codigo_Error').text('Producto vacío').show();
                 esValido = false;
             }
             if (!data.Prod_Nombre_) {
@@ -439,7 +445,7 @@
                 esValido = false;
             }
             if (!data.Prsx_Stock_ || data.Prsx_Stock_ <= 0) {
-                $('#Prsx_Stock_Error').text('Cantidad vacía o debe ser mayor que 0').show();
+                $('#Prsx_Stock_Error').text('Vacío, no puede ser menor a 0').show();
                 esValido = false;
             }
 

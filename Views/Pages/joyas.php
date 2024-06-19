@@ -661,14 +661,14 @@
                         });
 
 
-                        // Función para generar códigos de barras
+                   
                         function generarCodigosBarras(codigo, nombre) {
                             var cantidad = parseInt($('#cantidadCodigos').val());
 
-                            // Limpiar el contenedor de códigos de barras
+                      
                             $('#barcodeContainer').empty();
 
-                            // Generar códigos automáticos según la cantidad
+                       
                             for (var i = 0; i < cantidad; i++) {
                                 var svg = $('<svg class="barcode-item"></svg>');
                                 JsBarcode(svg[0], codigo, {
@@ -679,19 +679,19 @@
                                 });
                                 $('#barcodeContainer').append(svg);
 
-                                // Aquí puedes usar 'nombre' si necesitas hacer algo con el nombre de la joya
+                                
                                 console.log('Generando código de barras para ' + nombre);
                             }
                         }
 
-                        // Evento para generar códigos de barras al hacer clic en el botón
+               
                         $('#generarCodigos').click(function() {
                             var codigo = $('#codigoBarrasModal').data('codigo');
                             var nombre = $('#codigoBarrasModal').data('nombre');
                             generarCodigosBarras(codigo, nombre);
                         });
 
-                        // Evento para imprimir códigos de barras
+                   
                         $('#imprimirCodigos').click(function() {
                             var printContents = document.getElementById('barcodeContainer').innerHTML;
                             var originalContents = document.body.innerHTML;
@@ -700,10 +700,10 @@
                             window.print();
                             document.body.innerHTML = originalContents;
 
-                            location.reload(); // Recargar la página original
+                            location.reload(); 
                         });
 
-                        // Evento para cambiar la cantidad de códigos y regenerarlos
+                      
                         $('#cantidadCodigos').change(function() {
                             var codigo = $('#codigoBarrasModal').data('codigo');
                             var nombre = $('#codigoBarrasModal').data('nombre');
