@@ -658,8 +658,7 @@ DELIMITER ;
 
 
 DELIMITER //
-
-CREATE PROCEDURE Vent_SP_FacturaCompra_Insertar(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_FacturaCompra_Insertar`(
     IN p_Prov_Id INT,
     IN p_Mepa_Id INT,
     IN p_Sucu_Id INT,
@@ -668,24 +667,28 @@ CREATE PROCEDURE Vent_SP_FacturaCompra_Insertar(
     IN p_FeCE_UsuarioModificacion INT,
     IN p_FaCE_FechaModificacion DATETIME,
     IN p_FaCe_Id INT,
-    OUT ID INT
+    OUT p_ID INT
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Manejar errores aquí
-        SELECT 0;
+        ROLLBACK;
+        SET p_ID = NULL;
     END;
 
+    START TRANSACTION;
+
     IF p_FaCe_Id = 0 THEN
-        INSERT INTO Vent_tbFacturaCompraEncabezado 
+        -- Insertar un nuevo encabezado de factura de compra
+        INSERT INTO vent_tbfacturacompraencabezado 
             (Prov_Id, Mepa_Id, FeCE_UsuarioCreacion, FaCE_FechaCreacion, FaCE_Finalizada, Sucu_Id)
         VALUES 
             (p_Prov_Id, p_Mepa_Id, p_FeCE_UsuarioCreacion, p_FaCE_FechaCreacion, 0, p_Sucu_Id);
 
-        SET ID = LAST_INSERT_ID();
+        SET p_ID = LAST_INSERT_ID();
     ELSE
-        UPDATE Vent_tbFacturaCompraEncabezado
+        -- Actualizar el encabezado de factura de compra existente
+        UPDATE vent_tbfacturacompraencabezado
         SET 
             Prov_Id = p_Prov_Id,
             Mepa_Id = p_Mepa_Id,
@@ -696,29 +699,261 @@ BEGIN
         WHERE 
             FaCE_Id = p_FaCe_Id;
 
-        SET ID = p_FaCe_Id;
+        SET p_ID = p_FaCe_Id;
     END IF;
 
-    SELECT ID;
-END //
+    COMMIT;
+    SELECT p_ID;
+END
+ //
 
 DELIMITER ;
 
 DELIMITER //
 
-CREATE PROCEDURE Vent_SP_FacturaCompraDetalle_Eliminar(
-    IN ID INT
+CREATE PROCEDURE SP_FacturaCompraDetalle_Listar(IN p_FaCE_Id INT)
+BEGIN
+    -- Crear la tabla temporal y consolidar datos de joyas
+    CREATE TEMPORARY TABLE IF NOT EXISTS Consolidated AS
+    SELECT
+        fd.FaCD_Dif,
+        MAX(fd.FaCD_Id) AS FaCD_Id,
+        MAX(j.Joya_Codigo) AS Prod_Id,
+        j.Joya_Nombre AS Prod_Nombre,
+        SUM(fd.FaCD_Cantidad) AS Total_Cantidad,
+        'Joyas' AS Categoria,
+        MAX(j.Joya_PrecioCompra) AS Prod_Precio,
+        MAX(j.Joya_PrecioVenta) AS PrecioVenta,
+        MAX(j.Joya_PrecioMayor) AS PrecioMayorista
+    FROM
+        vent_tbfacturacompradetalle fd
+    JOIN
+        vent_tbjoyas j ON fd.Prod_Codigo = j.Joya_Codigo
+    WHERE
+        fd.FaCD_Dif = 1
+        AND fd.FaCE_Id = p_FaCE_Id
+    GROUP BY
+        fd.FaCD_Dif, j.Joya_Nombre;
+
+    -- Insertar datos de maquillajes en la tabla temporal
+    INSERT INTO Consolidated
+    SELECT
+        fd.FaCD_Dif,
+        MAX(fd.FaCD_Id) AS FaCD_Id,
+        MAX(m.Maqu_Codigo) AS Prod_Id,
+        m.Maqu_Nombre AS Prod_Nombre,
+        SUM(fd.FaCD_Cantidad) AS Total_Cantidad,
+        'Maquillajes' AS Categoria,
+        MAX(m.Maqu_PrecioCompra) AS Prod_Precio,
+        MAX(m.Maqu_PrecioVenta) AS PrecioVenta,
+        MAX(m.Maqu_PrecioMayor) AS PrecioMayorista
+    FROM
+        vent_tbfacturacompradetalle fd
+    JOIN
+        vent_tbmaquillajes m ON fd.Prod_Codigo = m.Maqu_Codigo
+    WHERE
+        fd.FaCD_Dif = 0
+        AND fd.FaCE_Id = p_FaCE_Id
+    GROUP BY
+        fd.FaCD_Dif, m.Maqu_Nombre;
+
+    -- Seleccionar los datos consolidados
+    SELECT
+        FaCD_Id AS faCD_Id,
+        Prod_Id,
+        Prod_Nombre AS Producto,
+        Total_Cantidad AS Cantidad,
+        Prod_Precio AS Precio_Venta,
+        PrecioVenta,
+        PrecioMayorista,
+        (Total_Cantidad * Prod_Precio) AS Total,
+        Categoria
+    FROM
+        Consolidated;
+
+    -- Eliminar la tabla temporal
+    DROP TEMPORARY TABLE Consolidated;
+
+END //
+
+DELIMITER ;
+
+CREATE   procedure SP_FacturaCompraDetalle_Buscar()
+BEGIN 
+	select * from vent_tbfacturacompradetalle;
+END
+
+DELIMITER //
+
+CREATE PROCEDURE SP_FacturaCompraDetalle_Eliminar(
+    IN p_ID INT
 )
 BEGIN
-    DECLARE Cantidad INT;
-    DECLARE dife BIT;
-    DECLARE producto VARCHAR(255);
-    DECLARE menor INT;
-    DECLARE menor1 INT;
-    DECLARE sucu INT;
-    DECLARE encabe INT;
-    DECLARE provee INT;
-    DECLARE nombre VARCHAR(255);
+    DECLARE p_Cantidad INT;
+    DECLARE p_dife TINYINT(1);
+    DECLARE p_producto VARCHAR(100);
+    DECLARE p_menor INT;
+    DECLARE p_menor1 INT;
+    DECLARE p_sucu INT;
+    DECLARE p_encabe INT;
+    DECLARE p_provee INT;
+    DECLARE p_nombre VARCHAR(255);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0;
+    END;
+
+    -- Obtener datos de detalle de factura
+    SELECT 
+        FaCD_Dif,
+        Prod_Codigo,
+        FaCE_Id
+    INTO 
+        p_dife,
+        p_producto,
+        p_encabe
+    FROM vent_tbfacturacompradetalle
+    WHERE FaCD_Id = p_ID;
+
+    -- Obtener cantidad total del producto en la factura
+    SELECT 
+        SUM(FaCD_Cantidad)
+    INTO 
+        p_Cantidad
+    FROM vent_tbfacturacompradetalle
+    WHERE FaCE_Id = p_encabe AND Prod_Codigo = p_producto;
+
+    -- Obtener información de encabezado
+    SELECT 
+        Sucu_Id,
+        Prov_Id
+    INTO 
+        p_sucu,
+        p_provee
+    FROM vent_tbfacturacompraencabezado
+    WHERE FaCE_Id = p_encabe;
+
+    -- Si es una joya
+    IF p_dife = 1 THEN
+        -- Obtener nombre de la joya
+        SELECT Joya_Nombre
+        INTO p_nombre
+        FROM vent_tbjoyas
+        WHERE Joya_Codigo = p_producto AND Prov_Id = p_provee;
+
+        -- Actualizar stock de la joya
+        UPDATE vent_tbjoyas
+        SET Joya_Stock = Joya_Stock - p_Cantidad
+        WHERE Joya_Nombre = p_nombre AND Prov_Id = p_provee;
+
+        -- Actualizar stock en la tabla de productos por sucursales
+        UPDATE gral_tbproductosporsucurales
+        SET Prsx_Stock = Prsx_Stock - p_Cantidad
+        WHERE Prxs_Dif = p_dife AND Sucu_Id = p_sucu AND Prod_Codigo = p_producto;
+
+        -- Verificar si el stock es negativo y ajustarlo
+        SELECT Joya_Stock
+        INTO p_menor
+        FROM vent_tbjoyas
+        WHERE Joya_Codigo = p_producto;
+
+        SELECT Prsx_Stock
+        INTO p_menor1
+        FROM gral_tbproductosporsucurales
+        WHERE Prxs_Dif = p_dife AND Sucu_Id = p_sucu AND Prod_Codigo = p_producto;
+
+        IF p_menor < 0 THEN
+            UPDATE vent_tbjoyas
+            SET Joya_Stock = 0
+            WHERE Joya_Codigo = p_producto;
+        END IF;
+
+        IF p_menor1 < 0 THEN
+            UPDATE gral_tbproductosporsucurales
+            SET Prsx_Stock = 0
+            WHERE Prxs_Dif = p_dife AND Sucu_Id = p_sucu AND Prod_Codigo = p_producto;
+        END IF;
+
+        -- Eliminar detalle de factura
+        DELETE FROM vent_tbfacturacompradetalle
+        WHERE FaCE_Id = p_encabe AND Prod_Codigo = p_producto;
+
+    -- Si es maquillaje
+    ELSE
+        -- Actualizar stock de maquillaje
+        UPDATE vent_tbmaquillajes
+        SET Maqu_Stock = Maqu_Stock - p_Cantidad
+        WHERE Maqu_Codigo = p_producto;
+
+        -- Actualizar stock en la tabla de productos por sucursales
+        UPDATE gral_tbproductosporsucurales
+        SET Prsx_Stock = Prsx_Stock - p_Cantidad
+        WHERE Prxs_Dif = p_dife AND Sucu_Id = p_sucu AND Prod_Codigo = p_producto;
+
+        -- Verificar si el stock es negativo y ajustarlo
+        SELECT Maqu_Stock
+        INTO p_menor
+        FROM vent_tbmaquillajes
+        WHERE Maqu_Codigo = p_producto;
+
+        SELECT Prsx_Stock
+        INTO p_menor1
+        FROM gral_tbproductosporsucurales
+        WHERE Prxs_Dif = p_dife AND Sucu_Id = p_sucu AND Prod_Codigo = p_producto;
+
+        IF p_menor < 0 THEN
+            UPDATE vent_tbmaquillajes
+            SET Maqu_Stock = 0
+            WHERE Maqu_Codigo = p_producto;
+        END IF;
+
+        IF p_menor1 < 0 THEN
+            UPDATE gral_tbproductosporsucurales
+            SET Prsx_Stock = 0
+            WHERE Prxs_Dif = p_dife AND Sucu_Id = p_sucu AND Prod_Codigo = p_producto;
+        END IF;
+
+        -- Eliminar detalle de factura
+        DELETE FROM vent_tbfacturacompradetalle
+        WHERE FaCE_Id = p_encabe AND Prod_Codigo = p_producto;
+    END IF;
+
+    SELECT 1;
+END //
+
+DELIMITER ;
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_FacturaCompraDetalle_Insertar`(
+    IN p_FaCE_Id INT,
+    IN p_FaCD_Dif TINYINT(1),
+    IN p_NombreProducto VARCHAR(70),
+    IN p_FaCD_Cantidad INT,
+    IN p_PrecioCompra DECIMAL(8,2),
+    IN p_PrecioVenta DECIMAL(8,2),
+    IN p_PrecioMayor DECIMAL(8,2)
+)
+BEGIN
+    DECLARE p_proid VARCHAR(100);
+    DECLARE p_idsalida VARCHAR(100);
+    DECLARE p_prove INT;
+    DECLARE p_stockActual INT;
+    DECLARE p_usuariocreacion INT;
+    DECLARE p_fechacreacion DATETIME;
+    DECLARE p_sucursal INT;
+
+    -- Declaraciones adicionales
+    DECLARE nombre VARCHAR(60);
+    DECLARE precio_Venta DECIMAL(18,2);
+    DECLARE precio_Mayor DECIMAL(18,2);
+    DECLARE imagen VARCHAR(255);
+    DECLARE mateId INT;
+    DECLARE cateId INT;
+    DECLARE nombreM VARCHAR(60);
+    DECLARE precioVentaM DECIMAL(18,2);
+    DECLARE precioMayorM DECIMAL(18,2);
+    DECLARE imagenM VARCHAR(255);
+    DECLARE marcIdM INT;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -726,116 +961,304 @@ BEGIN
     END;
 
     SELECT 
-        FaCD_Dif,
-        Prod_Id,
-        FaCE_Id
-    INTO 
-        dife,
-        producto,
-        encabe
-    FROM Vent_tbFacturaCompraDetalle
-    WHERE FaCD_Id = ID;
+        Prov_Id,
+        FeCE_UsuarioCreacion,
+        FaCE_FechaCreacion,
+        Sucu_Id
+    INTO
+        p_prove,
+        p_usuariocreacion,
+        p_fechacreacion,
+        p_sucursal
+    FROM vent_tbfacturacompraencabezado 
+    WHERE FaCE_Id = p_FaCE_Id;
 
-    SELECT 
-        SUM(FaCD_Cantidad)
-    INTO 
-        Cantidad
-    FROM Vent_tbFacturaCompraDetalle
-    WHERE encabe = FaCE_Id AND producto = Prod_Id;
+    -- Verificación y actualización/inserción en la tabla de joyas
+    IF p_FaCD_Dif = 1 THEN
+        IF EXISTS (SELECT 1 FROM vent_tbjoyas WHERE Joya_Codigo = p_NombreProducto OR Joya_Nombre = p_NombreProducto) THEN
+            SELECT Joya_Codigo INTO p_proid FROM vent_tbjoyas
+            WHERE Joya_Codigo = p_NombreProducto OR Joya_Nombre = p_NombreProducto;
 
-    SELECT 
-        Sucu_Id,
-        Prov_Id
-    INTO 
-        sucu,
-        provee
-    FROM Vent_tbFacturaCompraEncabezado
-    WHERE FaCE_Id = encabe;
+            UPDATE vent_tbjoyas
+            SET Joya_Stock = Joya_Stock + p_FaCD_Cantidad,
+                Joya_PrecioCompra = p_PrecioCompra,
+                Joya_PrecioVenta = p_PrecioVenta,
+                Joya_PrecioMayor = p_PrecioMayor
+            WHERE Joya_Codigo = p_proid;
 
-    IF dife = 1 THEN
-        SELECT
-            Joya_Nombre
-        INTO
-            nombre
-        FROM Vent_tbJoyas
-        WHERE Joya_Id = producto AND Prov_Id = provee;
+            IF EXISTS (SELECT 1 FROM gral_tbproductosporsucurales WHERE Sucu_Id = p_sucursal AND Prod_Codigo = p_proid AND Prxs_Dif = p_FaCD_Dif) THEN
+                UPDATE gral_tbproductosporsucurales
+                SET Prxs_Dif = p_FaCD_Dif,
+                    Prsx_Stock = Prsx_Stock + p_FaCD_Cantidad
+                WHERE Sucu_Id = p_sucursal AND Prod_Codigo = p_proid AND Prxs_Dif = p_FaCD_Dif;
+            ELSE
+                INSERT INTO gral_tbproductosporsucurales (Prxs_Dif, Prod_Codigo, Prsx_Stock, Sucu_Id)
+                VALUES (p_FaCD_Dif, p_proid, p_FaCD_Cantidad, p_sucursal);
+            END IF;
 
-        UPDATE Vent_tbJoyas
-        SET Joya_Stock = Joya_Stock - Cantidad
-        WHERE Joya_Nombre = nombre AND Prov_Id = provee;
+            IF EXISTS (SELECT 1 FROM vent_tbfacturacompradetalle WHERE FaCE_Id = p_FaCE_Id AND FaCD_Dif = p_FaCD_Dif AND Prod_Codigo = p_proid) THEN
+                UPDATE vent_tbfacturacompradetalle
+                SET FaCD_Cantidad = p_FaCD_Cantidad
+                WHERE FaCE_Id = p_FaCE_Id AND FaCD_Dif = p_FaCD_Dif AND Prod_Codigo = p_proid;
+            ELSE
+                INSERT INTO vent_tbfacturacompradetalle (FaCE_Id, FaCD_Dif, Prod_Codigo, FaCD_Cantidad)
+                VALUES (p_FaCE_Id, p_FaCD_Dif, p_proid, p_FaCD_Cantidad);
+            END IF;
+        ELSE
+            IF NOT EXISTS (SELECT 1 FROM vent_tbmaquillajes WHERE Maqu_Codigo = p_NombreProducto OR Maqu_Nombre = p_NombreProducto) THEN
+                INSERT INTO vent_tbjoyas (Joya_Nombre, Joya_PrecioCompra, Joya_PrecioVenta, Joya_PrecioMayor, Joya_Imagen, Prov_Id, Mate_Id, Cate_Id, Joya_UsuarioCreacion, Joya_FechaCreacion, Joya_Estado, Joya_Stock)
+                VALUES (p_NombreProducto, p_PrecioCompra, p_PrecioVenta, p_PrecioMayor, 'NA', p_prove, 6, 8, p_usuariocreacion, p_fechacreacion, 1, p_FaCD_Cantidad);
 
-        UPDATE Gral_tbProductosPorSucurales
-        SET Prsx_Stock = Prsx_Stock - Cantidad
-        WHERE Prxs_Dif = dife AND Sucu_Id = sucu AND Prod_Id = producto;
+                SET p_idsalida = LAST_INSERT_ID();
 
-        SELECT 
-            Joya_Stock
-        INTO 
-            menor
-        FROM Vent_tbJoyas
-        WHERE Joya_Id = producto;
+                INSERT INTO gral_tbproductosporsucurales (Prxs_Dif, Prod_Codigo, Prsx_Stock, Sucu_Id)
+                VALUES (p_FaCD_Dif, p_idsalida, p_FaCD_Cantidad, p_sucursal);
 
-        SELECT 
-            Prsx_Stock
-        INTO 
-            menor1
-        FROM Gral_tbProductosPorSucurales
-        WHERE Prxs_Dif = dife AND Sucu_Id = sucu AND Prod_Id = producto;
-
-        IF menor < 0 THEN
-            UPDATE Vent_tbJoyas
-            SET Joya_Stock = 0
-            WHERE Joya_Id = producto;
+                INSERT INTO vent_tbfacturacompradetalle (FaCE_Id, FaCD_Dif, Prod_Codigo, FaCD_Cantidad)
+                VALUES (p_FaCE_Id, p_FaCD_Dif, p_idsalida, p_FaCD_Cantidad);
+            END IF;
         END IF;
 
-        IF menor1 < 0 THEN
-            UPDATE Gral_tbProductosPorSucurales
-            SET Prsx_Stock = 0
-            WHERE Prxs_Dif = dife AND Sucu_Id = sucu AND Prod_Id = producto;
-        END IF;
-
-        DELETE FROM Vent_tbFacturaCompraDetalle
-        WHERE FaCE_Id = encabe AND Prod_Id = producto;
+    -- Verificación y actualización/inserción en la tabla de maquillajes
     ELSE
-        UPDATE Vent_tbMaquillajes
-        SET Maqu_Stock = Maqu_Stock - Cantidad
-        WHERE Maqu_Id = producto;
+        IF EXISTS (SELECT 1 FROM vent_tbmaquillajes WHERE Maqu_Codigo = p_NombreProducto OR Maqu_Nombre = p_NombreProducto) THEN
+            SELECT Maqu_Codigo INTO p_proid FROM vent_tbmaquillajes
+            WHERE Maqu_Codigo = p_NombreProducto OR Maqu_Nombre = p_NombreProducto;
 
-        UPDATE Gral_tbProductosPorSucurales
-        SET Prsx_Stock = Prsx_Stock - Cantidad
-        WHERE Prxs_Dif = dife AND Sucu_Id = sucu AND Prod_Id = producto;
+            UPDATE vent_tbmaquillajes
+            SET Maqu_Stock = Maqu_Stock + p_FaCD_Cantidad,
+                Maqu_PrecioCompra = p_PrecioCompra,
+                Maqu_PrecioVenta = p_PrecioVenta,
+                Maqu_PrecioMayor = p_PrecioMayor
+            WHERE Maqu_Codigo = p_proid;
 
-        SELECT 
-            Maqu_Stock
-        INTO 
-            menor
-        FROM Vent_tbMaquillajes
-        WHERE Maqu_Id = producto;
+            IF EXISTS (SELECT 1 FROM gral_tbproductosporsucurales WHERE Sucu_Id = p_sucursal AND Prod_Codigo = p_proid AND Prxs_Dif = p_FaCD_Dif) THEN
+                UPDATE gral_tbproductosporsucurales
+                SET Prxs_Dif = p_FaCD_Dif,
+                    Prsx_Stock = Prsx_Stock + p_FaCD_Cantidad
+                WHERE Sucu_Id = p_sucursal AND Prod_Codigo = p_proid AND Prxs_Dif = p_FaCD_Dif;
+            ELSE
+                INSERT INTO gral_tbproductosporsucurales (Prxs_Dif, Prod_Codigo, Prsx_Stock, Sucu_Id)
+                VALUES (p_FaCD_Dif, p_proid, p_FaCD_Cantidad, p_sucursal);
+            END IF;
 
-        SELECT 
-            Prsx_Stock
-        INTO 
-            menor1
-        FROM Gral_tbProductosPorSucurales
-        WHERE Prxs_Dif = dife AND Sucu_Id = sucu AND Prod_Id = producto;
+            IF EXISTS (SELECT 1 FROM vent_tbfacturacompradetalle WHERE FaCE_Id = p_FaCE_Id AND FaCD_Dif = p_FaCD_Dif AND Prod_Codigo = p_proid) THEN
+                UPDATE vent_tbfacturacompradetalle
+                SET FaCD_Cantidad = p_FaCD_Cantidad
+                WHERE FaCE_Id = p_FaCE_Id AND FaCD_Dif = p_FaCD_Dif AND Prod_Codigo = p_proid;
+            ELSE
+                INSERT INTO vent_tbfacturacompradetalle (FaCE_Id, FaCD_Dif, Prod_Codigo, FaCD_Cantidad)
+                VALUES (p_FaCE_Id, p_FaCD_Dif, p_proid, p_FaCD_Cantidad);
+            END IF;
+        ELSE
+            IF NOT EXISTS (SELECT 1 FROM vent_tbjoyas WHERE Joya_Codigo = p_NombreProducto OR Joya_Nombre = p_NombreProducto) THEN
+                INSERT INTO vent_tbmaquillajes (Maqu_Nombre, Maqu_PrecioCompra, Maqu_PrecioVenta, Maqu_PrecioMayor, Maqu_Imagen, Prov_Id, Marc_Id, Maqu_UsuarioCreacion, Maqu_FechaCreacion, Maqu_Estado, Maqu_Stock)
+                VALUES (p_NombreProducto, p_PrecioCompra, p_PrecioVenta, p_PrecioMayor, 'NA', p_prove, 8, p_usuariocreacion, p_fechacreacion, 1, p_FaCD_Cantidad);
 
-        IF menor < 0 THEN
-            UPDATE Vent_tbMaquillajes
-            SET Maqu_Stock = 0
-            WHERE Maqu_Id = producto;
+                SET p_idsalida = LAST_INSERT_ID();
+
+                INSERT INTO gral_tbproductosporsucurales (Prxs_Dif, Prod_Codigo, Prsx_Stock, Sucu_Id)
+                VALUES (p_FaCD_Dif, p_idsalida, p_FaCD_Cantidad, p_sucursal);
+
+                INSERT INTO vent_tbfacturacompradetalle (FaCE_Id, FaCD_Dif, Prod_Codigo, FaCD_Cantidad)
+                VALUES (p_FaCE_Id, p_FaCD_Dif, p_idsalida, p_FaCD_Cantidad);
+            END IF;
         END IF;
-
-        IF menor1 < 0 THEN
-            UPDATE Gral_tbProductosPorSucurales
-            SET Prsx_Stock = 0
-            WHERE Prxs_Dif = dife AND Sucu_Id = sucu AND Prod_Id = producto;
-        END IF;
-
-        DELETE FROM Vent_tbFacturaCompraDetalle
-        WHERE FaCE_Id = encabe AND Prod_Id = producto;
     END IF;
 
     SELECT 1;
+END
+//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE SP_FacturaCompra_Actualizar(
+    IN p_FaCE_Id INT,
+    IN p_Prov_Id INT,
+    IN p_Mepa_Id INT,
+    IN p_FeCE_UsuarioModificacion INT,
+    IN p_FaCE_FechaModificacion DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0;
+    END;
+
+    -- Actualizar encabezado de factura de compra
+    UPDATE vent_tbfacturacompraencabezado 
+    SET
+        Prov_Id = p_Prov_Id,
+        Mepa_Id = p_Mepa_Id,
+        FaCE_UsuarioModificacion = p_FeCE_UsuarioModificacion,
+        FaCE_FechaModificacion = p_FaCE_FechaModificacion
+    WHERE FaCE_Id = p_FaCE_Id;
+
+    SELECT 1;
 END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE SP_FacturaCompra_Buscar(
+    IN p_id INT
+)
+BEGIN
+    -- Consulta para buscar la factura de compra
+    SELECT
+        fe.FaCE_Id AS faCE_Id,
+        fe.Prov_Id,
+        0 AS faCD_Dif,
+        P.Prov_Proveedor AS nombreProveedor,
+        fe.Mepa_Id,
+        M.Mepa_Metodo,
+        fe.FaCE_fechafinalizacion,
+        s.Sucu_Id AS sucu_Id,
+        s.Sucu_Nombre AS sucu_Nombre
+    FROM vent_tbfacturacompraencabezado fe
+    LEFT JOIN acce_tbusuarios U1 ON fe.FeCE_UsuarioCreacion = U1.Usua_Id
+    LEFT JOIN acce_tbusuarios U2 ON fe.FaCE_UsuarioModificacion = U2.Usua_Id
+    LEFT JOIN gral_tbproveedores P ON P.Prov_Id = fe.Prov_Id
+    LEFT JOIN gral_tbmetodospago M ON M.Mepa_Id = fe.Mepa_Id
+    LEFT JOIN gral_tbsucursales s ON s.Sucu_Id = fe.Sucu_Id
+    WHERE fe.FaCE_Id = p_id AND fe.FaCE_Etado = 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE SP_FacturaCompra_Detalle(
+    IN p_id INT
+)
+BEGIN
+    -- Consulta para obtener el detalle de la factura de compra
+    SELECT
+        fe.FaCE_Id AS faCE_Id,
+        fe.Prov_Id,
+        P.Prov_Proveedor AS nombreProveedor,
+        fe.Mepa_Id,
+        M.Mepa_Metodo 
+    FROM vent_tbfacturacompraencabezado fe
+    LEFT JOIN acce_tbusuarios U1 ON fe.FeCE_UsuarioCreacion = U1.Usua_Id
+    LEFT JOIN acce_tbusuarios U2 ON fe.FaCE_UsuarioModificacion = U2.Usua_Id
+    LEFT JOIN gral_tbproveedores P ON P.Prov_Id = fe.Prov_Id
+    LEFT JOIN gral_tbmetodospago M ON M.Mepa_Id = fe.Mepa_Id
+    WHERE fe.FaCE_Id = p_id AND fe.FaCE_Etado = 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE SP_FacturaCompra_Eliminar(
+    IN p_ID INT
+)
+BEGIN
+    -- Actualizar el estado de la factura de compra a 0 (eliminado)
+    UPDATE vent_tbfacturacompraencabezado
+    SET
+        FaCE_Etado = 0
+    WHERE FaCE_Id = p_ID;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE SP_FacturaCompra_Finalizar(
+    IN p_FaCE_Id INT,
+    IN p_FaCE_FechaFinal DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 0;
+    END;
+
+    -- Actualizar el estado de la factura de compra a finalizada
+    UPDATE vent_tbfacturacompraencabezado 
+    SET
+        FaCE_Finalizada = 1,
+        FaCE_fechafinalizacion = p_FaCE_FechaFinal
+    WHERE FaCE_Id = p_FaCE_Id;
+
+    SELECT 1;
+END //
+
+DELIMITER ;
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_FacturaCompra_Insertar`(
+    IN p_Prov_Id INT,
+    IN p_Mepa_Id INT,
+    IN p_Sucu_Id INT,
+    IN p_FeCE_UsuarioCreacion INT,
+    IN p_FaCE_FechaCreacion DATETIME,
+    IN p_FeCE_UsuarioModificacion INT,
+    IN p_FaCE_FechaModificacion DATETIME,
+    IN p_FaCe_Id INT,
+    OUT p_ID INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SET p_ID = -1;
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    IF p_FaCe_Id = 0 THEN
+        -- Insertar un nuevo encabezado de factura de compra
+        INSERT INTO vent_tbfacturacompraencabezado 
+            (Prov_Id, Mepa_Id, FeCE_UsuarioCreacion, FaCE_FechaCreacion, FaCE_Finalizada, Sucu_Id)
+        VALUES 
+            (p_Prov_Id, p_Mepa_Id, p_FeCE_UsuarioCreacion, p_FaCE_FechaCreacion, 0, p_Sucu_Id);
+
+        SET p_ID = LAST_INSERT_ID();
+    ELSE
+        -- Actualizar el encabezado de factura de compra existente
+        UPDATE vent_tbfacturacompraencabezado
+        SET 
+            Prov_Id = p_Prov_Id,
+            Mepa_Id = p_Mepa_Id,
+            FeCE_UsuarioCreacion = p_FeCE_UsuarioModificacion,
+            FaCE_FechaCreacion = p_FaCE_FechaModificacion,
+            FaCE_Finalizada = 0,
+            Sucu_Id = p_Sucu_Id
+        WHERE 
+            FaCE_Id = p_FaCe_Id;
+
+        SET p_ID = p_FaCe_Id;
+    END IF;
+
+    COMMIT;
+
+    SELECT p_ID;
+END
+//
+
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ObtenerFacturaCompraDetalleId`(
+    IN p_FaCE_Id INT,
+    IN p_Prod_Codigo VARCHAR(100),
+    IN p_FaCD_Dif TINYINT(1)
+)
+BEGIN
+    SELECT FaCD_Id
+    FROM vent_tbfacturacompradetalle
+    WHERE FaCE_Id = p_FaCE_Id
+    AND Prod_Codigo = p_Prod_Codigo
+    AND FaCD_Dif = p_FaCD_Dif
+    LIMIT 1;
+END;
+
+//
 
 DELIMITER ;
