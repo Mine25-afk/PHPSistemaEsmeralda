@@ -116,7 +116,7 @@
                                         <div class="form-group">
                                             <label>Proveedor</label>
                                             <select id="Proveedor" name="Proveedor" class="form-control select2" style="width: 100%;">
-                                                <option selected="selected" value="">--Seleccione--</option>
+                                                <option value="">--Seleccione--</option>
                                             </select>
                                         </div>
                                     </div>
@@ -188,7 +188,7 @@
                                     <div class="form-row d-flex justify-content-start">
                                         <div class="col-md-2">
                                             <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-                                            <input type="button" value="Confirmar" class="btn btn-primary" id="confirmarBtn" />
+                                            <input type="button" class="btn btn-primary" id="btnConfirmar" />
 
                                         </div>
                                     </div>
@@ -200,6 +200,7 @@
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
 
     <script>
         $('.select2').select2();
@@ -254,6 +255,9 @@
                     Sucursal: {
                         required: true
                     },
+                    Producto: {
+                        required: true
+                    }
                 },
                 messages: {
                     Proveedor: {
@@ -262,6 +266,9 @@
 
                     Sucursal: {
                         required: "Por favor elija su Sucursal"
+                    },
+                    Producto: {
+                        required: "Por favor inserte el producto"
                     }
                 },
                 errorElement: 'span',
@@ -282,6 +289,18 @@
                 $('#FacturaCompraForm').trigger('reset');
                 $('#FacturaCompraForm').validate().resetForm();
                 sessionStorage.setItem('FaCE_Id', "0");
+                $('#detalleFactura').empty(); // Vaciar las filas existentes
+
+                $('#Proveedor').val('').trigger('change');
+                $('#Sucursal').val('').trigger('change');
+
+
+                // Restablecer el método de pago
+                $('#metodoPagoSeleccionado').val('1');
+                $('.metodo-pago').removeClass('btn-selected-info').addClass('deselected');
+                $('.metodo-pago[data-value="1"]').removeClass('deselected').addClass('btn-selected-info');
+
+                agregarNuevaFila(); // Agregar una fila inicial vacía
             });
 
 
@@ -291,15 +310,15 @@
 
             function agregarNuevaFila() {
                 var nuevaFila = `
-        <tr data-id="NEW_ID">
-            <td><p id="categoria"></p></td>
-            <td><input type="text" class="form-control" name="producto" /></td>
-            <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
-            <td><input type="text" class="form-control" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
-            <td><p id="precio_venta">0.00</p></td>
-            <td><p id="precio_mayorista">0.00</p></td>
-            <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
-        </tr>`;
+<tr data-id="NEW_ID">
+    <td><p id="categoria"></p></td>
+    <td><input type="text" class="form-control" name="producto" /></td>
+    <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
+    <td><input type="text" class="form-control" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
+    <td><p id="precio_venta">0.00</p></td>
+    <td><p id="precio_mayorista">0.00</p></td>
+    <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
+</tr>`;
                 $('#detalleFactura').append(nuevaFila);
                 aplicarAutocompletado();
             }
@@ -493,13 +512,10 @@
             });
 
             $(document).on('blur', 'input[name="precio_compra"]', function() {
-                if ($('#FacturaCompraForm').valid()) {
-                    var row = $(this).closest('tr');
-                    var producto = row.find('input[name="producto"]').val();
-
-
+                var row = $(this).closest('tr');
+                var producto = row.find('input[name="producto"]').val();
+                if ($('#FacturaCompraForm').valid() && producto.trim() !== '') {
                     insertarActualizarFactura(row);
-                    agregarNuevaFila();
                 } else {
                     iziToast.error({
                         title: 'Error',
@@ -510,6 +526,8 @@
                     });
                 }
             });
+
+
 
             function cargarDatos() {
                 $.ajax({
@@ -525,6 +543,7 @@
                         proveedores.forEach(function(proveedor) {
                             selectProveedor.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
                         });
+                        $('#Proveedor').val(null).trigger('change');
                     }
                 });
 
@@ -541,6 +560,7 @@
                         sucursales.forEach(function(sucursal) {
                             selectSucursal.append('<option value="' + sucursal.Sucu_Id + '">' + sucursal.Sucu_Nombre + '</option>');
                         });
+                        $('#Sucursal').val(null).trigger('change');
                     }
                 });
             }
@@ -641,6 +661,41 @@
                 });
             }
 
+            function obtenerDetalleId(faCE_Id, producto, categoria) {
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'obtenerFacturaCompraDetalleId',
+                        FaCE_Id: faCE_Id,
+                        producto: producto,
+                        FaCD_Dif: categoria
+                    },
+                    success: function(response) {
+                        console.log('Respuesta de obtener detalle ID:', response);
+                        if (response.success) {
+                            var row = $('tr[data-id="NEW_ID"]'); // Selecciona la fila que acabamos de insertar
+                            var cantidad = row.find('input[name="cantidad"]').val();
+                            var precioCompra = row.find('input[name="precio_compra"]').val();
+                            row.attr('data-id', response.FaCD_Id);
+                            row.find('input[name="producto"]').replaceWith('<p>' + producto + '</p>');
+                            row.find('input[name="cantidad"]').replaceWith('<p>' + cantidad + '</p>');
+                            row.find('input[name="precio_compra"]').replaceWith('<p>' + precioCompra + '</p>');
+
+                            // Agregar una nueva fila con inputs para el siguiente detalle
+                            agregarNuevaFila();
+                        } else {
+                            console.error('Error al obtener el ID del detalle:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la petición AJAX de obtener detalle ID:', status, error);
+                    }
+                });
+            }
+
+
             $('#TablaFacturaCompra tbody').on('click', '.abrir-editar', function() {
                 var data = table.row($(this).parents('tr')).data();
                 sessionStorage.setItem('FaCE_Id', data.FaCE_Id);
@@ -693,32 +748,6 @@
                 });
             });
 
-            function obtenerDetalleId(faCE_Id, producto, categoria) {
-                $.ajax({
-                    url: 'Services/FacturaCompraService.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'obtenerFacturaCompraDetalleId',
-                        FaCE_Id: faCE_Id,
-                        producto: producto,
-                        FaCD_Dif: categoria
-                    },
-                    success: function(response) {
-                        console.log('Respuesta de obtener detalle ID:', response);
-                        if (response.success) {
-                            var row = $('tr[data-id="NEW_ID"]'); // Selecciona la fila que acabamos de insertar
-                            row.attr('data-id', response.FaCD_Id); // Actualiza el atributo data-id con el ID real
-                        } else {
-                            console.error('Error al obtener el ID del detalle:', response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error en la petición AJAX de obtener detalle ID:', status, error);
-                    }
-                });
-            }
-
 
             aplicarAutocompletado();
 
@@ -733,7 +762,7 @@
                         d.action = 'listarFacturaCompras';
                     },
                     "dataSrc": function(json) {
-                        console.log('Respuesta del servidor:', json);
+                        //  console.log('Respuesta del servidor:', json);
                         if (json.error) {
                             console.error('Error recibido del servidor:', json.error);
                             return [];
@@ -786,6 +815,10 @@
                 $('.CrearOcultar').show();
                 $('.CrearMostrar').hide();
                 $('#FacturaCompraForm')[0].reset();
+                $('#FacturaCompraForm').validate().resetForm();
+
+                $('#Proveedor').val('').trigger('change');
+    $('#Sucursal').val('').trigger('change');
             });
 
             cargarDatos();
