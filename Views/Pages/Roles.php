@@ -530,7 +530,6 @@ $('#formNuevoRol').submit(function(e) {
     });
 });
 
-
 function obtenerDatosCompletosRol(roleId) {
     $.ajax({
         url: 'Services/RolesService.php',
@@ -551,8 +550,23 @@ function obtenerDatosCompletosRol(roleId) {
                     $('#Role_Rol').val(rol.Role_Rol);
 
                     $('#pantallasTreeView input[type="checkbox"]').prop('checked', false); 
+
                     pantallas.forEach(function(pantalla) {
                         $('#pantallasTreeView input[data-id="' + pantalla.Pant_Id + '"]').prop('checked', true);
+                    });
+
+                    // Verificar si todas las pantallas están seleccionadas
+                    var allPantallasChecked = $('.pantalla-checkbox:checked').length === $('.pantalla-checkbox').length;
+                    $('#selectAllPantallas').prop('checked', allPantallasChecked);
+                    if (allPantallasChecked) {
+                        $('#pantallasTreeView .categoria').addClass('expanded');
+                        $('#pantallasTreeView .categoria-ul').show();
+                    }
+
+                    // Verificar si todas las pantallas de una categoría están seleccionadas
+                    Object.keys(categorias).forEach(function(categoria) {
+                        var allPantallasInCategoriaChecked = $('.pantalla-checkbox[data-categoria="' + categoria + '"]:checked').length === $('.pantalla-checkbox[data-categoria="' + categoria + '"]').length;
+                        $('.categoria-checkbox[data-categoria="' + categoria + '"]').prop('checked', allPantallasInCategoriaChecked);
                     });
 
                     $('#tablaContainer').toggle();
@@ -570,10 +584,19 @@ function obtenerDatosCompletosRol(roleId) {
     });
 }
 
+// Manejar la selección de una categoría completa
+$('#pantallasTreeView').on('change', '.categoria-checkbox', function() {
+    var categoria = $(this).data('categoria');
+    var isChecked = $(this).is(':checked');
+    $('.pantalla-checkbox[data-categoria="' + categoria + '"]').prop('checked', isChecked);
+    $('#selectAllPantallas').prop('checked', $('.pantalla-checkbox:checked').length === $('.pantalla-checkbox').length);
+});
+
 $(document).on('click', '.abrir-editar', function () {
     var roleId = $(this).data('id');
     obtenerDatosCompletosRol(roleId);
 });
+
 $('#tablaRol tbody').on('click', '.ver-detalles', function () {
         var data = table.row($(this).parents('tr')).data();
         var valor = data.Role_Id;
