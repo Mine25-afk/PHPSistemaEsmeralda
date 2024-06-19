@@ -502,6 +502,9 @@ $('#formNuevoRol').submit(function(e) {
                                     iziToast.success({
                                         title: 'Éxito',
                                         message: 'Rol guardado correctamente.',
+                                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
                                     });
                                     $('#tablaRol').DataTable().ajax.reload();
                                     $('#tablaContainer').toggle();
