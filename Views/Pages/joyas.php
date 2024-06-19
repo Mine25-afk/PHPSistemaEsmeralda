@@ -54,12 +54,12 @@
                                     <th>Id</th>
                                     <th>Codigo</th>
                                     <th>Descripción</th>
-                                    <th>Precio Compra</th>
+                      
                                     <th>Precio Venta</th>
                                     <th>Stock</th>
                                     <th>Precio Mayorista</th>
                                     <th>Imagen</th>
-                                    <th>Material</th>
+                                  
                                     <th>Proveedor</th>
                                     <th>Categoría</th>
                                     <th class="text-center">Acciones</th>
@@ -310,11 +310,12 @@
                                     <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
                                 </div>
                                 <div class="barcode-container text-center" id="barcodeContainer">
-                                    <!-- Aquí se generan dinámicamente los códigos de barras -->
+                               
                                 </div>
                                 <div class="joya-nombre mt-3 text-center">
-                                    <!-- Aquí se mostrará el nombre de la joya -->
+                               
                                     <h5 id="nombreJoya"></h5>
+
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-center">
@@ -355,9 +356,7 @@
                                 {
                                     "data": "Joya_Nombre"
                                 },
-                                {
-                                    "data": "Joya_PrecioCompra"
-                                },
+                            
                                 {
                                     "data": "Joya_PrecioVenta"
                                 },
@@ -374,9 +373,7 @@
                                         return '<img src="' + imageUrl + '" alt="Imagen de Joya" width="50">';
                                     }
                                 },
-                                {
-                                    "data": "Mate_Material"
-                                },
+                             
                                 {
                                     "data": "Prov_Proveedor"
                                 },

@@ -60,7 +60,7 @@
                                     <th>Sexo</th>
                                     <th>Municipio</th>
                                     <th>Estado Civil</th>
-                                    <th>Es Mayorista</th>
+                                    <th>Mayorista</th>
                                     <th class="text-center">Acciones</th>
                                 </tr>
                             </thead>
@@ -331,7 +331,7 @@
                                 }
                             },
                             "columns": [{
-                                    "data": "Clie_Id"
+                                    "data": " "
                                 },
                                 {
                                     "data": "Clie_Nombre"
@@ -346,7 +346,7 @@
                                     "data": "Clie_FechaNac"
                                 },
                                 {
-                                    "data": "Clie_Sexo"
+                                    "data": "Sexo"
                                 },
                                 {
                                     "data": "Municipio"
@@ -378,6 +378,10 @@
                             $('.error-message').text('');
                             $('#Clie_Id').val('');
                         }
+
+                 
+                  
+
 
 
 
