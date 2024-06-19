@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
-
+session_start();
 class FacturaController {
     public function listarFactura() {
         global $pdo;
@@ -100,6 +100,30 @@ class FacturaController {
         }
     }
 
+
+    public function FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo) {
+        global $pdo;
+        try {
+            $sql = 'CALL SP_Facturas_Insertar(:Clie_Id,:Empl_Id,:Mepa_Id,:Sucu_Id,:Fact_UsuarioCreacion,:Fact_FechaCreacion,:Fact_UsuarioModificacion,:Fact_FechaModificacion,:Fact_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Clie_Id', $Clie_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Empl_Id', $_SESSION['Empl_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Mepa_Id', $Mepa_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Id', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_UsuarioCreacion',  $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_FechaCreacion', $Fact_FechaCreacion, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_UsuarioModificacion',  $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_FechaModificacion', $Fact_FechaModificacion, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_Codigo', $Fact_Codigo, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $facturaId = $stmt->fetchColumn();
+            return $facturaId; // 1 si es exitoso, 0 si no
+        } catch (PDOException $e) {
+            return 0; // Retornar 0 en caso de error
+        }
+    }
+
     public function buscarProductoPorCodigo($Codigo) {
         global $pdo;
         try {
@@ -149,6 +173,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Fact_Cambio = $_POST['Fact_Cambio'];
         
         $resultado = $controller->ConfirmarFactura($Fact_Codigo,$Fact_FechaFinalizado, $Fact_Pago, $Fact_Cambio);
+        echo $resultado;
+    }elseif ($_POST['action'] === 'insertarprimero') {
+        $Clie_Id = $_POST['Clie_Id'];
+        $Mepa_Id = $_POST['Mepa_Id'];
+        $Fact_FechaCreacion = $_POST['Fact_FechaCreacion'];
+        $Fact_FechaModificacion = $_POST['Fact_FechaModificacion'];
+        $Fact_Codigo = $_POST['Fact_Codigo'];
+        $resultado = $controller->FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo);
         echo $resultado;
     }elseif ($_POST['action'] === 'listarProductos') {
         $controller->ListarProductos();

@@ -1,3 +1,4 @@
+
 <style>
         .dataTables_wrapper .dataTables_filter {
             width: 100%;
@@ -20,6 +21,8 @@
     </style>
  <script>
         $(document).ready(function() {
+          sessionStorage.setItem("Clie_Id","1")
+          sessionStorage.setItem("Mayorista","0")
             var availableTags = [];
             
             // Cargar datos de la base de datos
@@ -40,8 +43,15 @@
                                 }));
                             },
                             select: function(event, ui) {
+                                
                                 var selectedObj = ui.item;
-                                alert('Nombre: ' + selectedObj.nombre + '\nMayorista: ' + (selectedObj.mayorista ? 'Sí' : 'No'));
+                                console.log(selectedObj);
+                                if (selectedObj.mayorista == "No") {
+                                  sessionStorage.setItem("Mayorista","0")
+                                }else{
+                                  sessionStorage.setItem("Mayorista","1")
+                                }
+                                sessionStorage.setItem("Clie_Id",selectedObj.id)
                             }
                         });
                     } else if (response.error) {
@@ -267,6 +277,7 @@
 <script>
 $(document).ready(function() {
 
+  sessionStorage.setItem("Fact_Id","0")
   cargarDropdowns({ Tarj_Id: 0 });
         async function cargarDropdowns(selectedData = {}) {
         try {
@@ -350,6 +361,47 @@ $(document).ready(function() {
               if (data && data.data && data.data.length > 0) {
                   alert("Hay datos")
                   var marca = data.data[0];
+                  $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'insertarprimero',
+                Clie_Id: sessionStorage.getItem("Clie_Id"),
+                Mepa_Id: sessionStorage.getItem("Mepa_Metodo"), 
+                Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
+
+            },
+            success: function(response) {
+          console.log(response)
+          if (response != 0) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+        sessionStorage.setItem("Fact_Id", response)
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se pudo subir',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
                  
               } else {
                 alert("No hay datos")
@@ -401,7 +453,47 @@ $(document).ready(function() {
 $('#tablaProductos tbody').on('click', '.añadir-item', function () {
         var data = table.row($(this).parents('tr')).data();
         console.log(data);
+        $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'insertarprimero',
+                Clie_Id: sessionStorage.getItem("Clie_Id"),
+                Mepa_Id: sessionStorage.getItem("Mepa_Metodo"), 
+                Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
 
+            },
+            success: function(response) {
+          console.log(response)
+          if (response != 0) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+        sessionStorage.setItem("Fact_Id", response)
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se pudo subir',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
         
        
   

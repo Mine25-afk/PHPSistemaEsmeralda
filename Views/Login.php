@@ -45,14 +45,15 @@
     background-size: contain;
     color: #000;
     padding: 20px;
-    border-radius: 8px 0 0 8px;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     width: 50%;
-    border-right: solid 1px;
+    background-color: #fff;
+    box-shadow: 0px 0px 5px black;
 
 }
 
