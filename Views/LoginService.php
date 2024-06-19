@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $_SESSION['Empl_Nombre'] = $user['Empl_Nombre'];
             $_SESSION['Empl_Id'] = $user['Empl_Id'];
             $_SESSION['Role_Id'] = $user['Role_Id'];
+            $_SESSION['Pant_Id'] = $user['Pant_Id'];
             $_SESSION['Usua_Administrador'] = $user['Usua_Administrador'];
             $_SESSION['Sucu_Id'] = $user['Sucu_Id'];
             $_SESSION['Sucu_Nombre'] = $user['Sucu_Nombre'];

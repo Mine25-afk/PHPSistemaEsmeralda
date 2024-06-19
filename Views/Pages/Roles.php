@@ -174,52 +174,65 @@
             </form>
         </div>
     </div>
-</div>
-<div class="card d-flex flex-column" id="Detalles">
-    <div class="card-body">
-        <h5 class="card-title">Detalles de Roles</h5>
-        <div class="row">
-            <div class="col">
-                <strong>ID:</strong>
-                <span id="DetallesId"></span>
-            </div>
-            <div class="col">
-                <strong>Marca:</strong>
-                <span id="DetallesRol"></span>
-            </div>
-        </div>
-    </div>
-    <div class="card-body mt-2">
-        
-        <hr>
-        <h5 class="card-title">Auditoria</h5>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Acciones</th>
-                    <th>Usuario</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Insertar</td>
-                    <td><span id="DetallesUsuarioCreacion"></span></td>
-                    <td><span id="DetallesFechaCreacion"></span></td>
-                </tr>
-                <tr>
-                    <td>Modificar</td>
-                    <td><span id="DetallesUsuarioModificacion"></span></td>
-                    <td><span id="DetallesFechaModificacion"></span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="text-end mt-3">
-        <a class="btn btn-secondary" id="VolverDetalles">Cancelar</a>
-    </div>
+ 
+
 </div>
 
+<div id="Detalles">
+    <div class="row" style="padding: 10px;">
+        <div class="col" style="font-weight:700">
+            ID
+        </div>
+        <div class="col" style="font-weight:700">
+            Rol
+        </div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">
+            <label for="" id="DetallesId"></label>
+        </div>
+        <div class="col">
+            <label for="" id="DetallesRol"></label>
+        </div>
+    </div>
+
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <h5>Auditoria</h5>
+            <hr>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Insertar</td>
+                        <td>
+
+                        <label for="" id="DetallesUsuarioCreacion"></label>
+                        </td>
+                        <td><label for="" id="DetallesFechaCreacion"></label></td>
+                    </tr>
+                    <tr>
+                        <td>Modificar</td>
+                        <td> <label for="" id="DetallesUsuarioModificacion"></label> </td>
+                        <td>  <label for="" id="DetallesFechaModificacion"></label></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col d-flex justify-content-end m-3">
+    <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
+</div>
 
         </div>
      
@@ -300,6 +313,7 @@ $(document).ready(function () {
     $('#AbrirCollapse').click(function() {
         $('#tablaContainer').toggle();
         $('#nuevoRolCollapse').collapse('toggle');
+        $('#Detalles').hide();
     });
     $('#CerrarModal').click(function() {
         $('#tablaContainer').toggle();
@@ -398,55 +412,62 @@ $(document).ready(function () {
                 var allChecked = $(this).closest('ul').find('.pantalla-checkbox:checked').length === $(this).closest('ul').find('.pantalla-checkbox').length;
                 categoriaCheckbox.prop('checked', allChecked);
             });
-            function limpiarFormulario() {
-  
+   function limpiarFormulario() {
+    console.log('Valor actual del campo Role_Id antes de limpiar:', $('#Role_Id').val());
+    $('#Role_Id').val('');
+    console.log('Valor actual del campo Role_Id después de limpiar:', $('#Role_Id').val());
+
     $('#Role_Rol').val('');
-
-   
     $('#pantallasTreeView input[type="checkbox"]').prop('checked', false);
-
-   
     $('#pantallasTreeView .categoria').removeClass('expanded');
     $('#pantallasTreeView .categoria-ul').hide();
 }
 
-
-    $('#formNuevoRol').submit(function(e) {
+$('#formNuevoRol').submit(function(e) {
     e.preventDefault();
-
     console.log('Formulario enviado');
 
+    var roleId = $('#Role_Id').val();
     var nombreRol = $('#Role_Rol').val();
-    var usuarioId = 1; 
+    var usuarioId = 1; // Assuming the user ID is 1 for now
     var fecha = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
+    var actionType = roleId ? 'actualizarRol' : 'insertarRol';
     var datosAEnviar = {
-        action: 'insertarRol',
+        action: actionType,
         Role_Rol: nombreRol,
-        Role_UsuarioCreacion: usuarioId,
-        Role_FechaCreacion: fecha
+        Role_UsuarioModificacion: usuarioId,
+        Role_FechaModificacion: fecha
     };
 
-    console.log('Datos a enviar:', datosAEnviar);
+    if (roleId) {
+        datosAEnviar.Role_Id = roleId;
+    } else {
+        datosAEnviar.Role_UsuarioCreacion = usuarioId;
+        datosAEnviar.Role_FechaCreacion = fecha;
+    }
 
     $.ajax({
         url: 'Services/RolesService.php',
         type: 'POST',
         data: datosAEnviar,
         success: function(response) {
-            console.log('Respuesta del servidor (insertarRol):', response);
+            console.log('Respuesta del servidor:', response);
             try {
                 var result = JSON.parse(response);
                 console.log('Resultado parseado:', result);
-                
-                
-                if (result.nuevoRolId) {
-                    var roleId = result.nuevoRolId;
+
+                if (result.nuevoRolId || result.resultado) {
+                    var roleId = result.nuevoRolId || datosAEnviar.Role_Id;
                     console.log('Role ID:', roleId);
                     var selectedPantallas = $('.pantalla-checkbox:checked').map(function() {
                         return $(this).data('id');
                     }).get();
+                    var unselectedPantallas = $('.pantalla-checkbox:not(:checked)').map(function() {
+                        return $(this).data('id');
+                    }).get();
                     console.log('Pantallas seleccionadas:', selectedPantallas);
+                    console.log('Pantallas deseleccionadas:', unselectedPantallas);
 
                     var datosPantallasRol = {
                         action: 'insertarPantallasPorRol',
@@ -454,25 +475,46 @@ $(document).ready(function () {
                         Pantallas: selectedPantallas.join(',')
                     };
 
-                    console.log('Datos de pantallas a enviar:', datosPantallasRol);
+                    var datosEliminarPantallas = {
+                        action: 'eliminarPantallasPorRol',
+                        Role_Id: roleId,
+                        Pantallas: unselectedPantallas.join(',')
+                    };
 
+                    console.log('Datos de pantallas a enviar:', datosPantallasRol);
+                    console.log('Datos de pantallas a eliminar:', datosEliminarPantallas);
+
+                    // First, remove the unselected screens
                     $.ajax({
                         url: 'Services/RolesService.php',
                         type: 'POST',
-                        data: datosPantallasRol,
+                        data: datosEliminarPantallas,
                         success: function(response) {
-                            console.log('Respuesta del servidor (insertarPantallasPorRol):', response);
-                            iziToast.success({
-                                title: 'Éxito',
-                                message: 'Proveedor guardado correctamente.',
+                            console.log('Respuesta del servidor (eliminarPantallasPorRol):', response);
+
+                            // Then, insert the selected screens
+                            $.ajax({
+                                url: 'Services/RolesService.php',
+                                type: 'POST',
+                                data: datosPantallasRol,
+                                success: function(response) {
+                                    console.log('Respuesta del servidor (insertarPantallasPorRol):', response);
+                                    iziToast.success({
+                                        title: 'Éxito',
+                                        message: 'Rol guardado correctamente.',
+                                    });
+                                    $('#tablaRol').DataTable().ajax.reload();
+                                    $('#tablaContainer').toggle();
+                                    $('#nuevoRolCollapse').collapse('hide');
+                                    limpiarFormulario();
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("Error al insertar pantallas por rol:", xhr.responseText, status, error);
+                                }
                             });
-                            $('#tablaRol').DataTable().ajax.reload();
-                            $('#tablaContainer').toggle();
-                            $('#nuevoRolCollapse').collapse('hide');
-                            limpiarFormulario();
                         },
                         error: function(xhr, status, error) {
-                            console.error("Error al insertar pantallas por rol:", xhr.responseText, status, error);
+                            console.error("Error al eliminar pantallas por rol:", xhr.responseText, status, error);
                         }
                     });
                 } else {
@@ -487,6 +529,7 @@ $(document).ready(function () {
         }
     });
 });
+
 
 function obtenerDatosCompletosRol(roleId) {
     $.ajax({
@@ -536,6 +579,7 @@ $('#tablaRol tbody').on('click', '.ver-detalles', function () {
         var valor = data.Role_Id;
         $('#Detalles').show();
         $('.CrearOcultar').hide();
+        $('#nuevoRolCollapse').collapse('hide');
         $('#tablaContainer').toggle();
 
         $.ajax({

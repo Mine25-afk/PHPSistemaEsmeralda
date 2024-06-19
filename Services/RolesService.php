@@ -127,16 +127,18 @@ class RolesController {
     
     
 
-    public function eliminarPantallaPorRol($Role_Id) {
+    public function eliminarPantallaPorRol($roleId, $pantallas) {
         try {
-            $sql = 'CALL sp_PantallasPorRoles_eliminar(:Role_Id)';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':Role_Id', $Role_Id, PDO::PARAM_INT);
+            $pantallasList = implode(',', $pantallas);
+            $stmt = $this->pdo->prepare("CALL sp_PantallasPorRoles_eliminar(:roleId, :pantallas)");
+            $stmt->bindParam(':roleId', $roleId, PDO::PARAM_INT);
+            $stmt->bindParam(':pantallas', $pantallasList, PDO::PARAM_STR);
             $stmt->execute();
 
-            return $stmt->fetchColumn(); // 1 si es exitoso, 0 si no
-        } catch (PDOException $e) {
-            throw new Exception('Error al eliminar pantalla por rol: ' . $e->getMessage());
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return isset($result['Resultado']) && $result['Resultado'] == 1;
+        } catch (Exception $e) {
+            return false;
         }
     }
 
@@ -268,18 +270,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 exit;
                 break;
               
-        case 'eliminarPantallaPorRol':
-            $Role_Id = $_POST['Role_Id'];
-            $resultado = $controller->eliminarPantallaPorRol($Role_Id);
-            echo json_encode(['resultado' => $resultado]);
-            break;
+                case 'eliminarPantallasPorRol':
+                    $data = $_POST;
+                    $roleID = isset($data['Role_Id']) ? $data['Role_Id'] : null;
+                    $pantallas = isset($data['Pantallas']) ? explode(',', $data['Pantallas']) : [];
+                    if ($roleID === null) {
+                        echo json_encode(['error' => 'Datos incompletos: Role_Id faltante.']);
+                        exit;
+                    }
+                    $resultado = $controller->eliminarPantallaPorRol($roleID, $pantallas);
+                    echo json_encode(['resultado' => $resultado]);
+                    exit;
+                    break;
             case 'buscarRol':
                 $Role_Id = $_POST['Role_Id'];
                 $resultado = $controller->buscarRol($Role_Id);
                 echo json_encode($resultado);
                 break;
             case 'buscarPantallaPorRol':
-                $Paxr_Id = $_POST['Paxr_Id'];
+                $Paxr_Id = $_POST['Role_Id'];
                 $resultado = $controller->buscarPantallaPorRol($Paxr_Id);
                 echo json_encode($resultado);
                 break;
