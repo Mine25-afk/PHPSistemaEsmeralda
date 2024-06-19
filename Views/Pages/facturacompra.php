@@ -134,12 +134,14 @@
                                     <label for="">Método de Pago</label>
                                     <div class="form-row d-flex justify-content-start">
                                         <div class="col-md-7">
-                                            <input type="button" value="Efectivo" class="btn btn-outline-info metodo-pago metodo-efectivo deselected" />
-                                            <input type="button" value="Tarjeta de Crédito" class="btn btn-outline-info metodo-pago metodo-tarjeta deselected" />
-                                            <input type="button" value="Pago en Línea" class="btn btn-outline-info metodo-pago metodo-online deselected" />
+                                            <input type="hidden" id="metodoPagoSeleccionado" name="metodoPagoSeleccionado" value="1" />
+                                            <button type="button" class="btn btn-outline-info metodo-pago btn-selected-info" data-value="1">Efectivo</button>
+                                            <button type="button" class="btn btn-outline-info metodo-pago deselected" data-value="5">Tarjeta de Crédito</button>
+                                            <button type="button" class="btn btn-outline-info metodo-pago deselected" data-value="7">Pago en Línea</button>
                                         </div>
                                     </div>
                                 </div>
+
 
 
 
@@ -164,8 +166,8 @@
                                                             <p id="categoria"></p>
                                                         </td>
                                                         <td><input type="text" class="form-control" name="producto" /></td>
-                                                        <td><input type="number" class="form-control" name="cantidad" /></td>
-                                                        <td><input type="text" class="form-control" id="precio_compra" name="precio_compra" oninput="validateNumber(this)" /></td>
+                                                        <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
+                                                        <td><input type="text" class="form-control" id="precio_compra" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
                                                         <td>
                                                             <p id="precio_venta">0.00</p>
                                                         </td>
@@ -179,6 +181,7 @@
                                         </div>
                                     </div>
                                 </div>
+
 
 
                                 <div class="card-body">
@@ -205,17 +208,92 @@
             input.value = input.value.replace(/[^0-9.,]/g, '');
         }
 
+
+
+
+        $('#metodoPagoSeleccionado').val('1');
+
+        var FaCE_Id = 0;
+
         function eliminarFila(button) {
             var row = button.closest('tr');
-            row.remove();
+            var FaCD_Id = row.getAttribute('data-id');
+            console.log(row, FaCD_Id);
+
+            $.ajax({
+                url: 'Services/FacturaCompraService.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'eliminarDetalleFactura',
+                    FaCD_Id: FaCD_Id
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        row.remove();
+                        console.log('Detalle eliminado correctamente.');
+                    } else {
+                        console.error('Error al eliminar el detalle:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la petición AJAX de eliminar detalle:', status, error);
+                }
+            });
         }
-        $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
-        $(this).closest('tr').find('input[name="cantidad"]').val('1');
 
         $(document).ready(function() {
+            $('#FacturaCompraForm').validate({
+        rules: {
+            Proveedor: {
+                required: true
+            }
+        },
+        messages: {
+            Proveedor: {
+                required: "Por favor ingrese su Marca"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.col-md-6').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+
 
             $('input[name="cantidad"]').on('input', function() {
                 this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            function agregarNuevaFila() {
+                var nuevaFila = `
+        <tr data-id="NEW_ID">
+            <td><p id="categoria"></p></td>
+            <td><input type="text" class="form-control" name="producto" /></td>
+            <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
+            <td><input type="text" class="form-control" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
+            <td><p id="precio_venta">0.00</p></td>
+            <td><p id="precio_mayorista">0.00</p></td>
+            <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
+        </tr>`;
+                $('#detalleFactura').append(nuevaFila);
+                aplicarAutocompletado();
+            }
+
+            $('.metodo-pago').click(function() {
+                $('.metodo-pago').removeClass('btn-selected-info').addClass('deselected');
+                $(this).removeClass('deselected').addClass('btn-selected-info');
+                var valor = $(this).data('value');
+                $('#metodoPagoSeleccionado').val(valor);
+                console.log("Método de pago seleccionado: " + valor);
             });
 
             $('.metodo-pago').click(function() {
@@ -231,7 +309,8 @@
                 // }
             });
 
-            $(document).ready(function() {
+            function aplicarAutocompletado() {
+
                 $('input[name="producto"]').autocomplete({
                     source: function(request, response) {
                         var term = request.term.toLowerCase();
@@ -247,13 +326,13 @@
                         if (/^[a-zA-Z]+/.test(term)) {
                             $.when(
                                 $.ajax({
-                                    url: 'Controllers/FacturaCompraController.php',
+                                    url: 'Services/FacturaCompraService.php',
                                     type: 'POST',
                                     dataType: 'json',
                                     data: ajaxDataJoyas
                                 }),
                                 $.ajax({
-                                    url: 'Controllers/FacturaCompraController.php',
+                                    url: 'Services/FacturaCompraService.php',
                                     type: 'POST',
                                     dataType: 'json',
                                     data: ajaxDataMaquillajes
@@ -273,11 +352,13 @@
                                         data: item
                                     };
                                 }));
+                            }).catch(function(error) {
+                                console.error('Error en la petición AJAX de autocompletado:', error);
                             });
                         } else if (/^[0-9]+/.test(term)) {
                             $(this).closest('tr').find('#categoria').text('Maquillaje');
                             $.ajax({
-                                url: 'Controllers/FacturaCompraController.php',
+                                url: 'Services/FacturaCompraService.php',
                                 type: 'POST',
                                 dataType: 'json',
                                 data: ajaxDataMaquillajes,
@@ -294,142 +375,291 @@
                                             data: item
                                         };
                                     }));
-                                }
+                                },
                             });
                         }
                     },
                     minLength: 1,
                     select: function(event, ui) {
                         var selectedItem = ui.item.data;
-                        console.log(selectedItem);
-                        let preciom = selectedItem.Mayor;
-                        let preciov = selectedItem.Venta;
-                        console.log(preciov);
+                        let nombreProducto = selectedItem.Joya_Nombre || selectedItem.Maqu_Nombre;
+                        var preciom = selectedItem.Mayor;
+                        var preciov = selectedItem.Venta;
                         $(this).closest('tr').find('#precio_mayorista').text(preciom);
                         $(this).closest('tr').find('#precio_venta').text(preciov);
                         $(this).closest('tr').find('input[name="precio_compra"]').val(selectedItem.Joya_PrecioCompra || selectedItem.Maqu_PrecioCompra);
                         if (selectedItem.Joya_Codigo) {
-                $(this).closest('tr').find('#categoria').text('Joya');
-            } else {
-                $(this).closest('tr').find('#categoria').text('Maquillaje');
-            }
+                            $(this).closest('tr').find('#categoria').text('Joya');
+                        } else {
+                            $(this).closest('tr').find('#categoria').text('Maquillaje');
+                        }
                     }
+
                 });
+            }
 
-                $('input[name="producto"]').on('blur', function() {
-                    var term = $(this).val();
-                    var isNumber = /^[0-9]+$/.test(term);
-                    var isAlpha = /^[a-zA-Z]+$/.test(term);
+            $('input[name="producto"]').on('blur', function() {
+                var term = $(this).val();
+                var isNumber = /^[0-9]+$/.test(term);
+                var isAlpha = /^[a-zA-Z]+$/.test(term);
 
-                    if (isNumber || isAlpha) {
-                        $.ajax({
-                            url: 'Controllers/FacturaCompraController.php',
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                action: 'buscarMaquillajePorCodigo',
-                                codigo: term
-                            },
-                            success: function(data) {
-                                if (data.length > 0) {
-                                    var item = data[0];
-                                    console.log(item, 'item');
-                                    var precioMayorista = item.Maqu_PrecioMayor;
-                                    let preciov = item.Maqu_PrecioVenta;
-                                    $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
-                                    $(this).closest('tr').find('#precio_venta').text(preciov);
-                                    $(this).closest('tr').find('#categoria').text('Maquillaje');
-                                    $(this).closest('tr').find('input[name="precio_compra"]').val(item.Maqu_PrecioCompra);
+                if (isNumber || isAlpha) {
+                    $.ajax({
+                        url: 'Services/FacturaCompraService.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'buscarMaquillajePorCodigo',
+                            codigo: term
+                        },
+                        success: function(data) {
+                            if (data.length > 0) {
+                                var item = data[0];
+                                console.log(item, 'item');
+                                var precioMayorista = item.Maqu_PrecioMayor;
+                                let preciov = item.Maqu_PrecioVenta;
+                                $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                $(this).closest('tr').find('#precio_venta').text(preciov);
+                                $(this).closest('tr').find('#categoria').text('Maquillaje');
+                                $(this).closest('tr').find('input[name="precio_compra"]').val(item.Maqu_PrecioCompra);
 
-                                } else {
-                                    $(this).closest('tr').find('#precio_mayorista').text('0.00');
-                                    $(this).closest('tr').find('#precio_venta').text('0.00');
-                                    $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+                                var row = $(this).closest('tr');
+                                insertarActualizarFactura(row, item.Maqu_Nombre);
 
-                                }
-                            }.bind(this),
-                            error: function() {
-                                $(this).closest('tr').find('#precio_mayorista').text('0.00');
-                                $(this).closest('tr').find('#precio_venta').text('0.00');
-                                $(this).closest('tr').find('input[name="precio_compra"]').val('0,00');
-
-                            }.bind(this)
-                        });
-                    } else {
-                        $.ajax({
-                            url: 'Controllers/FacturaCompraController.php',
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                action: 'buscarJoyaPorCodigo',
-                                codigo: term
-                            },
-                            success: function(data) {
-                                if (data.length > 0) {
-                                    var item = data[0];
-                                    console.log(item, 'item');
-                                    var precioMayorista = item.Joya_PrecioMayor;
-                                    let preciov = item.Joya_PrecioVenta;
-                                    $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
-                                    $(this).closest('tr').find('#precio_venta').text(preciov);
-                                    $(this).closest('tr').find('#categoria').text('Joya');
-                                    $(this).closest('tr').find('input[name="precio_compra"]').val(item.Joya_PrecioCompra);
-
-                                } else {
-                                    $(this).closest('tr').find('#precio_mayorista').text('0.00');
-                                    $(this).closest('tr').find('#precio_venta').text('0.00');
-                                    $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
-
-                                }
-                            }.bind(this),
-                            error: function() {
+                            } else {
                                 $(this).closest('tr').find('#precio_mayorista').text('0.00');
                                 $(this).closest('tr').find('#precio_venta').text('0.00');
                                 $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+                            }
+                        }.bind(this),
+                        error: function() {
+                            $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                            $(this).closest('tr').find('#precio_venta').text('0.00');
+                            $(this).closest('tr').find('input[name="precio_compra"]').val('0,00');
+                        }.bind(this)
+                    });
+                } else {
+                    $.ajax({
+                        url: 'Services/FacturaCompraService.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'buscarJoyaPorCodigo',
+                            codigo: term
+                        },
+                        success: function(data) {
+                            if (data.length > 0) {
+                                var item = data[0];
+                                console.log(item, 'item');
+                                var precioMayorista = item.Joya_PrecioMayor;
+                                let preciov = item.Joya_PrecioVenta;
+                                $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
+                                $(this).closest('tr').find('#precio_venta').text(preciov);
+                                $(this).closest('tr').find('#categoria').text('Joya');
+                                $(this).closest('tr').find('input[name="precio_compra"]').val(item.Joya_PrecioCompra);
 
-                            }.bind(this)
+                                var row = $(this).closest('tr');
+                                insertarActualizarFactura(row, item.Joya_Nombre);
+
+                            } else {
+                                $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                                $(this).closest('tr').find('#precio_venta').text('0.00');
+                                $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+                            }
+                        }.bind(this),
+                        error: function() {
+                            $(this).closest('tr').find('#precio_mayorista').text('0.00');
+                            $(this).closest('tr').find('#precio_venta').text('0.00');
+                            $(this).closest('tr').find('input[name="precio_compra"]').val('0.00');
+                        }.bind(this)
+                    });
+                }
+            });
+
+            $(document).on('blur', 'input[name="precio_compra"]', function() {
+    var row = $(this).closest('tr');
+    var producto = row.find('input[name="producto"]').val();
+
+    if (!producto) {
+        iziToast.error({
+            title: 'Error',
+            message: 'El producto es requerido antes de agregar una nueva línea.',
+            position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+        });
+        return;
+    }
+
+    insertarActualizarFactura(row);
+    agregarNuevaFila();
+});
+
+            function cargarDatos() {
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    data: {
+                        action: 'listarProveedores'
+                    },
+                    success: function(response) {
+                        var proveedores = JSON.parse(response);
+                        var selectProveedor = $('#Proveedor');
+                        selectProveedor.empty().append('<option selected="selected" value="">--Seleccione--</option>');
+                        proveedores.forEach(function(proveedor) {
+                            selectProveedor.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
                         });
                     }
                 });
-            });
 
-
-
-            $('#FacturaCompraForm').validate({
-                rules: {
-                    Proveedor: {
-                        required: true
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    data: {
+                        action: 'listarSucursales'
                     },
-                    Sucursal: {
-                        required: true
+                    success: function(response) {
+                        var sucursales = JSON.parse(response);
+                        var selectSucursal = $('#Sucursal');
+                        selectSucursal.empty().append('<option selected="selected" value="">--Seleccione--</option>');
+                        sucursales.forEach(function(sucursal) {
+                            selectSucursal.append('<option value="' + sucursal.Sucu_Id + '">' + sucursal.Sucu_Nombre + '</option>');
+                        });
                     }
+                });
+            }
 
-                },
-                messages: {
-                    Proveedor: {
-                        required: "Por favor seleccione el Proveedor"
-                    },
-                    Sucursal: {
-                        required: "Por favor seleccione la Sucursal"
-                    },
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.col-md-6').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
+
+            function insertarActualizarFactura(row) {
+                var proveedor = $('#Proveedor').val();
+                var sucursal = $('#Sucursal').val();
+                var metodoPago = $('#metodoPagoSeleccionado').val();
+                var producto = row.find('input[name="producto"]').val();
+                var cantidad = row.find('input[name="cantidad"]').val();
+                var precioCompra = row.find('input[name="precio_compra"]').val();
+                var precioVenta = row.find('#precio_venta').text();
+                var precioMayorista = row.find('#precio_mayorista').text();
+                var categoria = row.find('#categoria').text() === 'Joya' ? 1 : 0;
+
+                console.log('Datos a enviar para insertar/actualizar factura:', {
+                    proveedor,
+                    metodoPago,
+                    sucursal,
+                    FaCE_Id,
+                    categoria,
+                    producto,
+                    cantidad,
+                    precioCompra,
+                    precioVenta,
+                    precioMayorista,
+                });
+
+                if (FaCE_Id === 0) {
+                    console.log('Entra a insertar encabezado');
+                    $.ajax({
+                        url: 'Services/FacturaCompraService.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'insertarFacturaEncabezado',
+                            proveedor: proveedor,
+                            metodoPago: metodoPago,
+                            sucursal: sucursal,
+                            usuarioCreacion: 1,
+                            fechaCreacion: new Date().toISOString()
+                        },
+                        success: function(response) {
+                            console.log('Respuesta de insertar encabezado:', response);
+                            if (response.success) {
+                                FaCE_Id = response.FaCE_Id;
+                                insertarDetalle(FaCE_Id, producto, cantidad, precioCompra, precioVenta, precioMayorista, categoria);
+                            } else {
+                                console.error('Error al insertar la factura:', response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error en la petición AJAX de insertar encabezado:', status, error);
+                        }
+                    });
+                } else {
+                    insertarDetalle(FaCE_Id, producto, cantidad, precioCompra, precioVenta, precioMayorista, categoria);
                 }
-            });
+            }
+
+
+            function insertarDetalle(faCE_Id, producto, cantidad, precioCompra, precioVenta, precioMayorista, categoria) {
+                console.log('Datos a enviar para insertar detalle:', {
+                    faCE_Id,
+                    categoria,
+                    producto,
+                    cantidad,
+                    precioCompra,
+                    precioVenta,
+                    precioMayorista,
+                });
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'insertarDetalleFactura',
+                        FaCE_Id: faCE_Id,
+                        categoria: categoria,
+                        producto: producto,
+                        cantidad: cantidad,
+                        precioCompra: precioCompra,
+                        precioVenta: precioVenta,
+                        precioMayorista: precioMayorista,
+                    },
+                    success: function(response) {
+                        console.log('Respuesta de insertar detalle:', response);
+                        if (response.success) {
+                            obtenerDetalleId(faCE_Id, producto, categoria, response.success);
+                        } else {
+                            console.error('Error al insertar el detalle de la factura:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la petición AJAX de insertar detalle:', status, error);
+                    }
+                });
+            }
+
+            function obtenerDetalleId(faCE_Id, producto, categoria) {
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'obtenerFacturaCompraDetalleId',
+                        FaCE_Id: faCE_Id,
+                        producto: producto,
+                        FaCD_Dif: categoria
+                    },
+                    success: function(response) {
+                        console.log('Respuesta de obtener detalle ID:', response);
+                        if (response.success) {
+                            var row = $('tr[data-id="NEW_ID"]'); // Selecciona la fila que acabamos de insertar
+                            row.attr('data-id', response.FaCD_Id); // Actualiza el atributo data-id con el ID real
+                        } else {
+                            console.error('Error al obtener el ID del detalle:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la petición AJAX de obtener detalle ID:', status, error);
+                    }
+                });
+            }
+
+
+            aplicarAutocompletado();
+
+
 
             sessionStorage.setItem('FaCE_Id', "0");
             var table = $('#TablaFacturaCompra').DataTable({
                 "ajax": {
-                    "url": "Controllers/FacturaCompraController.php",
+                    "url": "Services/FacturaCompraService.php",
                     "type": "POST",
                     "data": function(d) {
                         d.action = 'listarFacturaCompras';
@@ -491,74 +721,9 @@
             $('#CerrarModal').click(function() {
                 $('.CrearOcultar').show();
                 $('.CrearMostrar').hide();
-                // $('#FacturaCompraForm')[0].reset();
             });
-
-            function cargarDatos() {
-                $.ajax({
-                    url: 'Controllers/FacturaCompraController.php',
-                    type: 'POST',
-                    data: {
-                        action: 'listarProveedores'
-                    },
-                    success: function(response) {
-                        var proveedores = JSON.parse(response);
-                        var selectProveedor = $('#Proveedor');
-                        selectProveedor.empty().append('<option selected="selected" value="">--Seleccione--</option>');
-                        proveedores.forEach(function(proveedor) {
-                            selectProveedor.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
-                        });
-                    }
-                });
-
-                $.ajax({
-                    url: 'Controllers/FacturaCompraController.php',
-                    type: 'POST',
-                    data: {
-                        action: 'listarSucursales'
-                    },
-                    success: function(response) {
-                        var sucursales = JSON.parse(response);
-                        var selectSucursal = $('#Sucursal');
-                        selectSucursal.empty().append('<option selected="selected" value="">--Seleccione--</option>');
-                        sucursales.forEach(function(sucursal) {
-                            selectSucursal.append('<option value="' + sucursal.Sucu_Id + '">' + sucursal.Sucu_Nombre + '</option>');
-                        });
-                    }
-                });
-            }
 
             cargarDatos();
-
-            $('#TablaFacturaCompra tbody').on('click', '.abrir-editar', function() {
-                var data = table.row($(this).parents('tr')).data();
-                sessionStorage.setItem('FaCE_Id', data.FaCE_Id);
-
-                $.ajax({
-                    url: 'Controllers/FacturaCompraController.php',
-                    method: 'POST',
-                    data: {
-                        action: 'buscar',
-                        FaCE_Id: data.FaCE_Id
-                    },
-                    // success: function(response) {
-                    //     var data = JSON.parse(response).data[0];
-                    //     $('#DNI').val(data.Empl_DNI);
-                    //     $('#Correo').val(data.Empl_Correo);
-                    //     $('#Nombres').val(data.Empl_Nombre);
-                    //     $('#Apellidos').val(data.Empl_Apellido);
-                    //     var formattedDate = new Date(data.Empl_FechaNac).toISOString().split('T')[0];
-                    //     $('#FechaNac').val(formattedDate);
-                    //     $('#Proveedor').val(data.Carg_Id).trigger('change');
-                    //     $('#Sucursal').val(data.Sucu_Id).trigger('change');
-                    //     $('.CrearOcultar').hide();
-                    //     $('.CrearMostrar').show();
-                    // },
-                    // error: function(error) {
-                    //     console.error('Error:', error);
-                    // }
-                });
-            });
 
         });
     </script>
