@@ -79,17 +79,16 @@ class TransferenciasServices
         }
     }
 
-    public function transferirProductos($Prxs_Dif_, $Prod_Nombre_, $Prsx_Stock_, $Sucu_EnviadoId_, $Sucu_RecibidoId_)
+    public function transferirProductos($Prod_Nombre_, $Prsx_Stock_, $Sucu_EnviadoId_, $Sucu_RecibidoId_)
     {
         header('Content-Type: application/json');
         try {
             // Desactivar SQL_SAFE_UPDATES
             $this->pdo->exec('SET SQL_SAFE_UPDATES = 0;');
 
-            // Llamar al procedimiento almacenado
-            $sql = 'CALL SP_ProductosPorSucursales_Transferir(:Prxs_Dif_, :Prod_Nombre_, :Prsx_Stock_, :Sucu_EnviadoId_, :Sucu_RecibidoId_)';
+         
+            $sql = 'CALL SP_ProductosPorSucursales_Transferir(:Prod_Nombre_, :Prsx_Stock_, :Sucu_EnviadoId_, :Sucu_RecibidoId_)';
             $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':Prxs_Dif_', $Prxs_Dif_, PDO::PARAM_INT);
             $stmt->bindParam(':Prod_Nombre_', $Prod_Nombre_, PDO::PARAM_STR);
             $stmt->bindParam(':Prsx_Stock_', $Prsx_Stock_, PDO::PARAM_INT);
             $stmt->bindParam(':Sucu_EnviadoId_', $Sucu_EnviadoId_, PDO::PARAM_INT);
@@ -97,13 +96,13 @@ class TransferenciasServices
             $stmt->execute();
             $result = $stmt->fetchColumn();
 
-            // Reactivar SQL_SAFE_UPDATES
+         
             $this->pdo->exec('SET SQL_SAFE_UPDATES = 1;');
 
 
             $this->respond(['result' => $result]);
         } catch (Exception $e) {
-            http_response_code(500); // Establece el código de estado HTTP adecuado
+            http_response_code(500); 
             echo json_encode(['error' => 'Descripción del error']);
             exit();
         }
@@ -137,13 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
             break;
         case 'transferir':
-            if (isset($_POST['Prxs_Dif_'], $_POST['Prod_Nombre_'], $_POST['Prsx_Stock_'], $_POST['Sucu_EnviadoId_'], $_POST['Sucu_RecibidoId_'])) {
-                $Prxs_Dif_ = $_POST['Prxs_Dif_'];
+            if (isset( $_POST['Prod_Nombre_'], $_POST['Prsx_Stock_'], $_POST['Sucu_EnviadoId_'], $_POST['Sucu_RecibidoId_'])) {
+              
                 $Prod_Nombre_ = $_POST['Prod_Nombre_'];
                 $Prsx_Stock_ = $_POST['Prsx_Stock_'];
                 $Sucu_EnviadoId_ = $_POST['Sucu_EnviadoId_'];
                 $Sucu_RecibidoId_ = $_POST['Sucu_RecibidoId_'];
-                $controller->transferirProductos($Prxs_Dif_, $Prod_Nombre_, $Prsx_Stock_, $Sucu_EnviadoId_, $Sucu_RecibidoId_);
+                $controller->transferirProductos($Prod_Nombre_, $Prsx_Stock_, $Sucu_EnviadoId_, $Sucu_RecibidoId_);
             } else {
                 $controller->respond(['error' => 'Parámetros incompletos']);
             }
