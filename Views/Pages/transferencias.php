@@ -153,19 +153,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Los detalles de los productos se llenarán dinámicamente aquí -->
+                         
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td>
-                                    <div>
-                                        <label>
-                                            <input type="radio" name="Prxs_Dif_" value="1" checked> J
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="Prxs_Dif_" value="2"> M
-                                        </label>
-                                    </div>
+                                
                                 </td>
                                 <td>
                                     <input type="text" id="Pro_Codigo_" name="Pro_Codigo_" autocomplete="off" onblur="buscarProductoPorCodigo()">
@@ -366,7 +359,6 @@
         function submitForm() {
     var data = {
         action: 'transferir',
-        Prxs_Dif_: $('input[name="Prxs_Dif_"]:checked').val(),
         Prod_Nombre_: $('#Prod_Nombre_').val(),
         Prsx_Stock_: $('#Prsx_Stock_').val(),
         Sucu_EnviadoId_: $('#SucursalEnvio').val(),
