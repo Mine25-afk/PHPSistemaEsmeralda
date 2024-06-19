@@ -448,9 +448,9 @@ $('#confirmarEliminarBtn').click(function() {
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
                     });
-                    $('#TablaMarca').DataTable().ajax.reload(function() {
-                        $('#eliminarModal').modal('hide'); // Cierra el modal después de cargar la tabla
-                    });
+                    $('#TablaMarca').DataTable().ajax.reload();
+                       // Cierra el modal después de cargar la tabla
+                       $('#eliminarModal').modal('hide');
                 } else {
                     iziToast.error({
                         title: 'Error',
