@@ -1,3 +1,4 @@
+
 <style>
         .dataTables_wrapper .dataTables_filter {
             width: 100%;
@@ -13,7 +14,6 @@
         .dataTables_wrapper .dataTables_filter label {
             width: 80%; 
         }
-
         .ui-autocomplete {
         z-index: 1050; 
         }
@@ -21,11 +21,13 @@
     </style>
  <script>
         $(document).ready(function() {
+          sessionStorage.setItem("Clie_Id","1")
+          sessionStorage.setItem("Mayorista","0")
             var availableTags = [];
             
             // Cargar datos de la base de datos
             $.ajax({
-                url: 'Controllers/FacturaController.php',
+                url: 'Services/FacturaService.php',
                 type: 'POST',
                 data: { action: 'listarClientes' },
                 dataType: 'json',
@@ -41,8 +43,15 @@
                                 }));
                             },
                             select: function(event, ui) {
+                                
                                 var selectedObj = ui.item;
-                                alert('Nombre: ' + selectedObj.nombre + '\nMayorista: ' + (selectedObj.mayorista ? 'Sí' : 'No'));
+                                console.log(selectedObj);
+                                if (selectedObj.mayorista == "No") {
+                                  sessionStorage.setItem("Mayorista","0")
+                                }else{
+                                  sessionStorage.setItem("Mayorista","1")
+                                }
+                                sessionStorage.setItem("Clie_Id",selectedObj.id)
                             }
                         });
                     } else if (response.error) {
@@ -59,9 +68,40 @@
   <div class="card-body">
     <h2 class="text-center" style="font-size: 34px !important">Facturas</h2>
 
-    <div style="height:91px; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
-        <span style="color:#17358D;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
+    <div class="form-row">
+    <div class="col-md-8">
+      <label for="">Cliente</label>
+        <div class="input-group mb-3">
+        <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-check"></i></span>
+        </div>
+                  <input type="text" class="form-control" id="tags" placeholder="Consumidor Final">
+        </div>
+        <div class="form-row"  style="justify-content: space-between; margin: 0px 10px">
+        <div class="col-md-3">
+            <button type="button" class="btn btn-secondary btn-block" id="btnEfectivo">
+              <i class="fas fa-dollar-sign"></i> Efectivo
+            </button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-secondary btn-block" id="btnTarjeta">
+              <i class="fas fa-credit-card"></i>Tarjeta de credito
+            </button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-secondary btn-block" id="btnTransferencias">
+              <i class="fas fa-donate"></i> Transferencias
+            </button>
+          </div>
+        </div>
     </div>
+    <div class="col-md-4">
+      <div style="height:100%; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
+        <span style="color:#17358D;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
+      </div>
+    </div>
+</div>
+  
 
     <div class="CrearMostrar">
       <form id="FacturaForm" style="width: 100%">
@@ -189,20 +229,45 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div style="padding: 0px 10px;">
-              <div style="height:91px; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
-                  <span style="color:#17358D;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
-              </div>
-            <div class="form-row">  
-              <div class="col-md-6">
-                  <label class="control-label">Cliente</label>
-                  <input name="clientes" class="form-control letras" id="tags"/>
+          <div style="padding: 10px 10px;">
+              <div class="form-row ">
+                <div class="col-md-6">
+                  <label class="control-label">Monto Recibido</label>
+                  <input name="Monto" class="form-control letras" id="Monto"/>
+                  <span class="text-danger"></span>
                 </div>
             </div>
+          </div>
+          <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-
-           </div>
-      <div style="height: 20px; width:10px"></div>
+<div class="modal fade" id="ModalTransferencias" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <!-- Add modal-lg class here -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Tarjeta de banco</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+          <div style="padding: 10px 10px;">
+              <div class="form-row ">
+                <div class="col-md-6">
+                  <label class="control-label">Monto Recibido</label>
+                  <select name="Tarj_Id" class="form-control" id="Tarj_Id" required></select>
+                  <span class="text-danger"></span>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -212,13 +277,78 @@
 <script>
 $(document).ready(function() {
 
+  sessionStorage.setItem("Fact_Id","0")
+  cargarDropdowns({ Tarj_Id: 0 });
+        async function cargarDropdowns(selectedData = {}) {
+        try {
+            const Tarjetas = await $.ajax({ url: 'Services/FacturaService.php', type: 'POST', data: { action: 'listartarjetas' } });
+            const TarjetaDropdown = $('#Tarj_Id');
+            console.log("Entra xD")
+            console.log(Tarjetas)
+            TarjetaDropdown.empty();
+
+            TarjetaDropdown.append('<option value="0">Seleccione una opción</option>');
+         
+
+       
+
+
+        } catch (error) {
+            console.error('Error cargando dropdowns:', error);
+        }
+    }
+
+
+  sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+
+    //Seleccionado de btn
+    $("#btnEfectivo").click(function () {
+        sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
+    
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+    })
+    
+    $("#btnTarjeta").click(function () {
+        sessionStorage.setItem("Mepa_Metodo", "4")
+        $("#btnTarjeta").removeClass("btn-secondary")
+        $("#btnTarjeta").addClass("btn-primary")
+
+        $("#btnEfectivo").removeClass("btn-primary")
+        $("#btnEfectivo").addClass("btn-secondary")
+
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+    })
+
+    $("#btnTransferencias").click(function () {
+        sessionStorage.setItem("Mepa_Metodo", "7")
+        $("#btnTransferencias").removeClass("btn-secondary")
+        $("#btnTransferencias").addClass("btn-primary")
+
+        $("#btnEfectivo").removeClass("btn-primary")
+        $("#btnEfectivo").addClass("btn-secondary")
+
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
+
+    })
+
+
     $('#auto').on('keydown', function(e) {
                 if (e.key === 'Tab') {
                     e.preventDefault(); // Evita que el navegador realice la acción predeterminada de la tecla Tab
                     // Ejecuta la acción deseada
                     console.log($('#auto').val())
                     $.ajax({
-            url: 'Controllers/FacturaController.php',
+            url: 'Services/FacturaService.php',
             method: 'POST',
             data: {
                 action: 'buscarCodigo',
@@ -231,6 +361,47 @@ $(document).ready(function() {
               if (data && data.data && data.data.length > 0) {
                   alert("Hay datos")
                   var marca = data.data[0];
+                  $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'insertarprimero',
+                Clie_Id: sessionStorage.getItem("Clie_Id"),
+                Mepa_Id: sessionStorage.getItem("Mepa_Metodo"), 
+                Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
+
+            },
+            success: function(response) {
+          console.log(response)
+          if (response != 0) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+        sessionStorage.setItem("Fact_Id", response)
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se pudo subir',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
                  
               } else {
                 alert("No hay datos")
@@ -252,7 +423,7 @@ $(document).ready(function() {
 
     var table = $('#tablaProductos').DataTable({
     "ajax": {
-        "url": "Controllers/FacturaController.php",
+        "url": "Services/FacturaService.php",
         "type": "POST",
         "data": {
             "action": 'listarProductos'
@@ -282,7 +453,47 @@ $(document).ready(function() {
 $('#tablaProductos tbody').on('click', '.añadir-item', function () {
         var data = table.row($(this).parents('tr')).data();
         console.log(data);
+        $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'insertarprimero',
+                Clie_Id: sessionStorage.getItem("Clie_Id"),
+                Mepa_Id: sessionStorage.getItem("Mepa_Metodo"), 
+                Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
 
+            },
+            success: function(response) {
+          console.log(response)
+          if (response != 0) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+        sessionStorage.setItem("Fact_Id", response)
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se pudo subir',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
         
        
   
@@ -293,7 +504,15 @@ $('#tablaProductos tbody').on('click', '.añadir-item', function () {
 
 
   $("#btnConfirmar").click(function () {
-    $("#ModalConfirmar").modal("show");
+    if (sessionStorage.getItem("Mepa_Metodo") == "1") {
+      $("#ModalConfirmar").modal("show");
+    }else if(sessionStorage.getItem("Mepa_Metodo") == "7"){
+      $("#ModalTransferencias").modal("show")
+
+    }else{
+      alert("es xd")
+    }
+  
   })
 
 

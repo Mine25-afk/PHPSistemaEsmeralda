@@ -177,6 +177,9 @@
                                                         <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
                                                     </tr>
                                                 </tbody>
+                                                <tfoot>
+
+                                                </tfoot>
                                             </table>
                                         </div>
                                     </div>
@@ -567,6 +570,7 @@
 
 
             function insertarActualizarFactura(row) {
+                if ($('#FacturaCompraForm').valid()) {
                 var proveedor = $('#Proveedor').val();
                 var sucursal = $('#Sucursal').val();
                 var metodoPago = $('#metodoPagoSeleccionado').val();
@@ -620,6 +624,8 @@
                 } else {
                     insertarDetalle(FaCE_Id, producto, cantidad, precioCompra, precioVenta, precioMayorista, categoria);
                 }
+            };
+        
             }
 
 

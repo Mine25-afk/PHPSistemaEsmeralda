@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="Views/Resources/css/IziToast.css">
     
     <script src="Views/Resources/js/JqueryVS3_7_1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
   </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -33,7 +34,7 @@
   <?php 
     if (isset($_GET["Pages"])) {
 
-      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles"|| $_GET["Pages"] == "FacturaVenta") {
+      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles"|| $_GET["Pages"] == "FacturaVenta"|| $_GET["Pages"] == "transferencias") {
 
         include "Pages/". $_GET["Pages"] . ".php";
       }

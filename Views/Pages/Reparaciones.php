@@ -48,10 +48,15 @@
                 </div>
             <div class="card-body">
          <div class="form-row d-flex justify-content-end">
-        <div class="col-md-3">
+         <div class="col-md-1" style="margin: 0px 10px;">
             <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
         </div>
-        <div class="col-md-3">
+        <div class="col-md-1">
+        <div class="col-md-1">
+           
+        </div>
+        </div>
+          <div class="col-md-1">
             <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
         </div>
     </div>
@@ -129,15 +134,24 @@ $(document).ready(function () {
                 "data": null,
                 "render": function (data, type, row) {
                     return `
-                        <a class='btn btn-primary btn-sm abrir-editar' data-id='${data.Repa_Id}'>
+                                     <div class='text-center'>
+    <div class='btn-group'>
+        <button type='button' class='btn btn-default dropdown-toggle dropdown-icon' data-toggle='dropdown'>
+            <i class="fas fa-cogs"></i> Acciones
+        </button>
+        <div class='dropdown-menu'>
+         <a class='dropdown-item  abrir-editar' data-id='${data.Repa_Id}'>
                             <i class='fas fa-edit'></i> Editar
                         </a> 
-                        <a class='btn btn-secondary btn-sm ver-detalles' data-id='${data.Repa_Id}'>
+                        <a class='dropdown-item  ver-detalles' data-id='${data.Repa_Id}'>
                             <i class='fas fa-eye'></i> Detalles
                         </a>
-                        <button class='btn btn-danger btn-sm eliminar' data-id='${data.Repa_Id}' data-toggle='modal' data-target='#eliminarModal'>
+                        <button class='dropdown-item  eliminar' data-id='${data.Repa_Id}' data-toggle='modal' data-target='#eliminarModal'>
                             <i class='fas fa-eraser'></i> Eliminar
                         </button>
+        </div>
+    </div>
+</div>
                     `;
                 },
                 "defaultContent": ""
