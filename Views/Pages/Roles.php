@@ -327,91 +327,91 @@ $(document).ready(function () {
     });
     // Datos estáticos de las pantallas
     var pantallas = [
-                { Pant_Id: 1, Pant_Descripcion: "Usuarios" },
-                { Pant_Id: 2, Pant_Descripcion: "Roles" },
-                { Pant_Id: 9, Pant_Descripcion: "Marcas" },
-                { Pant_Id: 13, Pant_Descripcion: "Proveedores" },
-                { Pant_Id: 5, Pant_Descripcion: "Clientes" },
-                { Pant_Id: 28, Pant_Descripcion: "Empleados" },
-                { Pant_Id: 15, Pant_Descripcion: "Facturas" },
-                { Pant_Id: 18, Pant_Descripcion: "Facturas de compra" },
-                { Pant_Id: 16, Pant_Descripcion: "Joyas" },
-                { Pant_Id: 17, Pant_Descripcion: "Maquillajes" },
-                { Pant_Id: 31, Pant_Descripcion: "Transferencias" },
-                { Pant_Id: 20, Pant_Descripcion: "Control de stock" },
-                { Pant_Id: 30, Pant_Descripcion: "Reporte de caja" },
-                { Pant_Id: 32, Pant_Descripcion: "Ventas por pago" }
-            ];
+            { Pant_Id: 1, Pant_Descripcion: "Usuarios" },
+            { Pant_Id: 2, Pant_Descripcion: "Roles" },
+            { Pant_Id: 9, Pant_Descripcion: "Marcas" },
+            { Pant_Id: 13, Pant_Descripcion: "Proveedores" },
+            { Pant_Id: 5, Pant_Descripcion: "Clientes" },
+            { Pant_Id: 28, Pant_Descripcion: "Empleados" },
+            { Pant_Id: 15, Pant_Descripcion: "Facturas" },
+            { Pant_Id: 18, Pant_Descripcion: "Facturas de compra" },
+            { Pant_Id: 16, Pant_Descripcion: "Joyas" },
+            { Pant_Id: 17, Pant_Descripcion: "Maquillajes" },
+            { Pant_Id: 31, Pant_Descripcion: "Transferencias" },
+            { Pant_Id: 20, Pant_Descripcion: "Control de stock" },
+            { Pant_Id: 30, Pant_Descripcion: "Reporte de caja" },
+            { Pant_Id: 32, Pant_Descripcion: "Ventas por pago" }
+        ];
 
-            var categorias = {
-                "Acceso": [],
-                "Generales": [],
-                "Ventas": []
-            };
+        var categorias = {
+            "Acceso": [],
+            "Generales": [],
+            "Ventas": []
+        };
 
-            pantallas.forEach(function(pantalla) {
-                if (pantalla.Pant_Descripcion.includes("Usuarios") || pantalla.Pant_Descripcion.includes("Roles")) {
-                    categorias["Acceso"].push(pantalla);
-                } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados")) {
-                    categorias["Generales"].push(pantalla);
-                } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") || pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") || pantalla.Pant_Descripcion.includes("Control de stock") || pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago")) {
-                    categorias["Ventas"].push(pantalla);
-                }
-            });
+        pantallas.forEach(function(pantalla) {
+            if (pantalla.Pant_Descripcion.includes("Usuarios") || pantalla.Pant_Descripcion.includes("Roles")) {
+                categorias["Acceso"].push(pantalla);
+            } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados")) {
+                categorias["Generales"].push(pantalla);
+            } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") || pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") || pantalla.Pant_Descripcion.includes("Control de stock") || pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago")) {
+                categorias["Ventas"].push(pantalla);
+            }
+        });
 
-            var pantallasTreeView = $('#pantallasTreeView > ul');
-            pantallasTreeView.empty();
+        var pantallasTreeView = $('#pantallasTreeView > ul');
+        pantallasTreeView.empty();
 
-            // Agregar checkbox para seleccionar todas las pantallas
-            pantallasTreeView.append(`
-                <li>
-                    <input type="checkbox" id="selectAllPantallas">
-                    <label for="selectAllPantallas">Seleccionar todas las pantallas</label>
+        // Agregar checkbox para seleccionar todas las pantallas
+        pantallasTreeView.append(`
+            <li>
+                <input type="checkbox" id="selectAllPantallas">
+                <label for="selectAllPantallas">Seleccionar todas las pantallas</label>
+            </li>
+        `);
+
+        Object.keys(categorias).forEach(function(categoria) {
+            var categoriaItem = $(`
+                <li class="categoria">
+                    <input type="checkbox" class="categoria-checkbox" data-categoria="${categoria}">
+                    <label class="categoria-label">${categoria}</label>
+                    <ul class="nested categoria-ul"></ul>
                 </li>
             `);
-
-            Object.keys(categorias).forEach(function(categoria) {
-                var categoriaItem = $(`
-                    <li class="categoria">
-                        <input type="checkbox" class="categoria-checkbox" data-categoria="${categoria}">
-                        <label class="categoria-label">${categoria}</label>
-                        <ul class="nested categoria-ul"></ul>
-                    </li>
-                `);
-                pantallasTreeView.append(categoriaItem);
-                categorias[categoria].forEach(function(pantalla) {
-                    categoriaItem.find('ul').append(
-                        `<li><input type="checkbox" class="pantalla-checkbox" data-id="${pantalla.Pant_Id}" data-categoria="${categoria}"><label>${pantalla.Pant_Descripcion}</label></li>`
-                    );
-                });
+            pantallasTreeView.append(categoriaItem);
+            categorias[categoria].forEach(function(pantalla) {
+                categoriaItem.find('ul').append(
+                    `<li><input type="checkbox" class="pantalla-checkbox" data-id="${pantalla.Pant_Id}" data-categoria="${categoria}"><label>${pantalla.Pant_Descripcion}</label></li>`
+                );
             });
+        });
 
-            // Manejar el colapso de categorías
-            pantallasTreeView.on('click', '.categoria-label', function() {
-                var parentLi = $(this).closest('li');
-                parentLi.toggleClass('expanded');
-                parentLi.find('.categoria-ul').toggle();
-            });
+        // Manejar el colapso de categorías
+        pantallasTreeView.on('click', '.categoria-label', function() {
+            var parentLi = $(this).closest('li');
+            parentLi.toggleClass('expanded');
+            parentLi.find('.categoria-ul').toggle();
+        });
 
-            // Manejar la selección de todas las pantallas
-            $('#selectAllPantallas').change(function() {
-                var isChecked = $(this).is(':checked');
-                $('.categoria-checkbox, .pantalla-checkbox').prop('checked', isChecked);
-            });
+        // Manejar la selección de todas las pantallas
+        $('#selectAllPantallas').change(function() {
+            var isChecked = $(this).is(':checked');
+            $('.categoria-checkbox, .pantalla-checkbox').prop('checked', isChecked);
+        });
 
-            // Manejar la selección de pantallas individuales dentro de una categoría
-            pantallasTreeView.on('change', '.categoria-checkbox', function() {
-                var categoria = $(this).data('categoria');
-                var isChecked = $(this).is(':checked');
-                $(this).siblings('ul').find('.pantalla-checkbox').prop('checked', isChecked);
-            });
+        // Manejar la selección de pantallas individuales dentro de una categoría
+        pantallasTreeView.on('change', '.categoria-checkbox', function() {
+            var categoria = $(this).data('categoria');
+            var isChecked = $(this).is(':checked');
+            $(this).siblings('ul').find('.pantalla-checkbox').prop('checked', isChecked);
+        });
 
-            // Manejar la selección individual de pantallas
-            pantallasTreeView.on('change', '.pantalla-checkbox', function() {
-                var categoriaCheckbox = $(this).closest('.categoria').find('.categoria-checkbox');
-                var allChecked = $(this).closest('ul').find('.pantalla-checkbox:checked').length === $(this).closest('ul').find('.pantalla-checkbox').length;
-                categoriaCheckbox.prop('checked', allChecked);
-            });
+        // Manejar la selección individual de pantallas
+        pantallasTreeView.on('change', '.pantalla-checkbox', function() {
+            var categoriaCheckbox = $(this).closest('.categoria').find('.categoria-checkbox');
+            var allChecked = $(this).closest('ul').find('.pantalla-checkbox:checked').length === $(this).closest('ul').find('.pantalla-checkbox').length;
+            categoriaCheckbox.prop('checked', allChecked);
+        });
    function limpiarFormulario() {
     console.log('Valor actual del campo Role_Id antes de limpiar:', $('#Role_Id').val());
     $('#Role_Id').val('');
