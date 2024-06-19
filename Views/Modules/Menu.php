@@ -149,7 +149,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="transferencias" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Transferencias</p>
                 </a>
