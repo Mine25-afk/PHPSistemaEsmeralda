@@ -136,7 +136,7 @@
                                         <div class="col-md-7">
                                             <input type="hidden" id="metodoPagoSeleccionado" name="metodoPagoSeleccionado" value="1" />
                                             <button type="button" class="btn btn-outline-info metodo-pago btn-selected-info" data-value="1">Efectivo</button>
-                                            <button type="button" class="btn btn-outline-info metodo-pago deselected" data-value="5">Tarjeta de Crédito</button>
+                                            <button type="button" class="btn btn-outline-info metodo-pago deselected" data-value="4">Tarjeta de Crédito</button>
                                             <button type="button" class="btn btn-outline-info metodo-pago deselected" data-value="7">Pago en Línea</button>
                                         </div>
                                     </div>
@@ -244,29 +244,45 @@
         }
 
         $(document).ready(function() {
+
             $('#FacturaCompraForm').validate({
-        rules: {
-            Proveedor: {
-                required: true
-            }
-        },
-        messages: {
-            Proveedor: {
-                required: "Por favor ingrese su Marca"
-            }
-        },
-        errorElement: 'span',
-        errorPlacement: function (error, element) {
-            error.addClass('invalid-feedback');
-            element.closest('.col-md-6').append(error);
-        },
-        highlight: function (element, errorClass, validClass) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function (element, errorClass, validClass) {
-            $(element).removeClass('is-invalid');
-        }
-    });
+                rules: {
+                    Proveedor: {
+                        required: true
+                    },
+
+                    Sucursal: {
+                        required: true
+                    },
+                },
+                messages: {
+                    Proveedor: {
+                        required: "Por favor ingrese su DNI"
+                    },
+
+                    Sucursal: {
+                        required: "Por favor elija su Sucursal"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.col-md-6').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+            $('#AbrirModal').click(function() {
+                $('.CrearOcultar').hide();
+                $('.CrearMostrar').show();
+                $('#FacturaCompraForm').trigger('reset');
+                $('#FacturaCompraForm').validate().resetForm();
+                sessionStorage.setItem('FaCE_Id', "0");
+            });
 
 
             $('input[name="cantidad"]').on('input', function() {
@@ -477,23 +493,23 @@
             });
 
             $(document).on('blur', 'input[name="precio_compra"]', function() {
-    var row = $(this).closest('tr');
-    var producto = row.find('input[name="producto"]').val();
+                if ($('#FacturaCompraForm').valid()) {
+                    var row = $(this).closest('tr');
+                    var producto = row.find('input[name="producto"]').val();
 
-    if (!producto) {
-        iziToast.error({
-            title: 'Error',
-            message: 'El producto es requerido antes de agregar una nueva línea.',
-            position: 'topRight',
+
+                    insertarActualizarFactura(row);
+                    agregarNuevaFila();
+                } else {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'El producto es requerido antes de agregar una nueva línea.',
+                        position: 'topRight',
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
-        });
-        return;
-    }
-
-    insertarActualizarFactura(row);
-    agregarNuevaFila();
-});
+                    });
+                }
+            });
 
             function cargarDatos() {
                 $.ajax({
@@ -625,6 +641,58 @@
                 });
             }
 
+            $('#TablaFacturaCompra tbody').on('click', '.abrir-editar', function() {
+                var data = table.row($(this).parents('tr')).data();
+                sessionStorage.setItem('FaCE_Id', data.FaCE_Id);
+
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    method: 'POST',
+                    data: {
+                        action: 'buscar',
+                        FaCE_Id: data.FaCE_Id
+                    },
+                    success: function(response) {
+                        console.log('editar encabezado', response);
+                        var data = JSON.parse(response).data[0];
+                        $('#Proveedor').val(data.Prov_Id).trigger('change');
+                        $('#Sucursal').val(data.sucu_Id).trigger('change');
+                        $('#metodoPagoSeleccionado').val(data.Mepa_Id);
+                        $('#categoria').val(data.Categoria);
+
+                        $('.CrearOcultar').hide();
+                        $('.CrearMostrar').show();
+                    },
+                    error: function(error) {
+                        console.error('Error:', error);
+                    }
+                });
+
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    method: 'POST',
+                    data: {
+                        action: 'buscardetalle',
+                        FaCE_Id: data.FaCE_Id
+                    },
+                    success: function(response) {
+                        console.log('editar detalle', response);
+                        var data = JSON.parse(response).data[0];
+                        $(this).closest('tr').find('#producto').text(data.Prod_Id);
+                        $(this).closest('tr').find('#cantidad').text(data.Cantidad);
+                        $(this).closest('tr').find('#precio_compra').text(data.Precio_Venta);
+                        $(this).closest('tr').find('#precio_venta').text(data.PrecioVenta);
+                        $(this).closest('tr').find('#precio_mayorista').text(data.precioMayorista);
+
+                        $('.CrearOcultar').hide();
+                        $('.CrearMostrar').show();
+                    },
+                    error: function(error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+
             function obtenerDetalleId(faCE_Id, producto, categoria) {
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
@@ -712,15 +780,12 @@
             $('.CrearOcultar').show();
             $('.CrearMostrar').hide();
 
-            $('#AbrirModal').click(function() {
-                $('.CrearOcultar').hide();
-                $('.CrearMostrar').show();
-                sessionStorage.setItem('FaCE_Id', "0");
-            });
+
 
             $('#CerrarModal').click(function() {
                 $('.CrearOcultar').show();
                 $('.CrearMostrar').hide();
+                $('#FacturaCompraForm')[0].reset();
             });
 
             cargarDatos();

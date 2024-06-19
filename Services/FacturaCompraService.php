@@ -216,6 +216,21 @@ class FacturaCompraService
             return array('error' => 'Error al eliminar el detalle de la factura: ' . $e->getMessage());
         }
     }
+
+    public function buscarFacturaDetalle($FaCE_Id)
+    {
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompraDetalle_Listar`(:FaCE_Id)';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($result);
+        } catch (Exception $e) {
+            error_log('Error al buscar joya por código: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al buscar detalle.'));
+        }
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -227,7 +242,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $FaCE_Id = $_POST['FaCE_Id'];
         $resultado = $service->buscarFacturaCompraPorCodigo($FaCE_Id);
         echo $resultado;
-    } elseif ($_POST['action'] === 'listarProveedores') {
+    }elseif ($_POST['action'] === 'buscardetalle') {
+        $FaCE_Id = $_POST['FaCE_Id'];
+        $resultado = $service->buscarFacturaDetalle($FaCE_Id);
+        echo $resultado;
+    }  elseif ($_POST['action'] === 'listarProveedores') {
         echo $service->listarProveedores();
     } elseif ($_POST['action'] === 'listarSucursales') {
         echo $service->listarSucursales();

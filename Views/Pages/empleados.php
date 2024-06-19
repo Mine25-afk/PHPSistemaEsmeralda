@@ -596,6 +596,8 @@
                     Empl_Id: data.Empl_Id
                 },
                 success: function(response) {
+                    console.log('editar detalle', response);
+
                     var data = JSON.parse(response).data[0];
                     $('#DNI').val(data.Empl_DNI);
                     $('#Correo').val(data.Empl_Correo);
