@@ -56,10 +56,15 @@
                 </div>
                 <div class="card-body">
     <div class="form-row d-flex justify-content-end">
-        <div class="col-md-3">
+    <div class="col-md-1" style="margin: 0px 10px;">
             <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
         </div>
-        <div class="col-md-3">
+        <div class="col-md-1">
+        <div class="col-md-1">
+           
+        </div>
+        </div>
+        <div class="col-md-1">
             <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
         </div>
     </div>
@@ -171,10 +176,11 @@ $(document).ready(function () {
     });
 
     $('#Municipio').change(function() {
-        var municipioSeleccionado = $(this).val();
-        console.log('Municipio seleccionado:', municipioSeleccionado); // Agrega este console.log para verificar el valor seleccionado
-        municipio = municipioSeleccionado;
-    });
+    var municipioSeleccionado = $(this).val();
+    console.log('Municipio seleccionado:', municipioSeleccionado); // Agrega este console.log para verificar el valor seleccionado
+    municipio = municipioSeleccionado;
+});
+
 
     $('#guardarBtn').click(function() {
         var proveedor = $('#Proveedor').val().trim();
@@ -315,7 +321,8 @@ $(document).on('click', '.abrir-editar', function () {
                 
                 // Seleccionar automáticamente el municipio en el select #Municipio
                 var selectMunicipio = $('#Municipio');
-                selectMunicipio.val(proveedor.Muni_Codigo);
+                    selectMunicipio.val(proveedor.Muni_Codigo);
+
 
                 // Mostrar el nombre del municipio solo para verificar
                 console.log('Nombre del municipio seleccionado:', proveedor.Muni_Municipio);
@@ -441,9 +448,9 @@ $('#confirmarEliminarBtn').click(function() {
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
                     });
-                    $('#TablaMarca').DataTable().ajax.reload(function() {
-                        $('#eliminarModal').modal('hide'); // Cierra el modal después de cargar la tabla
-                    });
+                    $('#TablaMarca').DataTable().ajax.reload();
+                       // Cierra el modal después de cargar la tabla
+                       $('#eliminarModal').modal('hide');
                 } else {
                     iziToast.error({
                         title: 'Error',
