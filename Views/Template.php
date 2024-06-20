@@ -40,7 +40,8 @@
   <?php 
     if (isset($_GET["Pages"])) {
 
-      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles"|| $_GET["Pages"] == "FacturaVenta"|| $_GET["Pages"] == "transferencias") {
+      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles"|| $_GET["Pages"] == "FacturaVenta" 
+      || $_GET["Pages"] == "Controldestock"  ) {
 
         include "Pages/". $_GET["Pages"] . ".php";
       }
@@ -69,7 +70,7 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="/resources/demos/style.css">
+  <!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
 
   <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 <!-- AdminLTE App -->
