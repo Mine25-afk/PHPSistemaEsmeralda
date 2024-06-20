@@ -1,3 +1,6 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=The+Nautigal:wght@400;700&display=swap" rel="stylesheet">
 <style>
 .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active, 
 .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
@@ -32,11 +35,15 @@
     color: #000000;
 }
 
-.btn-primary {
+.btn-primary:hover, .btn-primary {
     background-color: #5d9e3e;
     border-color: #5d9e3e;
     color: #FFFFFF;
     background:#5d9e3e;
+    
+}
+.hover{
+  background-color: #5d9e3e;
 }
 
 .btn-secondary {
@@ -52,13 +59,26 @@
 .nav-item.menu-open > .nav-treeview {
     display: block;
 }
+
+h2{
+  font-family: "The Nautigal", cursive;
+  font-weight: 100;
+  font-style: normal;
+  font-weight: 1000;
+
+}
+
+
+
+
+
 </style>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #000000;">
     <!-- Brand Logo -->
     <a href="Views/Resources/index3.html" class="brand-link" style="text-align: center;">
      
-      <img src="/PHPSistemaEsmeralda/Views/Logo2.png" alt="Logo" style="width: 230px; height: 100;">
+      <img src="/PHPSistemaEsmeralda/Views/Logo3.png" alt="Logo" style="width: 230px; height: 100;">
     </a>
 
     <!-- Sidebar -->
@@ -93,7 +113,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item"  id="menu-acceso">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-key" style="color: #5d9e3e;"></i>
+              <i class="nav-icon fas fa-key" id="linkacesso" style="color: #5d9e3e;"></i>
               <p style="color: #5d9e3e;">
                 Acceso
                 <i class="fas fa-angle-left right"></i>
@@ -101,7 +121,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="usuarios" class="nav-link">
+                <a href="usuarios" class="nav-link" id="Usuarios">
                   <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i>
                   <p>Usuarios</p>
                 </a>
@@ -116,7 +136,7 @@
           </li>
 
           <li class="nav-item" id="menu-generales">
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" id="linkgenerales">
               <i class="nav-icon fas fa-gem" style="color: #5d9e3e;"></i>
               <p style="color: #5d9e3e;">
                 Generales
@@ -125,7 +145,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="clientes" class="nav-link">
+                <a href="clientes" class="nav-link" id="linkclientes">
                   <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i>
                   <p>Clientes</p>
                 </a>
