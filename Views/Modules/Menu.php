@@ -167,7 +167,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="Controldestock" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Control de Stock</p>
                 </a>
@@ -179,7 +179,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="Ventasporpago" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Ventas por pago</p>
                 </a>
@@ -203,7 +203,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="facturas" class="nav-link">
+                <a href="dashboardsInicio" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Facturas</p>
                 </a>
