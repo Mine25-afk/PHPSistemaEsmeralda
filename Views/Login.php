@@ -17,7 +17,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #ffb3ce, #000000);
+            background: linear-gradient(135deg, #2283FF, #00890C);
             color: #fff;
             overflow: hidden;
         }
@@ -34,7 +34,8 @@
 
         .container {
             display: flex;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgb(131,250,251);
+            background: linear-gradient(0deg, rgba(131,250,251,1) 0%, rgba(244,217,161,1) 100%);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -181,7 +182,7 @@
         </div>
         <div class="form-section">
             <div class="toggle-buttons">
-                <button class="active" id="sign-in-toggle">Iniciar Sesion</button>
+                <button class="active" id="sign-in-toggle">_______________________</button>
             </div>
             <form id="sign-in-form">
                 <h1>Iniciar Sesion</h1>
