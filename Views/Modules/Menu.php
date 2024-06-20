@@ -5,237 +5,35 @@
       <span class="brand-text font-weight-light">Sistema Esmeralda</span>
     </a>
 
+ 
+
+     
+    <?php
+      if (session_status() == PHP_SESSION_NONE) {
+          session_start();
+      }
+      require_once __DIR__ . '/../../config.php';// Asegúrate de incluir la conexión a la base de datos.
+      include 'C:\xampp\htdocs\PHPSistemaEsmeralda\Services\MenuService.php';
+      $nombreCompleto = isset($_SESSION['Empl_Nombre']) ? $_SESSION['Empl_Nombre'] : 'Usuario invitado';
+    ?>
+    
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="Views/Resources/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+        <img src="Views/Resources/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
-        </div>
-      </div>
-
-      <!-- SidebarSearch Form -->
-      <div class="form-inline">
-        <div class="input-group" data-widget="sidebar-search">
-          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-          <div class="input-group-append">
-            <button class="btn btn-sidebar">
-              <i class="fas fa-search fa-fw"></i>
-            </button>
-          </div>
+          <a href="#" class="d-block" style="color:white">
+            <?php echo htmlspecialchars($nombreCompleto); ?>
+          </a>
         </div>
       </div>
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-          
-         
-     
-      
-        
-     
-    
-    
-     
-      
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-key"></i> 
-              <p>
-                Acceso
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="usuarios" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Usuarios</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="Roles" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Roles</p>
-                </a>
-              </li>
-             
-            </ul>
-          </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>
-                Generales
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-            <li class="nav-item">
-                <a href="clientes" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Clientes</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="marcas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Marcas</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="Proveedores" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Proveedores</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="empleados" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Empleados</p>
-                </a>
-              </li>
-              </li>
-            </ul>
-          </li>
-
-     
-     
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>
-                Ventas
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="joyas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Joyas</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="maquillajes" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Maquillajes</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="Reparaciones" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Reparaciones</p>
-                </a>
-              </li>
-          
-              <li class="nav-item">
-                <a href="facturas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Facturas</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="joyas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Factura compra</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="facturas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Transferencias</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-    
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>
-                Reportes
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="Controldestock" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Control de Stock</p>
-                </a>
-              </li>    
-              <li class="nav-item">
-                <a href="facturas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Caja</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="Ventasporpago" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Ventas por pago</p>
-                </a>
-              </li>     
-              <li class="nav-item">
-                <a href="facturas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Reporte de ventas</p>
-                </a>
-              </li>    
-            </ul>
-          </li>
-        
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>
-                Graficos
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="dashboardsInicio" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Facturas</p>
-                </a>
-              </li>             
-            </ul>
-            <li class="nav-item">
-                <a class="nav-link" id="AbrirCajas">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Abrir Caja</p>
-                </a>
-              </li> 
-              <li class="nav-item">
-                <a class="nav-link" id="CerrarCajas">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Cerrar caja</p>
-                </a>
-              </li>  <li class="nav-item">
-                <a class="nav-link"  href="FacturaVenta" >
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Factura Venta</p>
-                </a>
-              </li> 
-              <li class="nav-item">
-                <a class="nav-link" id="AbrirRetiro">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Retiro caja</p>
-                </a>
-              </li> 
-          </li>
-          
-       
-        </ul>
+        <?php generarMenu($pdo); ?>
       </nav>
       <!-- /.sidebar-menu -->
     </div>

@@ -22,26 +22,29 @@ class LoginService {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     session_start();
     $controller = new LoginService();
-   
+
     if ($_POST['action'] === 'Login') {
         $Usuario = $_POST['Usuario'];
         $Contra = $_POST['Contra'];
-        $resultado = $controller->InicioSesion($Usuario,$Contra);
-        $data = json_decode($resultado, true); 
+        $resultado = $controller->InicioSesion($Usuario, $Contra);
+        $data = json_decode($resultado, true);
+
         if (!empty($data) && isset($data['data'][0])) {
-            $user = $data['data'][0]; 
+            $user = $data['data'][0];
             $_SESSION['Usua_Id'] = $user['Usua_Id'];
             $_SESSION['Usua_Usuario'] = $user['Usua_Usuario'];
             $_SESSION['Empl_Nombre'] = $user['Empl_Nombre'];
             $_SESSION['Empl_Id'] = $user['Empl_Id'];
             $_SESSION['Role_Id'] = $user['Role_Id'];
             $_SESSION['Pant_Id'] = $user['Pant_Id'];
-            
-            // Corrección aquí para convertir un string en un array antes de asignarlo a $_SESSION['pantallas']
-          // Corrección aquí para convertir un string en un array antes de asignarlo a $_SESSION['pantallas']
-$_SESSION['pantallas'] = explode(',', $user['pant_Identificador']);
 
-            
+            // Extraer los valores de Pant_Identificador de cada elemento en data
+            $pantallas = array_map(function($item) {
+                return $item['Pant_Identificador'];
+            }, $data['data']);
+
+            $_SESSION['pantallas'] = $pantallas;
+
             $_SESSION['Usua_Administrador'] = $user['Usua_Administrador'];
             $_SESSION['Sucu_Id'] = $user['Sucu_Id'];
             $_SESSION['Sucu_Nombre'] = $user['Sucu_Nombre'];
@@ -49,6 +52,6 @@ $_SESSION['pantallas'] = explode(',', $user['pant_Identificador']);
             $_SESSION['Empl_Correo'] = $user['Empl_Correo'];
         }
         echo $resultado;
-    } 
+    }
 }
 

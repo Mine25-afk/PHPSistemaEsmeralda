@@ -1,3 +1,5 @@
+
+    
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -161,52 +163,72 @@
         }
 
         function generatePDF(data) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-            doc.setFontSize(18);
-            doc.setTextColor(255, 255, 255);
-            doc.setFillColor(255, 105, 180); // HotPink
-            doc.rect(10, 10, 190, 10, 'F');
-            doc.text('Reporte de Control de Stock', 105, 17, null, null, 'center');
+    const logoBase64 = 'Views/Logo.png';
 
-            doc.setFontSize(12);
-            doc.setTextColor(255, 255, 255);
-            doc.setFillColor(0, 0, 0);
-            doc.rect(10, 30, 190, 10, 'F');
+    // Agregar el logo
+    doc.addImage(logoBase64, 'PNG', 10, 10, 50, 20); 
 
-            doc.rect(10, 30, 60, 10, 'F'); // Categoría
-            doc.text('Categoría', 12, 37);
-            doc.rect(70, 30, 70, 10, 'F'); // Producto
-            doc.text('Producto', 72, 37);
-            doc.rect(140, 30, 60, 10, 'F'); // Stock
-            doc.text('Stock', 142, 37);
+    // Descripción de la sucursal, empleado y fecha
+    const sucursal = 'Sucursal: Centro';
+    const empleado = 'Empleado: Juan Pérez';
+    const fecha = `Fecha: ${new Date().toLocaleDateString()}`;
 
-            let yPosition = 47;
-            doc.setTextColor(0, 0, 0); // Negro
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(sucursal, 70, 15); // Ajusta las posiciones según sea necesario
+    doc.text(empleado, 70, 20);
+    doc.text(fecha, 70, 25);
 
-            doc.setLineWidth(0.1);
-            data.forEach(row => {
-                doc.line(10, yPosition - 7, 200, yPosition - 7);
-                doc.line(10, yPosition + 3, 200, yPosition + 3);
-                doc.line(10, yPosition - 7, 10, yPosition + 3);
-                doc.line(70, yPosition - 7, 70, yPosition + 3);
-                doc.line(140, yPosition - 7, 140, yPosition + 3);
-                doc.line(200, yPosition - 7, 200, yPosition + 3);
+    // Título del reporte
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFillColor(0, 123, 255); // Azul
+    doc.rect(10, 40, 190, 10, 'F'); // Ajusta la posición del rectángulo
+    doc.text('Reporte de Control de Stock', 105, 47, null, null, 'center'); // Ajusta la posición del texto
 
-                doc.text(`${row.Categoria}`, 12, yPosition);
-                doc.text(`${row.Producto}`, 72, yPosition);
-                doc.text(`${row.Stock}`, 142, yPosition);
-                yPosition += 10;
-                if (yPosition > 280) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-            });
+    // Encabezado de la tabla
+    doc.setFontSize(12);
+    doc.setTextColor(255, 255, 255);
+    doc.setFillColor(108, 117, 125); // Gris
+    doc.rect(10, 60, 190, 10, 'F'); // Ajusta la posición del encabezado
 
-            const pdfData = doc.output('datauristring');
-            $('#pdfEmbed').attr('src', pdfData);
+    doc.rect(10, 60, 60, 10, 'F'); // Categoría
+    doc.text('Categoría', 12, 67);
+    doc.rect(70, 60, 70, 10, 'F'); // Producto
+    doc.text('Producto', 72, 67);
+    doc.rect(140, 60, 60, 10, 'F'); // Stock
+    doc.text('Stock', 142, 67);
+
+    let yPosition = 77;
+    doc.setTextColor(0, 0, 0); // Negro
+
+    doc.setLineWidth(0.1);
+    data.forEach(row => {
+        doc.line(10, yPosition - 7, 200, yPosition - 7);
+        doc.line(10, yPosition + 3, 200, yPosition + 3);
+        doc.line(10, yPosition - 7, 10, yPosition + 3);
+        doc.line(70, yPosition - 7, 70, yPosition + 3);
+        doc.line(140, yPosition - 7, 140, yPosition + 3);
+        doc.line(200, yPosition - 7, 200, yPosition + 3);
+
+        doc.text(`${row.Categoria}`, 12, yPosition);
+        doc.text(`${row.Producto}`, 72, yPosition);
+        doc.text(`${row.Stock}`, 142, yPosition);
+        yPosition += 10;
+        if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
         }
+    });
+
+    const pdfData = doc.output('datauristring');
+    $('#pdfEmbed').attr('src', pdfData);
+}
+
+
     </script>
 </body>
 </html>

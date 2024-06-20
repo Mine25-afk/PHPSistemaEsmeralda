@@ -14,20 +14,6 @@ function generarMenu($conn) {
     // Acceder al valor 'usuarios' en el array $pantallas
    // Inicia la sesión si no está iniciada
 
-    if (isset($_SESSION['pantallas'])) {
-        $pantallas = $_SESSION['pantallas'];
-    
-        // Imprime toda la array $_SESSION['pantallas']
-        echo 'Array<br>(';
-        foreach ($pantallas as $key => $value) {
-            echo "    [$key] => $value<br>";
-        }
-        echo ')';
-    } else {
-        echo "La variable de sesión 'pantallas' no está definida.";
-    }
-    
-
     if ($es_admin == 1) { // Verificar si es administrador
         $sql = "SELECT * FROM acce_tbpantallas WHERE Pant_Estado = 1";
         $stmt = $conn->prepare($sql);
@@ -47,7 +33,7 @@ function generarMenu($conn) {
 
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+   
     // Agrupar pantallas por categoría
     $menu = [
         'Inicio' => [],
@@ -59,7 +45,7 @@ function generarMenu($conn) {
     ];
 
     foreach ($result as $row) {
-        switch ($row['pant_descripcion']) {
+        switch ($row['Pant_Descripcion']) {
             case 'Usuarios':
             case 'Roles':
                 $menu['Accesos'][] = $row;
@@ -77,15 +63,17 @@ function generarMenu($conn) {
                 $menu['Generales'][] = $row;
                 break;
             case 'Facturas':
-            case 'Facturas de compra':
+            case 'Facturas de Compra':
             case 'Transferencias':
+                case 'Maquillajes':
+                    case 'Joyas':
                 $menu['Ventas'][] = $row;
                 break;
-            // case 'Dashboards':
-            //     $menu['Dashboards'][] = $row;
-            //     break;
+            case 'dashboard':
+                $menu['Dashboards'][] = $row;
+                break;
             default:
-                $menu['Inicio'][] = $row;
+                $menu['Index'][] = $row;
         }
     }
 
@@ -93,34 +81,23 @@ function generarMenu($conn) {
     
     // Menu Items
     echo '<li class="nav-item">';
-    echo '<a href="inicio.php" class="nav-link"><i class="fa-solid fa-house"></i><p>Inicio</p></a>';
+    echo '<a href="Index.php" class="nav-link"><i class="fa-solid fa-house"></i><p>Inicio</p></a>';
     echo '</li>';
     
     if (!empty($menu['Dashboards'])) {
         echo '<li class="nav-item">';
-        echo '<a href="?Pages=dashboardsInicio" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Dashboards</p></a>';
+        echo '<a href="?Pages=dashboard" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Dashboards</p></a>';
         echo '</li>';
     }
 
-    // Reportes
-    if (!empty($menu['Reportes'])) {
-        echo '<li class="nav-item" id="EsquemaReportes">';
-        echo '<a href="#" class="nav-link" id="LinkReportes"><i class="fa-solid fa-file"></i><p>Reportes<i class="fas fa-angle-left right"></i></p></a>';
-        echo '<ul class="nav nav-treeview">';
-        foreach ($menu['Reportes'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['pant_descripcion'] . '</p></a></li>';
-        }
-        echo '</ul>';
-        echo '</li>';
-    }
-
+   
     // Accesos
     if (!empty($menu['Accesos'])) {
         echo '<li class="nav-item" id="EsquemaAcceso">';
-        echo '<a href="#" class="nav-link" id="LinkAcceso"><i class="fa-solid fa-lock"></i><p>Accesos<i class="fas fa-angle-left right"></i></p></a>';
+        echo '<a href="#" class="nav-link" id="LinkAcceso"><i class="nav-icon far fa-envelope"></i><p>Accesos<i class="fas fa-angle-left right"></i></p></a>';
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Accesos'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['pant_descripcion'] . '</p></a></li>';
+            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
         }
         echo '</ul>';
         echo '</li>';
@@ -129,10 +106,10 @@ function generarMenu($conn) {
     // Generales
     if (!empty($menu['Generales'])) {
         echo '<li class="nav-item" id="EsquemaGeneral">';
-        echo '<a href="#" class="nav-link" id="LinkGeneral"><i class="fa-solid fa-globe"></i><p>Generales<i class="fas fa-angle-left right"></i></p></a>';
+        echo '<a href="#" class="nav-link" id="LinkGeneral"><i class="nav-icon far fa-envelope"></i><p>Generales<i class="fas fa-angle-left right"></i></p></a>';
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Generales'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['pant_descripcion'] . '</p></a></li>';
+            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
         }
         echo '</ul>';
         echo '</li>';
@@ -141,14 +118,27 @@ function generarMenu($conn) {
     // Ventas
     if (!empty($menu['Ventas'])) {
         echo '<li class="nav-item" id="EsquemaVentas">';
-        echo '<a href="#" class="nav-link" id="LinkVentas"><i class="fa-solid fa-bag-shopping"></i><p>Ventas<i class="fas fa-angle-left right"></i></p></a>';
+        echo '<a href="#" class="nav-link" id="LinkVentas"><i class="nav-icon far fa-envelope"></i><p>Ventas<i class="fas fa-angle-left right"></i></p></a>';
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Ventas'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['pant_descripcion'] . '</p></a></li>';
+            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
         }
         echo '</ul>';
         echo '</li>';
     }
+
+     // Reportes
+     if (!empty($menu['Reportes'])) {
+        echo '<li class="nav-item" id="EsquemaReportes">';
+        echo '<a href="#" class="nav-link" id="LinkReportes"><i class="nav-icon far fa-envelope"></i><p>Reportes<i class="fas fa-angle-left right"></i></p></a>';
+        echo '<ul class="nav nav-treeview">';
+        foreach ($menu['Reportes'] as $item) {
+            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
+        }
+        echo '</ul>';
+        echo '</li>';
+    }
+
 
     echo '<li class="nav-item">';
     echo '<a href="cerrar-sesion.php" class="close-sesion nav-link text-center" style="color:white; background-color: red; margin-top:350px;"><p>Cerrar sesión</p></a>';
@@ -159,11 +149,4 @@ function generarMenu($conn) {
 
 
 ?>
-<!-- jQuery -->
-<script src="../Views/Resources/plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="../Views/Resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../Views/Resources/dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../Views/Resources/dist/js/demo.js"></script>
+

@@ -338,9 +338,11 @@ $(document).ready(function () {
             { Pant_Id: 16, Pant_Descripcion: "Joyas" },
             { Pant_Id: 17, Pant_Descripcion: "Maquillajes" },
             { Pant_Id: 31, Pant_Descripcion: "Transferencias" },
-            { Pant_Id: 20, Pant_Descripcion: "Control de stock" },
+            { Pant_Id: 35, Pant_Descripcion: "Control de stock" },
             { Pant_Id: 30, Pant_Descripcion: "Reporte de caja" },
-            { Pant_Id: 32, Pant_Descripcion: "Ventas por pago" }
+            { Pant_Id: 32, Pant_Descripcion: "Ventas por pago" },
+            { Pant_Id: 36, Pant_Descripcion: "Reparaciones" },
+            { Pant_Id: 37, Pant_Descripcion: "dashboard" }
         ];
 
         var categorias = {
@@ -352,9 +354,11 @@ $(document).ready(function () {
         pantallas.forEach(function(pantalla) {
             if (pantalla.Pant_Descripcion.includes("Usuarios") || pantalla.Pant_Descripcion.includes("Roles")) {
                 categorias["Acceso"].push(pantalla);
-            } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados")) {
-                categorias["Generales"].push(pantalla);
-            } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") || pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") || pantalla.Pant_Descripcion.includes("Control de stock") || pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago")) {
+            } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados") || pantalla.Pant_Descripcion.includes("dashboard")) {
+                categorias["Generales"].push(pantalla) ;
+            } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") 
+            || pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") 
+            || pantalla.Pant_Descripcion.includes("Control de stock") || pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") || pantalla.Pant_Descripcion.includes("Reparaciones")) {
                 categorias["Ventas"].push(pantalla);
             }
         });
