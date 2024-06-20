@@ -206,71 +206,74 @@
                         </div>
 
                         <div class="collapse" id="collapseNuevoProducto">
-                            <div class="card card-body">
-                                <h3 class="text-center"><b>Nuevo Producto</b></h3>
-                                <form id="NuevoProductoForm" style="width: 100%">
-                                    <div class="form-row" id="productTypeSelection">
-                                        <div class="col-md-12">
-                                            <label>Tipo de Producto</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="productType" id="radioMaquillaje" value="maquillaje" checked>
-                                                <label class="form-check-label" for="radioMaquillaje">
-                                                    Maquillaje
-                                                </label>
+                            <h5 class="text-center">Agregar Producto</h5>
+                            <form id="NuevoProductoForm" style="width: 100%">
+                                <div class="form-row" id="productTypeSelection">
+
+                                    <div class="col-sm-12">
+                                        <div class="d-flex align-items-center">
+                                            <div class="custom-control custom-radio mr-3">
+                                                <input class="custom-control-input" type="radio" id="radioMaquillaje" name="productType" value="maquillaje" checked>
+                                                <label for="radioMaquillaje" class="custom-control-label">Maquillaje</label>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="productType" id="radioJoya" value="joya">
-                                                <label class="form-check-label" for="radioJoya">
-                                                    Joya
-                                                </label>
+                                            <div class="custom-control custom-radio">
+                                                <input class="custom-control-input" type="radio" id="radioJoya" name="productType" value="joya">
+                                                <label for="radioJoya" class="custom-control-label">Joya</label>
                                             </div>
-
                                         </div>
                                     </div>
+                                </div>
+                                <br>
 
-                                    <div class="form-row">
-                                        <div class="col-md-6">
-                                            <label>Nombre del Producto</label>
-                                            <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Precio Compra</label>
-                                            <input type="text" class="form-control" id="precioCompraProducto" name="precioCompraProducto" required />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Precio Venta</label>
-                                            <input type="text" class="form-control" id="precioVentaProducto" name="precioVentaProducto" required />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Precio Mayorista</label>
-                                            <input type="text" class="form-control" id="precioMayoristaProducto" name="precioMayoristaProducto" required />
-                                        </div>
-                                        <div class="col-md-6" id="marcaField">
-                                            <label>Marca</label>
-                                            <select name="Marc_Id" class="form-control" id="Marc_Id"></select>
-                                        </div>
-                                        <div class="col-md-6" id="materialField" style="display:none;">
-                                            <label>Material</label>
-                                            <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
-                                        </div>
-                                        <div class="col-md-6" id="categoriaField" style="display:none;">
-                                            <label>Categoría</label>
-                                            <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Imagen</label>
-                                            <input type="file" name="Imagen" class="form-control" id="Imagen" required />
+                                <div class="form-row">
+                                    <div class="col-md-6">
+                                        <label>Nombre del Producto</label>
+                                        <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Precio Compra</label>
+                                        <input type="text" class="form-control" id="precioCompraProducto" name="precioCompraProducto" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Precio Venta</label>
+                                        <input type="text" class="form-control" id="precioVentaProducto" name="precioVentaProducto" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Precio Mayorista</label>
+                                        <input type="text" class="form-control" id="precioMayoristaProducto" name="precioMayoristaProducto" required />
+                                    </div>
+                                    <div class="col-md-6" id="marcaField">
+                                        <label>Marca</label>
+                                        <select name="Marc_Id" class="form-control" id="Marc_Id"></select>
+                                    </div>
+                                    <div class="col-md-6" id="materialField" style="display:none;">
+                                        <label>Material</label>
+                                        <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
+                                    </div>
+                                    <div class="col-md-6" id="categoriaField" style="display:none;">
+                                        <label>Categoría</label>
+                                        <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
+                                    </div>
+                                    <div class="custom-file col-md-6">
+                                        <label>Imagen</label>
+                                        <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
+                                        <label class="custom-file-label"></label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Imagen Actual</label>
+                                        <div id="imagenActualContainer">
+                                            <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
                                         </div>
                                     </div>
-
-                                    <div class="form-row d-flex justify-content-start">
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
-                                            <button type="submit" class="btn btn-primary">Guardar</button>
-                                        </div>
+                                </div>
+                                <br>
+                                <div class="form-row d-flex justify-content-start">
+                                    <div class="col-md-6">
+                                        <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
+                                        <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -278,7 +281,10 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script>
         function validateNumber(input) {
             input.value = input.value.replace(/[^0-9.,]/g, '');
@@ -403,6 +409,7 @@
                 $('#FacturaCompraForm').validate().resetForm();
                 FaCE_Id = 0;
                 $('#detalleFactura').empty();
+                cargarImagenActual(null);
 
                 habilitarCampos();
 
@@ -416,6 +423,20 @@
                 agregarNuevaFila();
             });
 
+            function cargarImagenActual(imagen) {
+                var imagenActual = $('#imagenActual');
+                if (imagen) {
+                    var imageUrl = '/PHPSistemaEsmeralda/Resources/uploads/joyas/' + encodeURIComponent(imagen);
+                    imagenActual
+                        .attr('src', imageUrl)
+                        .attr('style', 'max-width: 100%; max-height: 200px;')
+                        .show();
+                } else {
+                    imagenActual
+                        .attr('src', '#')
+                        .hide();
+                }
+            }
 
             $('input[name="cantidad"]').on('input', function() {
                 this.value = this.value.replace(/[^0-9]/g, '');
@@ -448,7 +469,6 @@
                 $(this).removeClass('deselected').addClass('btn-selected-info');
                 var valor = $(this).data('value');
                 $('#metodoPagoSeleccionado').val(valor);
-                console.log("Método de pago seleccionado: " + valor);
             });
 
             $('.metodo-pago').click(function() {
@@ -551,6 +571,7 @@
                 var term = $(this).val();
                 var numeroo = /^[0-9]+$/.test(term);
                 var alfanumerico = /^[a-zA-Z]+$/.test(term);
+                console.log('hola', term);
 
                 if (numeroo || alfanumerico) {
                     $.ajax({
@@ -564,7 +585,7 @@
                         success: function(data) {
                             if (data.length > 0) {
                                 var item = data[0];
-                                console.log(item, 'item');
+                                console.log('entra ok', item);
                                 var precioMayorista = item.Maqu_PrecioMayor;
                                 let preciov = item.Maqu_PrecioVenta;
                                 $(this).closest('tr').find('#precio_mayorista').text(precioMayorista);
@@ -588,6 +609,7 @@
                         }.bind(this)
                     });
                 } else {
+                    console.log('buscar entra joya');
                     $.ajax({
                         url: 'Services/FacturaCompraService.php',
                         type: 'POST',
@@ -744,6 +766,20 @@
             });
 
             cargarMarcas();
+
+            $('#Imagen').change(function() {
+                var input = this;
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#imagenActual')
+                            .attr('src', e.target.result)
+                            .attr('style', 'max-width: 100%; max-height: 200px;')
+                            .show();
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
 
             $('#NuevoProductoForm').on('submit', function(event) {
                 event.preventDefault();
@@ -996,7 +1032,6 @@
                         precioMayorista: precioMayorista,
                     },
                     success: function(response) {
-                        console.log('Respuesta de insertar detalle:', response);
                         if (response.success) {
                             obtenerDetalleId(faCE_Id, producto, categoria, response.success);
                         } else {
@@ -1041,6 +1076,7 @@
                                 transitionOut: 'flipOutX'
                             });
                         } else {
+                            console.error('no deja', response.message);
                             iziToast.error({
                                 title: 'Error',
                                 message: 'Ingrese un producto existente.',
@@ -1145,7 +1181,10 @@
                 const imgHeight = 50;
 
                 var pageNumber = 1;
+                const logoBase64 = 'Views/Logo.png';
 
+
+                doc.addImage(logoBase64, 'PNG', 10, 10, 50, 20);
 
 
                 doc.setFontSize(10);
@@ -1275,7 +1314,6 @@
                         FaCE_Id: FaCE_Id
                     },
                     success: function(response) {
-                        console.log('editar encabezado', response);
                         var factura = response.data[0];
 
                         $.ajax({
