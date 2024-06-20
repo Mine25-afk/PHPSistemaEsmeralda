@@ -97,7 +97,7 @@ function generarMenu($conn) {
     }
     if (!empty($menu['Facturas'])) {
         echo '<li class="nav-item">';
-        echo '<a href="?Pages=facturas" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Factura</p></a>';
+        echo '<a href="?Pages=FacturaVenta" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Factura</p></a>';
         echo '</li>';
     }
 
