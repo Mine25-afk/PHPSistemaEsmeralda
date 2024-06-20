@@ -12,6 +12,7 @@
                             <table class="table table-striped table-hover" id="TablaMarca">
                                 <thead>
                                     <tr>
+                                    <th>#</th>
                                         <th>Usuario</th>
                                         <th>Administrador</th>
                                         <th>Empleado</th>
@@ -59,12 +60,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row mt-3">
-                                <div class="col-md-6">
+                            <div class="form-row mt-3 d-flex justify-content-end">
+                                <div class="col-auto">
                                     <button type="button" class="btn btn-primary" id="guardarBtn">Guardar</button>
-                                    <a id="CerrarModal" class="btn btn-secondary ml-2" style="color:white">Volver</a>
+                                </div>
+                                <div class="col-auto">
+                                    <a id="CerrarModal" class="btn btn-secondary ml-2" style="color:white">Cancelar</a>
                                 </div>
                             </div>
+
                         </form>
                     </div>
                 </div>
@@ -216,7 +220,9 @@
                     "previous": "Anterior"
                 }
             },
-            "columns": [{
+            "columns": [
+                { "data": null },
+                {
                     "data": "Usua_Usuario"
                 },
                 {
@@ -229,10 +235,34 @@
                     "data": "Role_Rol"
                 },
                 {
-                    "data": null,
-                    "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button>"
-                }
-            ]
+    "data": null,
+    "defaultContent": `
+        <div class='text-center'>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cogs"></i> Acciones
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item abrir-editar" href="#">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a class="dropdown-item abrir-detalles" href="#">
+                        <i class="fas fa-eye"></i> Detalles
+                    </a>
+                    <button class="dropdown-item abrir-eliminar">
+                        <i class="fas fa-eraser"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+            ],
+        "createdRow": function(row, data, dataIndex) {
+      
+        $('td:eq(0)', row).html(dataIndex + 1);
+    }
         });
 
         $('.CrearOcultar').show();
