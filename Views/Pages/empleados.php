@@ -2,11 +2,12 @@
     <div class="row mt-2">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center"><b>Empleados</b></h3>
-                </div>
+        
+                <h2 class="text-center" style="font-size: 90px !important"> Empleados</h2>
+       
+           
                 <div class="card-body">
-                    <div class="CrearOcultar">
+                <div class="CrearOcultar" style="position:relative; top:-30px">
                         <p class="btn btn-primary" id="AbrirModal">Nuevo</p>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="TablaMarca">

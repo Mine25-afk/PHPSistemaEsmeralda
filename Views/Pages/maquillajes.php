@@ -1,7 +1,7 @@
 <div class="card">
     <div class="card-body">
-        <h2 class="text-center" style="font-size:34px !important">Maquillajes</h2>
-        <div class="CrearOcultar">
+    <h2 class="text-center" style="font-size: 90px !important">Maquillajes</h2>
+    <div class="CrearOcultar" style="position:relative; top:-30px">
         <p class="btn btn-primary" id="AbrirModal">
             Nuevo
         </p>
