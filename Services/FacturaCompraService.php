@@ -94,7 +94,7 @@ class FacturaCompraService
             echo json_encode(array('error' => 'Error al listar joyas para autocompletado.'));
         }
     }
-    
+
     public function listarMaquillajesAutoCompletado($term)
     {
         try {
@@ -233,52 +233,71 @@ class FacturaCompraService
     }
 
     public function finalizarFacturaCompra($FaCE_Id, $fechaFinal)
-{
-    try {
-        $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Finalizar`(:FaCE_Id, :fechaFinal)';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
-        $stmt->bindParam(':fechaFinal', $fechaFinal, PDO::PARAM_STR);
-        $stmt->execute();
-        return array('success' => true);
-    } catch (Exception $e) {
-        error_log('Error al finalizar la factura: ' . $e->getMessage());
-        return array('error' => 'Error al finalizar la factura: ' . $e->getMessage());
-    }
-}
-
-public function listarMateriales() {
-    global $pdo;
-    try {
-        $sql = 'CALL `dbsistemaesmeralda`.`SP_Materiales_listar`()';
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode(array('data' => $result));
-    } catch (Exception $e) {
-        error_log('Error al listar materiales: ' . $e->getMessage());
-        echo json_encode(array('error' => 'Error al listar materiales: ' . $e->getMessage()));
-    }
-}
-
-public function listarCategorias() {
-    global $pdo;
-    try {
-        $sql = 'CALL `dbsistemaesmeralda`.`SP_Categorias_listar`()';
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode(array('data' => $result));
-    } catch (Exception $e) {
-        error_log('Error al listar categorías: ' . $e->getMessage());
-        echo json_encode(array('error' => 'Error al listar categorías: ' . $e->getMessage()));
-    }
-}
-public function insertarProducto($tipo, $datos)
     {
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Finalizar`(:FaCE_Id, :fechaFinal)';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':fechaFinal', $fechaFinal, PDO::PARAM_STR);
+            $stmt->execute();
+            return array('success' => true);
+        } catch (Exception $e) {
+            error_log('Error al finalizar la factura: ' . $e->getMessage());
+            return array('error' => 'Error al finalizar la factura: ' . $e->getMessage());
+        }
+    }
+
+    public function listarMateriales()
+    {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Materiales_listar`()';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(array('data' => $result));
+        } catch (Exception $e) {
+            error_log('Error al listar materiales: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al listar materiales: ' . $e->getMessage()));
+        }
+    }
+
+    public function listarCategorias()
+    {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Categorias_listar`()';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(array('data' => $result));
+        } catch (Exception $e) {
+            error_log('Error al listar categorías: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al listar categorías: ' . $e->getMessage()));
+        }
+    }
+    public function listarMarcas()
+    {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Marcas_Listar`()';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(array('data' => $result));
+        } catch (Exception $e) {
+            error_log('Error al listar marcas: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al listar marcas: ' . $e->getMessage()));
+        }
+    }
+    public function insertarProducto($tipo, $datos)
+    {
+        error_log('insertarProducto: Tipo de producto: ' . $tipo);
+        error_log('insertarProducto: Datos: ' . json_encode($datos));
+
         if ($tipo === 'joya') {
-            return $this->insertarJoya(
-                $datos['codigo'],
+            return $this->insertarJoyas(
+                $datos['productoCodigo'],
                 $datos['nombre'],
                 $datos['precio_compra'],
                 $datos['precio_venta'],
@@ -293,7 +312,7 @@ public function insertarProducto($tipo, $datos)
             );
         } elseif ($tipo === 'maquillaje') {
             return $this->insertarMaquillaje(
-                $datos['codigo'],
+                $datos['productoCodigo'],
                 $datos['nombre'],
                 $datos['precio_compra'],
                 $datos['precio_venta'],
@@ -308,9 +327,10 @@ public function insertarProducto($tipo, $datos)
         }
     }
 
-    public function insertarJoya($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
+    public function insertarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
         global $pdo;
         try {
+            error_log('insertarJoyas: Datos recibidos');
             if (isset($Joya_Imagen['error']) && $Joya_Imagen['error'] == UPLOAD_ERR_OK) {
                 $uploadDir = '../Resources/uploads/joyas/';
                 if (!file_exists($uploadDir)) {
@@ -344,6 +364,7 @@ public function insertarProducto($tipo, $datos)
             $stmt->execute();
 
             $result = $stmt->fetchColumn();
+            error_log('insertarJoyas: Resultado: ' . $result);
             return $result;
         } catch (Exception $e) {
             error_log('Error al insertar joya: ' . $e->getMessage());
@@ -352,9 +373,11 @@ public function insertarProducto($tipo, $datos)
         }
     }
 
-    public function insertarMaquillaje($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
+    public function insertarMaquillaje($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion)
+    {
         global $pdo;
         try {
+            error_log('insertarMaquillaje: Datos recibidos');
             if (isset($Joya_Imagen['error']) && $Joya_Imagen['error'] == UPLOAD_ERR_OK) {
                 $uploadDir = '../Resources/uploads/joyas/';
                 if (!file_exists($uploadDir)) {
@@ -369,9 +392,7 @@ public function insertarProducto($tipo, $datos)
                 }
             } else {
                 throw new Exception('Error al subir el archivo: ' . $Joya_Imagen['error']);
-            }
-
-            $sql = 'CALL SP_Joyas_insertar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioCreacion, :Joya_FechaCreacion)';
+            } $sql = 'CALL SP_Joyas_insertar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioCreacion, :Joya_FechaCreacion)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Joya_Codigo', $Joya_Codigo, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_Nombre', $Joya_Nombre, PDO::PARAM_STR);
@@ -387,16 +408,15 @@ public function insertarProducto($tipo, $datos)
             $stmt->execute();
 
             $result = $stmt->fetchColumn();
+            error_log('insertarMaquillaje: Resultado: ' . $result);
             return $result;
         } catch (Exception $e) {
-            error_log('Error al insertar joya: ' . $e->getMessage());
-            echo json_encode(array('error' => 'Error al insertar joya: ' . $e->getMessage()));
+            error_log('Error al insertar maquillaje: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al insertar maquillaje: ' . $e->getMessage()));
             return 0;
         }
     }
-
 }
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $service = new FacturaCompraService();
 
@@ -406,40 +426,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $FaCE_Id = $_POST['FaCE_Id'];
         $resultado = $service->buscarFacturaCompraPorCodigo($FaCE_Id);
         echo $resultado;
-    }elseif ($_POST['action'] === 'buscardetalle') {
+    } elseif ($_POST['action'] === 'buscardetalle') {
         $FaCE_Id = $_POST['FaCE_Id'];
         $resultado = $service->buscarFacturaDetalle($FaCE_Id);
         echo $resultado;
-    }  elseif ($_POST['action'] === 'listarProveedores') {
+    } elseif ($_POST['action'] === 'listarProveedores') {
         echo $service->listarProveedores();
     } elseif ($_POST['action'] === 'listarMateriales') {
         echo $service->listarMateriales();
-    }elseif ($_POST['action'] === 'listarCategorias') {
+    } elseif ($_POST['action'] === 'listarCategorias') {
         echo $service->listarCategorias();
-    }elseif ($_POST['action'] === 'listarSucursales') {
+    } elseif ($_POST['action'] === 'listarMarcas') {
+        echo $service->listarMarcas();
+    } elseif ($_POST['action'] === 'listarSucursales') {
         echo $service->listarSucursales();
-    } elseif ($_POST['action'] === 'insertarProducto') {
+    } elseif ($_POST['action'] == 'insertarProducto') {
         $tipo = $_POST['tipo'];
-            $datos = [
-                'codigo' => $_POST['codigo'],
-                'nombre' => $_POST['nombre'],
-                'precio_compra' => $_POST['precio_compra'],
-                'precio_venta' => $_POST['precio_venta'],
-                'precio_mayorista' => $_POST['precio_mayorista'],
-                'imagen' => $_FILES['imagen'],
-                'stock' => 1,
-                'proveedor' => $_POST['proveedor'],
-                'usuario_creacion' => $_POST['usuario_creacion'],
-                'fecha_creacion' => $_POST['fecha_creacion']
-            ];
-            if ($tipo === 'joya') {
-                $datos['material'] = $_POST['material'];
-                $datos['categoria'] = $_POST['categoria'];
-            } elseif ($tipo === 'maquillaje') {
-                $datos['marca'] = $_POST['marca'];
-            }
-            $resultado = $service->insertarProducto($tipo, $datos);
-            echo json_encode($resultado);
+        $datos = [
+            'productoCodigo' => $_POST['productoCodigo'],
+            'nombre' => $_POST['nombre'],
+            'precio_compra' => $_POST['precio_compra'],
+            'precio_venta' => $_POST['precio_venta'],
+            'precio_mayorista' => $_POST['precio_mayorista'],
+            'imagen' => $_FILES['imagen'],
+            'stock' => 1,
+            'proveedor' => $_POST['proveedor'],
+            'material' => $_POST['Mate_Id'],
+            'categoria' => $_POST['Cate_Id'],
+            'usuario_creacion' => 1,
+            'fecha_creacion' => date('Y-m-d H:i:s')
+        ];
+
+        $resultado = $service->insertarProducto($tipo, $datos);
+        echo json_encode(array('result' => $resultado));
     } elseif ($_POST['action'] === 'listarJoyasAutoCompletado') {
         $term = $_POST['term'];
         echo $service->listarJoyasAutoCompletado($term);
@@ -474,23 +493,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $FaCE_Id = $_POST['FaCE_Id'];
         $producto = $_POST['producto'];
         $FaCD_Dif = $_POST['FaCD_Dif'];
-        
+
         $FaCD_Id = $service->obtenerFacturaCompraDetalleId($FaCE_Id, $producto, $FaCD_Dif);
         if ($FaCD_Id) {
             echo json_encode(array('success' => true, 'FaCD_Id' => $FaCD_Id));
         } else {
             echo json_encode(array('success' => false, 'message' => 'Error al obtener el ID del detalle de la factura.'));
         }
-    }elseif ($_POST['action'] == 'eliminarDetalleFactura') {
+    } elseif ($_POST['action'] == 'eliminarDetalleFactura') {
         $FaCD_Id = $_POST['FaCD_Id'];
 
         $resultado = $service->eliminarDetalleFactura($FaCD_Id);
         echo json_encode($resultado);
-    }elseif ($_POST['action'] == 'finalizarFacturaCompra') {
+    } elseif ($_POST['action'] == 'finalizarFacturaCompra') {
         $FaCE_Id = $_POST['FaCE_Id'];
         $fechaFinal = $_POST['fechaFinal'];
         $resultado = $service->finalizarFacturaCompra($FaCE_Id, $fechaFinal);
         echo json_encode($resultado);
     }
-    
 }

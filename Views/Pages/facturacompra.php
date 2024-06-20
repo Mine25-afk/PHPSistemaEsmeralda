@@ -1,80 +1,83 @@
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        padding: 6px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
 
+    .select2-results__option--highlighted[aria-selected] {
+        background-color: #e2c8c8;
+        color: black;
+    }
 
-    <style>
-        .select2-container--default .select2-selection--single {
-            height: 38px;
-            padding: 6px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-        }
+    .form-row {
+        justify-content: center;
+        margin: 0px 10px;
+    }
 
-        .select2-results__option--highlighted[aria-selected] {
-            background-color: #e2c8c8;
-            color: black;
-        }
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-        .form-row {
-            justify-content: center;
-            margin: 0px 10px;
-        }
+    .btn-outline-success {
+        background-color: white;
+        border-color: #28a745;
+        color: #28a745;
+    }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+    .btn-outline-info {
+        background-color: white;
+        border-color: #17a2b8;
+        color: #17a2b8;
+    }
 
-        .btn-outline-success {
-            background-color: white;
-            border-color: #28a745;
-            color: #28a745;
-        }
+    .btn-outline-danger {
+        background-color: white;
+        border-color: #dc3545;
+        color: #dc3545;
+    }
 
-        .btn-outline-info {
-            background-color: white;
-            border-color: #17a2b8;
-            color: #17a2b8;
-        }
+    .btn-selected-success {
+        background-color: #28a745 !important;
+        color: white !important;
+    }
 
-        .btn-outline-danger {
-            background-color: white;
-            border-color: #dc3545;
-            color: #dc3545;
-        }
+    .btn-selected-info {
+        background-color: #17a2b8 !important;
+        color: white !important;
+    }
 
-        .btn-selected-success {
-            background-color: #28a745 !important;
-            color: white !important;
-        }
+    .btn-selected-danger {
+        background-color: #dc3545 !important;
+        color: white !important;
+    }
 
-        .btn-selected-info {
-            background-color: #17a2b8 !important;
-            color: white !important;
-        }
+    .btn-outline-success.deselected {
+        background-color: white !important;
+        color: #28a745 !important;
+    }
 
-        .btn-selected-danger {
-            background-color: #dc3545 !important;
-            color: white !important;
-        }
+    .btn-outline-info.deselected {
+        background-color: white !important;
+        color: #17a2b8 !important;
+    }
 
-        .btn-outline-success.deselected {
-            background-color: white !important;
-            color: #28a745 !important;
-        }
+    .btn-outline-danger.deselected {
+        background-color: white !important;
+        color: #dc3545 !important;
+    }
 
-        .btn-outline-info.deselected {
-            background-color: white !important;
-            color: #17a2b8 !important;
-        }
+    .input-group-append .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 
-        .btn-outline-danger.deselected {
-            background-color: white !important;
-            color: #dc3545 !important;
-        }
-
-        .input-group-append .btn {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-    </style>
+    .disabled-button {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+</style>
 
 </head>
 
@@ -244,7 +247,7 @@
                                         </div>
                                         <div class="col-md-6" id="marcaField">
                                             <label>Marca</label>
-                                            <select name="Marca_Id" class="form-control" id="Marca_Id" required></select>
+                                            <select name="Marc_Id" class="form-control" id="Marc_Id"></select>
                                         </div>
                                         <div class="col-md-6" id="materialField" style="display:none;">
                                             <label>Material</label>
@@ -285,12 +288,16 @@
             $('#collapseNuevoProducto').collapse('show');
             $('.CrearOcultar').hide();
             $('.CrearMostrar').hide();
+
+            sessionStorage.setItem('actualFaceId', FaCE_Id);
+
             if ($('#radioJoya').is(':checked')) {
                 cargarMaterialesCategorias();
             } else {
                 cargarMarcas();
             }
         });
+
 
         $(document).on('click', '#btnVolverFacturaCompra', function() {
             $('#collapseNuevoProducto').collapse('hide');
@@ -318,17 +325,38 @@
                     console.log(response);
                     if (response.success) {
                         row.remove();
-                        console.log('Detalle eliminado correctamente.');
+                        iziToast.success({
+                            title: 'Exito',
+                            message: 'Detalle eliminado correctamente.',
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
                     } else {
-                        console.error('Error al eliminar el detalle:', response.message);
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Error al eliminar.',
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error('Error en la petición AJAX de eliminar detalle:', status, error);
-                }
+                error: function(xhr, status, error) {}
             });
         }
 
+        function deshabilitarCampos() {
+            $('#Proveedor').prop('disabled', true);
+            $('#Sucursal').prop('disabled', true);
+            $('.metodo-pago').addClass('disabled-button');
+        }
+
+        function habilitarCampos() {
+            $('#Proveedor').prop('disabled', false);
+            $('#Sucursal').prop('disabled', false);
+            $('.metodo-pago').removeClass('disabled-button');
+        }
         $(document).ready(function() {
 
             $('#FacturaCompraForm').validate({
@@ -373,13 +401,14 @@
                 $('.CrearMostrar').show();
                 $('#FacturaCompraForm').trigger('reset');
                 $('#FacturaCompraForm').validate().resetForm();
-                FaCE_Id = 0; // Reiniciar FaCE_Id a 0
-                $('#detalleFactura').empty(); // Vaciar las filas existentes
+                FaCE_Id = 0;
+                $('#detalleFactura').empty();
+
+                habilitarCampos();
 
                 $('#Proveedor').val('').trigger('change');
                 $('#Sucursal').val('').trigger('change');
 
-                // Restablecer el método de pago
                 $('#metodoPagoSeleccionado').val('1');
                 $('.metodo-pago').removeClass('btn-selected-info').addClass('deselected');
                 $('.metodo-pago[data-value="1"]').removeClass('deselected').addClass('btn-selected-info');
@@ -394,7 +423,7 @@
 
             function agregarNuevaFila() {
                 var nuevaFila = `
-<tr data-id="NEW_ID">
+<tr data-id="NUEVOID">
     <td><p id="categoria"></p></td>
     <td>
         <div class="input-group">
@@ -410,8 +439,8 @@
     <td><p id="precio_mayorista">0.00</p></td>
     <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
 </tr>`;
-$('#detalleFactura').append(nuevaFila);
-aplicarAutocompletado();
+                $('#detalleFactura').append(nuevaFila);
+                aplicarAutocompletado();
             }
 
             $('.metodo-pago').click(function() {
@@ -426,13 +455,7 @@ aplicarAutocompletado();
                 $('.metodo-pago').removeClass('btn-selected-success btn-selected-info btn-selected-danger').addClass('deselected');
                 $(this).removeClass('deselected');
 
-                // if ($(this).hasClass('metodo-efectivo')) {
-                //     $(this).addClass('btn-selected-success');
-                // } else if ($(this).hasClass('metodo-tarjeta')) {
                 $(this).addClass('btn-selected-info');
-                // } else if ($(this).hasClass('metodo-online')) {
-                //     $(this).addClass('btn-selected-danger');
-                // }
             });
 
             function aplicarAutocompletado() {
@@ -507,14 +530,14 @@ aplicarAutocompletado();
                     },
                     minLength: 1,
                     select: function(event, ui) {
-                        var selectedItem = ui.item.data;
-                        let nombreProducto = selectedItem.Joya_Nombre || selectedItem.Maqu_Nombre;
-                        var preciom = selectedItem.Mayor;
-                        var preciov = selectedItem.Venta;
+                        var seleccionadoitem = ui.item.data;
+                        let nombreProducto = seleccionadoitem.Joya_Nombre || seleccionadoitem.Maqu_Nombre;
+                        var preciom = seleccionadoitem.Mayor;
+                        var preciov = seleccionadoitem.Venta;
                         $(this).closest('tr').find('#precio_mayorista').text(preciom);
                         $(this).closest('tr').find('#precio_venta').text(preciov);
-                        $(this).closest('tr').find('input[name="precio_compra"]').val(selectedItem.Joya_PrecioCompra || selectedItem.Maqu_PrecioCompra);
-                        if (selectedItem.Joya_Codigo) {
+                        $(this).closest('tr').find('input[name="precio_compra"]').val(seleccionadoitem.Joya_PrecioCompra || seleccionadoitem.Maqu_PrecioCompra);
+                        if (seleccionadoitem.Joya_Codigo) {
                             $(this).closest('tr').find('#categoria').text('Joya');
                         } else {
                             $(this).closest('tr').find('#categoria').text('Maquillaje');
@@ -526,10 +549,10 @@ aplicarAutocompletado();
 
             $('input[name="producto"]').on('blur', function() {
                 var term = $(this).val();
-                var isNumber = /^[0-9]+$/.test(term);
-                var isAlpha = /^[a-zA-Z]+$/.test(term);
+                var numeroo = /^[0-9]+$/.test(term);
+                var alfanumerico = /^[a-zA-Z]+$/.test(term);
 
-                if (isNumber || isAlpha) {
+                if (numeroo || alfanumerico) {
                     $.ajax({
                         url: 'Services/FacturaCompraService.php',
                         type: 'POST',
@@ -629,10 +652,10 @@ aplicarAutocompletado();
                     },
                     success: function(response) {
                         var proveedores = JSON.parse(response);
-                        var selectProveedor = $('#Proveedor');
-                        selectProveedor.empty().append('<option selected="selected" value="">--Seleccione--</option>');
+                        var provseleccionado = $('#Proveedor');
+                        provseleccionado.empty().append('<option selected="selected" value="">--Seleccione--</option>');
                         proveedores.forEach(function(proveedor) {
-                            selectProveedor.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
+                            provseleccionado.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
                         });
                     }
                 });
@@ -645,10 +668,10 @@ aplicarAutocompletado();
                     },
                     success: function(response) {
                         var sucursales = JSON.parse(response);
-                        var selectSucursal = $('#Sucursal');
-                        selectSucursal.empty().append('<option selected="selected" value="">--Seleccione--</option>');
+                        var sucuseleccionada = $('#Sucursal');
+                        sucuseleccionada.empty().append('<option selected="selected" value="">--Seleccione--</option>');
                         sucursales.forEach(function(sucursal) {
-                            selectSucursal.append('<option value="' + sucursal.Sucu_Id + '">' + sucursal.Sucu_Nombre + '</option>');
+                            sucuseleccionada.append('<option value="' + sucursal.Sucu_Id + '">' + sucursal.Sucu_Nombre + '</option>');
                         });
                     }
                 });
@@ -687,16 +710,16 @@ aplicarAutocompletado();
 
             function cargarMarcas() {
                 $.ajax({
-                    url: 'Services/MarcaService.php',
+                    url: 'Services/FacturaCompraService.php',
                     type: 'POST',
                     data: {
                         action: 'listarMarcas'
                     },
                     success: function(response) {
                         const marcas = JSON.parse(response).data;
-                        $('#Marca_Id').empty().append('<option value="">--Seleccione--</option>');
+                        $('#Marc_Id').empty().append('<option value="">--Seleccione--</option>');
                         marcas.forEach(marca => {
-                            $('#Marca_Id').append('<option value="' + marca.Marca_Id + '">' + marca.Marca_Nombre + '</option>');
+                            $('#Marc_Id').append('<option value="' + marca.Marc_Id + '">' + marca.Marc_Marca + '</option>');
                         });
                     }
                 });
@@ -720,33 +743,49 @@ aplicarAutocompletado();
                 }
             });
 
-            // Inicializar con maquillaje seleccionado
             cargarMarcas();
 
             $('#NuevoProductoForm').on('submit', function(event) {
                 event.preventDefault();
+
                 const formData = new FormData(this);
 
-                if ($('#radioJoya').is(':checked')) {
-                    formData.append('action', 'insertarProducto');
-                    formData.append('tipo', 'joya');
-                    formData.append('nombre', $('#nombreProducto').val());
-                    formData.append('precio_compra', $('#precioCompraProducto').val());
-                    formData.append('precio_venta', $('#precioVentaProducto').val());
-                    formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
-                    formData.append('imagen', $('#Imagen')[0].files[0]);
+                var tipoProducto = $('input[name="productType"]:checked').val();
+                formData.append('tipo', tipoProducto);
+
+                var codigoProducto;
+                if (tipoProducto === 'joya') {
+                    var materialSeleccionado = $('#Mate_Id option:selected').text();
+                    var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
+                    var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
+                    codigoProducto = codigoMaterial + codigoAleatorio;
+                } else if (tipoProducto === 'maquillaje') {
+                    var categoriaSeleccionada = $('#Marc_Id option:selected').text();
+                    var codigoCategoria = categoriaSeleccionada.substring(0, 2).toUpperCase();
+                    var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
+                    codigoProducto = codigoCategoria + codigoAleatorio;
+                }
+                formData.append('productoCodigo', codigoProducto);
+
+                formData.append('action', 'insertarProducto');
+                formData.append('nombre', $('#nombreProducto').val());
+                formData.append('precio_compra', $('#precioCompraProducto').val());
+                formData.append('precio_venta', $('#precioVentaProducto').val());
+                formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
+                formData.append('imagen', $('#Imagen')[0].files[0]);
+                formData.append('stock', 1);
+                formData.append('usuario_creacion', 1);
+                formData.append('fecha_creacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+
+                if (tipoProducto === 'joya') {
                     formData.append('material', $('#Mate_Id').val());
                     formData.append('categoria', $('#Cate_Id').val());
-                } else {
-                    formData.append('action', 'insertarProducto');
-                    formData.append('tipo', 'maquillaje');
-                    formData.append('nombre', $('#nombreProducto').val());
-                    formData.append('precio_compra', $('#precioCompraProducto').val());
-                    formData.append('precio_venta', $('#precioVentaProducto').val());
-                    formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
-                    formData.append('imagen', $('#Imagen')[0].files[0]);
-                    formData.append('marca', $('#Marca_Id').val());
+                } else if (tipoProducto === 'maquillaje') {
+                    formData.append('marca', $('#Marc_Id').val());
                 }
+
+                var proveedorSeleccionado = $('#Proveedor').val();
+                formData.append('proveedor', proveedorSeleccionado);
 
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
@@ -755,31 +794,58 @@ aplicarAutocompletado();
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        response = JSON.parse(response);
-                        if (response.result == 1) {
-                            iziToast.success({
-                                title: 'Éxito',
-                                message: 'Producto insertado correctamente',
-                                position: 'topRight',
-                                transitionIn: 'flipInX',
-                                transitionOut: 'flipOutX'
-                            });
-                            $('#collapseNuevoProducto').collapse('hide');
-                            $('.CrearOcultar').show();
-                            $('.CrearMostrar').show();
-                            $('#NuevoProductoForm')[0].reset();
-                            $('#TablaFacturaCompra').DataTable().ajax.reload();
-                        } else {
+                        try {
+                            response = JSON.parse(response);
+                            if (response.result == 1) {
+                                iziToast.success({
+                                    title: 'Éxito',
+                                    message: 'Producto insertado correctamente',
+                                    position: 'topRight',
+                                    transitionIn: 'flipInX',
+                                    transitionOut: 'flipOutX'
+                                });
+
+                                var actualFaceId = sessionStorage.getItem('actualFaceId');
+                                if (actualFaceId) {
+                                    FaCE_Id = actualFaceId;
+
+                                    var nuevoProductoNombre = $('#nombreProducto').val();
+                                    var nuevoProductoPrecioCompra = $('#precioCompraProducto').val();
+                                    var nuevoProductoPrecioVenta = $('#precioVentaProducto').val();
+                                    var nuevoProductoPrecioMayorista = $('#precioMayoristaProducto').val();
+
+                                    sessionStorage.setItem('nuevoProductoNombre', nuevoProductoNombre);
+                                    sessionStorage.setItem('nuevoProductoPrecioCompra', nuevoProductoPrecioCompra);
+                                    sessionStorage.setItem('nuevoProductoPrecioVenta', nuevoProductoPrecioVenta);
+                                    sessionStorage.setItem('nuevoProductoPrecioMayorista', nuevoProductoPrecioMayorista);
+
+                                    editarFactura(FaCE_Id);
+                                }
+
+                                $('#collapseNuevoProducto').collapse('hide');
+                                $('.CrearOcultar').show();
+                                $('.CrearMostrar').hide();
+                                $('#NuevoProductoForm')[0].reset();
+                            } else {
+                                iziToast.error({
+                                    title: 'Error',
+                                    message: 'Error al insertar el producto: ' + (response.error ? response.error : ''),
+                                    position: 'topRight',
+                                    transitionIn: 'flipInX',
+                                    transitionOut: 'flipOutX'
+                                });
+                            }
+                        } catch (e) {
                             iziToast.error({
                                 title: 'Error',
-                                message: 'Error al insertar el producto: ' + (response.error ? response.error : ''),
+                                message: 'Error al insertar el producto. La respuesta del servidor no es válida.',
                                 position: 'topRight',
                                 transitionIn: 'flipInX',
                                 transitionOut: 'flipOutX'
                             });
                         }
                     },
-                    error: function() {
+                    error: function(jqXHR, textStatus, errorThrown) {
                         iziToast.error({
                             title: 'Error',
                             message: 'Error en la comunicación con el servidor',
@@ -790,6 +856,59 @@ aplicarAutocompletado();
                     }
                 });
             });
+
+            function editarFactura(faCE_Id) {
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'buscar',
+                        FaCE_Id: faCE_Id
+                    },
+                    success: function(response) {
+                        console.log('editar encabezado', response);
+                        var factura = response.data[0];
+
+                        $.ajax({
+                            url: 'Services/FacturaCompraService.php',
+                            method: 'POST',
+                            dataType: 'json',
+                            data: {
+                                action: 'buscardetalle',
+                                FaCE_Id: faCE_Id
+                            },
+                            success: function(responseDetalle) {
+                                console.log('editar detalle', responseDetalle);
+                                var detalles = responseDetalle.length > 0 ? responseDetalle : [];
+                                llenarCamposFactura(factura, detalles);
+                                var nuevoProductoNombre = sessionStorage.getItem('nuevoProductoNombre');
+                                var nuevoProductoPrecioCompra = sessionStorage.getItem('nuevoProductoPrecioCompra');
+                                var nuevoProductoPrecioVenta = sessionStorage.getItem('nuevoProductoPrecioVenta');
+                                var nuevoProductoPrecioMayorista = sessionStorage.getItem('nuevoProductoPrecioMayorista');
+
+                                if (nuevoProductoNombre) {
+                                    $('input[name="producto"]:last').val(nuevoProductoNombre);
+                                    $('input[name="precio_compra"]:last').val(nuevoProductoPrecioCompra);
+                                    $('#precio_venta:last').text(nuevoProductoPrecioVenta);
+                                    $('#precio_mayorista:last').text(nuevoProductoPrecioMayorista);
+
+                                    sessionStorage.removeItem('nuevoProductoNombre');
+                                    sessionStorage.removeItem('nuevoProductoPrecioCompra');
+                                    sessionStorage.removeItem('nuevoProductoPrecioVenta');
+                                    sessionStorage.removeItem('nuevoProductoPrecioMayorista');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error en la petición AJAX de obtener detalles de factura:', status, error);
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la petición AJAX de obtener datos de factura:', status, error);
+                    }
+                });
+            }
 
 
             function insertarActualizarFactura(row) {
@@ -817,7 +936,6 @@ aplicarAutocompletado();
                         precioMayorista,
                     });
 
-                    // Si FaCE_Id es mayor a 0, significa que estamos editando una factura existente.
                     if (FaCE_Id > 0) {
                         insertarDetalle(FaCE_Id, producto, cantidad, precioCompra, precioVenta, precioMayorista, categoria);
                     } else {
@@ -839,6 +957,8 @@ aplicarAutocompletado();
                                 if (response.success) {
                                     FaCE_Id = response.FaCE_Id;
                                     insertarDetalle(FaCE_Id, producto, cantidad, precioCompra, precioVenta, precioMayorista, categoria);
+                                    deshabilitarCampos();
+
                                 } else {
                                     console.error('Error al insertar la factura:', response.message);
                                 }
@@ -901,15 +1021,16 @@ aplicarAutocompletado();
                         FaCD_Dif: categoria
                     },
                     success: function(response) {
-                        console.log('Respuesta de obtener detalle ID:', response);
                         if (response.success) {
-                            var row = $('tr[data-id="NEW_ID"]');
+                            var row = $('tr[data-id="NUEVOID"]');
                             var cantidad = row.find('input[name="cantidad"]').val();
                             var precioCompra = row.find('input[name="precio_compra"]').val();
                             row.attr('data-id', response.FaCD_Id);
                             row.find('input[name="producto"]').replaceWith('<p>' + producto + '</p>');
                             row.find('input[name="cantidad"]').replaceWith('<p>' + cantidad + '</p>');
                             row.find('input[name="precio_compra"]').replaceWith('<p>' + precioCompra + '</p>');
+
+                            row.find('#btnNuevoProducto').remove();
 
                             agregarNuevaFila();
                             iziToast.success({
@@ -920,7 +1041,6 @@ aplicarAutocompletado();
                                 transitionOut: 'flipOutX'
                             });
                         } else {
-                            console.error('Error al obtener el ID del detalle:', response.message);
                             iziToast.error({
                                 title: 'Error',
                                 message: 'Ingrese un producto existente.',
@@ -935,6 +1055,7 @@ aplicarAutocompletado();
                     }
                 });
             }
+
 
 
             $('#TablaFacturaCompra tbody').on('click', '.abrir-finalizar', function() {
@@ -1022,10 +1143,10 @@ aplicarAutocompletado();
 
                 const imgWidth = 200;
                 const imgHeight = 50;
-          
+
                 var pageNumber = 1;
 
-           
+
 
                 doc.setFontSize(10);
                 doc.setFont(undefined, 'bold');
@@ -1112,7 +1233,6 @@ aplicarAutocompletado();
                 doc.save(`Factura_${factura.FaCE_Id}.pdf`);
             }
 
-            // Función para llenar los campos con los datos de la factura
             function llenarCamposFactura(factura, detalles) {
                 $('#Proveedor').val(factura.Prov_Id).trigger('change');
                 $('#Sucursal').val(factura.sucu_Id).trigger('change');
@@ -1120,7 +1240,7 @@ aplicarAutocompletado();
                 $('.metodo-pago').removeClass('btn-selected-info').addClass('deselected');
                 $(`.metodo-pago[data-value="${factura.Mepa_Id}"]`).removeClass('deselected').addClass('btn-selected-info');
 
-                $('#detalleFactura').empty(); // Vaciar los detalles existentes
+                $('#detalleFactura').empty();
 
                 detalles.forEach(detalle => {
                     var nuevaFila = `
@@ -1137,7 +1257,6 @@ aplicarAutocompletado();
                 });
                 agregarNuevaFila();
 
-                // Mostrar la sección de edición
                 $('.CrearOcultar').hide();
                 $('.CrearMostrar').show();
             }
@@ -1145,7 +1264,7 @@ aplicarAutocompletado();
             $('#TablaFacturaCompra tbody').on('click', '.abrir-editar', function() {
                 var row = $(this).closest('tr');
                 var data = table.row(row).data();
-                FaCE_Id = data.FaCE_Id; // Aquí asignamos el FaCE_Id de la factura existente
+                FaCE_Id = data.FaCE_Id;
 
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
@@ -1171,6 +1290,8 @@ aplicarAutocompletado();
                                 console.log('editar detalle', responseDetalle);
                                 var detalles = responseDetalle.length > 0 ? responseDetalle : [];
                                 llenarCamposFactura(factura, detalles);
+                                deshabilitarCampos();
+
                             },
                             error: function(xhr, status, error) {
                                 console.error('Error en la petición AJAX de obtener detalles de factura:', status, error);
@@ -1197,9 +1318,8 @@ aplicarAutocompletado();
                         d.action = 'listarFacturaCompras';
                     },
                     "dataSrc": function(json) {
-                        //  console.log('Respuesta del servidor:', json);
                         if (json.error) {
-                            console.error('Error recibido del servidor:', json.error);
+                            console.error('Erro:', json.error);
                             return [];
                         }
                         return json.data;
