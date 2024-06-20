@@ -1,16 +1,4 @@
 <style>
-    .select2-container--default .select2-selection--single {
-        height: 38px;
-        padding: 6px 12px;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-    }
-
-    .select2-results__option--highlighted[aria-selected] {
-        background-color: #e2c8c8;
-        color: black;
-    }
-
     .form-row {
         justify-content: center;
         margin: 0px 10px;
@@ -20,7 +8,7 @@
         margin-bottom: 15px;
     }
 
-    .btn-outline-success {
+    /* .btn-outline-success {
         background-color: white;
         border-color: #28a745;
         color: #28a745;
@@ -36,9 +24,9 @@
         background-color: white;
         border-color: #dc3545;
         color: #dc3545;
-    }
+    } */
 
-    .btn-selected-success {
+    /* .btn-selected-success {
         background-color: #28a745 !important;
         color: white !important;
     }
@@ -66,7 +54,7 @@
     .btn-outline-danger.deselected {
         background-color: white !important;
         color: #dc3545 !important;
-    }
+    } */
 
     .input-group-append .btn {
         border-top-left-radius: 0;
@@ -86,208 +74,198 @@
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card">
-                    <<<<<<< HEAD <div class="card-header">
-                        <h3 class="text-center"><b>Factura Compra</b></h3>
-                        <!-- <img src="../Logo.png" /> -->
-                        <!-- <img src="/Views/Logo.png" /> -->
-                </div>
-                =======
-                <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
+                    <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
 
-                >>>>>>> origin/Hector
-                <div class="card-body">
-                    <div class="CrearOcultar" style="position:relative; top:-30px">
-                        <p class="btn btn-primary" id="AbrirModal"> Nuevo</p>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover" id="TablaFacturaCompra">
-                                <thead>
-                                    <tr>
-                                        <th>Proveedor</th>
-                                        <th>Metodo de Pago</th>
-                                        <th class="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                    <div class="card-body">
+                        <div class="CrearOcultar" style="position:relative; top:-30px">
+                            <p class="btn btn-primary" id="AbrirModal"> Nuevo</p>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover" id="TablaFacturaCompra">
+                                    <thead>
+                                        <tr>
+                                            <th>Proveedor</th>
+                                            <th>Metodo de Pago</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="CrearMostrar">
-                        <form id="FacturaCompraForm" style="width: 100%">
-                            <div class="form-row" style="justify-content: center; margin: 0px 10px">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Proveedor</label>
-                                        <select id="Proveedor" name="Proveedor" class="form-control" style="width: 100%;">
-                                            <option value="">--Seleccione--</option>
-                                        </select>
+                        <div class="CrearMostrar">
+                            <form id="FacturaCompraForm" style="width: 100%">
+                                <div class="form-row" style="justify-content: center; margin: 0px 10px">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Proveedor</label>
+                                            <select id="Proveedor" name="Proveedor" class="form-control" style="width: 100%;">
+                                                <option value="">--Seleccione--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Sucursal</label>
+                                            <select id="Sucursal" name="Sucursal" class="form-control" style="width: 100%;">
+                                                <option selected="selected" value="">--Seleccione--</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Sucursal</label>
-                                        <select id="Sucursal" name="Sucursal" class="form-control" style="width: 100%;">
-                                            <option selected="selected" value="">--Seleccione--</option>
-                                        </select>
+
+                                <div class="card-body">
+                                    <label for="">Método de Pago</label>
+                                    <div class="form-row d-flex justify-content-start">
+                                        <div class="col-md-7">
+                                            <input type="hidden" id="metodoPagoSeleccionado" name="metodoPagoSeleccionado" value="1" />
+                                            <button type="button" class="btn btn-secondary metodo-pago btn-selected-info" data-value="1">Efectivo</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="4">Tarjeta de Crédito</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="7">Pago en Línea</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="card-body">
-                                <label for="">Método de Pago</label>
-                                <div class="form-row d-flex justify-content-start">
-                                    <div class="col-md-7">
-                                        <input type="hidden" id="metodoPagoSeleccionado" name="metodoPagoSeleccionado" value="1" />
-                                        <button type="button" class="btn btn-outline-info metodo-pago btn-selected-info" data-value="1">Efectivo</button>
-                                        <button type="button" class="btn btn-outline-info metodo-pago deselected" data-value="4">Tarjeta de Crédito</button>
-                                        <button type="button" class="btn btn-outline-info metodo-pago deselected" data-value="7">Pago en Línea</button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-
-                            <div class="card-body">
-                                <div class="form-row d-flex justify-content-start">
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Categoría</th>
-                                                    <th>Producto</th>
-                                                    <th>Cantidad</th>
-                                                    <th>Precio Compra</th>
-                                                    <th>Precio Venta</th>
-                                                    <th>Precio Mayorista</th>
-                                                    <th>Eliminar</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="detalleFactura">
-                                                <tr>
-                                                    <td>
-                                                        <p id="categoria"></p>
-                                                    </td>
-                                                    <td>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" name="producto" />
-                                                            <div class="input-group-append">
-                                                                <button class="btn btn-outline-secondary" type="button" id="btnNuevoProducto"><i class="fas fa-plus"></i></button>
+                                <div class="card-body">
+                                    <div class="form-row d-flex justify-content-start">
+                                        <div class="col-md-12">
+                                            <table class="table  table-striped table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Categoría</th>
+                                                        <th>Producto</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Precio Compra</th>
+                                                        <th>Precio Venta</th>
+                                                        <th>Precio Mayorista</th>
+                                                        <th>Eliminar</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="detalleFactura">
+                                                    <tr>
+                                                        <td>
+                                                            <p id="categoria"></p>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" name="producto" />
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-outline-secondary" type="button" id="btnNuevoProducto"><i class="fas fa-plus"></i></button>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
-                                                    <td><input type="text" class="form-control" id="precio_compra" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
-                                                    <td>
-                                                        <p id="precio_venta">0.00</p>
-                                                    </td>
-                                                    <td>
-                                                        <p id="precio_mayorista">0.00</p>
-                                                    </td>
-                                                    <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
-                                                </tr>
-                                            </tbody>
-                                            <tfoot>
+                                                        </td>
+                                                        <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
+                                                        <td><input type="text" class="form-control" id="precio_compra" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
+                                                        <td>
+                                                            <p id="precio_venta">0.00</p>
+                                                        </td>
+                                                        <td>
+                                                            <p id="precio_mayorista">0.00</p>
+                                                        </td>
+                                                        <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
 
-                                            </tfoot>
-                                        </table>
+                                                </tfoot>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
 
 
-                            <div class="card-body">
-                                <div class="form-row d-flex justify-content-end">
-                                    <div class="col-auto">
+                                <div class="card-body">
+                                    <div class="form-row d-flex justify-content-end">
+                                        <div class="col-auto">
 
-                                        <input type="button" value="Confirmar" class="btn btn-primary" id="confirmarBtn" />
+                                            <input type="button" value="Confirmar" class="btn btn-primary" id="confirmarBtn" />
+                                        </div>
+                                        <div class="col-auto">
+                                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+                                        </div>
+
                                     </div>
-                                    <div class="col-auto">
-                                        <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-                                    </div>
-
                                 </div>
-                            </div>
+                        </div>
+
+
                     </div>
-
-
                 </div>
+                </form>
             </div>
-            </form>
-        </div>
 
-        <div class="collapse" id="collapseNuevoProducto">
-            <h5 class="text-center">Agregar Producto</h5>
-            <form id="NuevoProductoForm" style="width: 100%">
-                <div class="form-row" id="productTypeSelection">
+            <div class="collapse" id="collapseNuevoProducto">
+                <h5 class="text-center">Agregar Producto</h5>
+                <form id="NuevoProductoForm" style="width: 100%">
+                    <div class="form-row" id="productTypeSelection">
 
-                    <div class="col-sm-12">
-                        <div class="d-flex align-items-center">
-                            <div class="custom-control custom-radio mr-3">
-                                <input class="custom-control-input" type="radio" id="radioMaquillaje" name="productType" value="maquillaje" checked>
-                                <label for="radioMaquillaje" class="custom-control-label">Maquillaje</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input class="custom-control-input" type="radio" id="radioJoya" name="productType" value="joya">
-                                <label for="radioJoya" class="custom-control-label">Joya</label>
+                        <div class="col-sm-12">
+                            <div class="d-flex align-items-center">
+                                <div class="custom-control custom-radio mr-3">
+                                    <input class="custom-control-input" type="radio" id="radioMaquillaje" name="productType" value="maquillaje" checked>
+                                    <label for="radioMaquillaje" class="custom-control-label">Maquillaje</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input class="custom-control-input" type="radio" id="radioJoya" name="productType" value="joya">
+                                    <label for="radioJoya" class="custom-control-label">Joya</label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <br>
+                    <br>
 
-                <div class="form-row">
-                    <div class="col-md-6">
-                        <label>Nombre del Producto</label>
-                        <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label>Precio Compra</label>
-                        <input type="text" class="form-control" id="precioCompraProducto" name="precioCompraProducto" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label>Precio Venta</label>
-                        <input type="text" class="form-control" id="precioVentaProducto" name="precioVentaProducto" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label>Precio Mayorista</label>
-                        <input type="text" class="form-control" id="precioMayoristaProducto" name="precioMayoristaProducto" required />
-                    </div>
-                    <div class="col-md-6" id="marcaField">
-                        <label>Marca</label>
-                        <select name="Marc_Id" class="form-control" id="Marc_Id"></select>
-                    </div>
-                    <div class="col-md-6" id="materialField" style="display:none;">
-                        <label>Material</label>
-                        <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
-                    </div>
-                    <div class="col-md-6" id="categoriaField" style="display:none;">
-                        <label>Categoría</label>
-                        <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
-                    </div>
-                    <div class="custom-file col-md-6">
-                        <label>Imagen</label>
-                        <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
-                        <label class="custom-file-label"></label>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Imagen Actual</label>
-                        <div id="imagenActualContainer">
-                            <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <label>Nombre del Producto</label>
+                            <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Precio Compra</label>
+                            <input type="text" class="form-control" id="precioCompraProducto" name="precioCompraProducto" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Precio Venta</label>
+                            <input type="text" class="form-control" id="precioVentaProducto" name="precioVentaProducto" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Precio Mayorista</label>
+                            <input type="text" class="form-control" id="precioMayoristaProducto" name="precioMayoristaProducto" required />
+                        </div>
+                        <div class="col-md-6" id="marcaField">
+                            <label>Marca</label>
+                            <select name="Marc_Id" class="form-control" id="Marc_Id"></select>
+                        </div>
+                        <div class="col-md-6" id="materialField" style="display:none;">
+                            <label>Material</label>
+                            <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
+                        </div>
+                        <div class="col-md-6" id="categoriaField" style="display:none;">
+                            <label>Categoría</label>
+                            <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
+                        </div>
+                        <div class="custom-file col-md-6">
+                            <label>Imagen</label>
+                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
+                            <label class="custom-file-label"></label>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Imagen Actual</label>
+                            <div id="imagenActualContainer">
+                                <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="form-row d-flex justify-content-start">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    <br>
+                    <div class="form-row d-flex justify-content-start">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
     </div>
     </div>
     </div>
@@ -1283,6 +1261,166 @@
 
                 doc.save(`Factura_${factura.FaCE_Id}.pdf`);
             }
+
+            // ReporteFactura(cuerpo, logoURL, Cliente, DNI, Muni, Depa, Fecha, Pedido, Imouesto, Metodo, Subtotal, Total, FechaCreacion, Usuario, largo, HoraGeneracion, TotalCancelado, Cambio) {
+            //     const doc = new jsPDF({
+            //         orientation: 'portrait',
+            //         unit: 'px',
+            //         format: [160, largo] // Ancho fijo de 200px, altura inicial muy grande
+            //     });
+
+            //     // Información de la empresa
+            //     doc.setFontSize(12);
+            //     doc.setFont(undefined, 'normal');
+            //     doc.text('Esmeraldas HN', 75, 20, {
+            //         align: 'center'
+            //     });
+
+            //     doc.setFontSize(10);
+            //     doc.setFont(undefined, 'normal');
+            //     doc.text("Francisco Morazan, Tegucigalpa", 75, 30, {
+            //         align: 'center'
+            //     });
+            //     doc.text("Los dolores, calle buenos aires", 75, 40, {
+            //         align: 'center'
+            //     });
+            //     doc.text("email: esmeraldashn2014@gmail.com", 75, 50, {
+            //         align: 'center'
+            //     });
+
+            //     // Información de la factura
+            //     doc.setFontSize(12);
+            //     doc.setFont(undefined, 'bold');
+            //     doc.text("Factura:", 60, 70, {
+            //         align: 'center'
+            //     });
+
+            //     doc.setFontSize(10);
+            //     doc.setFont(undefined, 'normal');
+            //     doc.text("Fecha: " + FechaCreacion + "   Hora:  " + HoraGeneracion, 10, 80, {
+            //         align: 'left'
+            //     });
+            //     doc.text("" + Pedido, 90, 70, {
+            //         align: 'center'
+            //     });
+            //     doc.text("Cliente: " + Cliente, 10, 90, {
+            //         align: 'left'
+            //     });
+            //     doc.text("RTN: " + DNI, 10, 100, {
+            //         align: 'left'
+            //     });
+            //     doc.text("--------------------------------------------------------", 10, 110, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(12);
+            //     doc.text("Descripción          Cant.        Precio ", 10, 120, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(10);
+            //     doc.text("--------------------------------------------------------", 10, 130, {
+            //         align: 'left'
+            //     });
+
+            //     // Ajustar la posición de inicio de la tabla
+            //     const yPosition = 140; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+            //     autoTable(doc, {
+            //         body: cuerpo,
+            //         startY: yPosition,
+            //         margin: {
+            //             left: 10
+            //         },
+            //         styles: {
+            //             fontSize: 12,
+            //             fillColor: [255, 255, 255], // Fondo blanco
+            //             textColor: [0, 0, 0] // Texto negro
+            //         },
+            //         headStyles: {
+            //             halign: 'center',
+            //             valign: 'middle',
+            //             fontStyle: 'normal',
+            //             fillColor: [255, 255, 255], // Fondo blanco
+            //             textColor: [0, 0, 0] // Texto negro
+            //         },
+            //         columnStyles: {
+            //             0: {
+            //                 halign: 'left',
+            //                 cellWidth: 75
+            //             }, // Ancho personalizado para la columna 0
+            //             1: {
+            //                 halign: 'center',
+            //                 cellWidth: 20
+            //             }, // Ancho personalizado para la columna 1
+            //             2: {
+            //                 halign: 'center',
+            //                 cellWidth: 60
+            //             } // Ancho personalizado para la columna 2
+            //         },
+            //         theme: 'plain' // Sin líneas de borde, solo blanco
+            //     });
+
+            //     const borderYPosition = (doc as any).previousAutoTable.finalY + 10;
+            //     doc.text("--------------------------------------------------------", 10, borderYPosition, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(12);
+            //     doc.text("Subtotal", 10, borderYPosition + 10, {
+            //         align: 'left'
+            //     });
+            //     doc.text("Impuesto", 10, borderYPosition + 25, {
+            //         align: 'left'
+            //     });
+            //     doc.text("Total", 10, borderYPosition + 40, {
+            //         align: 'left'
+            //     });
+            //     doc.text(Subtotal, 150, borderYPosition + 10, {
+            //         align: 'right'
+            //     });
+            //     doc.text(Imouesto, 150, borderYPosition + 25, {
+            //         align: 'right'
+            //     });
+            //     doc.text(Total, 150, borderYPosition + 40, {
+            //         align: 'right'
+            //     });
+
+            //     if (Metodo == "Efectivo") {
+            //         doc.text("Total Cancelado", 10, borderYPosition + 55, {
+            //             align: 'left'
+            //         });
+            //         doc.text(TotalCancelado, 150, borderYPosition + 55, {
+            //             align: 'right'
+            //         });
+            //         doc.text("Cambio", 10, borderYPosition + 70, {
+            //             align: 'left'
+            //         });
+            //         doc.text(Cambio, 150, borderYPosition + 70, {
+            //             align: 'right'
+            //         });
+            //     } else {
+            //         doc.text("Total Cancelado", 10, borderYPosition + 55, {
+            //             align: 'left'
+            //         });
+            //         doc.text(Total, 150, borderYPosition + 55, {
+            //             align: 'right'
+            //         });
+            //         doc.text("Cambio", 10, borderYPosition + 70, {
+            //             align: 'left'
+            //         });
+            //         doc.text("0", 150, borderYPosition + 70, {
+            //             align: 'right'
+            //         });
+            //     }
+            //     doc.setFontSize(10);
+            //     doc.text("--------------------------------------------------------", 10, borderYPosition + 80, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(14);
+            //     doc.text("Gracias por su compra", 80, borderYPosition + 90, {
+            //         align: 'center'
+            //     });
+            //     console.log(borderYPosition + 100)
+            //     return doc.output('blob');
+            // }
+
 
             function llenarCamposFactura(factura, detalles) {
                 $('#Proveedor').val(factura.Prov_Id).trigger('change');
