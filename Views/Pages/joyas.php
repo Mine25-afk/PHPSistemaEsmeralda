@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
+   
+   <style>
         .error-message {
             color: red;
             font-size: 0.875em;
@@ -54,12 +55,12 @@
                                     <th>Id</th>
                                     <th>Codigo</th>
                                     <th>Descripción</th>
-                                    <th>Precio Compra</th>
+                      
                                     <th>Precio Venta</th>
                                     <th>Stock</th>
                                     <th>Precio Mayorista</th>
                                     <th>Imagen</th>
-                                    <th>Material</th>
+                                  
                                     <th>Proveedor</th>
                                     <th>Categoría</th>
                                     <th class="text-center">Acciones</th>
@@ -131,6 +132,7 @@
                                 <input type="file" name="Joya_Imagen" class="form-control" id="Joya_Imagen" required />
                                 <div class="error-message" id="Joya_Imagen_error"></div>
 
+                        
                                 <label class="control-label">Imagen Actual</label>
                                 <div id="imagenActualContainer">
                                     <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
@@ -310,11 +312,12 @@
                                     <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
                                 </div>
                                 <div class="barcode-container text-center" id="barcodeContainer">
-                                    <!-- Aquí se generan dinámicamente los códigos de barras -->
+                               
                                 </div>
                                 <div class="joya-nombre mt-3 text-center">
-                                    <!-- Aquí se mostrará el nombre de la joya -->
+                               
                                     <h5 id="nombreJoya"></h5>
+
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-center">
@@ -355,9 +358,7 @@
                                 {
                                     "data": "Joya_Nombre"
                                 },
-                                {
-                                    "data": "Joya_PrecioCompra"
-                                },
+                            
                                 {
                                     "data": "Joya_PrecioVenta"
                                 },
@@ -374,9 +375,7 @@
                                         return '<img src="' + imageUrl + '" alt="Imagen de Joya" width="50">';
                                     }
                                 },
-                                {
-                                    "data": "Mate_Material"
-                                },
+                             
                                 {
                                     "data": "Prov_Proveedor"
                                 },
@@ -511,129 +510,127 @@
                         });
 
                         $('#guardarBtn').click(function() {
-                            $('.error-message').text('');
-                            var isValid = true;
+    $('.error-message').text('');
+    var isValid = true;
 
+    var materialSeleccionado = $('#Mate_Id option:selected').text();
+    console.log('Material seleccionado:', materialSeleccionado);
 
-                            // Captura el valor del material seleccionado
-                            var materialSeleccionado = $('#Mate_Id option:selected').text();
-                            console.log('Material seleccionado:', materialSeleccionado);
+    if (materialSeleccionado === undefined) {
+        $('#Mate_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
 
+    var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
+    console.log('Código del material:', codigoMaterial);
 
-                            if (materialSeleccionado === undefined) {
-                                $('#Mate_Id_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
+    var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
+    console.log('Código aleatorio:', codigoAleatorio);
 
-                            //primeras dos letras del material 
-                            var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
-                            console.log('Código del material:', codigoMaterial);
+    var joyaCodigo = codigoMaterial + codigoAleatorio;
+    console.log('Joya Código generado:', joyaCodigo);
 
-                            //codigo aleatorio
-                            var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
-                            console.log('Código aleatorio:', codigoAleatorio);
+    $('#Joya_Codigo').val(joyaCodigo);
 
+    if ($('#Joya_Nombre').val().trim() === '') {
+        $('#Joya_Nombre_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_PrecioCompra').val().trim() === '') {
+        $('#Joya_PrecioCompra_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_PrecioVenta').val().trim() === '') {
+        $('#Joya_PrecioVenta_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_PrecioMayor').val().trim() === '') {
+        $('#Joya_PrecioMayor_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Joya_Imagen').val().trim() === '') {
+        $('#Joya_Imagen_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Prov_Id').val() === null) {
+        $('#Prov_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Mate_Id').val() === null) {
+        $('#Mate_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
+    if ($('#Cate_Id').val() === null) {
+        $('#Cate_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
 
-                            var joyaCodigo = codigoMaterial + codigoAleatorio;
-                            console.log('Joya Código generado:', joyaCodigo);
+    if (isValid) {
+        var joyaData = new FormData();
+        joyaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
+        joyaData.append('Joya_Id', $('#Joya_Id').val());
+        joyaData.append('Joya_Codigo', joyaCodigo);
+        joyaData.append('Joya_Nombre', $('#Joya_Nombre').val());
+        joyaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
+        joyaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
+        joyaData.append('Joya_PrecioMayor', $('#Joya_PrecioMayor').val());
+        joyaData.append('Joya_Imagen', $('#Joya_Imagen')[0].files[0]);
+        joyaData.append('Joya_Stock', 1);
+        joyaData.append('Prov_Id', $('#Prov_Id').val());
+        joyaData.append('Mate_Id', $('#Mate_Id').val());
+        joyaData.append('Cate_Id', $('#Cate_Id').val());
+        joyaData.append('Joya_UsuarioCreacion', 1);
+        joyaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+        joyaData.append('Joya_UsuarioModificacion', 1);
+        joyaData.append('Joya_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
+        for (var pair of joyaData.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
 
-                            $('#Joya_Codigo').val(joyaCodigo);
+        $.ajax({
+            url: 'Services/JoyasServices.php',
+            type: 'POST',
+            data: joyaData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                response = JSON.parse(response);
+                if (response.result == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Subido con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    table.ajax.reload();
+                    limpiarFormulario();
+                    $('.CrearOcultar').show();
+                    $('.CrearMostrar').hide();
+                } else {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Error al insertar/actualizar joya. ' + (response.error ? response.error : ''),
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                }
+            },
+            error: function() {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Error en la comunicación con el servidor.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
+            }
+        });
+    }
+});
 
-                            if ($('#Joya_Nombre').val().trim() === '') {
-                                $('#Joya_Nombre_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-                            if ($('#Joya_PrecioCompra').val().trim() === '') {
-                                $('#Joya_PrecioCompra_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-                            if ($('#Joya_PrecioVenta').val().trim() === '') {
-                                $('#Joya_PrecioVenta_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-                            if ($('#Joya_PrecioMayor').val().trim() === '') {
-                                $('#Joya_PrecioMayor_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-                            if ($('#Joya_Imagen').val().trim() === '') {
-                                $('#Joya_Imagen_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-                            if ($('#Prov_Id').val() === null) {
-                                $('#Prov_Id_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-                            if ($('#Mate_Id').val() === null) {
-                                $('#Mate_Id_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-                            if ($('#Cate_Id').val() === null) {
-                                $('#Cate_Id_error').text('Este campo es requerido');
-                                isValid = false;
-                            }
-
-                            if (isValid) {
-                                var joyaData = new FormData();
-                                joyaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
-                                joyaData.append('Joya_Id', $('#Joya_Id').val());
-                                joyaData.append('Joya_Codigo', joyaCodigo);
-                                joyaData.append('Joya_Nombre', $('#Joya_Nombre').val());
-                                joyaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
-                                joyaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
-                                joyaData.append('Joya_PrecioMayor', $('#Joya_PrecioMayor').val());
-                                joyaData.append('Joya_Imagen', $('#Joya_Imagen')[0].files[0]);
-                                joyaData.append('Joya_Stock', 1);
-                                joyaData.append('Prov_Id', $('#Prov_Id').val());
-                                joyaData.append('Mate_Id', $('#Mate_Id').val());
-                                joyaData.append('Cate_Id', $('#Cate_Id').val());
-                                joyaData.append('Joya_UsuarioCreacion', 1);
-                                joyaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-                                joyaData.append('Joya_UsuarioModificacion', 1);
-                                joyaData.append('Joya_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-
-                                $.ajax({
-                                    url: 'Services/JoyasServices.php',
-                                    type: 'POST',
-                                    data: joyaData,
-                                    contentType: false,
-                                    processData: false,
-                                    success: function(response) {
-                                        response = JSON.parse(response);
-                                        if (response.result == 1) {
-                                            iziToast.success({
-                                                title: 'Éxito',
-                                                message: 'Subido con éxito',
-                                                position: 'topRight',
-                                                transitionIn: 'flipInX',
-                                                transitionOut: 'flipOutX'
-                                            });
-                                            table.ajax.reload();
-                                            limpiarFormulario();
-                                            $('.CrearOcultar').show();
-                                            $('.CrearMostrar').hide();
-                                        } else {
-                                            iziToast.error({
-                                                title: 'Error',
-                                                message: 'Error al insertar/actualizar joya. ' + (response.error ? response.error : ''),
-                                                position: 'topRight',
-                                                transitionIn: 'flipInX',
-                                                transitionOut: 'flipOutX'
-                                            });
-                                        }
-                                    },
-                                    error: function() {
-                                        iziToast.error({
-                                            title: 'Error',
-                                            message: 'Error en la comunicación con el servidor.',
-                                            position: 'topRight',
-                                            transitionIn: 'flipInX',
-                                            transitionOut: 'flipOutX'
-                                        });
-                                    }
-                                });
-                            }
-                        });
 
                         $('#TablaJoya tbody').on('click', '.abrir-generar-codigo', function() {
                             var data = table.row($(this).parents('tr')).data();
@@ -802,7 +799,8 @@
                             $('#Prov_Id').val(data.Prov_Id);
                             $('#Mate_Id').val(data.Mate_Id);
                             $('#Cate_Id').val(data.Cate_Id);
-                            // $('#Joya_Imagen').val(data.Joya_Imagen);
+                      
+
 
                             // Cargar imagen actual
                             cargarImagenActual(data.Joya_Imagen);
@@ -812,6 +810,7 @@
                             $('.CrearMostrar').show();
                         });
                         cargarImagenActual($('#Joya_Imagen').val());
+               
                     });
                 </script>
 </body>
