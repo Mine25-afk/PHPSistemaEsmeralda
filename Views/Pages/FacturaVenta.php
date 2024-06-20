@@ -1352,10 +1352,13 @@ return borderYPosition + 70;
 var cuerpo = JSON.parse(sessionStorage.getItem("Productos"));
 var Encabezado = JSON.parse(sessionStorage.getItem("Encabezado"));
 console.log(Encabezado)
+var img = new Image();
+img.src = 'Views/Logo.png';
 
-doc.setFontSize(12);
-doc.setFont(undefined, 'normal');
-doc.text('Esmeraldas HN', 60, 20, { align: 'center' });
+
+    
+doc.addImage(img, 'PNG', 10, 5, 100, 20);
+
 doc.setFontSize(10);
 doc.setFont(undefined, 'normal');
 doc.text("Francisco Morazan, Tegucigalpa", 60, 30, { align: 'center' });
