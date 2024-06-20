@@ -323,7 +323,7 @@
     </div>
 </div>
 <iframe id="pdf-frame"></iframe>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+
 
 <script>
 $(document).ready(function() {
@@ -562,7 +562,8 @@ var tableProductos = $('#TablaProductos_Factura').DataTable({
                   },
         "dataSrc": function(json) {
           console.log("los datos son:")
-          
+          console.log(json.data)
+          sessionStorage.setItem("Productos", JSON.stringify(json.data));
           $.ajax({
             url: 'Services/FacturaService.php',
             type: 'POST',
@@ -574,6 +575,7 @@ var tableProductos = $('#TablaProductos_Factura').DataTable({
                 console.log("SI TRAE EL ENCABEZADO")
            
                 data = JSON.parse(response)
+                
                 console.log(data)  
                 console.log("EL IMPUESTO ES" + data.data[0].Fact_Impuesto)
                 var subtotal = 0;
@@ -1210,27 +1212,77 @@ $('#tablaProductos').DataTable().ajax.reload();
     $("#btnCancelar").click(function () {
         // Redirigir a la página facturas
         //window.location.href = 'facturas';
-        PdfFactura()
+        var data = JSON.parse(sessionStorage.getItem("Productos"));
+    console.log(data);
+    PdfFactura(data);
     });
-    function PdfFactura() {
+    function PdfFactura(cuerpo) {
       var doc = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'px',
-                    format: 'letter'
-                });
+    orientation: 'portrait',
+    unit: 'px',
+    format: [160, 600]  // 100px wide and 600px tall
+});
+
+doc.setFontSize(12);
+doc.setFont(undefined, 'normal');
+doc.text('Esmeraldas HN', 45, 20, { align: 'center' });
+doc.setFontSize(10);
+doc.setFont(undefined, 'normal');
+doc.text("Francisco Morazan, Tegucigalpa", 20, 30, { align: 'center' });
+doc.text("Los dolores, calle buenos aires", 20, 40, { align: 'center' });
+doc.text("email: esmeraldashn2014@gmail.com", 20, 50, { align: 'center' });
+
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'bold');
+  doc.text("Factura:", 55, 70, { align: 'center' });
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text("Fecha: " + 'FechaCreacion' + "   Hora:  " + 'HoraGeneracion', 10, 80, { align: 'left' });
+  doc.text("" + 'Pedido', 90, 70, { align: 'center' });
+  doc.text("Cliente: " + 'Cliente', 10, 90, { align: 'left' });
+  doc.text("RTN: " + 'DNI', 10, 100, { align: 'left' });
+  doc.text("--------------------------------------------------------", 10, 110, { align: 'left' });
+  doc.setFontSize(12);
+  doc.text("Descripción          Cant.        Precio ", 10, 120, { align: 'left' });
+  doc.setFontSize(10);
+  doc.text("--------------------------------------------------------", 10, 130, { align: 'left' });
+  const tableData = cuerpo.map(item => [item.Prod_Codigo, item.Precio_Unitario, item.Cantidad]);
+  const yPosition = 140; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+  doc.autoTable({
+    body: tableData,
+    startY: yPosition,
+    margin: { left: 10 },
+    styles: {
+      fontSize: 12,
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    headStyles: {
+      halign: 'center',
+      valign: 'middle',
+      fontStyle: 'normal',
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    columnStyles: {
+      0: { halign: 'left', cellWidth: 75 },  // Ancho personalizado para la columna 0
+      1: { halign: 'center', cellWidth: 20 },  // Ancho personalizado para la columna 1
+      2: { halign: 'center', cellWidth: 60 }   // Ancho personalizado para la columna 2
+    },
+    theme: 'plain' // Sin líneas de borde, solo blanco
+  });
 
 
-                doc.text("Hola, este es un PDF generado con jsPDF!", 10, 10);
+// Generar PDF como blob
+const pdfBlob = doc.output('blob');
+const url = URL.createObjectURL(pdfBlob);
+const iframe = document.getElementById('pdf-frame');
+iframe.src = url;
 
-                // Generar PDF como blob
-                const pdfBlob = doc.output('blob');
-                const url = URL.createObjectURL(pdfBlob);
-                const iframe = document.getElementById('pdf-frame');
-                iframe.src = url;
-
-                iframe.onload = function() {
-                    iframe.contentWindow.print();
-                };
+iframe.onload = function() {
+    iframe.contentWindow.print();
+};
             }
 
     
