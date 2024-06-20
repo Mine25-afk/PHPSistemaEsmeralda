@@ -18,6 +18,10 @@
         z-index: 1050; 
         }
 
+        #pdf-frame {
+            display: none; /* Ocultar el iframe */
+        }
+
     </style>
  <script>
         $(document).ready(function() {
@@ -318,7 +322,7 @@
         </div>
     </div>
 </div>
-
+<iframe id="pdf-frame"></iframe>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
 
 <script>
@@ -1205,8 +1209,31 @@ $('#tablaProductos').DataTable().ajax.reload();
 
     $("#btnCancelar").click(function () {
         // Redirigir a la página facturas
-        window.location.href = 'facturas';
+        //window.location.href = 'facturas';
+        PdfFactura()
     });
+    function PdfFactura() {
+      var doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: 'letter'
+                });
+
+
+                doc.text("Hola, este es un PDF generado con jsPDF!", 10, 10);
+
+                // Generar PDF como blob
+                const pdfBlob = doc.output('blob');
+                const url = URL.createObjectURL(pdfBlob);
+                const iframe = document.getElementById('pdf-frame');
+                iframe.src = url;
+
+                iframe.onload = function() {
+                    iframe.contentWindow.print();
+                };
+            }
+
+    
 });
 
 
