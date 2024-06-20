@@ -57,7 +57,7 @@ function generarMenu($conn) {
                 $menu['Reportes'][] = $row;
                 break;
             case 'Empleados':
-            case 'clientes':
+            case 'Clientes':
             case 'Marcas':
             case 'Proveedores':
                 $menu['Generales'][] = $row;
