@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Proveedor</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 <div class="container">
@@ -19,7 +17,7 @@
                 <table class="table table-striped table-hover" id="TablaMarca">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                        <th>#</th>
                             <th>Proveedor</th>
                             <th>Telefono</th>
                             <th>Municipio</th>
@@ -55,15 +53,16 @@
 
                 </div>
                 <div class="card-body">
-    <div class="form-row d-flex justify-content-end">
-        <div class="col-md-3">
-            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-        </div>
-        <div class="col-md-3">
-            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-        </div>
-    </div>
-</div>
+                    <div class="form-row d-flex justify-content-end">
+                        <div class="col-auto">
+                            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+                        </div>
+                        <div class="col-auto">
+                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+
 
             </form>
         </div>
@@ -75,7 +74,7 @@
                     <p id="detallesContenido"></p>
                     <div class="form-row d-flex justify-content-end">
                         <div class="col-md-3">
-                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Volver</a>
+                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Cancelar</a>
                         </div>
                     </div>
                 </div>
@@ -111,9 +110,7 @@
 
 
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
 
 <script>
 $(document).ready(function () {
@@ -129,29 +126,42 @@ $(document).ready(function () {
             }
         },
         "columns": [
-            { "data": "Prov_Id" },
+            { "data": null },
             { "data": "Prov_Proveedor" },
             { "data": "Prov_Telefono" },
             { "data": "Muni_Municipio" },
-            { 
-                "data": null,
-                "render": function (data, type, row) {
-                    return `
-                        <a class='btn btn-primary btn-sm abrir-editar' data-id='${data.Prov_Id}'>
+            {
+    "data": null,
+    "render": function (data, type, row) {
+        return `
+            <div class='text-center'>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-cogs"></i> Acciones
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item abrir-editar" data-id='${data.Prov_Id}' href="#">
                             <i class='fas fa-edit'></i> Editar
                         </a> 
-                       <a class='btn btn-secondary btn-sm ver-detalles' data-id='${data.Prov_Id}'>
-    <i class='fas fa-eye'></i> Detalles
-</a>
-
-                        <button class='btn btn-danger btn-sm eliminar' data-id='${data.Prov_Id}' data-toggle='modal' data-target='#eliminarModal'>
+                        <a class="dropdown-item ver-detalles" data-id='${data.Prov_Id}' href="#">
+                            <i class='fas fa-eye'></i> Detalles
+                        </a>
+                        <button class="dropdown-item eliminar" data-id='${data.Prov_Id}' data-toggle='modal' data-target='#eliminarModal'>
                             <i class='fas fa-eraser'></i> Eliminar
                         </button>
-                    `;
-                },
-                "defaultContent": ""
-            }
-        ]
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+    "defaultContent": ""
+}
+
+        ],
+        "createdRow": function(row, data, dataIndex) {
+      
+        $('td:eq(0)', row).html(dataIndex + 1);
+    }
     });
 
     $('.CrearOcultar').show();
@@ -290,7 +300,7 @@ $(document).ready(function () {
 
     
     $('#CerrarDetalles').click(function() {
-    $('#detallesCollapse').collapse('hide'); // Ocultar el Collapse de detalles al hacer clic en Volver
+    $('#detallesCollapse').collapse('hide'); // Ocultar el Collapse de detalles al hacer clic en Cancelar
     $('.CrearOcultar').show();
 });
 

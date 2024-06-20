@@ -5,9 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Clientes</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         .error-message {
             color: red;
@@ -63,11 +60,11 @@
                         <table class="table table-striped table-hover" id="TablaCliente">
                             <thead>
                                 <tr>
-                                    <th>Id</th>
+                                    <th>#</th>
                                     <th>Nombre</th>
                                     <th>Apellido</th>
                                     <th>DNI</th>
-                                    <th>Fecha Nacimiento</th>
+                                    <!-- <th>Fecha Nacimiento</th> -->
                                     <th>Sexo</th>
                                     <th>Municipio</th>
                                     <th>Estado Civil</th>
@@ -81,7 +78,9 @@
                 </div>
 
                 <div class="CrearMostrar">
+                    <div class="card-body">
                     <form id="clienteForm">
+                        <hr>
                         <input type="hidden" name="Clie_Id" id="Clie_Id">
 
                         <div class="form-row">
@@ -162,15 +161,17 @@
                         </div>
                         <div class="card-body">
                             <div class="form-row d-flex justify-content-end">
-                                <div class="col-md-3">
+                                <div class="col-auto">
                                     <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn">
                                 </div>
-                                <div class="col-md-3">
-                                    <a id="CerrarModal" class="btn btn-secondary" style="color: white;">Volver</a>
+                                <div class="col-auto">
+                                    <a id="CerrarModal" class="btn btn-secondary" style="color: white;">Cancelar</a>
                                 </div>
                             </div>
                         </div>
+
                     </form>
+                    </div>
                 </div>
                 <!-- Collapse Detalles -->
                 <div class="CrearDetalles collapse" id="detallesCollapse">
@@ -279,7 +280,7 @@
                         </div>
                         <div class="form-row d-flex justify-content-end mt-3">
                             <div class="col-md-3">
-                                <a id="CerrarDetalles" class="btn btn-secondary" style="color: white;">Volver</a>
+                                <a id="CerrarDetalles" class="btn btn-secondary" style="color: white;">Cancelar</a>
                             </div>
                         </div>
                     </div>
@@ -333,10 +334,7 @@
                 </div>
 
 
-                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-                <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+                
                 <script>
                     $(document).ready(function() {
                         var table = $('#TablaCliente').DataTable({
@@ -350,9 +348,8 @@
                                     return json.data;
                                 }
                             },
-                            "columns": [{
-                                    "data": "Clie_Id"
-                                },
+                            "columns": [
+                                { "data": null },
                                 {
                                     "data": "Clie_Nombre"
                                 },
@@ -362,9 +359,7 @@
                                 {
                                     "data": "Clie_DNI"
                                 },
-                                {
-                                    "data": "Clie_FechaNac"
-                                },
+                             
                                 {
                                     "data": "Sexo"
                                 },
@@ -378,13 +373,26 @@
                                     "data": "Clie_esMayorista"
                                 },
                                 {
-                                "data": null,
-                                "defaultContent": "<div class='btn-group'><button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-cogs'></i> Acciones</button><div class='dropdown-menu'><a class='dropdown-item abrir-editar' href='#'>Editar</a><a class='dropdown-item abrir-detalles' href='#'>Detalles</a><a class='dropdown-item abrir-eliminar' href='#'>Eliminar</a></div>"
-                            }
-
-
-
-                            ]
+            "data": null,
+            "defaultContent": `
+             <div class='text-center'>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cogs"></i> Acciones
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item abrir-editar" href="#"><i class="fas fa-edit"></i> Editar</a>
+                            <a class="dropdown-item abrir-detalles" href="#"><i class="fas fa-info-circle"></i> Detalles</a>
+                            <a class="dropdown-item abrir-eliminar" href="#"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                        </div>
+                    </div>
+              </div>
+            `
+        }    ],
+        "createdRow": function(row, data, dataIndex) {
+      
+        $('td:eq(0)', row).html(dataIndex + 1);
+    }
                         });
 
 

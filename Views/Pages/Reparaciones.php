@@ -14,15 +14,14 @@
         <div class="card-body">
             <h2 class="text-center" style="font-size:34px !important">Reparaciones</h2>
             <div class="CrearOcultar">
-            <p class="btn btn-primary" id="AbrirModal">
-                Nuevo
-            </p>
+            <p class="btn btn-primary" id="AbrirModal" style="background-color:#FFA2DB; border-color:#FFA2DB; color:black;">Nuevo</p>
+
             <hr>
             <div class="table-responsive">
                 <table class="table table-striped table-hover" id="Tablaone">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                        <th>#</th>
                             <th>Codigo</th>
                             <th>Tipo Reparacion</th>
                             <th class="text-center">Acciones</th>
@@ -46,15 +45,17 @@
                         <span class="text-danger" id="TelefonoError"></span>
                     </div>
                 </div>
-            <div class="card-body">
-         <div class="form-row d-flex justify-content-end">
-        <div class="col-md-3">
-            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-        </div>
-        <div class="col-md-3">
-            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-        </div>
+                <div class="card-body">
+                <div class="form-row d-flex justify-content-end">
+                    <div class="col-auto">
+                        <input type="button" style="background-color:#FFA2DB; border-color:#FFA2DB; color:black;" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+                    </div>
+                    <div class="col-auto">
+                        <a id="CerrarModal" style="background-color:#000000; border-color:#000000; color:white;" class="btn btn-secondary" style="color:white">Cancelar</a>
+                    </div>
+                </div>
     </div>
+
 </div>
 
             </form>
@@ -67,7 +68,7 @@
                     <p id="detallesContenido"></p>
                     <div class="form-row d-flex justify-content-end">
                         <div class="col-md-3">
-                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Volver</a>
+                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Cancelar</a>
                         </div>
                     </div>
                 </div>
@@ -122,27 +123,41 @@ $(document).ready(function () {
             }
         },
         "columns": [
-            { "data": "Repa_Id" },
+            { "data": null },
             { "data": "Repa_Codigo" },
             { "data": "Repa_Tipo_Reparacion" },
-            { 
-                "data": null,
-                "render": function (data, type, row) {
-                    return `
-                        <a class='btn btn-primary btn-sm abrir-editar' data-id='${data.Repa_Id}'>
-                            <i class='fas fa-edit'></i> Editar
-                        </a> 
-                        <a class='btn btn-secondary btn-sm ver-detalles' data-id='${data.Repa_Id}'>
-                            <i class='fas fa-eye'></i> Detalles
+            {
+    "data": null,
+    "render": function (data, type, row) {
+        return `
+            <div class='text-center'>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-cogs"></i> Acciones
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item abrir-editar" data-id='${data.Repa_Id}' href="#">
+                            <i class="fas fa-edit"></i> Editar
                         </a>
-                        <button class='btn btn-danger btn-sm eliminar' data-id='${data.Repa_Id}' data-toggle='modal' data-target='#eliminarModal'>
-                            <i class='fas fa-eraser'></i> Eliminar
+                        <a class="dropdown-item ver-detalles" data-id='${data.Repa_Id}' href="#">
+                            <i class="fas fa-eye"></i> Detalles
+                        </a>
+                        <button class="dropdown-item eliminar" data-id='${data.Repa_Id}' data-toggle="modal" data-target="#eliminarModal">
+                            <i class="fas fa-eraser"></i> Eliminar
                         </button>
-                    `;
-                },
-                "defaultContent": ""
-            }
-        ]
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+    "defaultContent": ""
+}
+
+        ],
+        "createdRow": function(row, data, dataIndex) {
+      
+        $('td:eq(0)', row).html(dataIndex + 1);
+    }
     });
 
     // Mostrar y ocultar secciones del formulario
