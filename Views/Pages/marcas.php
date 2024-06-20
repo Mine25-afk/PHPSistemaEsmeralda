@@ -11,7 +11,7 @@
             <table class="table table-striped table-hover" id="TablaMarca">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                    <th>#</th>
                         <th>Marca</th>
                         <th class="text-center">Acciones</th>
                     </tr>
@@ -25,27 +25,28 @@
         <form id="quickForm">
 
 
-<div class="form-row">
-    <div class="col-md-6">
-        <label class="control-label"></label>
-        <input name="Marca" class="form-control letras" id="Marca"/>
-        <span class="text-danger"></span>
-    </div>
-</div>
+        <div class="form-row d-flex justify-content-center">
+            <div class="col-md-6">
+                <label class="control-label"></label>
+                <input name="Marca" class="form-control letras" id="Marca"/>
+                <span class="text-danger"></span>
+            </div>
+        </div>
+
 
 <div class="card-body">
-    <div class="form-row d-flex justify-content-end">
+    <div class="form-row d-flex justify-content-center">
 
-        <div class="col-md-1" style="margin: 0px 10px;">
-        <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
+        <div class="col-auto" style="margin: 0px 10px;">
+            <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
         </div>
 
-
-        <div class="col-md-1">
-            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+        <div class="col-auto">
+            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Cancelar</a>
         </div>
     </div>
 </div>
+
 
 </form>
         </div>
@@ -195,7 +196,7 @@
 
             },
         "columns": [
-            { "data": "Marc_Id" },
+            { "data": null },
             { "data": "Marc_Marca" },
             { 
                 "data": null, 
@@ -224,7 +225,11 @@
 </div>
 `
             }
-        ]
+        ],
+        "createdRow": function(row, data, dataIndex) {
+      
+        $('td:eq(0)', row).html(dataIndex + 1);
+    }
     });
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
@@ -392,29 +397,7 @@
     $('.CrearMostrar').hide();
     });
 
-
-
-
-
-
     });
-
-
-    
-
-  
-
-
-
-
-
-    
-    
-      
-
-    
-        
-
 
 </script>
 

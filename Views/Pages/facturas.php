@@ -209,7 +209,7 @@ $(document).ready(function() {
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+
 
 <script>
 $(document).ready(function() {
@@ -217,7 +217,7 @@ $(document).ready(function() {
     $('.CrearMostrar').hide();
     var table = $('#tablaFactura').DataTable({
         "ajax": {
-            "url": "Controllers/FacturaController.php",
+            "url": "Services/FacturaService.php",
             "type": "POST",
             "data": {
                 "action": 'listarFactura'

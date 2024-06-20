@@ -147,10 +147,10 @@ class UsuarioService
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $Service = new UsuarioService();
+    $service = new UsuarioService();
 
     if ($_POST['action'] === 'listarUsuarios') {
-        $service->listarUsuarios();
+        $Service->listarUsuarios();
     } elseif ($_POST['action'] === 'insertar') {
         $Usua_Usuario = $_POST['Usuario'];
         $Usua_Contraseña = $_POST['Contraseña'];
