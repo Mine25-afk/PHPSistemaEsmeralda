@@ -37,6 +37,17 @@
                 margin: 5px;
             }
         }
+
+        .blinking-button {
+            animation: blinking 1s infinite;
+        }
+
+        @keyframes blinking {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
     </style>
 </head>
 
@@ -124,7 +135,7 @@
 
                             <div class="col-md-6">
                                 <label class="control-label">Es Mayorista</label>
-                                <div>
+                                <div class="d-flex align-items-center">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaSi" value="true" required>
                                         <label class="form-check-label" for="esMayoristaSi">Sí</label>
@@ -133,9 +144,17 @@
                                         <input class="form-check-input" type="radio" name="Clie_esMayorista" id="esMayoristaNo" value="false" required>
                                         <label class="form-check-label" for="esMayoristaNo">No</label>
                                     </div>
+                                    <div id="botonIngresarCodigoContainer" class="ml-2" style="display: none;">
+                                        <button type="button" class="btn btn-info blinking-button" id="botonIngresarCodigo">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="error-message" id="Clie_esMayorista_error"></div>
                             </div>
+
+
+                          
 
 
 
@@ -288,7 +307,7 @@
                     </div>
                 </div>
 
-                <!-- Modal para ingresar código de autorización -->
+
                 <div class="modal fade" id="modalAutorizacion" tabindex="-1" aria-labelledby="modalAutorizacionLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -305,6 +324,7 @@
                                         <input type="text" class="form-control" id="codigoAutorizacion" required>
                                     </div>
                                     <div id="codigoAutorizacion_error" class="error-message"></div>
+                                    <button type="button" class="btn btn-secondary" name="EnviarCorreoBoton" id="EnviarCorreoBoton">Enviar Correo</button>
                                     <button type="button" class="btn btn-primary" id="verificarCodigoBtn">Verificar</button>
                                 </form>
                             </div>
@@ -331,7 +351,7 @@
                                 }
                             },
                             "columns": [{
-                                    "data": " "
+                                    "data": "Clie_Id"
                                 },
                                 {
                                     "data": "Clie_Nombre"
@@ -379,6 +399,17 @@
                             $('#Clie_Id').val('');
                         }
 
+                        $('#modalAutorizacion').on('hidden.bs.modal', function () {
+            if (!codigoVerificado) {
+                $('#botonIngresarCodigoContainer').show();
+                $('#botonIngresarCodigo').addClass('blinking-button');
+            }
+        });
+
+        // Al hacer clic en el botón "Ingresar código"
+        $('#botonIngresarCodigo').click(function() {
+            $('#modalAutorizacion').modal('show');
+        });
                  
                   
 
@@ -435,17 +466,20 @@
 
 
                         });
+                        
 
 
                         $('#CerrarModal').click(function() {
                             limpiarFormulario();
                             $('.CrearOcultar').show();
                             $('.CrearMostrar').hide();
+                            $('#botonIngresarCodigoContainer').hide();
                         });
 
                         $('#CerrarDetalles').click(function() {
                             $('.CrearOcultar').show();
                             $('.CrearDetalles').hide();
+                     
                         });
 
 
@@ -679,12 +713,18 @@
                         });
 
 
-                        $('input[name="Clie_esMayorista"]').change(function() {
-                            if ($(this).val() === 'true') {
-                                $('#modalAutorizacion').modal('show');
-                                enviarCorreo();
-                            }
-                        });
+                        $('#EnviarCorreoBoton').click(function() {
+                                    enviarCorreo();
+                                });
+
+
+                            $('input[name="Clie_esMayorista"]').change(function() {
+                                    if ($(this).val() === 'true') {
+                                    $('#modalAutorizacion').modal('show');
+                 
+                                    }
+                                    });
+
 
                         //enviar el correo electrónico
                         function enviarCorreo() {
@@ -711,6 +751,7 @@
 
 
                         $('#verificarCodigoBtn').click(function() {
+                     
                             var codigo = $('#codigoAutorizacion').val();
 
                             $.ajax({
@@ -730,11 +771,14 @@
                                             transitionOut: 'flipOutX'
                                         });
                                         $('#modalAutorizacion').modal('hide');
+                                        $('#botonIngresarCodigoContainer').hide();
                                         codigoVerificado = true;
                                         puedeGuardar();
+                                   
                                         setTimeout(function() {
                                             location.reload();
                                         }, 1000); // Recargar 1 segundo despues
+                                     
                                     } else {
                                         $('#codigoAutorizacion_error').text('Código incorrecto. Por favor, intente de nuevo.');
                                     }
