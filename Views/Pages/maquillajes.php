@@ -1,7 +1,3 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-   
 <div class="card">
     <div class="card-body">
         <h2 class="text-center" style="font-size:34px !important">Maquillajes</h2>
@@ -14,6 +10,7 @@
             <table class="table table-striped table-hover" id="TablaMaquillaje">
                 <thead>
                     <tr>
+                    <th>#</th>
                         <th>Codigo</th>
                         <th>Maquillaje</th>
                         <th>Imagen</th>
@@ -92,18 +89,16 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="form-row d-flex justify-content-end">
-
-                <div class="col-md-3">
-                    <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
-                </div>
-
-
-                <div class="col-md-3">
-                    <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-                </div>
+        <div class="form-row d-flex justify-content-end">
+            <div class="col-auto">
+                <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn"/>
+            </div>
+            <div class="col-auto">
+                <a id="CerrarModal" class="btn btn-secondary" style="color:white">Cancelar</a>
             </div>
         </div>
+</div>
+
 
 </form>
         </div>
@@ -250,10 +245,7 @@
     <a class="btn btn-secondary" style="color:white" id="VolverDetalles">Cancelar</a>
 </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -379,6 +371,7 @@
         }
     },
     "columns": [
+        { "data": null },
         { "data": "Maqu_Codigo" },
         { "data": "Maqu_Nombre" },
         {
@@ -391,11 +384,30 @@
         { "data": "Maqu_PrecioCompra" },
         { "data": "Maqu_PrecioVenta" },
         { "data": "Maqu_PrecioMayor" },
-        { 
-            "data": null, 
-            "defaultContent": "<a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button><button class='btn btn-info btn-sm abrir-generar-codigo'><i class='fas fa-barcode'></i> Generar Código de Barras</button>"
-        }
-    ]
+        {
+    "data": null,
+    "defaultContent": `
+        <div class='text-center'>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cogs"></i> Acciones
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item abrir-editar" href="#"><i class="fas fa-edit"></i> Editar</a>
+                    <a class="dropdown-item abrir-detalles" href="#"><i class="fas fa-eye"></i> Detalles</a>
+                    <button class="dropdown-item abrir-eliminar"><i class="fas fa-eraser"></i> Eliminar</button>
+                    <button class="dropdown-item abrir-generar-codigo"><i class="fas fa-barcode"></i>Etiquetas</button>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+    ],
+        "createdRow": function(row, data, dataIndex) {
+      
+        $('td:eq(0)', row).html(dataIndex + 1);
+    }
     });
 
     $('#TablaMaquillaje tbody').on('click', '.abrir-generar-codigo', function() {

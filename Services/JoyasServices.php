@@ -115,8 +115,7 @@ class JoyasServices {
                 $fileName = basename($Joya_Imagen['name']);
                 $targetFilePath = $uploadDir . $fileName;
                 if (move_uploaded_file($Joya_Imagen['tmp_name'], $targetFilePath)) {
-                    // Guarda solo el nombre del archivo en la base de datos
-                    $Joya_Imagen = $fileName;
+                    $Joya_Imagen = $fileName; // Guarda solo el nombre del archivo
                 } else {
                     throw new Exception('Error al mover el archivo subido.');
                 }
@@ -124,9 +123,10 @@ class JoyasServices {
                 $joya = $this->buscarJoya($Joya_Id);
                 $Joya_Imagen = $joya['Joya_Imagen'];
             }
-
-            $sql = 'CALL SP_Joyas_actualizar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioModificacion, :Joya_FechaModificacion, :Joya_Id)';
+    
+            $sql = 'CALL SP_Joyas_actualizar(:Joya_Id, :Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioModificacion, :Joya_FechaModificacion)';
             $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Joya_Id', $Joya_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Joya_Codigo', $Joya_Codigo, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_Nombre', $Joya_Nombre, PDO::PARAM_STR);
             $stmt->bindParam(':Joya_PrecioCompra', $Joya_PrecioCompra, PDO::PARAM_STR);
@@ -139,16 +139,17 @@ class JoyasServices {
             $stmt->bindParam(':Cate_Id', $Cate_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Joya_UsuarioModificacion', $Joya_UsuarioModificacion, PDO::PARAM_INT);
             $stmt->bindParam(':Joya_FechaModificacion', $Joya_FechaModificacion, PDO::PARAM_STR);
-            $stmt->bindParam(':Joya_Id', $Joya_Id, PDO::PARAM_INT);
             $stmt->execute();
-
+    
             $result = $stmt->fetchColumn();
             return $result;
         } catch (Exception $e) {
             error_log('Error al actualizar joya: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al actualizar joya: ' . $e->getMessage()));
             return 0;
         }
     }
+    
 
     public function eliminarJoyas($Joya_Id) {
         global $pdo;

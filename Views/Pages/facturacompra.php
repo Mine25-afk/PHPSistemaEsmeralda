@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
     <style>
         .select2-container--default .select2-selection--single {
@@ -283,7 +274,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+
 
     <script>
         function validateNumber(input) {
@@ -1031,10 +1022,10 @@ aplicarAutocompletado();
 
                 const imgWidth = 200;
                 const imgHeight = 50;
-                const logoURL = '../Logo.png';
+          
                 var pageNumber = 1;
 
-                doc.addImage(logoURL, 'JPEG', 10, 10, imgWidth, imgHeight);
+           
 
                 doc.setFontSize(10);
                 doc.setFont(undefined, 'bold');
@@ -1069,7 +1060,7 @@ aplicarAutocompletado();
                     });
                 };
 
-                autoTable(doc, {
+                doc.autoTable({
                     head: [
                         ['Factura', 'Producto', 'Cantidad', 'Categoria', 'Precio Compra', 'Precio Venta', 'Precio Mayorista', 'Subtotal']
                     ],
@@ -1270,6 +1261,3 @@ aplicarAutocompletado();
 
         });
     </script>
-</body>
-
-</html>
