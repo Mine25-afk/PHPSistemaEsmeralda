@@ -24,7 +24,7 @@ $(document).ready(function() {
   </script>
 <div class="card">
   <div class="card-body">
-    <h2 class="text-center" style="font-size: 34px !important">Facturas</h2>
+    <h2 class="text-center" style="font-size: 90px !important">Facturas</h2>
 
     <div class="CrearOcultar">
       <p class="btn btn-primary" id="AbrirModal">Nuevo</p>

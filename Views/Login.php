@@ -17,7 +17,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #2283FF, #00890C);
+            background: rgb(61,61,61);
+            background: linear-gradient(0deg, rgba(61,61,61,1) 0%, rgba(0,0,0,1) 100%);
             color: #fff;
             overflow: hidden;
         }
@@ -34,8 +35,8 @@
 
         .container {
             display: flex;
-            background: rgb(131,250,251);
-            background: linear-gradient(0deg, rgba(131,250,251,1) 0%, rgba(244,217,161,1) 100%);
+            background: rgb(255,198,50);
+            background: radial-gradient(circle, rgba(255,198,50,1) 0%, rgba(238,255,40,1) 100%);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -59,7 +60,8 @@
         }
 
         .form-section {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgb(110,200,67);
+            background: radial-gradient(circle, rgba(110,200,67,1) 0%, rgba(26,82,0,1) 100%);
             padding: 30px;
             border-radius: 0 20px 20px 0;
             animation: slideIn 2s ease-in-out;
@@ -182,10 +184,10 @@
         </div>
         <div class="form-section">
             <div class="toggle-buttons">
-                <button class="active" id="sign-in-toggle">_______________________</button>
+   
             </div>
             <form id="sign-in-form">
-                <h1>Iniciar Sesion</h1>
+                <h1 >Iniciar Sesion</h1>
                 <div class="input-group">
                     <input type="text" name="Usuario" placeholder="Usuario" required id="Usuario">
                 </div>
@@ -195,7 +197,7 @@
                 <div class="forgot-password">
                     <a href="#">Olvidaste tu Contraseña?</a>
                 </div>
-                <button type="submit" class="sign-in-button">Iniciar Sesion</button>
+                <button type="submit" class="sign-in-button" style="background-color: #ebb22a;">Iniciar Sesion</button>
                 <div class="social-icons">
                     <a href="https://accounts.google.com/signin"><img src="Google__G__logo.svg.webp" alt="Google"></a>
                     <a href="https://www.facebook.com/login/"><img src="images.png" alt="Facebook"></a>

@@ -83,13 +83,10 @@
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center"><b>Factura Compra</b></h3>
-                        <!-- <img src="../Logo.png" /> -->
-                        <!-- <img src="/Views/Logo.png" /> -->
-                    </div>
+                    <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
+
                     <div class="card-body">
-                        <div class="CrearOcultar">
+                        <div class="CrearOcultar" style="position:relative; top:-30px">
                             <p class="btn btn-primary" id="AbrirModal"> Nuevo</p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover" id="TablaFacturaCompra">
@@ -191,48 +188,27 @@
 
 
                                 <div class="card-body">
-                                    <div class="form-row d-flex justify-content-start">
-                                        <div class="col-md-2">
-                                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
-                                            <a id="btnConfirmar" class="btn btn-primary">Confirmar</a>
+                                    <div class="form-row d-flex justify-content-end">
+                                        <div class="col-auto">
 
+                                            <input type="button" value="Confirmar" class="btn btn-primary" id="confirmarBtn" />
                                         </div>
+                                        <div class="col-auto">
+                                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+                                        </div>
+
                                     </div>
                                 </div>
-                            </form>
                         </div>
 
-                        <div class="collapse" id="collapseNuevoProducto">
-                            <div class="card card-body">
-                                <h3 class="text-center"><b>Nuevo Producto</b></h3>
-                                <form id="NuevoProductoForm" style="width: 100%">
-                                    <div class="form-row" style="justify-content: center; margin: 0px 10px">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Nombre del Producto</label>
-                                                <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Precio</label>
-                                                <input type="text" class="form-control" id="precioProducto" name="precioProducto" required />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-row d-flex justify-content-start">
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
-                                            <button type="submit" class="btn btn-primary">Guardar</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
+    </div>
+    </div>
+    </div>
     </div>
 
 
