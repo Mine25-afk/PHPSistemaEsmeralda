@@ -89,18 +89,8 @@ function generarMenu($conn) {
     echo '<li class="nav-item">';
     echo '<a href="Index.php" class="nav-link"><i class="fa-solid fa-house"></i><p>Inicio</p></a>';
     echo '</li>';
-    
-    if (!empty($menu['Dashboards'])) {
-        echo '<li class="nav-item">';
-        echo '<a href="?Pages=dashboard" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Dashboards</p></a>';
-        echo '</li>';
-    }
-    if (!empty($menu['Facturas'])) {
-        echo '<li class="nav-item">';
-        echo '<a href="?Pages=FacturaVenta" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Factura</p></a>';
-        echo '</li>';
-    }
 
+  
    
     // Accesos
     if (!empty($menu['Accesos'])) {
@@ -151,8 +141,28 @@ function generarMenu($conn) {
     }
 
 
+   
+    
+    if (!empty($menu['Dashboards'])) {
+        echo '<li class="nav-item">';
+        echo '<a href="?Pages=dashboard" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Dashboards</p></a>';
+        echo '</li>';
+    }
+    if (!empty($menu['Facturas'])) {
+        echo '<li class="nav-item">';
+        echo '<a href="?Pages=FacturaVenta" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Factura</p></a>';
+        echo '</li>';
+    }
     echo '<li class="nav-item">';
-    echo '<a href="cerrar-sesion.php" class="close-sesion nav-link text-center" style="color:white; background-color: red; margin-top:350px;"><p>Cerrar sesión</p></a>';
+    echo ' <a class="nav-link" id="AbrirCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Abrir Caja</p></a>';
+    echo '</li>';
+
+  echo '<li class="nav-item">';
+    echo '<a class="nav-link" id="CerrarCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Cerrar caja</p></a>';
+    echo '</li>';
+
+    echo '<li class="nav-item">';
+    echo ' <a class="nav-link" id="AbrirRetiro"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Retiro caja</p></a>';
     echo '</li>';
     
     echo '</ul>';
