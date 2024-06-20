@@ -119,9 +119,9 @@
                                     <div class="form-row d-flex justify-content-start">
                                         <div class="col-md-7">
                                             <input type="hidden" id="metodoPagoSeleccionado" name="metodoPagoSeleccionado" value="1" />
-                                            <button type="button" class="btn btn-secondary metodo-pago btn-selected-info" data-value="1">Efectivo</button>
-                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="4">Tarjeta de Crédito</button>
-                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="7">Pago en Línea</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago btn-selected-info" data-value="1"><i class="fas fa-dollar-sign"></i> Efectivo</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="4"><i class="fas fa-credit-card"></i> Tarjeta de Crédito</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="7"><i class="fas fa-donate"></i> Pago en Línea</button>
                                         </div>
                                     </div>
                                 </div>
