@@ -98,7 +98,7 @@
     </div>
     <div class="col-md-4">
       <div style="height:100%; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
-        <span style="color:#17358D;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
+        <span style="color:#FFF;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
       </div>
     </div>
 </div>
@@ -150,6 +150,19 @@
           </div>
         </div>
       </form>
+      <div
+          class="form-row"
+          style="justify-content: end; margin: 0px 10px"
+        >
+          <div class="col-md-6" style="display: flex; flex-direction:column; justify-content: end">
+              <label for="" style="text-align: end;font-size:24px" id="txtSubtotal">Subtotal:00.0</label>
+              <label for="" style="text-align: end;font-size:24px" id="txtImpuesto">Impuesto:00.0</label>
+              <label for="" style="text-align: end;font-size:28px" id="txtTotal2">Total:00.0</label>
+          </div>
+    
+    
+        </div>
+
       <div
           class="form-row"
           style="justify-content: end; margin: 0px 10px"
@@ -382,8 +395,8 @@ $(document).ready(function() {
               console.log(data); 
 
               if (data && data.data && data.data.length > 0) {
-
-                  var marca = data.data[0];
+                  if (data.data[0].Categoria != "Reparaciones") {
+                    var marca = data.data[0];
                   var valor = "1"
                   if (data.data[0].Categoria == "Joyas") {
                     valor = 1;
@@ -391,9 +404,9 @@ $(document).ready(function() {
                     valor = 2;
                   }
                   console.log("El valor es" + valor)
-          
 
-                  $.ajax({
+
+                    $.ajax({
             url: 'Services/FacturaService.php',
             type: 'POST',
             data: {
@@ -418,8 +431,6 @@ $(document).ready(function() {
             position: 'topRight',
             transitionIn: 'flipInX',
             transitionOut: 'flipOutX'
-
-
         });
         sessionStorage.setItem("Fact_Id", data[0].TotalStock)
         console.log(sessionStorage.getItem("Fact_Id"));
@@ -443,6 +454,23 @@ $('#TablaProductos_Factura').DataTable().ajax.reload();
                 alert('Error en la comunicación con el servidor.');
             }
         });
+                  }else{
+
+                    var data = JSON.parse(response);
+                    console.log(data); 
+                    sessionStorage.setItem("Diferenciador", "3")
+                    sessionStorage.setItem("Codigo", data.data[0].Codigo)
+                    console.log("el codigo es" + data.data[0].Codigo)
+          
+                    $("#ModalReparacion").modal("show");
+                    $("#DescripcionRepa").val(null)
+                    $("#PrecioRepa").val(null)
+                    
+                   }
+               
+          
+
+             
         
 
 
@@ -507,6 +535,41 @@ var tableProductos = $('#TablaProductos_Factura').DataTable({
             d.mayorista =sessionStorage.getItem("Mayorista");
                   },
         "dataSrc": function(json) {
+          console.log("los datos son:")
+          
+          $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'listarFacturaId',
+                "FactId": sessionStorage.getItem("Fact_Id")
+            },
+            success: function(response) {
+                console.log("SI TRAE EL ENCABEZADO")
+           
+                data = JSON.parse(response)
+                console.log(data)
+                console.log("EL IMPUESTO ES" + data.data[0].Fact_Impuesto)
+                var subtotal = 0;
+                var total = 0;
+                var tax = parseFloat(data.data[0].Fact_Impuesto) / 100;
+       
+                json.data.forEach(function(item) {
+                var itemTotal = parseFloat(item.Total);
+                subtotal += itemTotal;
+            });
+            
+            var taxAmount = subtotal * tax;
+            total = subtotal + taxAmount;
+ 
+            console.log("El Total es:"+ total)
+            $("#txtTotal").text(total)
+            $("#txtTotal2").text("Total: " + total)
+            $("#txtSubtotal").text("Subtotal: " + subtotal)
+            $("#txtImpuesto").text("Impuesto: " + taxAmount)
+            }
+          
+        });
             console.log(json.data);
             return json.data;
         }
@@ -519,11 +582,12 @@ var tableProductos = $('#TablaProductos_Factura').DataTable({
         { "data": "Producto" },
         { "data": "Precio_Unitario" },
         {
-            "data": "Cantidad",
-            "render": function(data, type, row) {
-                return '<form class="cantidad-form" id="form_cantidad_' + row.Prod_Codigo + '"><input type="number" name="cantidad_' + row.Prod_Codigo + '" class="form-control cantidad-input" value="' + data + '" /></form>';
-            }
-        },
+        "data": "Cantidad",
+        "render": function(data, type, row) {
+            var disabled = row.Categoria === "Reparaciones" ? 'disabled' : '';
+            return '<form class="cantidad-form" id="form_cantidad_' + row.Prod_Codigo + '"><input type="number" name="cantidad_' + row.Prod_Codigo + '" class="form-control cantidad-input" value="' + data + '" ' + disabled + ' /></form>';
+        }
+    },
         { "data": "Total" },
         { 
             "data": null, 
@@ -664,8 +728,62 @@ $('#TablaProductos_Factura').DataTable().ajax.reload();
         }
     });
   $("#confirmarReparacion").click(function () {
+  console.log($("#DescripcionRepa").val()) 
+  console.log($("#PrecioRepa").val())
     if ($('#FormReparacion').valid()) {
+      $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'insertarreparacion',
+                Clie_Id: sessionStorage.getItem("Clie_Id"),
+                Mepa_Id: sessionStorage.getItem("Mepa_Metodo"), 
+                Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
+                Faxd_Diferenciador: sessionStorage.getItem("Diferenciador"),
+                Prod_Codigo:  sessionStorage.getItem("Codigo"),
+                FaxD_Producto: $("#DescripcionRepa").val(),
+                FaxD_Precio:  $("#PrecioRepa").val()
+            },
+            success: function(response) {
+              console.log(response)
+              var parsedResponse = JSON.parse(response);
+        var data = parsedResponse.data;
+        if (data[0].TotalStock != 0 && data[0].Resultado == 1) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
 
+
+        });
+        sessionStorage.setItem("Fact_Id", data[0].TotalStock)
+        console.log(sessionStorage.getItem("Fact_Id"));
+        $("#DescripcionRepa").val(null),
+        $("#PrecioRepa").val(null)
+        $("#ModalReparacion").modal("hide");
+$('#TablaProductos_Factura').DataTable().ajax.reload(); 
+        $('#tablaProductos').DataTable().ajax.reload();
+
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se pudo',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
 
 
 
@@ -779,8 +897,8 @@ $('#TablaProductos_Factura').DataTable().ajax.reload();
 $('#TablaProductos_Factura tbody').on('click', '.eliminar-item', function () {
         var data = tableProductos.row($(this).parents('tr')).data();
         console.log(data.Producto);
-
-        $.ajax({
+        if (data.Categoria != "Reparaciones") {
+          $.ajax({
             url: 'Services/FacturaService.php',
             type: 'POST',
             data: {
@@ -823,12 +941,86 @@ $('#tablaProductos').DataTable().ajax.reload();
             }
         });
         
+        }else{ 
+
+          console.log(data.FaxD_Id);
+          $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'eliminarDetalleReparaciones',
+                'FaxD_Codigo': data.FaxD_Id,
+            },
+            success: function(response) {
+              console.log(response)
+        if (response == 1) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Eliminado con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+
+
+$('#TablaProductos_Factura').DataTable().ajax.reload(); 
+$('#tablaProductos').DataTable().ajax.reload();
+
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se logro eliminar',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+
+
+        }
+
+       
        
 
 
        
        
     });   
+
+
+    $("#btnNuevo").click(function () {
+      sessionStorage.setItem("Mepa_Metodo", "1")
+        $("#btnEfectivo").removeClass("btn-secondary")
+        $("#btnEfectivo").addClass("btn-primary")
+
+        $("#btnTarjeta").removeClass("btn-primary")
+        $("#btnTarjeta").addClass("btn-secondary")
+    
+        $("#btnTransferencias").removeClass("btn-primary")
+        $("#btnTransferencias").addClass("btn-secondary")
+
+        $("#tags").val(null)
+        $("#auto").val(null)
+        sessionStorage.setItem("Fact_Id","0")
+        sessionStorage.setItem("Cantidad","1")
+        sessionStorage.setItem("Clie_Id","1")
+        sessionStorage.setItem("Mayorista","0")
+        $('#TablaProductos_Factura').DataTable().ajax.reload(); 
+        $('#tablaProductos').DataTable().ajax.reload();
+        $("#txtTotal").text("00.0")
+            $("#txtTotal2").text("Total: " + "00.0")
+            $("#txtSubtotal").text("Subtotal: " + "00.0")
+            $("#txtImpuesto").text("Impuesto: " + "00.0")
+    })
 });
 
 

@@ -119,6 +119,22 @@ class FacturaController {
         }
     }
 
+    public function EliminarFacturaDetalleReparaciones($FaxD_Codigo) {
+        global $pdo;
+        try {
+            $sql = 'CALL sp_FacturaDetalles_eliminarReparaciones(:FaxD_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':FaxD_Codigo', $FaxD_Codigo, PDO::PARAM_INT);
+
+            $stmt->execute();
+            
+            $result = $stmt->fetchColumn();
+            return $result; 
+        } catch (PDOException $e) {
+            return 0; 
+        }
+    }
+
     
     public function FacturaInsertarDespues($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad) {
         global $pdo;
@@ -210,7 +226,7 @@ class FacturaController {
         }
     }
 
-    public function FacturaInsertarReparacion($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad) {
+    public function FacturaInsertarReparacion($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Codigo,$FaxD_Producto,$FaxD_Precio) {
         global $pdo;
         try {
             $sql = 'CALL SP_Facturas_Insertar(:Clie_Id,:Empl_Id,:Mepa_Id,:Sucu_Id,:Fact_UsuarioCreacion,:Fact_FechaCreacion,:Fact_UsuarioModificacion,:Fact_FechaModificacion,:Fact_Codigo)';
@@ -228,13 +244,13 @@ class FacturaController {
             $facturaId = $stmt->fetchColumn();
             $stmt->closeCursor();
             $pdo->exec('SET SQL_SAFE_UPDATES = 0;');
-            $sql = 'CALL SP_FacturaDetalles_Insertar(:Faxd_Diferenciador,:Prod_Nombre,:Faxd_Cantidad,:Fact_Codigo,:Sucu_Codigo)';
+            $sql = 'CALL SP_FacturaDetallesReparaciones_Insertar(:Faxd_Diferenciador,:Prod_Codigo,:Fact_Codigo,:FaxD_Producto,:FaxD_Precio)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Faxd_Diferenciador', $Faxd_Diferenciador, PDO::PARAM_INT);
-            $stmt->bindParam(':Prod_Nombre', $Prod_Nombre, PDO::PARAM_STR);
-            $stmt->bindParam(':Faxd_Cantidad', $Faxd_Cantidad, PDO::PARAM_INT);
-            $stmt->bindParam(':Fact_Codigo',  $facturaId, PDO::PARAM_INT);
-            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Prod_Codigo', $Prod_Codigo, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_Codigo', $facturaId, PDO::PARAM_INT);
+            $stmt->bindParam(':FaxD_Producto', $FaxD_Producto , PDO::PARAM_STR);
+            $stmt->bindParam(':FaxD_Precio', $FaxD_Precio, PDO::PARAM_STR);
             $stmt->execute();
             
             $resulta = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -272,6 +288,7 @@ class FacturaController {
             foreach ($result as $row) {
                 $data[] = array(
                     'Row' => $row['CodigoRow'],
+                    'FaxD_Id' => $row['FaxD_Id'],
                     'Prod_Codigo' => $row['Prod_Codigo'],
                     'Producto' => $row['Producto'],
                     'Cantidad' => $row['Cantidad'],
@@ -292,6 +309,20 @@ class FacturaController {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursalesPorCodigo`(:Codigo)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Codigo', $Codigo, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return json_encode(array('data' => $result));
+        } catch (Exception $e) {
+            throw new Exception('Error al buscar la marca: ' . $e->getMessage());
+        }
+    }
+
+    public function buscarFacturaPorCodigo($FactId) {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`sp_Factura_buscar`(:FactId)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':FactId', $FactId, PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return json_encode(array('data' => $result));
@@ -341,6 +372,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         
         $resultado = $controller->EliminarFacturaDetalle($Fact_Codigo,$Sucu_Codigo, $Prod_Nombre_Codigo);
         echo $resultado;
+    } elseif ($_POST['action'] === 'eliminarDetalleReparaciones') {
+        $FaxD_Codigo = $_POST['FaxD_Codigo'];
+
+
+        
+        $resultado = $controller->EliminarFacturaDetalleReparaciones($FaxD_Codigo);
+        echo $resultado;
+    }elseif ($_POST['action'] === 'listarFacturaId') {
+        $FactId = $_POST['FactId'];
+
+
+        
+        $resultado = $controller->buscarFacturaPorCodigo($FactId);
+        echo $resultado;
     }elseif ($_POST['action'] === 'confirmar') {
         $Fact_Codigo = $_POST['Fact_Codigo'];
         $Fact_FechaFinalizado = $_POST['Fact_FechaFinalizado'];
@@ -372,6 +417,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Faxd_Cantidad = $_POST['Faxd_Cantidad'];
 
         $resultado = $controller->FacturaInsertarDespues($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad);
+        echo $resultado;
+    }elseif ($_POST['action'] === 'insertarreparacion') {
+        $Clie_Id = $_POST['Clie_Id'];
+        $Mepa_Id = $_POST['Mepa_Id'];
+        $Fact_FechaCreacion = $_POST['Fact_FechaCreacion'];
+        $Fact_FechaModificacion = $_POST['Fact_FechaModificacion'];
+        $Fact_Codigo = $_POST['Fact_Codigo'];
+        $Faxd_Diferenciador = $_POST['Faxd_Diferenciador'];
+        $Prod_Codigo = $_POST['Prod_Codigo'];
+        $FaxD_Producto = $_POST['FaxD_Producto'];
+        $FaxD_Precio = $_POST['FaxD_Precio'];
+
+        $resultado = $controller->FacturaInsertarReparacion($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Codigo,$FaxD_Producto,$FaxD_Precio);
         echo $resultado;
     }elseif ($_POST['action'] === 'listarProductos') {
         $controller->ListarProductos();

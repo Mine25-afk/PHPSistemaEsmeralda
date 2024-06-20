@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Clientes</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         .error-message {
             color: red;
@@ -48,11 +39,10 @@
             100% { opacity: 1; }
         }
 
-    </style>
-</head>
 
-<body>
-    <div class="container">
+        </style>
+
+  
         <div class="card">
             <div class="card-body">
                 <h2 class="text-center" style="font-size: 34px !important">Clientes</h2>
@@ -333,10 +323,7 @@
                 </div>
 
 
-                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-                <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+              
                 <script>
                     $(document).ready(function() {
                         var table = $('#TablaCliente').DataTable({
@@ -841,6 +828,3 @@
 
                     });
                 </script>
-</body>
-
-</html>
