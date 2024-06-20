@@ -89,11 +89,10 @@
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center"><b>Factura Compra</b></h3>
-                    </div>
+                <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
+           
                     <div class="card-body">
-                        <div class="CrearOcultar">
+                    <div class="CrearOcultar" style="position:relative; top:-30px">
                             <p class="btn btn-primary" id="AbrirModal"> Nuevo</p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover" id="TablaFacturaCompra">
@@ -182,14 +181,22 @@
 
 
                                 <div class="card-body">
-                                    <div class="form-row d-flex justify-content-start">
-                                        <div class="col-md-2">
-                                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+                                    <div class="form-row d-flex justify-content-end">
+                                    <div class="col-auto">
+                              
                                             <input type="button" value="Confirmar" class="btn btn-primary" id="confirmarBtn" />
+                                            </div>
+                                <div class="col-auto">
+                                <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+                                            </div>
 
                                         </div>
                                     </div>
                                 </div>
+
+                             
+                            </div>
+                        </div>
                             </form>
                         </div>
                     </div>

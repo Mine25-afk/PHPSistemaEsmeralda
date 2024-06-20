@@ -57,7 +57,7 @@
     </script>
 <div class="card">
   <div class="card-body">
-    <h2 class="text-center" style="font-size: 34px !important">Facturas</h2>
+    <h2 class="text-center" style="font-size: 90px !important">Facturas</h2>
 
     <div style="height:91px; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
         <span style="color:#17358D;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
