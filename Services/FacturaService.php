@@ -60,8 +60,9 @@ class FacturaController {
     public function ListarProductos() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursales`()';
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursalesFiltrado`(:Sucu_Codigo)';
             $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetchAll(); // Asegúrate de obtener los datos como un array asociativo
             $data = array();
@@ -100,8 +101,26 @@ class FacturaController {
         }
     }
 
+    public function EliminarFacturaDetalle($Fact_Codigo, $Sucu_Codigo,$Prod_Nombre_Codigo) {
+        global $pdo;
+        try {
+            $sql = 'CALL sp_FacturaDetalles_eliminar(:Fact_Codigo,:Sucu_Codigo,:Prod_Nombre_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Fact_Codigo', $Fact_Codigo, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Prod_Nombre_Codigo', $Prod_Nombre_Codigo, PDO::PARAM_STR);
 
-    public function FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo) {
+            $stmt->execute();
+            
+            $result = $stmt->fetchColumn();
+            return $result; 
+        } catch (PDOException $e) {
+            return 0; 
+        }
+    }
+
+    
+    public function FacturaInsertarDespues($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad) {
         global $pdo;
         try {
             $sql = 'CALL SP_Facturas_Insertar(:Clie_Id,:Empl_Id,:Mepa_Id,:Sucu_Id,:Fact_UsuarioCreacion,:Fact_FechaCreacion,:Fact_UsuarioModificacion,:Fact_FechaModificacion,:Fact_Codigo)';
@@ -116,11 +135,154 @@ class FacturaController {
             $stmt->bindParam(':Fact_FechaModificacion', $Fact_FechaModificacion, PDO::PARAM_STR);
             $stmt->bindParam(':Fact_Codigo', $Fact_Codigo, PDO::PARAM_INT);
             $stmt->execute();
-            
             $facturaId = $stmt->fetchColumn();
-            return $facturaId; // 1 si es exitoso, 0 si no
+            $stmt->closeCursor();
+            $sql = 'CALL sp_FacturaDetalles_eliminar(:Fact_Codigo,:Sucu_Codigo,:Prod_Nombre_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Fact_Codigo', $Fact_Codigo, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Prod_Nombre_Codigo', $Prod_Nombre, PDO::PARAM_STR);
+            $stmt->execute();
+            $stmt->closeCursor();
+
+            $pdo->exec('SET SQL_SAFE_UPDATES = 0;');
+            $sql = 'CALL SP_FacturaDetalles_Insertar(:Faxd_Diferenciador,:Prod_Nombre,:Faxd_Cantidad,:Fact_Codigo,:Sucu_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Faxd_Diferenciador', $Faxd_Diferenciador, PDO::PARAM_INT);
+            $stmt->bindParam(':Prod_Nombre', $Prod_Nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':Faxd_Cantidad', $Faxd_Cantidad, PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_Codigo',  $facturaId, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $resulta = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $data = array();
+            foreach ($resulta as $row) {
+                $data[] = array(
+                    'TotalStock' => $row['TotalStock'],
+                    'Resultado' => $row['Resultado']
+                );
+            }
+            return json_encode(array('data' => $data));
         } catch (PDOException $e) {
-            return 0; // Retornar 0 en caso de error
+            return $e; 
+        }
+    }
+
+    public function FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad) {
+        global $pdo;
+        try {
+            $sql = 'CALL SP_Facturas_Insertar(:Clie_Id,:Empl_Id,:Mepa_Id,:Sucu_Id,:Fact_UsuarioCreacion,:Fact_FechaCreacion,:Fact_UsuarioModificacion,:Fact_FechaModificacion,:Fact_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Clie_Id', $Clie_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Empl_Id', $_SESSION['Empl_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Mepa_Id', $Mepa_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Id', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_UsuarioCreacion',  $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_FechaCreacion', $Fact_FechaCreacion, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_UsuarioModificacion',  $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_FechaModificacion', $Fact_FechaModificacion, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_Codigo', $Fact_Codigo, PDO::PARAM_INT);
+            $stmt->execute();
+            $facturaId = $stmt->fetchColumn();
+            $stmt->closeCursor();
+            $pdo->exec('SET SQL_SAFE_UPDATES = 0;');
+            $sql = 'CALL SP_FacturaDetalles_Insertar(:Faxd_Diferenciador,:Prod_Nombre,:Faxd_Cantidad,:Fact_Codigo,:Sucu_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Faxd_Diferenciador', $Faxd_Diferenciador, PDO::PARAM_INT);
+            $stmt->bindParam(':Prod_Nombre', $Prod_Nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':Faxd_Cantidad', $Faxd_Cantidad, PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_Codigo',  $facturaId, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $resulta = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $data = array();
+            foreach ($resulta as $row) {
+                $data[] = array(
+                    'TotalStock' => $row['TotalStock'],
+                    'Resultado' => $row['Resultado']
+                );
+            }
+            return json_encode(array('data' => $data));
+        } catch (PDOException $e) {
+            return $e; 
+        }
+    }
+
+    public function FacturaInsertarReparacion($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad) {
+        global $pdo;
+        try {
+            $sql = 'CALL SP_Facturas_Insertar(:Clie_Id,:Empl_Id,:Mepa_Id,:Sucu_Id,:Fact_UsuarioCreacion,:Fact_FechaCreacion,:Fact_UsuarioModificacion,:Fact_FechaModificacion,:Fact_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Clie_Id', $Clie_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Empl_Id', $_SESSION['Empl_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Mepa_Id', $Mepa_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Id', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_UsuarioCreacion',  $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_FechaCreacion', $Fact_FechaCreacion, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_UsuarioModificacion',  $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_FechaModificacion', $Fact_FechaModificacion, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_Codigo', $Fact_Codigo, PDO::PARAM_INT);
+            $stmt->execute();
+            $facturaId = $stmt->fetchColumn();
+            $stmt->closeCursor();
+            $pdo->exec('SET SQL_SAFE_UPDATES = 0;');
+            $sql = 'CALL SP_FacturaDetalles_Insertar(:Faxd_Diferenciador,:Prod_Nombre,:Faxd_Cantidad,:Fact_Codigo,:Sucu_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Faxd_Diferenciador', $Faxd_Diferenciador, PDO::PARAM_INT);
+            $stmt->bindParam(':Prod_Nombre', $Prod_Nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':Faxd_Cantidad', $Faxd_Cantidad, PDO::PARAM_INT);
+            $stmt->bindParam(':Fact_Codigo',  $facturaId, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $resulta = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $data = array();
+            foreach ($resulta as $row) {
+                $data[] = array(
+                    'TotalStock' => $row['TotalStock'],
+                    'Resultado' => $row['Resultado']
+                );
+            }
+            return json_encode(array('data' => $data));
+        } catch (PDOException $e) {
+            return $e; 
+        }
+    }
+
+    public function TablaProductoFactura($FactId, $Mayorista) {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaDetalles_ProductosVentas`(:FactId, :Mayorista)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':FactId', $FactId, PDO::PARAM_INT);
+            $stmt->bindParam(':Mayorista', $Mayorista, PDO::PARAM_BOOL);
+            $stmt->execute();
+            
+            // Verifica si la consulta devolvió resultados
+            $result = $stmt->fetchAll();
+            if ($result === false) {
+                // Obtén información del error
+                $errorInfo = $stmt->errorInfo();
+                throw new Exception('Error en la consulta SQL: ' . $errorInfo[2]);
+            }
+            
+            $data = array();
+            foreach ($result as $row) {
+                $data[] = array(
+                    'Row' => $row['CodigoRow'],
+                    'Prod_Codigo' => $row['Prod_Codigo'],
+                    'Producto' => $row['Producto'],
+                    'Cantidad' => $row['Cantidad'],
+                    'Precio_Unitario' => $row['Precio_Unitario'],
+                    'Total' => $row['Total'],
+                    'Categoria' => $row['Categoria']
+                );
+            }
+            return json_encode(array('data' => $data));
+        } catch (Exception $e) {
+            throw new Exception('Error al buscar la marca: ' . $e->getMessage());
         }
     }
 
@@ -164,9 +326,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     require_once __DIR__ . '/../config.php';
     $controller = new FacturaController();
 
-    if ($_POST['action'] === 'listarFactura') {
+    if ($_POST['action'] == 'listarFactura') {
         $controller->listarFactura();
-    } elseif ($_POST['action'] === 'confirmar') {
+    }elseif ($_POST['action'] == 'listarproductos_Factura') {
+        $Fact_Id = $_POST['fact_Id'];
+        $Mayorista = $_POST['mayorista'];
+        echo $controller->TablaProductoFactura($Fact_Id,$Mayorista);
+       
+        } elseif ($_POST['action'] === 'eliminarDetalle') {
+        $Fact_Codigo = $_POST['Fact_Codigo'];
+        $Sucu_Codigo = $_POST['Sucu_Codigo'];
+        $Prod_Nombre_Codigo = $_POST['Prod_Nombre_Codigo'];
+
+        
+        $resultado = $controller->EliminarFacturaDetalle($Fact_Codigo,$Sucu_Codigo, $Prod_Nombre_Codigo);
+        echo $resultado;
+    }elseif ($_POST['action'] === 'confirmar') {
         $Fact_Codigo = $_POST['Fact_Codigo'];
         $Fact_FechaFinalizado = $_POST['Fact_FechaFinalizado'];
         $Fact_Pago = $_POST['Fact_Pago'];
@@ -180,7 +355,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Fact_FechaCreacion = $_POST['Fact_FechaCreacion'];
         $Fact_FechaModificacion = $_POST['Fact_FechaModificacion'];
         $Fact_Codigo = $_POST['Fact_Codigo'];
-        $resultado = $controller->FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo);
+        $Faxd_Diferenciador = $_POST['Faxd_Diferenciador'];
+        $Prod_Nombre = $_POST['Prod_Nombre'];
+        $Faxd_Cantidad = $_POST['Faxd_Cantidad'];
+
+        $resultado = $controller->FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad);
+        echo $resultado;
+    }elseif ($_POST['action'] === 'insertardespues') {
+        $Clie_Id = $_POST['Clie_Id'];
+        $Mepa_Id = $_POST['Mepa_Id'];
+        $Fact_FechaCreacion = $_POST['Fact_FechaCreacion'];
+        $Fact_FechaModificacion = $_POST['Fact_FechaModificacion'];
+        $Fact_Codigo = $_POST['Fact_Codigo'];
+        $Faxd_Diferenciador = $_POST['Faxd_Diferenciador'];
+        $Prod_Nombre = $_POST['Prod_Nombre'];
+        $Faxd_Cantidad = $_POST['Faxd_Cantidad'];
+
+        $resultado = $controller->FacturaInsertarDespues($Clie_Id,$Mepa_Id,$Fact_FechaCreacion,$Fact_FechaModificacion,$Fact_Codigo,$Faxd_Diferenciador,$Prod_Nombre,$Faxd_Cantidad);
         echo $resultado;
     }elseif ($_POST['action'] === 'listarProductos') {
         $controller->ListarProductos();

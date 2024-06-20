@@ -52,6 +52,7 @@
                                   sessionStorage.setItem("Mayorista","1")
                                 }
                                 sessionStorage.setItem("Clie_Id",selectedObj.id)
+                                $('#TablaProductos_Factura').DataTable().ajax.reload();
                             }
                         });
                     } else if (response.error) {
@@ -130,7 +131,7 @@
         >
           <div class="col-md-12" style="margin-top:10px">
             <div class="table-responsive">
-              <table class="table table-striped table-hover">
+              <table class="table table-striped table-hover" id="TablaProductos_Factura">
                 <thead>
                   <tr>
                     <th>Categoria</th>
@@ -143,19 +144,6 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Maquillaje</td>
-                    <td>M1004</td>
-                    <td>Labial</td>
-                    <td>300.34</td>
-                    <td>3</td>
-                    <td>1000</td>
-                    <td>
-                      <button type="button" class="btn btn-secondary btn-block">
-                        <i class="fas fa-eraser"></i>
-                      </button>
-                    </td>
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -272,12 +260,47 @@
     </div>
 </div>
 
+<div class="modal fade" id="ModalReparacion" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <!-- Add modal-lg class here -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Especificacion de producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FormReparacion">
+          <div style="padding: 10px 10px;">
+              <div class="form-row ">
+                <div class="col-md-6">
+                  <label class="control-label">Descripcion</label>
+                  <input name="DescripcionRepa" class="form-control letras" id="DescripcionRepa"/>
+                  <span class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                  <label class="control-label">Precio</label>
+                  <input name="PrecioRepa" class="form-control letras" id="PrecioRepa"/>
+                  <span class="text-danger"></span>
+                </div>
+              </div>
+          </div>
+          </form>
+          <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmarReparacion">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
 
 <script>
 $(document).ready(function() {
 
   sessionStorage.setItem("Fact_Id","0")
+  sessionStorage.setItem("Cantidad","1")
+
   cargarDropdowns({ Tarj_Id: 0 });
         async function cargarDropdowns(selectedData = {}) {
         try {
@@ -344,9 +367,9 @@ $(document).ready(function() {
 
     $('#auto').on('keydown', function(e) {
                 if (e.key === 'Tab') {
-                    e.preventDefault(); // Evita que el navegador realice la acción predeterminada de la tecla Tab
-                    // Ejecuta la acción deseada
+                    e.preventDefault(); 
                     console.log($('#auto').val())
+                    sessionStorage.setItem("Cantidad","1")
                     $.ajax({
             url: 'Services/FacturaService.php',
             method: 'POST',
@@ -359,8 +382,17 @@ $(document).ready(function() {
               console.log(data); 
 
               if (data && data.data && data.data.length > 0) {
-                  alert("Hay datos")
+
                   var marca = data.data[0];
+                  var valor = "1"
+                  if (data.data[0].Categoria == "Joyas") {
+                    valor = 1;
+                  }else {
+                    valor = 2;
+                  }
+                  console.log("El valor es" + valor)
+          
+
                   $.ajax({
             url: 'Services/FacturaService.php',
             type: 'POST',
@@ -371,11 +403,15 @@ $(document).ready(function() {
                 Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 Fact_Codigo: sessionStorage.getItem("Fact_Id"),
-
+                Faxd_Diferenciador: valor,
+                Prod_Nombre: data.data[0].Producto,
+                Faxd_Cantidad: sessionStorage.getItem("Cantidad")
             },
             success: function(response) {
-          console.log(response)
-          if (response != 0) {
+              console.log(response)
+              var parsedResponse = JSON.parse(response);
+        var data = parsedResponse.data;
+        if (data[0].TotalStock != 0 && data[0].Resultado == 1) {
             iziToast.success({
             title: 'Éxito',
             message: 'Subido con exito',
@@ -385,11 +421,16 @@ $(document).ready(function() {
 
 
         });
-        sessionStorage.setItem("Fact_Id", response)
+        sessionStorage.setItem("Fact_Id", data[0].TotalStock)
+        console.log(sessionStorage.getItem("Fact_Id"));
+
+$('#TablaProductos_Factura').DataTable().ajax.reload(); 
+        $('#tablaProductos').DataTable().ajax.reload();
+
                 } else {
                     iziToast.error({
             title: 'Error',
-            message: 'No se pudo subir',
+            message: 'Stock insuficiente' + data[0].TotalStock,
             position: 'topRight',
             transitionIn: 'flipInX',
             transitionOut: 'flipOutX'
@@ -402,7 +443,11 @@ $(document).ready(function() {
                 alert('Error en la comunicación con el servidor.');
             }
         });
-                 
+        
+
+
+
+
               } else {
                 alert("No hay datos")
               }
@@ -415,7 +460,7 @@ $(document).ready(function() {
                     // Puedes agregar aquí cualquier otra acción que desees ejecutar
                 }
             });
-    $('#txtTotal').text("100.00")
+ 
 
     $('#btnSeleccionarProducto').click(function(){
         $("#ModalListaProductos").modal("show")
@@ -449,11 +494,62 @@ $(document).ready(function() {
     ],
     "dom": '<"top"f>rt<"bottom"p><"clear">' // Ubica el buscador en la parte superior
 });
+$.validator.addMethod("notZero", function(value, element) {
+    return value !== "0" && value !== "";
+}, "La cantidad no puede ser 0 o vacía.");
+var tableProductos = $('#TablaProductos_Factura').DataTable({
+    "ajax": {
+        "url": "Services/FacturaService.php",
+        "type": "POST",
+        "data":  function(d){
+            d.action = 'listarproductos_Factura';
+            d.fact_Id = sessionStorage.getItem("Fact_Id");
+            d.mayorista =sessionStorage.getItem("Mayorista");
+                  },
+        "dataSrc": function(json) {
+            console.log(json.data);
+            return json.data;
+        }
+    },
+    "pageLength": 5, 
+    "lengthChange": false, 
+    "columns": [
+        { "data": "Categoria" },
+        { "data": "Prod_Codigo" },
+        { "data": "Producto" },
+        { "data": "Precio_Unitario" },
+        {
+            "data": "Cantidad",
+            "render": function(data, type, row) {
+                return '<form class="cantidad-form" id="form_cantidad_' + row.Prod_Codigo + '"><input type="number" name="cantidad_' + row.Prod_Codigo + '" class="form-control cantidad-input" value="' + data + '" /></form>';
+            }
+        },
+        { "data": "Total" },
+        { 
+            "data": null, 
+            "defaultContent": "<div class='text-center'><a class='btn btn-danger btn-sm eliminar-item' style='border-radius: 20px;'><i class='fas fa-trash'></i></a></div>"
+
+        }
+    ],
+    "dom": 'rt<"bottom"p><"clear">' // Excluye el buscador
+});
+
+
 
 $('#tablaProductos tbody').on('click', '.añadir-item', function () {
         var data = table.row($(this).parents('tr')).data();
         console.log(data);
-        $.ajax({
+        sessionStorage.setItem("Cantidad","1")
+        if (data.Categoria == "Joyas" || data.Categoria == "Maquillajes") {
+            var valor = "1"
+          if (data.Categoria == "Joyas") {
+            valor = 1;
+          }else {
+            valor = 2;
+          }
+          console.log(valor)
+
+          $.ajax({
             url: 'Services/FacturaService.php',
             type: 'POST',
             data: {
@@ -463,11 +559,15 @@ $('#tablaProductos tbody').on('click', '.añadir-item', function () {
                 Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 Fact_Codigo: sessionStorage.getItem("Fact_Id"),
-
+                Faxd_Diferenciador: valor,
+                Prod_Nombre: data.Producto,
+                Faxd_Cantidad: sessionStorage.getItem("Cantidad")
             },
             success: function(response) {
-          console.log(response)
-          if (response != 0) {
+              console.log(response)
+              var parsedResponse = JSON.parse(response);
+        var data = parsedResponse.data;
+        if (data[0].TotalStock != 0 && data[0].Resultado == 1) {
             iziToast.success({
             title: 'Éxito',
             message: 'Subido con exito',
@@ -477,11 +577,16 @@ $('#tablaProductos tbody').on('click', '.añadir-item', function () {
 
 
         });
-        sessionStorage.setItem("Fact_Id", response)
+        sessionStorage.setItem("Fact_Id", data[0].TotalStock)
+        console.log(sessionStorage.getItem("Fact_Id"));
+
+$('#TablaProductos_Factura').DataTable().ajax.reload(); 
+        $('#tablaProductos').DataTable().ajax.reload();
+
                 } else {
                     iziToast.error({
             title: 'Error',
-            message: 'No se pudo subir',
+            message: 'Stock insuficiente' + data[0].TotalStock,
             position: 'topRight',
             transitionIn: 'flipInX',
             transitionOut: 'flipOutX'
@@ -494,6 +599,20 @@ $('#tablaProductos tbody').on('click', '.añadir-item', function () {
                 alert('Error en la comunicación con el servidor.');
             }
         });
+
+
+        }else{
+          sessionStorage.setItem("Diferenciador", "3")
+          sessionStorage.setItem("Codigo", data.Codigo)
+          $("#ModalListaProductos").modal("hide")
+          $("#ModalReparacion").modal("show");
+          $("#DescripcionRepa").val(null)
+          $("#PrecioRepa").val(null)
+        }
+        
+
+        
+       
         
        
   
@@ -514,8 +633,202 @@ $('#tablaProductos tbody').on('click', '.añadir-item', function () {
     }
   
   })
+  $('#FormReparacion').validate({
+        rules: {
+            DescripcionRepa: {
+                required: true
+            },
+            PrecioRepa: {
+                required: true
+            }
+        },
+        messages: {
+          DescripcionRepa: {
+                required: "Por favor ingrese una descripcion"
+            },  
+            PrecioRepa: {
+                required: "Por favor ingrese un precio"
+            },
+
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.col-md-6').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+  $("#confirmarReparacion").click(function () {
+    if ($('#FormReparacion').valid()) {
 
 
+
+
+    }
+  
+  })
+
+  $('#TablaProductos_Factura tbody').on('keydown', '.cantidad-input', function(e) {
+    if (e.key === 'Tab') {
+        e.preventDefault(); // Prevenir el comportamiento por defecto del tab
+        var $input = $(this);
+        var $form = $input.closest('form');
+        var inputName = $input.attr('name');
+        
+        $form.validate({
+            rules: {
+                [inputName]: {
+                    required: true,
+                    notZero: true
+                }
+            },
+            messages: {
+                [inputName]: {
+                    required: "La cantidad es requerida.",
+                    notZero: "La cantidad no puede ser 0."
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.cantidad-form').append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Si el formulario es válido, ejecutar la acción
+        if ($form.valid()) {
+            var value = $input.val();
+            var row = tableProductos.row($input.closest('tr')).data();
+            console.log("Cantidad válida: " + value);
+            console.log("Fila: ", row);
+            var valor = "1"
+        if (row.Categoria == "Joyas") {
+          valor = 1;
+        }else {
+          valor = 2;
+         }
+
+        console.log(valor)
+        $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'insertardespues',
+                Clie_Id: sessionStorage.getItem("Clie_Id"),
+                Mepa_Id: sessionStorage.getItem("Mepa_Metodo"), 
+                Fact_FechaCreacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_FechaModificacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
+                Faxd_Diferenciador: valor,
+                Prod_Nombre: row.Producto,
+                Faxd_Cantidad: value
+            },
+            success: function(response) {
+              console.log(response)
+              var parsedResponse = JSON.parse(response);
+        var data = parsedResponse.data;
+        if (data[0].TotalStock != 0 && data[0].Resultado == 1) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Subido con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+        sessionStorage.setItem("Fact_Id", data[0].TotalStock)
+        console.log(sessionStorage.getItem("Fact_Id"));
+
+$('#TablaProductos_Factura').DataTable().ajax.reload(); 
+        $('#tablaProductos').DataTable().ajax.reload();
+
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'Stock insuficiente' + data[0].TotalStock,
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+            
+        } else {
+            $input.focus(); // Mantener el foco en el input
+        }
+    }
+});
+$('#TablaProductos_Factura tbody').on('click', '.eliminar-item', function () {
+        var data = tableProductos.row($(this).parents('tr')).data();
+        console.log(data.Producto);
+
+        $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'eliminarDetalle',
+                'Fact_Codigo': sessionStorage.getItem("Fact_Id"),
+                'Sucu_Codigo': 1,
+                'Prod_Nombre_Codigo':data.Producto
+            },
+            success: function(response) {
+              console.log(response)
+        if (response == 1) {
+            iziToast.success({
+            title: 'Éxito',
+            message: 'Eliminado con exito',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+
+
+$('#TablaProductos_Factura').DataTable().ajax.reload(); 
+$('#tablaProductos').DataTable().ajax.reload();
+
+                } else {
+                    iziToast.error({
+            title: 'Error',
+            message: 'No se logro eliminar',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+
+
+        });
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+        
+       
+
+
+       
+       
+    });   
 });
 
 
