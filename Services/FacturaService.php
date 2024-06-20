@@ -83,15 +83,18 @@ class FacturaController {
         }
     }
 
-    public function ConfirmarFactura($Fact_Codigo, $Fact_FechaFinalizado,$Fact_Pago, $Fact_Cambio) {
+    public function ConfirmarFactura($Fact_Codigo, $Fact_FechaFinalizado,$Fact_Pago, $Fact_Cambio,$Tarj_Id,$Tarj_Codigo,$Fact_Total) {
         global $pdo;
         try {
-            $sql = 'CALL sp_ConfirmarFactura(:Fact_Codigo,:Fact_FechaFinalizado,:Fact_Pago,:Fact_Cambio)';
+            $sql = 'CALL sp_ConfirmarFactura(:Fact_Codigo,:Fact_FechaFinalizado,:Fact_Pago,:Fact_Cambio,:Tarj_Id,:Tarj_Codigo,:Fact_Total)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Fact_Codigo', $Fact_Codigo, PDO::PARAM_INT);
             $stmt->bindParam(':Fact_FechaFinalizado',$Fact_FechaFinalizado, PDO::PARAM_STR);
             $stmt->bindParam(':Fact_Pago', $Fact_Pago, PDO::PARAM_STR);
             $stmt->bindParam(':Fact_Cambio', $Fact_Cambio, PDO::PARAM_STR);
+            $stmt->bindParam(':Tarj_Id', $Tarj_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Tarj_Codigo', $Tarj_Codigo, PDO::PARAM_STR);
+            $stmt->bindParam(':Fact_Total', $Fact_Total, PDO::PARAM_STR);
             $stmt->execute();
             
             $result = $stmt->fetchColumn();
@@ -337,17 +340,21 @@ class FacturaController {
         try {
             $sql = 'CALL `dbsistemaesmeralda`.`SP_Tarjetas_Listar`()';
             $stmt = $pdo->prepare($sql);
-            $result = $stmt->execute();
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $data = array();
             foreach ($result as $row) {
-                $data[] = array(
-                    'tarj_id' => $row['tarj_Id'],
-                    'tarj_Descripcion'=> $row['tarj_Descripcion']
-                );
+                // Excluir el ID 3 si no lo has hecho en el SP
+                if ($row['tarj_Id'] != 3) {
+                    $data[] = array(
+                        'tarj_id' => $row['tarj_Id'],
+                        'tarj_Descripcion'=> $row['tarj_Descripcion']
+                    );
+                }
             }
-            echo json_encode(array('data' => $data));
+            return json_encode(array('data' => $data));
         } catch (Exception $e) {
-            throw new Exception('Error al listar cargos: ' . $e->getMessage());
+            throw new Exception('Error al listar tarjetas: ' . $e->getMessage());
         }
     }
 }
@@ -391,8 +398,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $Fact_FechaFinalizado = $_POST['Fact_FechaFinalizado'];
         $Fact_Pago = $_POST['Fact_Pago'];
         $Fact_Cambio = $_POST['Fact_Cambio'];
-        
-        $resultado = $controller->ConfirmarFactura($Fact_Codigo,$Fact_FechaFinalizado, $Fact_Pago, $Fact_Cambio);
+        $Tarj_Id= $_POST['Tarj_Id'];
+        $Tarj_Codigo= $_POST['Tarj_Codigo'];
+        $Fact_Total= $_POST['Fact_Total'];
+        $resultado = $controller->ConfirmarFactura($Fact_Codigo,$Fact_FechaFinalizado, $Fact_Pago, $Fact_Cambio,$Tarj_Id,$Tarj_Codigo,$Fact_Total);
         echo $resultado;
     }elseif ($_POST['action'] === 'insertarprimero') {
         $Clie_Id = $_POST['Clie_Id'];
@@ -440,7 +449,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $resultado = $controller->buscarProductoPorCodigo($Codigo);
         echo $resultado;
     }elseif ($_POST['action'] === 'listartarjetas') {
-    $controller->listarTarjetas();
+    echo $controller->listarTarjetas();
    
     }
 }

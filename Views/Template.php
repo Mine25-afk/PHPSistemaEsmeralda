@@ -17,7 +17,13 @@
     <link rel="stylesheet" href="Views/Resources/css/IziToast.css">
     
     <script src="Views/Resources/js/JqueryVS3_7_1.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.6/jspdf.plugin.autotable.min.js"></script>
+    
+
+
+
+
   </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
