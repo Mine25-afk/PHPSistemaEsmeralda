@@ -200,6 +200,7 @@ button:hover {
                         Contra: Contraseña
                     },
                     success: function(response) {
+                        console.log('Response from server:', response);
                         var data = JSON.parse(response); // Parse the JSON response
                         console.log(data);
                         console.log(data.data.length);

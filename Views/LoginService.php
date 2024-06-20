@@ -2,10 +2,7 @@
 require_once __DIR__ . '/../config.php';
 
 class LoginService {
-
-
     public function InicioSesion($Usuario, $Contra) {
-
         global $pdo;
         try {
             $sql = 'CALL SP_Usuarios_inicioSesion(:p_Usuario, :p_Contra)';
@@ -20,12 +17,9 @@ class LoginService {
             return 0; 
         }
     }
-
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    require_once __DIR__ . '/../config.php';
     session_start();
     $controller = new LoginService();
    
@@ -42,6 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $_SESSION['Empl_Id'] = $user['Empl_Id'];
             $_SESSION['Role_Id'] = $user['Role_Id'];
             $_SESSION['Pant_Id'] = $user['Pant_Id'];
+            
+            // Corrección aquí para convertir un string en un array antes de asignarlo a $_SESSION['pantallas']
+          // Corrección aquí para convertir un string en un array antes de asignarlo a $_SESSION['pantallas']
+$_SESSION['pantallas'] = explode(',', $user['pant_Identificador']);
+
+            
             $_SESSION['Usua_Administrador'] = $user['Usua_Administrador'];
             $_SESSION['Sucu_Id'] = $user['Sucu_Id'];
             $_SESSION['Sucu_Nombre'] = $user['Sucu_Nombre'];
@@ -52,4 +52,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     } 
 }
 
-?>
