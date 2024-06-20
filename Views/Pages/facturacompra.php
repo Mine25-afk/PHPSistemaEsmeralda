@@ -166,29 +166,29 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="detalleFactura">
-    <tr>
-        <td>
-            <p id="categoria"></p>
-        </td>
-        <td>
-            <div class="input-group">
-                <input type="text" class="form-control" name="producto" />
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="btnNuevoProducto"><i class="fas fa-plus"></i></button>
-                </div>
-            </div>
-        </td>
-        <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
-        <td><input type="text" class="form-control" id="precio_compra" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
-        <td>
-            <p id="precio_venta">0.00</p>
-        </td>
-        <td>
-            <p id="precio_mayorista">0.00</p>
-        </td>
-        <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
-    </tr>
-</tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <p id="categoria"></p>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" name="producto" />
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-outline-secondary" type="button" id="btnNuevoProducto"><i class="fas fa-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
+                                                        <td><input type="text" class="form-control" id="precio_compra" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
+                                                        <td>
+                                                            <p id="precio_venta">0.00</p>
+                                                        </td>
+                                                        <td>
+                                                            <p id="precio_mayorista">0.00</p>
+                                                        </td>
+                                                        <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
+                                                    </tr>
+                                                </tbody>
                                                 <tfoot>
 
                                                 </tfoot>
@@ -215,20 +215,60 @@
                             <div class="card card-body">
                                 <h3 class="text-center"><b>Nuevo Producto</b></h3>
                                 <form id="NuevoProductoForm" style="width: 100%">
-                                    <div class="form-row" style="justify-content: center; margin: 0px 10px">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Nombre del Producto</label>
-                                                <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required />
+                                    <div class="form-row" id="productTypeSelection">
+                                        <div class="col-md-12">
+                                            <label>Tipo de Producto</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="productType" id="radioMaquillaje" value="maquillaje" checked>
+                                                <label class="form-check-label" for="radioMaquillaje">
+                                                    Maquillaje
+                                                </label>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Precio</label>
-                                                <input type="text" class="form-control" id="precioProducto" name="precioProducto" required />
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="productType" id="radioJoya" value="joya">
+                                                <label class="form-check-label" for="radioJoya">
+                                                    Joya
+                                                </label>
                                             </div>
+
                                         </div>
                                     </div>
+
+                                    <div class="form-row">
+                                        <div class="col-md-6">
+                                            <label>Nombre del Producto</label>
+                                            <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Precio Compra</label>
+                                            <input type="text" class="form-control" id="precioCompraProducto" name="precioCompraProducto" required />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Precio Venta</label>
+                                            <input type="text" class="form-control" id="precioVentaProducto" name="precioVentaProducto" required />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Precio Mayorista</label>
+                                            <input type="text" class="form-control" id="precioMayoristaProducto" name="precioMayoristaProducto" required />
+                                        </div>
+                                        <div class="col-md-6" id="marcaField">
+                                            <label>Marca</label>
+                                            <select name="Marca_Id" class="form-control" id="Marca_Id" required></select>
+                                        </div>
+                                        <div class="col-md-6" id="materialField" style="display:none;">
+                                            <label>Material</label>
+                                            <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
+                                        </div>
+                                        <div class="col-md-6" id="categoriaField" style="display:none;">
+                                            <label>Categoría</label>
+                                            <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Imagen</label>
+                                            <input type="file" name="Imagen" class="form-control" id="Imagen" required />
+                                        </div>
+                                    </div>
+
                                     <div class="form-row d-flex justify-content-start">
                                         <div class="col-md-2">
                                             <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
@@ -254,15 +294,18 @@
             $('#collapseNuevoProducto').collapse('show');
             $('.CrearOcultar').hide();
             $('.CrearMostrar').hide();
+            if ($('#radioJoya').is(':checked')) {
+                cargarMaterialesCategorias();
+            } else {
+                cargarMarcas();
+            }
         });
 
-        // Volver al colapso de factura compra al hacer clic en el botón volver
         $(document).on('click', '#btnVolverFacturaCompra', function() {
             $('#collapseNuevoProducto').collapse('hide');
-            $('.CrearOcultar').hide();
+            $('.CrearOcultar').show();
             $('.CrearMostrar').show();
         });
-
         $('#metodoPagoSeleccionado').val('1');
 
         var FaCE_Id = 0;
@@ -362,15 +405,22 @@
                 var nuevaFila = `
 <tr data-id="NEW_ID">
     <td><p id="categoria"></p></td>
-    <td><input type="text" class="form-control" name="producto" /></td>
+    <td>
+        <div class="input-group">
+            <input type="text" class="form-control" name="producto" />
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="btnNuevoProducto"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+    </td>
     <td><input type="number" class="form-control" name="cantidad" value="1" /></td>
     <td><input type="text" class="form-control" name="precio_compra" value="0.00" oninput="validateNumber(this)" /></td>
     <td><p id="precio_venta">0.00</p></td>
     <td><p id="precio_mayorista">0.00</p></td>
     <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>
 </tr>`;
-                $('#detalleFactura').append(nuevaFila);
-                aplicarAutocompletado();
+$('#detalleFactura').append(nuevaFila);
+aplicarAutocompletado();
             }
 
             $('.metodo-pago').click(function() {
@@ -613,7 +663,142 @@
                 });
             }
 
+            function cargarMaterialesCategorias() {
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    data: {
+                        action: 'listarMateriales'
+                    },
+                    success: function(response) {
+                        const materiales = JSON.parse(response).data;
+                        $('#Mate_Id').empty().append('<option value="">--Seleccione--</option>');
+                        materiales.forEach(material => {
+                            $('#Mate_Id').append('<option value="' + material.Mate_Id + '">' + material.Mate_Material + '</option>');
+                        });
+                    }
+                });
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    data: {
+                        action: 'listarCategorias'
+                    },
+                    success: function(response) {
+                        const categorias = JSON.parse(response).data;
+                        $('#Cate_Id').empty().append('<option value="">--Seleccione--</option>');
+                        categorias.forEach(categoria => {
+                            $('#Cate_Id').append('<option value="' + categoria.Cate_Id + '">' + categoria.Cate_Categoria + '</option>');
+                        });
+                    }
+                });
+            }
 
+            function cargarMarcas() {
+                $.ajax({
+                    url: 'Services/MarcaService.php',
+                    type: 'POST',
+                    data: {
+                        action: 'listarMarcas'
+                    },
+                    success: function(response) {
+                        const marcas = JSON.parse(response).data;
+                        $('#Marca_Id').empty().append('<option value="">--Seleccione--</option>');
+                        marcas.forEach(marca => {
+                            $('#Marca_Id').append('<option value="' + marca.Marca_Id + '">' + marca.Marca_Nombre + '</option>');
+                        });
+                    }
+                });
+            }
+
+            $('#radioJoya').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#materialField').show();
+                    $('#categoriaField').show();
+                    $('#marcaField').hide();
+                    cargarMaterialesCategorias();
+                }
+            });
+
+            $('#radioMaquillaje').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#materialField').hide();
+                    $('#categoriaField').hide();
+                    $('#marcaField').show();
+                    cargarMarcas();
+                }
+            });
+
+            // Inicializar con maquillaje seleccionado
+            cargarMarcas();
+
+            $('#NuevoProductoForm').on('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+
+                if ($('#radioJoya').is(':checked')) {
+                    formData.append('action', 'insertarProducto');
+                    formData.append('tipo', 'joya');
+                    formData.append('nombre', $('#nombreProducto').val());
+                    formData.append('precio_compra', $('#precioCompraProducto').val());
+                    formData.append('precio_venta', $('#precioVentaProducto').val());
+                    formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
+                    formData.append('imagen', $('#Imagen')[0].files[0]);
+                    formData.append('material', $('#Mate_Id').val());
+                    formData.append('categoria', $('#Cate_Id').val());
+                } else {
+                    formData.append('action', 'insertarProducto');
+                    formData.append('tipo', 'maquillaje');
+                    formData.append('nombre', $('#nombreProducto').val());
+                    formData.append('precio_compra', $('#precioCompraProducto').val());
+                    formData.append('precio_venta', $('#precioVentaProducto').val());
+                    formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
+                    formData.append('imagen', $('#Imagen')[0].files[0]);
+                    formData.append('marca', $('#Marca_Id').val());
+                }
+
+                $.ajax({
+                    url: 'Services/FacturaCompraService.php',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        response = JSON.parse(response);
+                        if (response.result == 1) {
+                            iziToast.success({
+                                title: 'Éxito',
+                                message: 'Producto insertado correctamente',
+                                position: 'topRight',
+                                transitionIn: 'flipInX',
+                                transitionOut: 'flipOutX'
+                            });
+                            $('#collapseNuevoProducto').collapse('hide');
+                            $('.CrearOcultar').show();
+                            $('.CrearMostrar').show();
+                            $('#NuevoProductoForm')[0].reset();
+                            $('#TablaFacturaCompra').DataTable().ajax.reload();
+                        } else {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'Error al insertar el producto: ' + (response.error ? response.error : ''),
+                                position: 'topRight',
+                                transitionIn: 'flipInX',
+                                transitionOut: 'flipOutX'
+                            });
+                        }
+                    },
+                    error: function() {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Error en la comunicación con el servidor',
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
+                    }
+                });
+            });
 
 
             function insertarActualizarFactura(row) {
@@ -736,7 +921,7 @@
                             row.find('input[name="precio_compra"]').replaceWith('<p>' + precioCompra + '</p>');
 
                             agregarNuevaFila();
-                            iziToast.error({
+                            iziToast.success({
                                 title: 'Exito',
                                 message: 'Producto agregado con exito.',
                                 position: 'topRight',
@@ -952,7 +1137,7 @@
                 <td><p>${detalle.Categoria}</p></td>
                 <td><p>${detalle.Producto}</p></td>
                 <td><p>${detalle.Cantidad}</p></td>
-                <td><p>${detalle.PrecioCompra}</p></td>
+                <td><p>${detalle.Precio_Venta}</p></td>
                 <td><p>${detalle.PrecioVenta}</p></td>
                 <td><p>${detalle.PrecioMayorista}</p></td>
                 <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>

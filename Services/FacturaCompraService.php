@@ -247,6 +247,154 @@ class FacturaCompraService
     }
 }
 
+public function listarMateriales() {
+    global $pdo;
+    try {
+        $sql = 'CALL `dbsistemaesmeralda`.`SP_Materiales_listar`()';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode(array('data' => $result));
+    } catch (Exception $e) {
+        error_log('Error al listar materiales: ' . $e->getMessage());
+        echo json_encode(array('error' => 'Error al listar materiales: ' . $e->getMessage()));
+    }
+}
+
+public function listarCategorias() {
+    global $pdo;
+    try {
+        $sql = 'CALL `dbsistemaesmeralda`.`SP_Categorias_listar`()';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode(array('data' => $result));
+    } catch (Exception $e) {
+        error_log('Error al listar categorías: ' . $e->getMessage());
+        echo json_encode(array('error' => 'Error al listar categorías: ' . $e->getMessage()));
+    }
+}
+public function insertarProducto($tipo, $datos)
+    {
+        if ($tipo === 'joya') {
+            return $this->insertarJoya(
+                $datos['codigo'],
+                $datos['nombre'],
+                $datos['precio_compra'],
+                $datos['precio_venta'],
+                $datos['precio_mayorista'],
+                $datos['imagen'],
+                $datos['stock'],
+                $datos['proveedor'],
+                $datos['material'],
+                $datos['categoria'],
+                $datos['usuario_creacion'],
+                $datos['fecha_creacion']
+            );
+        } elseif ($tipo === 'maquillaje') {
+            return $this->insertarMaquillaje(
+                $datos['codigo'],
+                $datos['nombre'],
+                $datos['precio_compra'],
+                $datos['precio_venta'],
+                $datos['precio_mayorista'],
+                $datos['imagen'],
+                $datos['stock'],
+                $datos['proveedor'],
+                $datos['marca'],
+                $datos['usuario_creacion'],
+                $datos['fecha_creacion']
+            );
+        }
+    }
+
+    public function insertarJoya($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
+        global $pdo;
+        try {
+            if (isset($Joya_Imagen['error']) && $Joya_Imagen['error'] == UPLOAD_ERR_OK) {
+                $uploadDir = '../Resources/uploads/joyas/';
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                $fileName = basename($Joya_Imagen['name']);
+                $targetFilePath = $uploadDir . $fileName;
+                if (move_uploaded_file($Joya_Imagen['tmp_name'], $targetFilePath)) {
+                    $Joya_Imagen = $fileName; // Guarda solo el nombre del archivo
+                } else {
+                    throw new Exception('Error al mover el archivo subido.');
+                }
+            } else {
+                throw new Exception('Error al subir el archivo: ' . $Joya_Imagen['error']);
+            }
+
+            $sql = 'CALL SP_Joyas_insertar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioCreacion, :Joya_FechaCreacion)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Joya_Codigo', $Joya_Codigo, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_Nombre', $Joya_Nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_PrecioCompra', $Joya_PrecioCompra, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_PrecioVenta', $Joya_PrecioVenta, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_PrecioMayor', $Joya_PrecioMayor, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_Imagen', $Joya_Imagen, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_Stock', $Joya_Stock, PDO::PARAM_INT);
+            $stmt->bindParam(':Prov_Id', $Prov_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Mate_Id', $Mate_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Cate_Id', $Cate_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Joya_UsuarioCreacion', $Joya_UsuarioCreacion, PDO::PARAM_INT);
+            $stmt->bindParam(':Joya_FechaCreacion', $Joya_FechaCreacion, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $result = $stmt->fetchColumn();
+            return $result;
+        } catch (Exception $e) {
+            error_log('Error al insertar joya: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al insertar joya: ' . $e->getMessage()));
+            return 0;
+        }
+    }
+
+    public function insertarMaquillaje($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
+        global $pdo;
+        try {
+            if (isset($Joya_Imagen['error']) && $Joya_Imagen['error'] == UPLOAD_ERR_OK) {
+                $uploadDir = '../Resources/uploads/joyas/';
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                $fileName = basename($Joya_Imagen['name']);
+                $targetFilePath = $uploadDir . $fileName;
+                if (move_uploaded_file($Joya_Imagen['tmp_name'], $targetFilePath)) {
+                    $Joya_Imagen = $fileName; // Guarda solo el nombre del archivo
+                } else {
+                    throw new Exception('Error al mover el archivo subido.');
+                }
+            } else {
+                throw new Exception('Error al subir el archivo: ' . $Joya_Imagen['error']);
+            }
+
+            $sql = 'CALL SP_Joyas_insertar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioCreacion, :Joya_FechaCreacion)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':Joya_Codigo', $Joya_Codigo, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_Nombre', $Joya_Nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_PrecioCompra', $Joya_PrecioCompra, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_PrecioVenta', $Joya_PrecioVenta, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_PrecioMayor', $Joya_PrecioMayor, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_Imagen', $Joya_Imagen, PDO::PARAM_STR);
+            $stmt->bindParam(':Joya_Stock', $Joya_Stock, PDO::PARAM_INT);
+            $stmt->bindParam(':Prov_Id', $Prov_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Cate_Id', $Cate_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Joya_UsuarioCreacion', $Joya_UsuarioCreacion, PDO::PARAM_INT);
+            $stmt->bindParam(':Joya_FechaCreacion', $Joya_FechaCreacion, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $result = $stmt->fetchColumn();
+            return $result;
+        } catch (Exception $e) {
+            error_log('Error al insertar joya: ' . $e->getMessage());
+            echo json_encode(array('error' => 'Error al insertar joya: ' . $e->getMessage()));
+            return 0;
+        }
+    }
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -264,8 +412,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo $resultado;
     }  elseif ($_POST['action'] === 'listarProveedores') {
         echo $service->listarProveedores();
-    } elseif ($_POST['action'] === 'listarSucursales') {
+    } elseif ($_POST['action'] === 'listarMateriales') {
+        echo $service->listarMateriales();
+    }elseif ($_POST['action'] === 'listarCategorias') {
+        echo $service->listarCategorias();
+    }elseif ($_POST['action'] === 'listarSucursales') {
         echo $service->listarSucursales();
+    } elseif ($_POST['action'] === 'insertarProducto') {
+        $tipo = $_POST['tipo'];
+            $datos = [
+                'codigo' => $_POST['codigo'],
+                'nombre' => $_POST['nombre'],
+                'precio_compra' => $_POST['precio_compra'],
+                'precio_venta' => $_POST['precio_venta'],
+                'precio_mayorista' => $_POST['precio_mayorista'],
+                'imagen' => $_FILES['imagen'],
+                'stock' => 1,
+                'proveedor' => $_POST['proveedor'],
+                'usuario_creacion' => $_POST['usuario_creacion'],
+                'fecha_creacion' => $_POST['fecha_creacion']
+            ];
+            if ($tipo === 'joya') {
+                $datos['material'] = $_POST['material'];
+                $datos['categoria'] = $_POST['categoria'];
+            } elseif ($tipo === 'maquillaje') {
+                $datos['marca'] = $_POST['marca'];
+            }
+            $resultado = $service->insertarProducto($tipo, $datos);
+            echo json_encode($resultado);
     } elseif ($_POST['action'] === 'listarJoyasAutoCompletado') {
         $term = $_POST['term'];
         echo $service->listarJoyasAutoCompletado($term);
