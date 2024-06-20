@@ -379,7 +379,7 @@
                                 },
                                 {
                                 "data": null,
-                                "defaultContent": "<div class='acciones-container text-center'><div class='btn-group'><button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-cogs'></i> Acciones</button><div class='dropdown-menu'><a class='dropdown-item abrir-editar' href='#'>Editar</a><a class='dropdown-item abrir-detalles' href='#'>Detalles</a><a class='dropdown-item abrir-eliminar' href='#'>Eliminar</a></div></div></div>"
+                                "defaultContent": "<div class='btn-group'><button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-cogs'></i> Acciones</button><div class='dropdown-menu'><a class='dropdown-item abrir-editar' href='#'>Editar</a><a class='dropdown-item abrir-detalles' href='#'>Detalles</a><a class='dropdown-item abrir-eliminar' href='#'>Eliminar</a></div>"
                             }
 
 
