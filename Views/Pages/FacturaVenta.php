@@ -575,6 +575,7 @@ var tableProductos = $('#TablaProductos_Factura').DataTable({
                 console.log("SI TRAE EL ENCABEZADO")
            
                 data = JSON.parse(response)
+                sessionStorage.setItem("Encabezado", JSON.stringify(data));
                 
                 console.log(data)  
                 console.log("EL IMPUESTO ES" + data.data[0].Fact_Impuesto)
@@ -590,6 +591,9 @@ var tableProductos = $('#TablaProductos_Factura').DataTable({
             var taxAmount = subtotal * tax;
             total = subtotal + taxAmount;
             sessionStorage.setItem("Total",total)
+            sessionStorage.setItem("SubTotal", subtotal)
+            sessionStorage.setItem("taxAmount", taxAmount)
+            
             console.log("El Total es:"+ total)
             $("#txtTotal").text(total)
             $("#txtTotal2").text("Total: " + total)
@@ -721,9 +725,44 @@ $('#TablaProductos_Factura').DataTable().ajax.reload();
       $("#ModalTransferencias").modal("show")
 
     }else{
-      alert("es xd")
-    }
-  
+      
+      $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'confirmar',
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
+                Fact_FechaFinalizado: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Pago: sessionStorage.getItem("Total"),
+                Fact_Cambio: sessionStorage.getItem("Total"),
+                Tarj_Id: "3",
+                Tarj_Codigo: "Tarjeta",
+                Fact_Total: sessionStorage.getItem("Total")
+            },
+            success: function(response) {
+                if (response == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Confirmado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+            
+                
+                    PdfFactura();
+                    resetForm();
+                  
+                } else {
+                    alert('Error al eliminar joya.');
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+          }
+
   })
 
 
@@ -1101,9 +1140,11 @@ $('#tablaProductos').DataTable().ajax.reload();
                         transitionIn: 'flipInX',
                         transitionOut: 'flipOutX'
                     });
-                   
+            
                     $('#ModalConfirmar').modal('hide');
+                    PdfFactura();
                     resetForm();
+                  
                 } else {
                     alert('Error al eliminar joya.');
                 }
@@ -1189,7 +1230,9 @@ $('#tablaProductos').DataTable().ajax.reload();
                     });
                    
                     $('#ModalTransferencias').modal('hide');
+                    PdfFactura();
                     resetForm();
+                  
                 } else {
                     alert('Error al eliminar joya.');
                 }
@@ -1211,50 +1254,54 @@ $('#tablaProductos').DataTable().ajax.reload();
 
     $("#btnCancelar").click(function () {
         // Redirigir a la página facturas
-        //window.location.href = 'facturas';
-        var data = JSON.parse(sessionStorage.getItem("Productos"));
-    console.log(data);
-    PdfFactura(data);
+        window.location.href = 'facturas';
+
+
     });
-    function PdfFactura(cuerpo) {
+
+    function PdfFacturaNumero() {
       var doc = new jsPDF({
     orientation: 'portrait',
     unit: 'px',
-    format: [160, 600]  // 100px wide and 600px tall
+    format: [160, 800]  // 100px wide and 600px tall
 });
+var cuerpo = JSON.parse(sessionStorage.getItem("Productos"));
+var Encabezado = JSON.parse(sessionStorage.getItem("Encabezado"));
+console.log(Encabezado)
 
 doc.setFontSize(12);
 doc.setFont(undefined, 'normal');
-doc.text('Esmeraldas HN', 45, 20, { align: 'center' });
+doc.text('Esmeraldas HN', 60, 20, { align: 'center' });
 doc.setFontSize(10);
 doc.setFont(undefined, 'normal');
-doc.text("Francisco Morazan, Tegucigalpa", 20, 30, { align: 'center' });
-doc.text("Los dolores, calle buenos aires", 20, 40, { align: 'center' });
-doc.text("email: esmeraldashn2014@gmail.com", 20, 50, { align: 'center' });
+doc.text("Francisco Morazan, Tegucigalpa", 60, 30, { align: 'center' });
+doc.text("Los dolores, calle buenos aires", 60, 40, { align: 'center' });
+doc.setFontSize(9);
+doc.text("email: esmeraldashn2014@gmail.com", 60, 50, { align: 'center' });
 
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
-  doc.text("Factura:", 55, 70, { align: 'center' });
+  doc.text("Factura:", 53, 70, { align: 'center' });
 
   doc.setFontSize(10);
   doc.setFont(undefined, 'normal');
-  doc.text("Fecha: " + 'FechaCreacion' + "   Hora:  " + 'HoraGeneracion', 10, 80, { align: 'left' });
-  doc.text("" + 'Pedido', 90, 70, { align: 'center' });
-  doc.text("Cliente: " + 'Cliente', 10, 90, { align: 'left' });
-  doc.text("RTN: " + 'DNI', 10, 100, { align: 'left' });
-  doc.text("--------------------------------------------------------", 10, 110, { align: 'left' });
-  doc.setFontSize(12);
-  doc.text("Descripción          Cant.        Precio ", 10, 120, { align: 'left' });
+  doc.text("Fecha: " + new Date().toISOString().slice(0, 10).replace('T', ' ') + "   Hora: " + new Date().toISOString().slice(11, 16).replace('T', ' ') , 5, 80, { align: 'left' });
+  doc.text("" + Encabezado.data[0].Fact_Id , 77, 70, { align: 'center' });
+  doc.text("Cliente: " + Encabezado.data[0].Clie_Nombre, 5, 90, { align: 'left' });
+  doc.text("RTN: " + Encabezado.data[0].Clie_DNI , 5, 100, { align: 'left' });
+  doc.text("-------------------------------------------", 5, 110, { align: 'left' });
+  doc.setFontSize(8);
+  doc.text("  Descripción     Cantidad           Precio ", 5, 120, { align: 'left' });
   doc.setFontSize(10);
-  doc.text("--------------------------------------------------------", 10, 130, { align: 'left' });
-  const tableData = cuerpo.map(item => [item.Prod_Codigo, item.Precio_Unitario, item.Cantidad]);
-  const yPosition = 140; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+  doc.text("-------------------------------------------", 5, 130, { align: 'left' });
+  const tableData = cuerpo.map(item => [item.Producto, item.Cantidad, item.Precio_Unitario]);
+  const yPosition = 130; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
   doc.autoTable({
     body: tableData,
     startY: yPosition,
-    margin: { left: 10 },
+    margin: { left: 5},
     styles: {
-      fontSize: 12,
+      fontSize: 8,
       fillColor: [255, 255, 255], // Fondo blanco
       textColor: [0, 0, 0]       // Texto negro
     },
@@ -1266,13 +1313,118 @@ doc.text("email: esmeraldashn2014@gmail.com", 20, 50, { align: 'center' });
       textColor: [0, 0, 0]       // Texto negro
     },
     columnStyles: {
-      0: { halign: 'left', cellWidth: 75 },  // Ancho personalizado para la columna 0
+      0: { halign: 'left', cellWidth: 47 },  // Ancho personalizado para la columna 0
       1: { halign: 'center', cellWidth: 20 },  // Ancho personalizado para la columna 1
       2: { halign: 'center', cellWidth: 60 }   // Ancho personalizado para la columna 2
     },
     theme: 'plain' // Sin líneas de borde, solo blanco
   });
+  var total = parseFloat(sessionStorage.getItem("Total"))
+  var Impuesto = parseFloat(sessionStorage.getItem("taxAmount"))
+  var subtotal = parseFloat(sessionStorage.getItem("SubTotal"))
+  const borderYPosition = (doc).previousAutoTable.finalY + 10;
+  doc.text("-------------------------------------------", 5, borderYPosition, { align: 'left' });
+  doc.setFontSize(12);
+  doc.text("Subtotal", 5, borderYPosition + 10, { align: 'left' });
+  doc.text("Impuesto", 5, borderYPosition + 25, { align: 'left' });
+  doc.text("Total", 5, borderYPosition + 40 , { align: 'left' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 10, { align: 'right' });
+  doc.text(Impuesto.toFixed(2).toString(), 110, borderYPosition + 25, { align: 'right' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 40, { align: 'right' });
 
+  doc.setFontSize(10);
+  doc.text("-------------------------------------------", 5, borderYPosition + 50, { align: 'left' });
+doc.setFontSize(14);
+doc.text("Gracias por su compra", 60, borderYPosition + 60 , { align: 'center' });
+console.log("EL LARGO ES DEL COSO" + borderYPosition + 70)
+return borderYPosition + 70;
+    }
+
+    function PdfFactura() {
+      var largo = PdfFacturaNumero();
+   
+      console.log("EL LARGO ES" + largo)
+      var doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: [160, largo + 80]  // 100px wide and 600px tall
+    });
+var cuerpo = JSON.parse(sessionStorage.getItem("Productos"));
+var Encabezado = JSON.parse(sessionStorage.getItem("Encabezado"));
+console.log(Encabezado)
+
+doc.setFontSize(12);
+doc.setFont(undefined, 'normal');
+doc.text('Esmeraldas HN', 60, 20, { align: 'center' });
+doc.setFontSize(10);
+doc.setFont(undefined, 'normal');
+doc.text("Francisco Morazan, Tegucigalpa", 60, 30, { align: 'center' });
+doc.text("Los dolores, calle buenos aires", 60, 40, { align: 'center' });
+doc.setFontSize(9);
+doc.text("email: esmeraldashn2014@gmail.com", 60, 50, { align: 'center' });
+
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'bold');
+  doc.text("Factura:", 53, 70, { align: 'center' });
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text("Fecha: " + new Date().toISOString().slice(0, 10).replace('T', ' ') + "   Hora: " + new Date().toISOString().slice(11, 16).replace('T', ' ') , 5, 80, { align: 'left' });
+  doc.text("" + Encabezado.data[0].Fact_Id , 77, 70, { align: 'center' });
+  doc.text("Cliente: " + Encabezado.data[0].Clie_Nombre, 5, 90, { align: 'left' });
+  doc.text("RTN: " + Encabezado.data[0].Clie_DNI , 5, 100, { align: 'left' });
+  doc.text("-------------------------------------------", 5, 110, { align: 'left' });
+  doc.setFontSize(8);
+  doc.text("  Descripción     Cantidad           Precio ", 5, 120, { align: 'left' });
+  doc.setFontSize(10);
+  doc.text("-------------------------------------------", 5, 130, { align: 'left' });
+  const tableData = cuerpo.map(item => [item.Producto, item.Cantidad, item.Precio_Unitario]);
+  const yPosition = 130; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+  doc.autoTable({
+    body: tableData,
+    startY: yPosition,
+    margin: { left: 5},
+    styles: {
+      fontSize: 8,
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    headStyles: {
+      halign: 'center',
+      valign: 'middle',
+      fontStyle: 'normal',
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    columnStyles: {
+      0: { halign: 'left', cellWidth: 47 },  // Ancho personalizado para la columna 0
+      1: { halign: 'center', cellWidth: 20 },  // Ancho personalizado para la columna 1
+      2: { halign: 'center', cellWidth: 60 }   // Ancho personalizado para la columna 2
+    },
+    theme: 'plain' // Sin líneas de borde, solo blanco
+  });
+  var total = parseFloat(sessionStorage.getItem("Total"))
+  var Impuesto = parseFloat(sessionStorage.getItem("taxAmount"))
+  var subtotal = parseFloat(sessionStorage.getItem("SubTotal"))
+  const borderYPosition = (doc).previousAutoTable.finalY + 10;
+  doc.text("-------------------------------------------", 5, borderYPosition, { align: 'left' });
+  doc.setFontSize(12);
+  doc.text("Subtotal", 5, borderYPosition + 10, { align: 'left' });
+  doc.text("Impuesto", 5, borderYPosition + 25, { align: 'left' });
+  doc.text("Total", 5, borderYPosition + 40 , { align: 'left' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 10, { align: 'right' });
+  doc.text(Impuesto.toFixed(2).toString(), 110, borderYPosition + 25, { align: 'right' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 40, { align: 'right' });
+
+  doc.setFontSize(10);
+  doc.text("-------------------------------------------", 5, borderYPosition + 50, { align: 'left' });
+doc.setFontSize(14);
+doc.text("Gracias por su compra", 60, borderYPosition + 60 , { align: 'center' });
+console.log(borderYPosition + 70)
+
+  
+           
+            
 
 // Generar PDF como blob
 const pdfBlob = doc.output('blob');
