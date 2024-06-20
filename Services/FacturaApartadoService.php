@@ -198,6 +198,20 @@ class FacturaApartadoServices {
         }
     }
 
+    public function DevolucionFacturaDetalle($FacP_Codigo, $Sucu_Codigo) {
+        global $pdo;
+        try {
+            $sql = 'CALL sp_FacturaDetallesApartado_Devolucion(:FacP_Codigo,:Sucu_Codigo)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':FacP_Codigo', $FacP_Codigo, PDO::PARAM_INT);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetchColumn();
+            return $result; 
+        } catch (PDOException $e) {
+            return 0; 
+        }
+    }
     public function FacturaInsertarDespues($Clie_Id,$Mepa_Id,$FacP_FechaCreacion,$FacP_FechaModificacion,$FacP_FechaExpiracion,$FacP_Codigo,$FacP_PagoInicial,$FaxP_Diferenciador,$Prod_Nombre,$FaxP_Cantidad) {
         global $pdo;
         try {
@@ -248,6 +262,62 @@ class FacturaApartadoServices {
         }
     }
 
+    public function ConfirmarFactura($FacP_Codigo, $FacP_FechaFinalizado,$FacP_PagoFinal, $FacP_Cambio,$Tarj_Id,$Tarj_Codigo,$FacP_Total) {
+        global $pdo;
+        try {
+            $sql = 'CALL sp_ConfirmarFacturaApartado(:FacP_Codigo,:FacP_FechaFinalizado,:FacP_PagoFinal,:FacP_Cambio,:Tarj_Id,:Tarj_Codigo,:FacP_Total)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':FacP_Codigo', $FacP_Codigo, PDO::PARAM_INT);
+            $stmt->bindParam(':FacP_FechaFinalizado',$FacP_FechaFinalizado, PDO::PARAM_STR);
+            $stmt->bindParam(':FacP_PagoFinal', $FacP_PagoFinal, PDO::PARAM_STR);
+            $stmt->bindParam(':FacP_Cambio', $FacP_Cambio, PDO::PARAM_STR);
+            $stmt->bindParam(':Tarj_Id', $Tarj_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Tarj_Codigo', $Tarj_Codigo, PDO::PARAM_STR);
+            $stmt->bindParam(':FacP_Total', $FacP_Total, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            $result = $stmt->fetchColumn();
+            return $result; // 1 si es exitoso, 0 si no
+        } catch (PDOException $e) {
+            return 0; // Retornar 0 en caso de error
+        }
+    }
+
+    public function TablaProductoFactura($FacPId, $Mayorista) {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaDetallesApartado_ProductosVentas`(:FacPId, :Mayorista)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':FacPId', $FacPId, PDO::PARAM_INT);
+            $stmt->bindParam(':Mayorista', $Mayorista, PDO::PARAM_BOOL);
+            $stmt->execute();
+            
+            // Verifica si la consulta devolvió resultados
+            $result = $stmt->fetchAll();
+            if ($result === false) {
+                // Obtén información del error
+                $errorInfo = $stmt->errorInfo();
+                throw new Exception('Error en la consulta SQL: ' . $errorInfo[2]);
+            }
+            
+            $data = array();
+            foreach ($result as $row) {
+                $data[] = array(
+                    'Row' => $row['CodigoRow'],
+                    'FaxD_Id' => $row['FaxD_Id'],
+                    'Prod_Codigo' => $row['Prod_Codigo'],
+                    'Producto' => $row['Producto'],
+                    'Cantidad' => $row['Cantidad'],
+                    'Precio_Unitario' => $row['Precio_Unitario'],
+                    'Total' => $row['Total'],
+                    'Categoria' => $row['Categoria']
+                );
+            }
+            return json_encode(array('data' => $data));
+        } catch (Exception $e) {
+            throw new Exception('Error al buscar la marca: ' . $e->getMessage());
+        }
+    }
 
 }
 
@@ -291,14 +361,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $resultado = $controller->FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$FacP_FechaCreacion,$FacP_FechaModificacion,$FacP_FechaExpiracion,$FacP_Codigo,$FacP_PagoInicial,$FaxP_Diferenciador,$Prod_Nombre,$FaxP_Cantidad);
         echo $resultado;
         break;
+        case 'InsertarDespues':
+        $Clie_Id = $_POST['Clie_Id'];
+        $Mepa_Id = $_POST['Mepa_Id'];
+        $FacP_FechaCreacion = $_POST['FacP_FechaCreacion'];
+        $FacP_FechaModificacion = $_POST['FacP_FechaModificacion'];
+        $FacP_FechaExpiracion = $_POST['FacP_FechaExpiracion'];
+        $FacP_Codigo = $_POST['FacP_Codigo'];
+        $FacP_PagoInicial = $_POST['FacP_PagoInicial'];
+        $FaxP_Diferenciador = $_POST['FaxP_Diferenciador'];
+        $Prod_Nombre = $_POST['Prod_Nombre'];
+        $FaxP_Cantidad = $_POST['FaxP_Cantidad'];
+        $resultado = $controller->FacturaInsertarPrimero($Clie_Id,$Mepa_Id,$FacP_FechaCreacion,$FacP_FechaModificacion,$FacP_FechaExpiracion,$FacP_Codigo,$FacP_PagoInicial,$FaxP_Diferenciador,$Prod_Nombre,$FaxP_Cantidad);
+        echo $resultado;
+        break;
         case 'EliminarFacturaDetalles':
         $FacP_Codigo = $_POST['FacP_Codigo'];
         $Sucu_Codigo = $_POST['Sucu_Codigo'];
         $Prod_Nombre_Codigo = $_POST['Prod_Nombre_Codigo'];
-
-        
         $resultado = $controller->EliminarFacturaDetalle($FacP_Codigo,$Sucu_Codigo, $Prod_Nombre_Codigo);
         echo $resultado;
+        break;
+        case 'Devolucion':
+        $FacP_Codigo = $_POST['FacP_Codigo'];
+        $Sucu_Codigo = $_POST['Sucu_Codigo'];
+        $resultado = $controller->DevolucionFacturaDetalle($FacP_Codigo,$Sucu_Codigo, $Prod_Nombre_Codigo);
+        echo $resultado;
+        break;
+        case 'Confirmar':
+        $FacP_Codigo = $_POST['FacP_Codigo'];
+        $FacP_FechaFinalizado = $_POST['FacP_FechaFinalizado'];
+        $FacP_PagoFinal = $_POST['FacP_PagoFinal'];
+        $FacP_Cambio = $_POST['FacP_Cambio'];
+        $Tarj_Id= $_POST['Tarj_Id'];
+        $Tarj_Codigo= $_POST['Tarj_Codigo'];
+        $FacP_Total= $_POST['FacP_Total'];
+        $resultado = $controller->ConfirmarFactura($FacP_Codigo,$FacP_FechaFinalizado, $FacP_PagoFinal, $FacP_Cambio,$Tarj_Id,$Tarj_Codigo,$FacP_Total);
+        echo $resultado;
+        break;
+        case 'ListaProductos':
+        $FacPId = $_POST['FacPId'];
+        $Mayorista = $_POST['mayorista'];
+        echo $controller->TablaProductoFactura($FacPId,$Mayorista);
         break;
        
     }
