@@ -158,3 +158,166 @@ BEGIN
     WHERE
         paro.Role_Id = p_Role_Id;
 END
+
+
+-------------------------------------------------------------------
+
+ALTER TABLE acce_tbpantallas
+ADD COLUMN Pant_Identificador Varchar(50) ;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Reporte_ControlStock`(
+    IN TipoProducto INT,
+    IN Sucu_Id INT
+)
+BEGIN
+    -- Desactivar el comportamiento de no contar filas afectadas
+    SET SESSION sql_mode = '';
+
+    IF TipoProducto = 2 AND Sucu_Id = 0 THEN
+        SELECT
+            CASE 
+                WHEN j.Joya_Nombre IS NOT NULL THEN j.Joya_Nombre
+                ELSE m.Maqu_Nombre
+            END AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,
+            CASE 
+                WHEN j.Joya_Nombre IS NOT NULL THEN 'Joya'
+                ELSE 'Maquillaje'
+            END AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbJoyas j ON p.Prod_Id = j.Joya_Id AND p.Prxs_Dif = 1
+        LEFT JOIN Vent_tbMaquillajes m ON p.Prod_Id = m.Maqu_Id AND p.Prxs_Dif = 0
+        WHERE (j.Joya_Estado = 1 OR m.Maqu_Estado = 1)
+        GROUP BY Producto, Categoria;
+
+    ELSEIF TipoProducto = 1 AND Sucu_Id = 0 THEN
+        SELECT
+            j.Joya_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Joya' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbJoyas j ON p.Prod_Id = j.Joya_Id AND p.Prxs_Dif = 1
+        WHERE j.Joya_Estado = 1
+        AND p.Prxs_Dif = 1
+        GROUP BY j.Joya_Nombre;
+
+    ELSEIF TipoProducto = 0 AND Sucu_Id = 0 THEN
+        SELECT
+            m.Maqu_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Maquillaje' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbMaquillajes m ON p.Prod_Id = m.Maqu_Id AND p.Prxs_Dif = 0
+        WHERE m.Maqu_Estado = 1
+        AND p.Prxs_Dif = 0
+        GROUP BY m.Maqu_Nombre;
+
+    ELSEIF TipoProducto = 1 THEN
+        SELECT
+            j.Joya_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Joya' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbJoyas j ON p.Prod_Id = j.Joya_Id AND p.Prxs_Dif = 1
+        WHERE j.Joya_Estado = 1
+        AND p.Prxs_Dif = 1
+        AND (@Sucu_Id = 2 OR p.Sucu_Id = Sucu_Id)
+        GROUP BY j.Joya_Nombre;
+
+    ELSEIF TipoProducto = 0 THEN
+        SELECT
+            m.Maqu_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Maquillaje' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbMaquillajes m ON p.Prod_Id = m.Maqu_Id AND p.Prxs_Dif = 0
+        WHERE m.Maqu_Estado = 1
+        AND p.Prxs_Dif = 0
+        AND (@Sucu_Id = 2 OR p.Sucu_Id = Sucu_Id)
+        GROUP BY m.Maqu_Nombre;
+
+    ELSEIF TipoProducto = 2 THEN
+        SELECT
+            CASE 
+                WHEN j.Joya_Nombre IS NOT NULL THEN j.Joya_Nombre
+                ELSE m.Maqu_Nombre
+            END AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,
+            CASE 
+                WHEN j.Joya_Nombre IS NOT NULL THEN 'Joya'
+                ELSE 'Maquillaje'
+            END AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbJoyas j ON p.Prod_Id = j.Joya_Id AND p.Prxs_Dif = 1
+        LEFT JOIN Vent_tbMaquillajes m ON p.Prod_Id = m.Maqu_Id AND p.Prxs_Dif = 0
+        WHERE (j.Joya_Estado = 1 OR m.Maqu_Estado = 1)
+        AND (@Sucu_Id = 2 OR p.Sucu_Id = Sucu_Id)
+        GROUP BY Producto, Categoria;
+
+    END IF;
+
+END
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Usuarios_inicioSesion`(
+IN p_Usuario VARCHAR(100),
+IN p_Contra VARCHAR(255)
+)
+BEGIN
+SELECT 
+usu.Usua_Id AS Usua_Id,
+usu.Usua_Usuario AS Usua_Usuario,
+usu.Usua_Contraseña AS Usua_Contraseña,
+CONCAT(emp.Empl_Nombre, ' ', emp.Empl_Apellido) AS Empl_Nombre,
+emp.Empl_Id,
+r.Role_Id,
+p.pant_descripcion,
+p.Pant_Id,
+pant_Identificador,
+usu.Usua_Administrador,
+S.Sucu_Id,
+S.Sucu_Nombre,
+ro.Role_Rol,
+emp.Empl_Correo
+FROM
+acce_tbusuarios AS usu
+LEFT JOIN gral_tbempleados AS emp ON usu.Empl_Id = emp.Empl_Id
+LEFT JOIN acce_tbpantallasporroles AS r ON r.Role_Id = usu.Role_Id
+LEFT JOIN acce_tbpantallas AS p ON p.Pant_Id = r.Pant_Id
+LEFT JOIN gral_tbsucursales S ON S.Sucu_Id = emp.Sucu_Id
+LEFT JOIN acce_tbroles AS ro ON ro.Role_Id = usu.Role_Id
+WHERE
+usu.Usua_Usuario = p_Usuario
+AND usu.Usua_Contraseña = p_Contra;
+END
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Usuarios_inicioSesion`(
+IN p_Usuario VARCHAR(100),
+IN p_Contra VARCHAR(255)
+)
+BEGIN
+SELECT 
+usu.Usua_Id AS Usua_Id,
+usu.Usua_Usuario AS Usua_Usuario,
+usu.Usua_Contraseña AS Usua_Contraseña,
+CONCAT(emp.Empl_Nombre, ' ', emp.Empl_Apellido) AS Empl_Nombre,
+emp.Empl_Id,
+r.Role_Id,
+p.pant_Descripcion,
+p.Pant_Id,
+p.Pant_Identificador,
+usu.Usua_Administrador,
+S.Sucu_Id,
+S.Sucu_Nombre,
+ro.Role_Rol,
+emp.Empl_Correo
+FROM
+acce_tbusuarios AS usu
+LEFT JOIN gral_tbempleados AS emp ON usu.Empl_Id = emp.Empl_Id
+LEFT JOIN acce_tbpantallasporroles AS r ON r.Role_Id = usu.Role_Id
+LEFT JOIN acce_tbpantallas AS p ON p.Pant_Id = r.Pant_Id
+LEFT JOIN gral_tbsucursales S ON S.Sucu_Id = emp.Sucu_Id
+LEFT JOIN acce_tbroles AS ro ON ro.Role_Id = usu.Role_Id
+WHERE
+usu.Usua_Usuario = p_Usuario
+AND usu.Usua_Contraseña = p_Contra;
+END
