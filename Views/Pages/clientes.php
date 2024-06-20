@@ -378,10 +378,10 @@
                                     "data": "Clie_esMayorista"
                                 },
                                 {
-                                    "data": null,
-                                    "defaultContent": "<div class='acciones-container'><a class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i> Editar</a> <a class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i> Detalles</a> <button class='btn btn-danger btn-sm abrir-eliminar'><i class='fas fa-eraser'></i> Eliminar</button></div>"
+                                "data": null,
+                                "defaultContent": "<div class='acciones-container text-center'><div class='btn-group'><button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-cogs'></i> Acciones</button><div class='dropdown-menu'><a class='dropdown-item abrir-editar' href='#'>Editar</a><a class='dropdown-item abrir-detalles' href='#'>Detalles</a><a class='dropdown-item abrir-eliminar' href='#'>Eliminar</a></div></div></div>"
+                            }
 
-                                }
 
 
                             ]
