@@ -470,40 +470,4 @@ h2{
     });
 </script> 
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const menuItems = document.querySelectorAll(".nav-item > .nav-link");
-
-    menuItems.forEach(item => {
-        item.addEventListener("click", function(event) {
-            event.stopPropagation();
-
-            const parent = item.parentElement;
-            const submenu = parent.querySelector(".nav-treeview");
-
-            // Si el menú ya está abierto, simplemente se cierra
-            if (parent.classList.contains("menu-open")) {
-                parent.classList.remove("menu-open");
-            } else {
-                // Cierra otros submenús
-                document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("menu-open"));
-                // Abre el submenú del elemento seleccionado
-                parent.classList.add("menu-open");
-            }
-        });
-    });
-
-    // Gestionar enlaces del submenú
-    const subMenuLinks = document.querySelectorAll(".nav-treeview .nav-link");
-
-    subMenuLinks.forEach(link => {
-        link.addEventListener("click", function() {
-            // Mantiene el submenú abierto
-            const parent = link.closest(".nav-item");
-            document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("menu-open"));
-            parent.classList.add("menu-open");
-        });
-    });
-});
-</script>
 
