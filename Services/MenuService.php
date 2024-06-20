@@ -62,18 +62,24 @@ function generarMenu($conn) {
             case 'Proveedores':
                 $menu['Generales'][] = $row;
                 break;
-            case 'Facturas':
+        
             case 'Facturas de Compra':
             case 'Transferencias':
                 case 'Maquillajes':
                     case 'Joyas':
                 $menu['Ventas'][] = $row;
                 break;
+                
             case 'dashboard':
+                
                 $menu['Dashboards'][] = $row;
                 break;
+                case 'Facturas':
+                
+                    $menu['Facturas'][] = $row;
             default:
                 $menu['Index'][] = $row;
+                
         }
     }
 
@@ -87,6 +93,11 @@ function generarMenu($conn) {
     if (!empty($menu['Dashboards'])) {
         echo '<li class="nav-item">';
         echo '<a href="?Pages=dashboard" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Dashboards</p></a>';
+        echo '</li>';
+    }
+    if (!empty($menu['Facturas'])) {
+        echo '<li class="nav-item">';
+        echo '<a href="?Pages=FacturaVenta" class="nav-link"><i class="fa-solid fa-chart-simple"></i><p>Factura</p></a>';
         echo '</li>';
     }
 
