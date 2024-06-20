@@ -94,7 +94,7 @@ class FacturaCompraService
             echo json_encode(array('error' => 'Error al listar joyas para autocompletado.'));
         }
     }
-
+    
     public function listarMaquillajesAutoCompletado($term)
     {
         try {
@@ -231,6 +231,22 @@ class FacturaCompraService
             echo json_encode(array('error' => 'Error al buscar detalle.'));
         }
     }
+
+    public function finalizarFacturaCompra($FaCE_Id, $fechaFinal)
+{
+    try {
+        $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Finalizar`(:FaCE_Id, :fechaFinal)';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
+        $stmt->bindParam(':fechaFinal', $fechaFinal, PDO::PARAM_STR);
+        $stmt->execute();
+        return array('success' => true);
+    } catch (Exception $e) {
+        error_log('Error al finalizar la factura: ' . $e->getMessage());
+        return array('error' => 'Error al finalizar la factura: ' . $e->getMessage());
+    }
+}
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -296,5 +312,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         $resultado = $service->eliminarDetalleFactura($FaCD_Id);
         echo json_encode($resultado);
+    }elseif ($_POST['action'] == 'finalizarFacturaCompra') {
+        $FaCE_Id = $_POST['FaCE_Id'];
+        $fechaFinal = $_POST['fechaFinal'];
+        $resultado = $service->finalizarFacturaCompra($FaCE_Id, $fechaFinal);
+        echo json_encode($resultado);
     }
+    
 }
