@@ -39,7 +39,7 @@
 </head>
 
 <body>
-    <div class="container">
+   
         <div class="card">
             <div class="card-body">
                 <h2 class="text-center" style="font-size:34px !important">Joyas</h2>
@@ -331,7 +331,7 @@
 
             </div>
         </div>
-    </div>
+
 </body>
 
 </html>
