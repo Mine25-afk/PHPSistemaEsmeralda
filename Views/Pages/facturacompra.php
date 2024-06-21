@@ -241,22 +241,17 @@
                         </div>
                         <div class="col-md-6" id="materialField" style="display:none;">
                             <label>Material</label>
-                            <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
+                            <select name="Mate_Id" class="form-control" id="Mate_Id"></select>
                         </div>
                         <div class="col-md-6" id="categoriaField" style="display:none;">
                             <label>Categoría</label>
-                            <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
+                            <select name="Cate_Id" class="form-control" id="Cate_Id"></select>
                         </div>
-                
-                            <div class="custom-file col-md-6">
-                                <label>Imagen</label>
-                                <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
-                                <label class="custom-file-label"></label>
-                            </div>
-                  
-
-                        <div class="col-md-4"></div>
-                        <br>
+                        <div class="custom-file col-md-6">
+                            <label>Imagen</label>
+                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen" />
+                            <label class="custom-file-label"></label>
+                        </div>
                         <div class="col-md-6">
                             <br>
                             <label>Imagen Actual</label>
@@ -371,6 +366,47 @@
         }
         $(document).ready(function() {
 
+            var temporizadorinactividad;
+            var inactividadmaxima = 60000;
+            var advertencia = 30000;
+
+            function iniciartemp() {
+                clearTimeout(temporizadorinactividad);
+                temporizadorinactividad = setTimeout(function() {
+                    iziToast.warning({
+                        title: 'Error',
+                        message: 'Su tiempo en la factura se excedió. La factura se ha cerrado.',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    cerrarFactura();
+                }, inactividadmaxima);
+            }
+
+            function cerrarFactura() {
+                $('.CrearOcultar').show();
+                $('.CrearMostrar').hide();
+                $('#FacturaCompraForm')[0].reset();
+                $('#FacturaCompraForm').validate().resetForm();
+                $('#Proveedor').val('').trigger('change');
+                $('#Sucursal').val('').trigger('change');
+                FaCE_Id = 0;
+            }
+
+            function reseteartemp() {
+                clearTimeout(temporizadorinactividad);
+                temporizadorinactividad = setTimeout(function() {
+                    iniciartemp();
+                }, advertencia);
+            }
+
+            $('#FacturaCompraForm').on('input click', function() {
+                reseteartemp();
+            });
+            $('#NuevoProductoForm').on('input click', function() {
+                reseteartemp();
+            });
             $('#FacturaCompraForm').validate({
                 rules: {
                     Proveedor: {
@@ -409,6 +445,7 @@
                 }
             });
             $('#AbrirModal').click(function() {
+                iniciartemp();
                 $('.CrearOcultar').hide();
                 $('.CrearMostrar').show();
                 $('#FacturaCompraForm').trigger('reset');
@@ -443,6 +480,8 @@
                         .hide();
                 }
             }
+
+
 
             $('input[name="cantidad"]').on('input', function() {
                 this.value = this.value.replace(/[^0-9]/g, '');
@@ -569,105 +608,103 @@
                             $(this).closest('tr').find('#categoria').text('Maquillaje');
                         }
                     }
-
                 });
             }
 
 
+                    // $(document).on('blur', 'input[name="producto"]', function() {
+                    //     var term = $(this).val();
+                    //     var row = $(this).closest('tr');
+                    //     var numeroo = /^[0-9]+$/.test(term);
+                    //     var alfanumerico = /^[a-zA-Z]+$/.test(term);
+                    //     console.log('Term:', term);
 
-            $(document).on('blur', 'input[name="producto"]', function() {
-                var term = $(this).val();
-                var row = $(this).closest('tr');
-                var numeroo = /^[0-9]+$/.test(term);
-                var alfanumerico = /^[a-zA-Z]+$/.test(term);
-                console.log('Term:', term);
+                    //     if (numeroo || alfanumerico) {
+                    //         console.log('entra al numeroalfa');
+                    //         var ajaxData = {
+                    //             action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
+                    //             codigo: term
+                    //         };
 
-                if (numeroo || alfanumerico) {
-                    console.log('entra al numeroalfa');
-                    var ajaxData = {
-                        action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
-                        codigo: term
-                    };
+                    //         $.ajax({
+                    //             url: 'Services/FacturaCompraService.php',
+                    //             type: 'POST',
+                    //             dataType: 'json',
+                    //             data: ajaxData,
+                    //             success: function(data) {
+                    //                 if (data.length > 0) {
+                    //                     var item = data[0];
+                    //                     console.log('Item:', item);
+                    //                     var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
+                    //                     var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
+                    //                     var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
 
-                    $.ajax({
-                        url: 'Services/FacturaCompraService.php',
-                        type: 'POST',
-                        dataType: 'json',
-                        data: ajaxData,
-                        success: function(data) {
-                            if (data.length > 0) {
-                                var item = data[0];
-                                console.log('Item:', item);
-                                var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
-                                var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
-                                var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
+                    //                     row.find('#precio_mayorista').text(precioMayorista);
+                    //                     row.find('#precio_venta').text(precioVenta);
+                    //                     row.find('input[name="precio_compra"]').val(precioCompra);
 
-                                row.find('#precio_mayorista').text(precioMayorista);
-                                row.find('#precio_venta').text(precioVenta);
-                                row.find('input[name="precio_compra"]').val(precioCompra);
+                    //                     if (item.Joya_Codigo) {
+                    //                         row.find('#categoria').text('Joya');
+                    //                     } else {
+                    //                         row.find('#categoria').text('Maquillaje');
+                    //                     }
 
-                                if (item.Joya_Codigo) {
-                                    row.find('#categoria').text('Joya');
-                                } else {
-                                    row.find('#categoria').text('Maquillaje');
-                                }
+                    //                     // Inserta o actualiza la factura con la información obtenida
+                     //                     // insertarActualizarFactura(row, item.Nombre);
+                    //                 } else {
+                    //                     row.find('#precio_mayorista').text('0.00');
+                    //                     row.find('#precio_venta').text('0.00');
+                    //                     row.find('input[name="precio_compra"]').val('0.00');
+                    //                 }
+                    //             },
+                    //             error: function() {
+                    //                 row.find('#precio_mayorista').text('0.00');
+                    //                 row.find('#precio_venta').text('0.00');
+                    //                 row.find('input[name="precio_compra"]').val('0.00');
+                    //             }
+                    //         });
+                    //     }  else  {
+                    //         console.log('entra a solo joya');
+                    //         var ajaxData = {
+                    //             action:  'buscarJoyaPorCodigo',
+                    //             codigo: term
+                    //         };
 
-                                // Inserta o actualiza la factura con la información obtenida
-                                // insertarActualizarFactura(row, item.Nombre);
-                            } else {
-                                row.find('#precio_mayorista').text('0.00');
-                                row.find('#precio_venta').text('0.00');
-                                row.find('input[name="precio_compra"]').val('0.00');
-                            }
-                        },
-                        error: function() {
-                            row.find('#precio_mayorista').text('0.00');
-                            row.find('#precio_venta').text('0.00');
-                            row.find('input[name="precio_compra"]').val('0.00');
-                        }
-                    });
-                } else {
-                    console.log('entra a solo joya');
-                    var ajaxData = {
-                        action: 'buscarJoyaPorCodigo',
-                        codigo: term
-                    };
+                    //         $.ajax({
+                    //             url: 'Services/FacturaCompraService.php',
+                    //             type: 'POST',
+                    //             dataType: 'json',
+                    //             data: ajaxData,
+                    //             success: function(data) {
+                    //                 if (data.length > 0) {
+                    //                     var item = data[0];
+                    //                     console.log('Item:', item);
+                    //                     var precioCompra = item.Joya_PrecioCompra;
+                    //                     var precioMayorista = item.Joya_PrecioMayor;
+                    //                     var precioVenta = item.Joya_PrecioVenta;
 
-                    $.ajax({
-                        url: 'Services/FacturaCompraService.php',
-                        type: 'POST',
-                        dataType: 'json',
-                        data: ajaxData,
-                        success: function(data) {
-                            if (data.length > 0) {
-                                var item = data[0];
-                                console.log('Item:', item);
-                                var precioCompra = item.Joya_PrecioCompra;
-                                var precioMayorista = item.Joya_PrecioMayor;
-                                var precioVenta = item.Joya_PrecioVenta;
+                    //                     row.find('#precio_mayorista').text(precioMayorista);
+                    //                     row.find('#precio_venta').text(precioVenta);
+                    //                     row.find('input[name="precio_compra"]').val(precioCompra);
 
-                                row.find('#precio_mayorista').text(precioMayorista);
-                                row.find('#precio_venta').text(precioVenta);
-                                row.find('input[name="precio_compra"]').val(precioCompra);
+                //                     row.find('#categoria').text('Joya');
 
-                                row.find('#categoria').text('Joya');
-
-                                // Inserta o actualiza la factura con la información obtenida
-                                // insertarActualizarFactura(row, item.Nombre);
-                            } else {
-                                row.find('#precio_mayorista').text('0.00');
-                                row.find('#precio_venta').text('0.00');
-                                row.find('input[name="precio_compra"]').val('0.00');
-                            }
-                        },
-                        error: function() {
-                            row.find('#precio_mayorista').text('0.00');
-                            row.find('#precio_venta').text('0.00');
-                            row.find('input[name="precio_compra"]').val('0.00');
-                        }
-                    });
-                }
-            });
+                    //                     // Inserta o actualiza la factura con la información obtenida
+                     //                     // insertarActualizarFactura(row, item.Nombre);
+                    //                 } else {
+                    //                     row.find('#precio_mayorista').text('0.00');
+                    //                     row.find('#precio_venta').text('0.00');
+                    //                     row.find('input[name="precio_compra"]').val('0.00');
+                    //                 }
+                    //             },
+                    //             error: function() {
+                    //                 row.find('#precio_mayorista').text('0.00');
+                    //                 row.find('#precio_venta').text('0.00');
+                    //                 row.find('input[name="precio_compra"]').val('0.00');
+                    //             }
+                    //         });
+                    //     }
+                    // });
 
             $(document).on('blur', 'input[name="precio_compra"]', function() {
                 var row = $(this).closest('tr');
@@ -798,11 +835,13 @@
                             .attr('src', e.target.result)
                             .attr('style', 'max-width: 100%; max-height: 200px;')
                             .show();
+                        $('#imagenActualContainer').show();
                     };
                     reader.readAsDataURL(input.files[0]);
+                    var fileName = input.files[0].name;
+                    $(input).next('.custom-file-label').html(fileName);
                 }
             });
-
             $('#NuevoProductoForm').on('submit', function(event) {
                 event.preventDefault();
 
@@ -817,15 +856,24 @@
                     var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
                     var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
                     codigoProducto = codigoMaterial + codigoAleatorio;
-                } else if (tipoProducto === 'maquillaje') {
-                    var categoriaSeleccionada = $('#Marc_Id option:selected').text();
-                    var codigoCategoria = categoriaSeleccionada.substring(0, 2).toUpperCase();
-                    var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
-                    codigoProducto = codigoCategoria + codigoAleatorio;
                 }
-                formData.append('productoCodigo', codigoProducto);
 
-                formData.append('action', 'insertarProducto');
+                if (tipoProducto == 'joya') {
+                    formData.append('action', 'insertarJoyas');
+                    formData.append('Joya_Codigo', codigoProducto);
+                    formData.append('Joya_Nombre', $('#nombreProducto').val());
+                    formData.append('precio_compra', $('#precioCompraProducto').val());
+                    formData.append('precio_venta', $('#precioVentaProducto').val());
+                    formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
+                    formData.append('imagen', $('#Imagen')[0].files[0]);
+                    formData.append('stock', 1);
+                    formData.append('usuario_creacion', 1);
+                    formData.append('fecha_creacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+                } else {
+                    accion = 'insertarMaquillajes'
+                }
+
+                formData.append('action', accion);
                 formData.append('nombre', $('#nombreProducto').val());
                 formData.append('precio_compra', $('#precioCompraProducto').val());
                 formData.append('precio_venta', $('#precioVentaProducto').val());
@@ -844,6 +892,8 @@
 
                 var proveedorSeleccionado = $('#Proveedor').val();
                 formData.append('proveedor', proveedorSeleccionado);
+
+
 
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
@@ -1115,11 +1165,20 @@
             }
 
             $("#btnConfirmar").click(function() {
+                if (FaCE_Id === 0) {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'No hay factura abierta para finalizar.',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    return;
+                }
+
                 if (sessionStorage.getItem("Mepa_Metodo") == "7") {
-                    $("#ModalTransferencias").modal("show")
-
+                    $("#ModalTransferencias").modal("show");
                 } else {
-
                     $.ajax({
                         url: 'Services/FacturaCompraService.php',
                         type: 'POST',
@@ -1132,25 +1191,25 @@
                         success: function(response) {
                             if (response.success) {
                                 iziToast.success({
-                                    title: 'Exito',
+                                    title: 'Éxito',
                                     message: 'Factura finalizada correctamente.',
                                     position: 'topRight',
                                     transitionIn: 'flipInX',
                                     transitionOut: 'flipOutX'
                                 });
                                 table.ajax.reload();
+                                cerrarFactura();
                             } else {
                                 console.error('Error al finalizar la factura:', response.message);
                             }
-
                         },
                         error: function() {
 
                         }
                     });
                 }
+            });
 
-            })
 
             $('#TablaFacturaCompra tbody').on('click', '.abrir-finalizar', function() {
                 var row = $(this).closest('tr');
@@ -1327,11 +1386,23 @@
                         }
                     },
                     theme: 'grid',
-                    didDrawPage: (data) => {
-                        footer();
-                        pageNumber++;
-                    }
+
                 });
+
+                const user = "<?php echo $_SESSION['Empl_Nombre']; ?>";
+                const currentDate = new Date().toISOString().split('T')[0];
+                const pageHeight = doc.internal.pageSize.height;
+
+
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(10);
+                    doc.text(`Página ${i} de ${totalPages}`, doc.internal.pageSize.width - 80, pageHeight - 15);
+
+                    doc.text(`Emitido por: ${user}`, 32, pageHeight - 25);
+                    doc.text(`Fecha: ${currentDate}`, 32, pageHeight - 15);
+                }
 
                 doc.save(`FacturaCompra - ${factura.faCE_Id}.pdf`);
             }

@@ -122,14 +122,12 @@ h2{
     <!-- /.sidebar -->
 </aside>
 
-<div class="modal fade" id="AbrirCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+<div class="modal fade" id="AbrirCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #5d9e3e;">
                 <h5 class="modal-title" id="eliminarModalLabel" style="color: #000000;">Deseas abrir la caja?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+               
             </div>
             <div class="modal-body">
         <div class="row">
@@ -165,7 +163,7 @@ h2{
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" id="SalirCaja">Cancelar</button>
                 <button type="button" class="btn btn-primary" id="guardarBtnCaja">Abrir</button>
             </div>
         </div>
@@ -194,39 +192,102 @@ h2{
             </div>
 
             <div class="col-md-4 col-sm-8 col-12">
-                <div class="info-box">
+                <div class="info-box" style="height: 80px !important;">
                     <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
                     <div class="info-box-content">
-                <span class="info-box-text" style="font-weight: 800;">Usuario</span>
-                <span class="info-box-text"> <?php echo $_SESSION['Usua_Usuario']; ?></span>
+                <span class="info-box-text" style="font-weight: 800;">Diferencia</span>
+                <span class="info-box-text"><p id="txtDiferencia"></p></span>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 col-sm-8 col-12">
-                <div class="info-box">
+                <div class="info-box" style="height: 80px !important;">
                     <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
                     <div class="info-box-content">
-                <span class="info-box-text" style="font-weight: 800;">Sucursal</span>
-                <span class="info-box-text"><?php echo $_SESSION['Sucu_Nombre']; ?></span>
+                <span class="info-box-text" style="font-weight: 800;">Monto Inicial</span>
+                <span class="info-box-text"><p id="txtMontoInicial"></p></span>
                     </div>
                 </div>
             </div>
-        </div>
-        
-                <form id="CerrarCajaForm" enctype="multipart/form-data">
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <label class="control-label">Monto Final</label>
-                            <input name="Final" class="form-control letras" id="Final" style="border: 1px solid #5d9e3e;"/>
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label">Observaciones</label>
-                            <input name="Observaciones" class="form-control letras" id="Observaciones" style="border: 1px solid #5d9e3e;"/>
-                            <span class="text-danger"></span>
-                        </div>
+        </div> <form id="CerrarCajaForm" enctype="multipart/form-data">
+        <div class="row">
+
+            <div class="col-md-6">
+                <div style="text-align: center;">
+                    <h2>Ingresos</h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center;">
+                        <label for="" >Ventas Efectivo:</label>
                     </div>
-                </form>
+                    <div class="col-md-6">
+                       <input type="text" class="form-control" id="txtVentasEfectivo" disabled="true">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center;">
+                        <label for="" >Ventas en transferencia:</label>
+                    </div>
+                    <div class="col-md-6">
+                       <input type="text" class="form-control" id="txtVentasTransferencias" disabled="true">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6" style="text-align:center;">
+                        <label for="" >Ventas en tarjeta credito:</label>
+                    </div>
+                    <div class="col-md-6">
+                       <input type="text" class="form-control" id="txtVentasCredito" disabled="true">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div style="text-align: center;">
+                    <h2 style="font-size: 30px;">Egresos</h2>
+                    <div class="row">
+                    <div class="col-md-6" style="text-align: end;">
+                        <label for="" >Total Retiros:</label>
+                        
+                    </div>
+                    <div class="col-md-6">
+                    <input type="text" class="form-control" id="txtRetiros" disabled="true">
+                    </div>
+                    </div>
+                    <h2 style="font-size: 30px;">Caja</h2>
+                    <div class="row">
+                    <div class="col-md-6" style="text-align: end;">
+                        <label for="" >Total Efectivo:</label>
+                        <input type="text" class="form-control" id="txtTotalEfectivo" disabled="true">
+                    </div>
+                    <div class="col-md-6">
+                    <label for="" >Efectivo Final</label>
+                    <input type="text" name="Final"  class="form-control" id="Final">
+                    </div>
+                    </div>
+             
+                    <div class="row">
+                    <div class="col-md-6" style="text-align: end;">
+              
+                     
+                    </div>
+                   
+                    <div class="col-md-6">
+               
+                    </div>
+                    </div>
+                </div>
+            </div>
+                    <div class="col-md-12" >
+                            <label class="control-label">Observaciones</label>
+                            <input name="Observaciones" class="form-control letras"  id="Observaciones" style="border: 1px solid #5d9e3e;"/>
+                            <span class="text-danger"></span>
+                        </div>
+                 
+        </div>
+        </form>
+                    
+              
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -269,7 +330,7 @@ h2{
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Observaciones</label>
-                            <input name="ObservacionesRe" class="form-control letras" id="ObservacionesRe" style="border: 1px solid #5d9e3e;"/>
+                            <input name="ObservacionesRe" class="form-control letras" id="ObservacionesRe"  style="border: 1px solid #5d9e3e;" />
                             <span class="text-danger"></span>
                         </div>
                     </div>
@@ -282,7 +343,6 @@ h2{
         </div>
     </div>
 </div>
-
 
 
 
@@ -311,11 +371,14 @@ h2{
                     $("#AbrirLink").show()
                     $("#CerrarLink").hide()
                     $("#RetiroLink").hide()
+               
                 }else{
                     $("#CerrarLink").show()
                     $("#RetiroLink").show()
                     $("#AbrirLink").hide()
+                
                 }
+      
                
             },
             error: function() {
@@ -329,7 +392,11 @@ h2{
       $('#AbrirCajas').click(function() {
         $('#AbrirCajaModal').modal('show');
       });
-
+      $('#SalirCaja').click(function() {
+         window.location.href = 'index';
+        $('#AbrirCajaModal').modal('show');
+      });
+   
 
 
       $('#CajaForm').validate({
@@ -409,8 +476,48 @@ h2{
 
   $('#CerrarCajas').click(function() {
         $('#CerrarCajaModal').modal('show');
+        $.ajax({
+            url: 'Views/Modules/ServicesModules/MenuService.php',
+            type: 'POST',
+            data: {
+                action: 'totales',
+                FechaHoy: new Date().toISOString().slice(0, 11).replace('T', ' ')
+            },
+            success: function(response) {
+                console.log(response)
+                data = JSON.parse(response)
+                console.log(data);
+
+               $("#txtVentasEfectivo").val(data.data[0].Efectivo + " .Lps")
+               $("#txtVentasTransferencias").val(data.data[0].Transferencias + " .Lps")
+               $("#txtVentasCredito").val(data.data[0].Tarjeta_Credito + " .Lps")
+               $("#txtRetiros").val(data.data[0].TotalRetiro + " .Lps")
+               $("#txtDiferencia").text("0.00" + " .Lps")
+               $("#txtMontoInicial").text(data.data[0].MontoInicial + " .Lps")
+                const totalEfectivo = (parseFloat(data.data[0].MontoInicial) + parseFloat(data.data[0].Efectivo)) - parseFloat(data.data[0].TotalRetiro)
+               $("#txtTotalEfectivo").val(totalEfectivo.toFixed(2) + " .Lps")
+               
+               sessionStorage.setItem("TotalEfectivo", totalEfectivo.toFixed(2).toString())
+               sessionStorage.setItem("Caja_Id", data.data[0].Caja_Id)
+               sessionStorage.setItem("MontoInicial", data.data[0].MontoInicial)
+        
+
+
+            
+               
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
   });
 
+    $('#Final').on('input', function() {
+      let montoEfectivo = parseFloat($(this).val()) || 0;
+      let cambio =  montoEfectivo - parseFloat(sessionStorage.getItem("TotalEfectivo"));
+
+      $('#txtDiferencia').text(cambio.toFixed(2));
+    });
 
   $('#FacturaLink').click(function() {
        sessionStorage.setItem("CrearOEditar", "Crear")
@@ -456,11 +563,11 @@ h2{
             data: {
                 action: 'cerrar',
                 caja_FechaCierre: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                caja_MontoInicial: $("#Final").val(), 
+                caja_MontoInicial: sessionStorage.getItem("MontoInicial"), 
                 caja_MontoFinal: $("#Final").val(), 
-                caja_MontoSistema:$("#Final").val(), 
+                caja_MontoSistema: sessionStorage.getItem("TotalEfectivo"), 
                 caja_Observacion: $("#Observaciones").val(),
-                caja_codigo: 1,
+                caja_codigo: sessionStorage.getItem("Caja_Id")
             },
             success: function(response) {
                 console.log(response)
@@ -474,10 +581,13 @@ h2{
             position: 'topRight',
             transitionIn: 'flipInX',
             transitionOut: 'flipOutX'
+           
 
 
         });
-
+            validar()
+            location.reload();
+ 
             $('#AbrirCajaModal').hide();
             } else {
             iziToast.error({

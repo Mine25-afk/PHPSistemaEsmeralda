@@ -21,10 +21,22 @@ class FacturaCompraService
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $data = array();
             foreach ($result as $row) {
-                $editar = $row['faCE_Finalizada'] == 'Si' ? "<button style='margin: 0 5px;' class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-pencil-alt'></i> Editar</button>" : "";
-                $imprimir = $row['faCE_Finalizada'] == 'No' ? "<button style='margin: 0 5px;' class='btn btn-danger btn-sm abrir-imprimir' ><i class='fas fa-print'></i> Imprimir</button>" : "";
-                $finalizar = $row['faCE_Finalizada'] == 'Si' ? "<button style='margin: 0 5px;' class='btn btn-danger btn-sm abrir-finalizar'><i class='fas fa-check-circle'></i> Finalizar</button>" : "";
-                $acciones = "<div class='text-center'>" . $editar . $imprimir . $finalizar . "</div>";
+                $editar = $row['faCE_Finalizada'] == 'Si' ? "<a class='dropdown-item abrir-editar' href='#'><i class='fas fa-pencil-alt'></i> Editar</a>" : "";
+            $imprimir = $row['faCE_Finalizada'] == 'No' ? "<a class='dropdown-item abrir-imprimir' href='#'><i class='fas fa-print'></i> Imprimir</a>" : "";
+            $finalizar = $row['faCE_Finalizada'] == 'Si' ? "<a class='dropdown-item abrir-finalizar' href='#'><i class='fas fa-check-circle'></i> Finalizar</a>" : "";
+            
+            $acciones = "
+                <div class='dropdown text-center'>
+                    <button class='btn btn-default dropdown-toggle dropdown-icon' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        Acciones
+                    </button>
+                    <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>
+                        $editar
+                        $imprimir
+                        $finalizar
+                    </div>
+                </div>
+            ";
                 $data[] = array(
                     'FaCE_Id' => $row['FaCE_Id'],
                     'nombreProveedor' => $row['nombreProveedor'],
@@ -373,42 +385,47 @@ class FacturaCompraService
         }
     }
 
-    public function insertarMaquillaje($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion)
-    {
+    public function insertarMaquillaje($Maqu_Id, $Maqu_Nombre, $Maqu_PrecioCompra, $Maqu_PrecioVenta, $Maqu_PrecioMayor, $Maqu_Imagen, $Prov_Id, $Marc_Id, $Maqu_FechaCreacion) {
         global $pdo;
         try {
-            error_log('insertarMaquillaje: Datos recibidos');
-            if (isset($Joya_Imagen['error']) && $Joya_Imagen['error'] == UPLOAD_ERR_OK) {
-                $uploadDir = '../Resources/uploads/joyas/';
+            if (isset($Maqu_Imagen['error']) && $Maqu_Imagen['error'] == UPLOAD_ERR_OK) {
+                $uploadDir = '../Resources/uploads/maquillajes/';
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
                 }
-                $fileName = basename($Joya_Imagen['name']);
-                $targetFilePath = $uploadDir . $fileName;
-                if (move_uploaded_file($Joya_Imagen['tmp_name'], $targetFilePath)) {
-                    $Joya_Imagen = $fileName; // Guarda solo el nombre del archivo
+                $fileInfo = pathinfo($Maqu_Imagen['name']);
+                $extension = $fileInfo['extension'];
+                $uniqueName = uniqid() . '.' . $extension;
+                $targetFilePath = $uploadDir . $uniqueName;
+
+                // Mover el archivo subido al directorio de destino
+                if (move_uploaded_file($Maqu_Imagen['tmp_name'], $targetFilePath)) {
+                    $Maqu_Imagen = $uniqueName;
                 } else {
+                    error_log('Error al mover el archivo subido.');
                     throw new Exception('Error al mover el archivo subido.');
                 }
             } else {
-                throw new Exception('Error al subir el archivo: ' . $Joya_Imagen['error']);
-            } $sql = 'CALL SP_Joyas_insertar(:Joya_Codigo, :Joya_Nombre, :Joya_PrecioCompra, :Joya_PrecioVenta, :Joya_PrecioMayor, :Joya_Imagen, :Joya_Stock, :Prov_Id, :Mate_Id, :Cate_Id, :Joya_UsuarioCreacion, :Joya_FechaCreacion)';
+                error_log('Error al subir el archivo: ' . $Maqu_Imagen['error']);
+                throw new Exception('Error al subir el archivo: ' . $Maqu_Imagen['error']);
+            }
+
+            $Maqu_Stock = 1;
+            $sql = 'CALL SP_Maquillajes_insertar(:Maqu_Nombre, :Maqu_PrecioCompra, :Maqu_PrecioVenta, :Maqu_PrecioMayor, :Maqu_Stock, :Maqu_Imagen, :Prov_Id, :Marc_Id, :Maqu_UsuarioCreacion, :Maqu_FechaCreacion)';
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':Joya_Codigo', $Joya_Codigo, PDO::PARAM_STR);
-            $stmt->bindParam(':Joya_Nombre', $Joya_Nombre, PDO::PARAM_STR);
-            $stmt->bindParam(':Joya_PrecioCompra', $Joya_PrecioCompra, PDO::PARAM_STR);
-            $stmt->bindParam(':Joya_PrecioVenta', $Joya_PrecioVenta, PDO::PARAM_STR);
-            $stmt->bindParam(':Joya_PrecioMayor', $Joya_PrecioMayor, PDO::PARAM_STR);
-            $stmt->bindParam(':Joya_Imagen', $Joya_Imagen, PDO::PARAM_STR);
-            $stmt->bindParam(':Joya_Stock', $Joya_Stock, PDO::PARAM_INT);
+            $stmt->bindParam(':Maqu_Nombre', $Maqu_Nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':Maqu_PrecioCompra', $Maqu_PrecioCompra, PDO::PARAM_STR);
+            $stmt->bindParam(':Maqu_PrecioVenta', $Maqu_PrecioVenta, PDO::PARAM_STR);
+            $stmt->bindParam(':Maqu_PrecioMayor', $Maqu_PrecioMayor, PDO::PARAM_STR);
+            $stmt->bindParam(':Maqu_Stock', $Maqu_Stock, PDO::PARAM_INT);
+            $stmt->bindParam(':Maqu_Imagen', $Maqu_Imagen, PDO::PARAM_STR);
             $stmt->bindParam(':Prov_Id', $Prov_Id, PDO::PARAM_INT);
-            $stmt->bindParam(':Cate_Id', $Cate_Id, PDO::PARAM_INT);
-            $stmt->bindParam(':Joya_UsuarioCreacion', $Joya_UsuarioCreacion, PDO::PARAM_INT);
-            $stmt->bindParam(':Joya_FechaCreacion', $Joya_FechaCreacion, PDO::PARAM_STR);
+            $stmt->bindParam(':Marc_Id', $Marc_Id, PDO::PARAM_INT);
+            $stmt->bindParam(':Maqu_UsuarioCreacion', $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Maqu_FechaCreacion', $Maqu_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
 
             $result = $stmt->fetchColumn();
-            error_log('insertarMaquillaje: Resultado: ' . $result);
             return $result;
         } catch (Exception $e) {
             error_log('Error al insertar maquillaje: ' . $e->getMessage());
@@ -416,6 +433,7 @@ class FacturaCompraService
             return 0;
         }
     }
+
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $service = new FacturaCompraService();
@@ -440,26 +458,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo $service->listarMarcas();
     } elseif ($_POST['action'] === 'listarSucursales') {
         echo $service->listarSucursales();
-    } elseif ($_POST['action'] == 'insertarProducto') {
-        $tipo = $_POST['tipo'];
-        $datos = [
-            'productoCodigo' => $_POST['productoCodigo'],
-            'nombre' => $_POST['nombre'],
-            'precio_compra' => $_POST['precio_compra'],
-            'precio_venta' => $_POST['precio_venta'],
-            'precio_mayorista' => $_POST['precio_mayorista'],
-            'imagen' => $_FILES['imagen'],
-            'stock' => 1,
-            'proveedor' => $_POST['proveedor'],
-            'material' => $_POST['Mate_Id'],
-            'categoria' => $_POST['Cate_Id'],
-            'usuario_creacion' => 1,
-            'fecha_creacion' => date('Y-m-d H:i:s')
-        ];
+    } elseif ($_POST['action'] == 'insertarJoyas') {
+        $Joya_Codigo = $_POST['Joya_Codigo'];
+        $Joya_Nombre = $_POST['Joya_Nombre'];
+        $Joya_PrecioCompra = $_POST['Joya_PrecioCompra'];
+        $Joya_PrecioVenta = $_POST['Joya_PrecioVenta'];
+        $Joya_PrecioMayor = $_POST['Joya_PrecioMayor'];
+        $Joya_Imagen = $_FILES['Joya_Imagen'];
+        $Joya_Stock = $_POST['Joya_Stock'];
+        $Prov_Id = $_POST['Prov_Id'];
+        $Mate_Id = $_POST['Mate_Id'];
+        $Cate_Id = $_POST['Cate_Id'];
+        $Joya_UsuarioCreacion = $_POST['Joya_UsuarioCreacion'];
+        $Joya_FechaCreacion = $_POST['Joya_FechaCreacion'];
 
-        $resultado = $service->insertarProducto($tipo, $datos);
+        $resultado = $service->insertarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion);
         echo json_encode(array('result' => $resultado));
-    } elseif ($_POST['action'] === 'listarJoyasAutoCompletado') {
+    }elseif ($_POST['action'] == 'insertarMaquillajes') {
+        $Maqu_Id = $_POST['Maqu_Id'];
+            $Maqu_Nombre = $_POST['Maqu_Nombre'];
+            $Maqu_PrecioCompra = $_POST['Maqu_PrecioCompra'];
+            $Maqu_PrecioVenta = $_POST['Maqu_PrecioVenta'];
+            $Maqu_PrecioMayor = $_POST['Maqu_PrecioMayor'];
+            $Maqu_Imagen = $_FILES['Maqu_Imagen'];
+            $Prov_Id = $_POST['Prov_Id'];
+            $Marc_Id = $_POST['Marc_Id'];
+            $Maqu_FechaCreacion = $_POST['Maqu_FechaCreacion'];
+
+            $resultado = $controller->insertarMaquillaje($Maqu_Id, $Maqu_Nombre, $Maqu_PrecioCompra, $Maqu_PrecioVenta, $Maqu_PrecioMayor, $Maqu_Imagen, $Prov_Id, $Marc_Id, $Maqu_FechaCreacion);
+            echo json_encode(array('result' => $resultado));
+    }  elseif ($_POST['action'] === 'listarJoyasAutoCompletado') {
         $term = $_POST['term'];
         echo $service->listarJoyasAutoCompletado($term);
     } elseif ($_POST['action'] === 'listarMaquillajesAutoCompletado') {
