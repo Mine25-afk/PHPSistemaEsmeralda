@@ -238,15 +238,15 @@
                         </div>
                         <div class="col-md-6" id="materialField" style="display:none;">
                             <label>Material</label>
-                            <select name="Mate_Id" class="form-control" id="Mate_Id" ></select>
+                            <select name="Mate_Id" class="form-control" id="Mate_Id"></select>
                         </div>
                         <div class="col-md-6" id="categoriaField" style="display:none;">
                             <label>Categoría</label>
-                            <select name="Cate_Id" class="form-control" id="Cate_Id" ></select>
+                            <select name="Cate_Id" class="form-control" id="Cate_Id"></select>
                         </div>
                         <div class="custom-file col-md-6">
                             <label>Imagen</label>
-                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen"  />
+                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen" />
                             <label class="custom-file-label"></label>
                         </div>
                         <div class="col-md-6">
@@ -356,8 +356,8 @@
         $(document).ready(function() {
 
             var temporizadorinactividad;
-            var inactividadmaxima = 60000; 
-            var advertencia = 30000; 
+            var inactividadmaxima = 60000;
+            var advertencia = 30000;
 
             function iniciartemp() {
                 clearTimeout(temporizadorinactividad);
@@ -470,7 +470,7 @@
                 }
             }
 
-           
+
 
             $('input[name="cantidad"]').on('input', function() {
                 this.value = this.value.replace(/[^0-9]/g, '');
@@ -845,20 +845,22 @@
                     var codigoMaterial = materialSeleccionado.substring(0, 2).toUpperCase();
                     var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
                     codigoProducto = codigoMaterial + codigoAleatorio;
-                } else if (tipoProducto === 'maquillaje') {
-                    var categoriaSeleccionada = $('#Marc_Id option:selected').text();
-                    var codigoCategoria = categoriaSeleccionada.substring(0, 2).toUpperCase();
-                    var codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
-                    codigoProducto = codigoCategoria + codigoAleatorio;
                 }
-                formData.append('productoCodigo', codigoProducto);
 
-                let accion = '';
-
-                if(tipoProducto == 'joya')
-                {
-                    accion = 'insertarJoyas';
-                } else {accion = 'insertarMaquillajes'}
+                if (tipoProducto == 'joya') {
+                    formData.append('action', 'insertarJoyas');
+                    formData.append('Joya_Codigo', codigoProducto);
+                    formData.append('Joya_Nombre', $('#nombreProducto').val());
+                    formData.append('precio_compra', $('#precioCompraProducto').val());
+                    formData.append('precio_venta', $('#precioVentaProducto').val());
+                    formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
+                    formData.append('imagen', $('#Imagen')[0].files[0]);
+                    formData.append('stock', 1);
+                    formData.append('usuario_creacion', 1);
+                    formData.append('fecha_creacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+                } else {
+                    accion = 'insertarMaquillajes'
+                }
 
                 formData.append('action', accion);
                 formData.append('nombre', $('#nombreProducto').val());
@@ -880,7 +882,7 @@
                 var proveedorSeleccionado = $('#Proveedor').val();
                 formData.append('proveedor', proveedorSeleccionado);
 
-                
+
 
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
@@ -1191,7 +1193,7 @@
                             }
                         },
                         error: function() {
-      
+
                         }
                     });
                 }
