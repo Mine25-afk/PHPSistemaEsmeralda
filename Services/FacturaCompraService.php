@@ -244,13 +244,15 @@ class FacturaCompraService
         }
     }
 
-    public function finalizarFacturaCompra($FaCE_Id, $fechaFinal)
+    public function finalizarFacturaCompra($FaCE_Id, $fechaFinal, $Tarj_Id, $Tarj_Codigo)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Finalizar`(:FaCE_Id, :fechaFinal)';
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Finalizar`(:FaCE_Id, :fechaFinal,:Tarj_Id, :Tarj_Codigo)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
             $stmt->bindParam(':fechaFinal', $fechaFinal, PDO::PARAM_STR);
+            $stmt->bindParam(':Tarj_Id', $Tarj_Id, PDO::PARAM_STR);
+            $stmt->bindParam(':Tarj_Codigo', $Tarj_Codigo, PDO::PARAM_STR);
             $stmt->execute();
             return array('success' => true);
         } catch (Exception $e) {
@@ -392,6 +394,19 @@ class FacturaCompraService
         }
     }
 
+    public function listartarjetas()
+    {
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`SP_Tarjetas_Listar`()';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Exception $e) {
+            error_log('Error al listar tarjetas: ' . $e->getMessage());
+            throw new Exception('Error al listar tarjetas.');
+        }
+    }
+
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $service = new FacturaCompraService();
@@ -447,7 +462,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }  elseif ($_POST['action'] === 'listarJoyasAutoCompletado') {
         $term = $_POST['term'];
         echo $service->listarJoyasAutoCompletado($term);
-    } elseif ($_POST['action'] === 'listarMaquillajesAutoCompletado') {
+    } elseif ($_POST['action'] === 'listartarjetas') {
+        echo $controller->listarTarjetas();
+       
+    }elseif ($_POST['action'] === 'listarMaquillajesAutoCompletado') {
         $term = $_POST['term'];
         echo $service->listarMaquillajesAutoCompletado($term);
     } elseif ($_POST['action'] === 'buscarMaquillajePorCodigo') {
@@ -493,7 +511,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     } elseif ($_POST['action'] == 'finalizarFacturaCompra') {
         $FaCE_Id = $_POST['FaCE_Id'];
         $fechaFinal = $_POST['fechaFinal'];
-        $resultado = $service->finalizarFacturaCompra($FaCE_Id, $fechaFinal);
+        $Tarj_Id= $_POST['Tarj_Id'];
+        $Tarj_Codigo= $_POST['Tarj_Codigo'];
+        $resultado = $service->finalizarFacturaCompra($FaCE_Id, $fechaFinal,$Tarj_Id,$Tarj_Codigo);
         echo json_encode($resultado);
     }
 }
