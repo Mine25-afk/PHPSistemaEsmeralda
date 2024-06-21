@@ -302,42 +302,6 @@ class FacturaCompraService
             echo json_encode(array('error' => 'Error al listar marcas: ' . $e->getMessage()));
         }
     }
-    public function insertarProducto($tipo, $datos)
-    {
-        error_log('insertarProducto: Tipo de producto: ' . $tipo);
-        error_log('insertarProducto: Datos: ' . json_encode($datos));
-
-        if ($tipo === 'joya') {
-            return $this->insertarJoyas(
-                $datos['productoCodigo'],
-                $datos['nombre'],
-                $datos['precio_compra'],
-                $datos['precio_venta'],
-                $datos['precio_mayorista'],
-                $datos['imagen'],
-                $datos['stock'],
-                $datos['proveedor'],
-                $datos['material'],
-                $datos['categoria'],
-                $datos['usuario_creacion'],
-                $datos['fecha_creacion']
-            );
-        } elseif ($tipo === 'maquillaje') {
-            return $this->insertarMaquillaje(
-                $datos['productoCodigo'],
-                $datos['nombre'],
-                $datos['precio_compra'],
-                $datos['precio_venta'],
-                $datos['precio_mayorista'],
-                $datos['imagen'],
-                $datos['stock'],
-                $datos['proveedor'],
-                $datos['marca'],
-                $datos['usuario_creacion'],
-                $datos['fecha_creacion']
-            );
-        }
-    }
 
     public function insertarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion) {
         global $pdo;
@@ -385,7 +349,7 @@ class FacturaCompraService
         }
     }
 
-    public function insertarMaquillaje($Maqu_Id, $Maqu_Nombre, $Maqu_PrecioCompra, $Maqu_PrecioVenta, $Maqu_PrecioMayor, $Maqu_Imagen, $Prov_Id, $Marc_Id, $Maqu_FechaCreacion) {
+    public function insertarMaquillaje($Maqu_Nombre, $Maqu_PrecioCompra, $Maqu_PrecioVenta, $Maqu_PrecioMayor, $Maqu_Imagen, $Prov_Id, $Marc_Id, $Maqu_FechaCreacion) {
         global $pdo;
         try {
             if (isset($Maqu_Imagen['error']) && $Maqu_Imagen['error'] == UPLOAD_ERR_OK) {
@@ -393,20 +357,14 @@ class FacturaCompraService
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
                 }
-                $fileInfo = pathinfo($Maqu_Imagen['name']);
-                $extension = $fileInfo['extension'];
-                $uniqueName = uniqid() . '.' . $extension;
-                $targetFilePath = $uploadDir . $uniqueName;
-
-                // Mover el archivo subido al directorio de destino
+                $fileName = basename($Maqu_Imagen['name']);
+                $targetFilePath = $uploadDir . $fileName;
                 if (move_uploaded_file($Maqu_Imagen['tmp_name'], $targetFilePath)) {
-                    $Maqu_Imagen = $uniqueName;
+                    $Maqu_Imagen = $fileName; // Guarda solo el nombre del archivo
                 } else {
-                    error_log('Error al mover el archivo subido.');
                     throw new Exception('Error al mover el archivo subido.');
                 }
             } else {
-                error_log('Error al subir el archivo: ' . $Maqu_Imagen['error']);
                 throw new Exception('Error al subir el archivo: ' . $Maqu_Imagen['error']);
             }
 
@@ -475,7 +433,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $resultado = $service->insertarJoyas($Joya_Codigo, $Joya_Nombre, $Joya_PrecioCompra, $Joya_PrecioVenta, $Joya_PrecioMayor, $Joya_Imagen, $Joya_Stock, $Prov_Id, $Mate_Id, $Cate_Id, $Joya_UsuarioCreacion, $Joya_FechaCreacion);
         echo json_encode(array('result' => $resultado));
     }elseif ($_POST['action'] == 'insertarMaquillajes') {
-        $Maqu_Id = $_POST['Maqu_Id'];
             $Maqu_Nombre = $_POST['Maqu_Nombre'];
             $Maqu_PrecioCompra = $_POST['Maqu_PrecioCompra'];
             $Maqu_PrecioVenta = $_POST['Maqu_PrecioVenta'];
@@ -485,7 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $Marc_Id = $_POST['Marc_Id'];
             $Maqu_FechaCreacion = $_POST['Maqu_FechaCreacion'];
 
-            $resultado = $controller->insertarMaquillaje($Maqu_Id, $Maqu_Nombre, $Maqu_PrecioCompra, $Maqu_PrecioVenta, $Maqu_PrecioMayor, $Maqu_Imagen, $Prov_Id, $Marc_Id, $Maqu_FechaCreacion);
+            $resultado = $service->insertarMaquillaje($Maqu_Nombre, $Maqu_PrecioCompra, $Maqu_PrecioVenta, $Maqu_PrecioMayor, $Maqu_Imagen, $Prov_Id, $Marc_Id, $Maqu_FechaCreacion);
             echo json_encode(array('result' => $resultado));
     }  elseif ($_POST['action'] === 'listarJoyasAutoCompletado') {
         $term = $_POST['term'];
