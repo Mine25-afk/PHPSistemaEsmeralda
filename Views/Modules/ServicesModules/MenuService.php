@@ -120,6 +120,28 @@ class MenuService {
         }
     }
 
+    public function SP_Caja_TotalesPorSucu($FechaHoy, $Sucu_Id) {
+        global $pdo;
+        try {
+            $sql = 'CALL SP_Caja_Totales(:report_date, :Sucu_Codigo)';
+            $stmt = $pdo->prepare($sql);
+           
+            $stmt->bindParam(':report_date', $FechaHoy, PDO::PARAM_STR);
+            $stmt->bindParam(':Sucu_Codigo',$Sucu_Id, PDO::PARAM_STR);
+    
+            $stmt->execute();
+            
+            // Fetch all rows
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+          
+            // If all caja_Finalizado are not 0, return 1
+            echo json_encode(array('data' => $rows));
+        } catch (PDOException $e) {
+            return 0; // Return 0 in case of an error
+        }
+    }
+
 }
 
 
@@ -156,6 +178,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }elseif ($_POST['action'] === 'totales') {
         $FechaHoy = $_POST['FechaHoy'];
         $resultado = $controller->SP_Caja_Totales($FechaHoy);
+        echo $resultado;
+    }
+    elseif ($_POST['action'] === 'totalesSucu') {
+        $Sucu_Id = $_POST['Sucu_Id'];
+        $FechaHoy = $_POST['FechaHoy'];
+        $resultado = $controller->SP_Caja_TotalesPorSucu($FechaHoy,$Sucu_Id);
         echo $resultado;
     }
 }

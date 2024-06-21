@@ -52,8 +52,9 @@
             url: 'Views/Modules/ServicesModules/MenuService.php',
             type: 'POST',
             data: {
-                action: 'totales',
-                FechaHoy: new Date().toISOString().slice(0, 11).replace('T', ' ')
+                action: 'totalesSucu',
+                FechaHoy: new Date().toISOString().slice(0, 11).replace('T', ' '),
+                Sucu_Id: sucuIdPredeterminado
             },
             success: function(response) {
                 console.log(response)
@@ -82,6 +83,12 @@
                 alert('Error en la comunicación con el servidor.');
             }
         });
+
+        $('#reservationdate, #Sucursal').change(function() {
+                console.log($("#reservationdate").val())
+                console.log($("#Sucursal").val())
+            
+            });
 
             // Realizar la llamada AJAX para obtener las sucursales
             $.ajax({
