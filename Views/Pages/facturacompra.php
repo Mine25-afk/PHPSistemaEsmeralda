@@ -238,15 +238,15 @@
                         </div>
                         <div class="col-md-6" id="materialField" style="display:none;">
                             <label>Material</label>
-                            <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
+                            <select name="Mate_Id" class="form-control" id="Mate_Id" ></select>
                         </div>
                         <div class="col-md-6" id="categoriaField" style="display:none;">
                             <label>Categoría</label>
-                            <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
+                            <select name="Cate_Id" class="form-control" id="Cate_Id" ></select>
                         </div>
                         <div class="custom-file col-md-6">
                             <label>Imagen</label>
-                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
+                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen"  />
                             <label class="custom-file-label"></label>
                         </div>
                         <div class="col-md-6">
@@ -469,6 +469,8 @@
                         .hide();
                 }
             }
+
+           
 
             $('input[name="cantidad"]').on('input', function() {
                 this.value = this.value.replace(/[^0-9]/g, '');
@@ -822,11 +824,13 @@
                             .attr('src', e.target.result)
                             .attr('style', 'max-width: 100%; max-height: 200px;')
                             .show();
+                        $('#imagenActualContainer').show();
                     };
                     reader.readAsDataURL(input.files[0]);
+                    var fileName = input.files[0].name;
+                    $(input).next('.custom-file-label').html(fileName);
                 }
             });
-
             $('#NuevoProductoForm').on('submit', function(event) {
                 event.preventDefault();
 
@@ -849,7 +853,14 @@
                 }
                 formData.append('productoCodigo', codigoProducto);
 
-                formData.append('action', 'insertarProducto');
+                let accion = '';
+
+                if(tipoProducto == 'joya')
+                {
+                    accion = 'insertarJoyas';
+                } else {accion = 'insertarMaquillajes'}
+
+                formData.append('action', accion);
                 formData.append('nombre', $('#nombreProducto').val());
                 formData.append('precio_compra', $('#precioCompraProducto').val());
                 formData.append('precio_venta', $('#precioVentaProducto').val());
@@ -868,6 +879,8 @@
 
                 var proveedorSeleccionado = $('#Proveedor').val();
                 formData.append('proveedor', proveedorSeleccionado);
+
+                
 
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
