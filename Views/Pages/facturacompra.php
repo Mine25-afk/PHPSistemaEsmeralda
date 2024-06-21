@@ -119,9 +119,9 @@
                                     <div class="form-row d-flex justify-content-start">
                                         <div class="col-md-7">
                                             <input type="hidden" id="metodoPagoSeleccionado" name="metodoPagoSeleccionado" value="1" />
-                                            <button type="button" class="btn btn-secondary metodo-pago btn-selected-info" data-value="1">Efectivo</button>
-                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="4">Tarjeta de Crédito</button>
-                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="7">Pago en Línea</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago btn-selected-info" data-value="1"><i class="fas fa-dollar-sign"></i> Efectivo</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="4"><i class="fas fa-credit-card"></i> Tarjeta de Crédito</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="7"><i class="fas fa-donate"></i> Pago en Línea</button>
                                         </div>
                                     </div>
                                 </div>
@@ -179,10 +179,10 @@
                                     <div class="form-row d-flex justify-content-end">
                                         <div class="col-auto">
 
-                                            <input type="button" value="Confirmar" class="btn btn-primary" id="confirmarBtn" />
+                                            <input type="button" value="Confirmar" class="btn btn-primary" id="btnConfirmar" />
                                         </div>
                                         <div class="col-auto">
-                                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Volver</a>
+                                            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Cancelar</a>
                                         </div>
 
                                     </div>
@@ -1082,7 +1082,43 @@
                 });
             }
 
+            $("#btnConfirmar").click(function() {
+                if (sessionStorage.getItem("Mepa_Metodo") == "7") {
+                    $("#ModalTransferencias").modal("show")
 
+                } else {
+
+                    $.ajax({
+                        url: 'Services/FacturaCompraService.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'finalizarFacturaCompra',
+                            FaCE_Id: FaCE_Id,
+                            fechaFinal: new Date().toISOString()
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                iziToast.success({
+                                    title: 'Exito',
+                                    message: 'Factura finalizada correctamente.',
+                                    position: 'topRight',
+                                    transitionIn: 'flipInX',
+                                    transitionOut: 'flipOutX'
+                                });
+                                table.ajax.reload();
+                            } else {
+                                console.error('Error al finalizar la factura:', response.message);
+                            }
+
+                        },
+                        error: function() {
+                            alert('Error en la comunicación con el servidor.');
+                        }
+                    });
+                }
+
+            })
 
             $('#TablaFacturaCompra tbody').on('click', '.abrir-finalizar', function() {
                 var row = $(this).closest('tr');
@@ -1160,107 +1196,243 @@
                 });
             });
 
-            function generarPDF(factura, detalles) {
-                var doc = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'px',
-                    format: 'letter'
-                });
+    //         function generarPDF(factura, detalles) {
+    //             var doc = new jsPDF({
+    //                 orientation: 'portrait',
+    //                 unit: 'px',
+    //                 format: 'letter'
+    //             });
 
-                const imgWidth = 200;
-                const imgHeight = 50;
+    //             const imgWidth = 200;
+    //             const imgHeight = 50;
 
-                var pageNumber = 1;
-                const logoBase64 = 'Views/Logo.png';
-
-
-                doc.addImage(logoBase64, 'PNG', 10, 10, 50, 20);
+    //             var pageNumber = 1;
+    //             const logoBase64 = 'Views/Logo.png';
 
 
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'bold');
-                doc.text('Esmeraldas HN', 280, 30);
+    //             doc.addImage(logoBase64, 'PNG', 10, 10, 50, 20);
 
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.text('Dirección :', 280, 40);
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.text("Tegucigalpa: Los dolores, calle buenos aires", 280, 50);
 
-                doc.setFontSize(16);
-                doc.setFont(undefined, 'bold');
-                doc.text("PEDIDO", 32, 100);
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.text("Proveedor: " + (factura.nombreProveedor || ''), 32, 110);
+    //             doc.setFontSize(10);
+    //             doc.setFont(undefined, 'bold');
+    //             doc.text('Esmeraldas HN', 280, 30);
 
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.text("Fecha Pedido: " + (factura.FaCE_Fecha || ''), 280, 110);
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.text("Metodo Pago: " + (factura.mepa_Metodo || ''), 280, 140);
+    //             doc.setFontSize(10);
+    //             doc.setFont(undefined, 'normal');
+    //             doc.text('Dirección :', 280, 40);
+    //             doc.setFontSize(10);
+    //             doc.setFont(undefined, 'normal');
+    //             doc.text("Tegucigalpa: Los dolores, calle buenos aires", 280, 50);
 
-                const footer = () => {
-                    doc.setFontSize(10);
-                    doc.setFont(undefined, 'normal');
-                    doc.text(String(pageNumber), 444, 580, {
-                        align: 'right'
-                    });
-                };
+    //             doc.setFontSize(16);
+    //             doc.setFont(undefined, 'bold');
+    //             doc.text("PEDIDO", 32, 100);
+    //             doc.setFontSize(10);
+    //             doc.setFont(undefined, 'normal');
+    //             doc.text("Proveedor: " + (factura.nombreProveedor || ''), 32, 110);
 
-                doc.autoTable({
-                    head: [
-                        ['Factura', 'Producto', 'Cantidad', 'Categoria', 'Precio Compra', 'Precio Venta', 'Precio Mayorista', 'Subtotal']
-                    ],
-                    body: detalles.map(detalle => [
-                        factura.FaCE_Id,
-                        detalle.Producto || 'N/A',
-                        detalle.Cantidad ? detalle.Cantidad.toString() : '0',
-                        detalle.Categoria || 'N/A',
-                        detalle.Precio_Venta || '0.00',
-                        detalle.PrecioVenta || '0.00',
-                        detalle.PrecioMayorista || '0.00',
-                        (detalle.Cantidad * detalle.PrecioCompra).toFixed(2) || '0.00'
-                    ]),
-                    startY: pageNumber === 1 ? 180 : 170,
-                    styles: {
-                        fontSize: 10,
-                    },
-                    headStyles: {
-                        fillColor: [0, 0, 0],
-                        textColor: [255, 255, 255],
-                        halign: 'center',
-                        valign: 'middle',
-                        fontStyle: 'bold',
-                    },
-                    columnStyles: {
-                        0: {
-                            halign: 'center'
-                        },
-                        1: {
-                            halign: 'center'
-                        },
-                        2: {
-                            halign: 'center'
-                        },
-                        3: {
-                            halign: 'center'
-                        },
-                        4: {
-                            halign: 'center'
-                        }
-                    },
-                    theme: 'grid',
-                    didDrawPage: (data) => {
-                        footer();
-                        pageNumber++;
-                    }
-                });
+    //             doc.setFontSize(10);
+    //             doc.setFont(undefined, 'normal');
+    //             doc.text("Fecha Pedido: " + (factura.FaCE_Fecha || ''), 280, 110);
+    //             doc.setFontSize(10);
+    //             doc.setFont(undefined, 'normal');
+    //             doc.text("Metodo Pago: " + (factura.mepa_Metodo || ''), 280, 140);
 
-                doc.save(`Factura_${factura.FaCE_Id}.pdf`);
-            }
+    //             const footer = () => {
+    //                 doc.setFontSize(10);
+    //                 doc.setFont(undefined, 'normal');
+    //                 doc.text(String(pageNumber), 444, 580, {
+    //                     align: 'right'
+    //                 });
+    //             };
+
+    //             doc.autoTable({
+    //                 head: [
+    //                     ['Factura', 'Producto', 'Cantidad', 'Categoria', 'Precio Compra', 'Precio Venta', 'Precio Mayorista', 'Subtotal']
+    //                 ],
+    //                 body: detalles.map(detalle => [
+    //                     factura.FaCE_Id,
+    //                     detalle.Producto || 'N/A',
+    //                     detalle.Cantidad ? detalle.Cantidad.toString() : '0',
+    //                     detalle.Categoria || 'N/A',
+    //                     detalle.Precio_Venta || '0.00',
+    //                     detalle.PrecioVenta || '0.00',
+    //                     detalle.PrecioMayorista || '0.00',
+    //                     (detalle.Cantidad * detalle.PrecioCompra).toFixed(2) || '0.00'
+    //                 ]),
+    //                 startY: pageNumber === 1 ? 180 : 170,
+    //                 styles: {
+    //                     fontSize: 10,
+    //                 },
+    //                 headStyles: {
+    //                     fillColor: [0, 0, 0],
+    //                     textColor: [255, 255, 255],
+    //                     halign: 'center',
+    //                     valign: 'middle',
+    //                     fontStyle: 'bold',
+    //                 },
+    //                 columnStyles: {
+    //                     0: {
+    //                         halign: 'center'
+    //                     },
+    //                     1: {
+    //                         halign: 'center'
+    //                     },
+    //                     2: {
+    //                         halign: 'center'
+    //                     },
+    //                     3: {
+    //                         halign: 'center'
+    //                     },
+    //                     4: {
+    //                         halign: 'center'
+    //                     }
+    //                 },
+    //                 theme: 'grid',
+    //                 didDrawPage: (data) => {
+    //                     footer();
+    //                     pageNumber++;
+    //                 }
+    //             });
+
+    //             doc.save(`Factura_${factura.FaCE_Id}.pdf`);
+    //         }
+
+    //         function PdfFacturaNumero() {
+    //   var doc = new jsPDF({
+    //     orientation: 'portrait',
+    //     unit: 'px',
+    //     format: [160, 800] // 100px wide and 600px tall
+    //   });
+    //   var cuerpo = JSON.parse(sessionStorage.getItem("Productos"));
+    //   var Encabezado = JSON.parse(sessionStorage.getItem("Encabezado"));
+    //   console.log(Encabezado)
+
+    //   doc.setFontSize(12);
+    //   doc.setFont(undefined, 'normal');
+    //   doc.text('Esmeraldas HN', 60, 20, {
+    //     align: 'center'
+    //   });
+    //   doc.setFontSize(10);
+    //   doc.setFont(undefined, 'normal');
+    //   doc.text("Francisco Morazan, Tegucigalpa", 60, 30, {
+    //     align: 'center'
+    //   });
+    //   doc.text("Los dolores, calle buenos aires", 60, 40, {
+    //     align: 'center'
+    //   });
+    //   doc.setFontSize(9);
+    //   doc.text("email: esmeraldashn2014@gmail.com", 60, 50, {
+    //     align: 'center'
+    //   });
+
+    //   doc.setFontSize(12);
+    //   doc.setFont(undefined, 'bold');
+    //   doc.text("Factura:", 53, 70, {
+    //     align: 'center'
+    //   });
+
+    //   doc.setFontSize(10);
+    //   doc.setFont(undefined, 'normal');
+    //   doc.text("Fecha: " + new Date().toISOString().slice(0, 10).replace('T', ' ') + "   Hora: " + new Date().toISOString().slice(11, 16).replace('T', ' '), 5, 80, {
+    //     align: 'left'
+    //   });
+    //   doc.text("" + Encabezado.data[0].Fact_Id, 77, 70, {
+    //     align: 'center'
+    //   });
+    //   doc.text("Cliente: " + Encabezado.data[0].Clie_Nombre, 5, 90, {
+    //     align: 'left'
+    //   });
+    //   doc.text("RTN: " + Encabezado.data[0].Clie_DNI, 5, 100, {
+    //     align: 'left'
+    //   });
+    //   doc.text("-------------------------------------------", 5, 110, {
+    //     align: 'left'
+    //   });
+    //   doc.setFontSize(8);
+    //   doc.text("  Descripción     Cantidad           Precio ", 5, 120, {
+    //     align: 'left'
+    //   });
+    //   doc.setFontSize(10);
+    //   doc.text("-------------------------------------------", 5, 130, {
+    //     align: 'left'
+    //   });
+    //   const tableData = cuerpo.map(item => [item.Producto, item.Cantidad, item.Precio_Unitario]);
+    //   const yPosition = 130; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+    //   doc.autoTable({
+    //     body: tableData,
+    //     startY: yPosition,
+    //     margin: {
+    //       left: 5
+    //     },
+    //     styles: {
+    //       fontSize: 8,
+    //       fillColor: [255, 255, 255], // Fondo blanco
+    //       textColor: [0, 0, 0] // Texto negro
+    //     },
+    //     headStyles: {
+    //       halign: 'center',
+    //       valign: 'middle',
+    //       fontStyle: 'normal',
+    //       fillColor: [255, 255, 255], // Fondo blanco
+    //       textColor: [0, 0, 0] // Texto negro
+    //     },
+    //     columnStyles: {
+    //       0: {
+    //         halign: 'left',
+    //         cellWidth: 47
+    //       }, // Ancho personalizado para la columna 0
+    //       1: {
+    //         halign: 'center',
+    //         cellWidth: 20
+    //       }, // Ancho personalizado para la columna 1
+    //       2: {
+    //         halign: 'center',
+    //         cellWidth: 60
+    //       } // Ancho personalizado para la columna 2
+    //     },
+    //     theme: 'plain' // Sin líneas de borde, solo blanco
+    //   });
+    //   var total = parseFloat(sessionStorage.getItem("Total"))
+    //   var Impuesto = parseFloat(sessionStorage.getItem("taxAmount"))
+    //   var subtotal = parseFloat(sessionStorage.getItem("SubTotal"))
+    //   const borderYPosition = (doc).previousAutoTable.finalY + 10;
+    //   doc.text("-------------------------------------------", 5, borderYPosition, {
+    //     align: 'left'
+    //   });
+    //   doc.setFontSize(12);
+    //   doc.text("Subtotal", 5, borderYPosition + 10, {
+    //     align: 'left'
+    //   });
+    //   doc.text("Impuesto", 5, borderYPosition + 25, {
+    //     align: 'left'
+    //   });
+    //   doc.text("Total", 5, borderYPosition + 40, {
+    //     align: 'left'
+    //   });
+    //   doc.text(total.toFixed(2).toString(), 110, borderYPosition + 10, {
+    //     align: 'right'
+    //   });
+    //   doc.text(Impuesto.toFixed(2).toString(), 110, borderYPosition + 25, {
+    //     align: 'right'
+    //   });
+    //   doc.text(total.toFixed(2).toString(), 110, borderYPosition + 40, {
+    //     align: 'right'
+    //   });
+
+    //   doc.setFontSize(10);
+    //   doc.text("-------------------------------------------", 5, borderYPosition + 50, {
+    //     align: 'left'
+    //   });
+    //   doc.setFontSize(14);
+    //   doc.text("Gracias por su compra", 60, borderYPosition + 60, {
+    //     align: 'center'
+    //   });
+    //   console.log("EL LARGO ES DEL COSO" + borderYPosition + 70)
+    //   return borderYPosition + 70;
+    // }
+
+            
 
             // ReporteFactura(cuerpo, logoURL, Cliente, DNI, Muni, Depa, Fecha, Pedido, Imouesto, Metodo, Subtotal, Total, FechaCreacion, Usuario, largo, HoraGeneracion, TotalCancelado, Cambio) {
             //     const doc = new jsPDF({
@@ -1419,6 +1591,157 @@
             //     });
             //     console.log(borderYPosition + 100)
             //     return doc.output('blob');
+            // }
+
+            // function PdfFactura() {
+            //     var largo = PdfFacturaNumero();
+
+            //     console.log("EL LARGO ES" + largo)
+            //     var doc = new jsPDF({
+            //         orientation: 'portrait',
+            //         unit: 'px',
+            //         format: [160, largo + 80] // 100px wide and 600px tall
+            //     });
+            //     var cuerpo = JSON.parse(sessionStorage.getItem("Productos"));
+            //     var Encabezado = JSON.parse(sessionStorage.getItem("Encabezado"));
+            //     console.log(Encabezado)
+            //     var img = new Image();
+            //     img.src = 'Views/Logo.png';
+
+
+
+            //     doc.addImage(img, 'PNG', 10, 5, 100, 20);
+
+            //     doc.setFontSize(10);
+            //     doc.setFont(undefined, 'normal');
+            //     doc.text("Francisco Morazan, Tegucigalpa", 60, 30, {
+            //         align: 'center'
+            //     });
+            //     doc.text("Los dolores, calle buenos aires", 60, 40, {
+            //         align: 'center'
+            //     });
+            //     doc.setFontSize(9);
+            //     doc.text("email: esmeraldashn2014@gmail.com", 60, 50, {
+            //         align: 'center'
+            //     });
+
+            //     doc.setFontSize(12);
+            //     doc.setFont(undefined, 'bold');
+            //     doc.text("Factura:", 53, 70, {
+            //         align: 'center'
+            //     });
+
+            //     doc.setFontSize(10);
+            //     doc.setFont(undefined, 'normal');
+            //     doc.text("Fecha: " + new Date().toISOString().slice(0, 10).replace('T', ' ') + "   Hora: " + new Date().toISOString().slice(11, 16).replace('T', ' '), 5, 80, {
+            //         align: 'left'
+            //     });
+            //     doc.text("" + Encabezado.data[0].Fact_Id, 77, 70, {
+            //         align: 'center'
+            //     });
+            //     doc.text("Cliente: " + Encabezado.data[0].Clie_Nombre, 5, 90, {
+            //         align: 'left'
+            //     });
+            //     doc.text("RTN: " + Encabezado.data[0].Clie_DNI, 5, 100, {
+            //         align: 'left'
+            //     });
+            //     doc.text("-------------------------------------------", 5, 110, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(8);
+            //     doc.text("  Descripción     Cantidad           Precio ", 5, 120, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(10);
+            //     doc.text("-------------------------------------------", 5, 130, {
+            //         align: 'left'
+            //     });
+            //     const tableData = cuerpo.map(item => [item.Producto, item.Cantidad, item.Precio_Unitario]);
+            //     const yPosition = 130; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+            //     doc.autoTable({
+            //         body: tableData,
+            //         startY: yPosition,
+            //         margin: {
+            //             left: 5
+            //         },
+            //         styles: {
+            //             fontSize: 8,
+            //             fillColor: [255, 255, 255], // Fondo blanco
+            //             textColor: [0, 0, 0] // Texto negro
+            //         },
+            //         headStyles: {
+            //             halign: 'center',
+            //             valign: 'middle',
+            //             fontStyle: 'normal',
+            //             fillColor: [255, 255, 255], // Fondo blanco
+            //             textColor: [0, 0, 0] // Texto negro
+            //         },
+            //         columnStyles: {
+            //             0: {
+            //                 halign: 'left',
+            //                 cellWidth: 47
+            //             }, // Ancho personalizado para la columna 0
+            //             1: {
+            //                 halign: 'center',
+            //                 cellWidth: 20
+            //             }, // Ancho personalizado para la columna 1
+            //             2: {
+            //                 halign: 'center',
+            //                 cellWidth: 60
+            //             } // Ancho personalizado para la columna 2
+            //         },
+            //         theme: 'plain' // Sin líneas de borde, solo blanco
+            //     });
+            //     var total = parseFloat(sessionStorage.getItem("Total"))
+            //     var Impuesto = parseFloat(sessionStorage.getItem("taxAmount"))
+            //     var subtotal = parseFloat(sessionStorage.getItem("SubTotal"))
+            //     const borderYPosition = (doc).previousAutoTable.finalY + 10;
+            //     doc.text("-------------------------------------------", 5, borderYPosition, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(12);
+            //     doc.text("Subtotal", 5, borderYPosition + 10, {
+            //         align: 'left'
+            //     });
+            //     doc.text("Impuesto", 5, borderYPosition + 25, {
+            //         align: 'left'
+            //     });
+            //     doc.text("Total", 5, borderYPosition + 40, {
+            //         align: 'left'
+            //     });
+            //     doc.text(total.toFixed(2).toString(), 110, borderYPosition + 10, {
+            //         align: 'right'
+            //     });
+            //     doc.text(Impuesto.toFixed(2).toString(), 110, borderYPosition + 25, {
+            //         align: 'right'
+            //     });
+            //     doc.text(total.toFixed(2).toString(), 110, borderYPosition + 40, {
+            //         align: 'right'
+            //     });
+
+            //     doc.setFontSize(10);
+            //     doc.text("-------------------------------------------", 5, borderYPosition + 50, {
+            //         align: 'left'
+            //     });
+            //     doc.setFontSize(14);
+            //     doc.text("Gracias por su compra", 60, borderYPosition + 60, {
+            //         align: 'center'
+            //     });
+            //     console.log(borderYPosition + 70)
+
+
+
+
+
+            //     // Generar PDF como blob
+            //     const pdfBlob = doc.output('blob');
+            //     const url = URL.createObjectURL(pdfBlob);
+            //     const iframe = document.getElementById('pdf-frame');
+            //     iframe.src = url;
+
+            //     iframe.onload = function() {
+            //         iframe.contentWindow.print();
+            //     };
             // }
 
 
