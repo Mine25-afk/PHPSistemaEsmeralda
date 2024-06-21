@@ -137,7 +137,7 @@
                     <table class="table table-striped table-hover" id="tablaRol">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>#</th>
                                 <th>Rol</th>
                                 <th class="text-center">Acciones</th>
                             </tr>
@@ -146,9 +146,14 @@
                 </div>
             </div>
             <div class="collapse" id="nuevoRolCollapse">
+         
                 <div class="card">
+                <div class="d-flex justify-content-end">
+                        <a  id="CerrarModal2" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                     <div class="card-header text-white" style="background-color:#5d9e3e;">
                         <h5>Crear Nuevo Rol</h5>
+                      
                     </div>
                     <div class="card-body">
                         <form id="formNuevoRol">
@@ -182,6 +187,9 @@
             </div>
 
             <div id="Detalles">
+            <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarDetalles2" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                 <div class="row" style="padding: 10px;">
                     <div class="col" style="font-weight:700">
                         ID
@@ -282,7 +290,7 @@
                             }
                         },
                         "columns": [{
-                                "data": "Role_Id"
+                                "data": null
                             },
                             {
                                 "data": "Role_Rol"
@@ -304,7 +312,7 @@
                             <i class='fas fa-eye'></i> Detalles
                         </a>
                         <button class='dropdown-item  eliminar' data-id='${data.Role_Id}' data-toggle='modal' data-target='#eliminarModal'>
-                            <i class='fas fa-eraser'></i> Eliminar
+                            <i class='fas fa-trash-alt'></i> Eliminar
                         </button>
         </div>
     </div>
@@ -313,7 +321,11 @@
                                 },
                                 "defaultContent": ""
                             }
-                        ]
+                        ],
+                        "createdRow": function(row, data, dataIndex) {
+      
+      $('td:eq(0)', row).html(dataIndex + 1);
+  }
                     });
 
                     $('#AbrirCollapse').click(function() {
@@ -326,7 +338,17 @@
                         $('#nuevoRolCollapse').collapse('hide');
                         limpiarFormulario();
                     });
+                    $('#CerrarModal2').click(function() {
+                        $('#tablaContainer').toggle();
+                        $('#nuevoRolCollapse').collapse('hide');
+                        limpiarFormulario();
+                    });
                     $('#CerrarDetalles').click(function() {
+                        $('#tablaContainer').toggle();
+                        $('.CrearOcultar').show();
+                        $('.detallesContenido').hide();
+                    });
+                    $('#CerrarDetalles2').click(function() {
                         $('#tablaContainer').toggle();
                         $('.CrearOcultar').show();
                         $('.detallesContenido').hide();
@@ -401,14 +423,6 @@
                             Pant_Descripcion: "Control de stock"
                         },
                         {
-                            Pant_Id: 30,
-                            Pant_Descripcion: "Reporte de caja"
-                        },
-                        {
-                            Pant_Id: 32,
-                            Pant_Descripcion: "Ventas por pago"
-                        },
-                        {
                             Pant_Id: 35,
                             Pant_Descripcion: "Reparaciones"
                         },
@@ -430,12 +444,11 @@
                          pantalla.Pant_Descripcion.includes("dashboard")) {
                             categorias["Generales"].push(pantalla);
                         } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") ||
-                            pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") ||
-                            pantalla.Pant_Descripcion.includes("Control de stock")  ||
-                             pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") ||
+                            pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") 
+                            ||
                               pantalla.Pant_Descripcion.includes("Reparaciones") || pantalla.Pant_Descripcion.includes("facturaApartado")) {
                             categorias["Ventas"].push(pantalla);
-                        } else if (pantalla.Pant_Descripcion.includes("reportecaja") || pantalla.Pant_Descripcion.includes("ventasmetodo") || pantalla.Pant_Descripcion.includes("ventasmayorista") ) {
+                        } else if (pantalla.Pant_Descripcion.includes("reportecaja") || pantalla.Pant_Descripcion.includes("ventasmetodo") || pantalla.Pant_Descripcion.includes("ventasmayorista")||  pantalla.Pant_Descripcion.includes("Control de stock") ) {
                             categorias["Reporte"].push(pantalla);
                         }
                     });

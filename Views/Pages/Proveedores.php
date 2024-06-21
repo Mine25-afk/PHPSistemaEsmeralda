@@ -80,7 +80,7 @@
                     <p id="detallesContenido"></p>
                     <div class="form-row d-flex justify-content-end">
                         <div class="col-md-3">
-                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Cancelar</a>
+                            <a id="Regresar" class="btn btn-secondary" style="color:white">Cancelar</a>
                         </div>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ $(document).ready(function () {
     console.log('Municipio seleccionado:', municipioSeleccionado); // Agrega este console.log para verificar el valor seleccionado
     municipio = municipioSeleccionado;
 });
-
+var municipio = '';
 
     $('#guardarBtn').click(function() {
         var proveedor = $('#Proveedor').val().trim();
@@ -326,7 +326,7 @@ $(document).on('click', '.abrir-editar', function () {
                 $('#Prov_Id').val(provId);
                 $('#Proveedor').val(proveedor.Prov_Proveedor);
                 $('#Telefono').val(proveedor.Prov_Telefono);
-                
+                municipio = proveedor.Muni_Codigo; // Asignar el valor a la variable global
                 // Seleccionar automáticamente el municipio en el select #Municipio
                 var selectMunicipio = $('#Municipio');
                     selectMunicipio.val(proveedor.Muni_Codigo);
