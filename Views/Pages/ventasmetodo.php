@@ -197,14 +197,16 @@
             const user = "<?php echo $_SESSION['Empl_Nombre']; ?>";
             const currentDate = new Date().toISOString().split('T')[0];
             const pageHeight = doc.internal.pageSize.height;
-            doc.text(`Emitido por: ${user}`, 32, pageHeight - 30);
-            doc.text(`Fecha: ${currentDate}`, 32, pageHeight - 15);
+
 
             const totalPages = doc.internal.getNumberOfPages();
             for (let i = 1; i <= totalPages; i++) {
                 doc.setPage(i);
                 doc.setFontSize(10);
                 doc.text(`Página ${i} de ${totalPages}`, doc.internal.pageSize.width - 80, pageHeight - 15);
+
+                doc.text(`Emitido por: ${user}`, 32, pageHeight - 25);
+                doc.text(`Fecha: ${currentDate}`, 32, pageHeight - 15);
             }
 
             const string = doc.output('datauristring');

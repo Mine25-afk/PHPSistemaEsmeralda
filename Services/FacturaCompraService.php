@@ -21,10 +21,22 @@ class FacturaCompraService
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $data = array();
             foreach ($result as $row) {
-                $editar = $row['faCE_Finalizada'] == 'Si' ? "<button style='margin: 0 5px;' class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-pencil-alt'></i> Editar</button>" : "";
-                $imprimir = $row['faCE_Finalizada'] == 'No' ? "<button style='margin: 0 5px;' class='btn btn-danger btn-sm abrir-imprimir' ><i class='fas fa-print'></i> Imprimir</button>" : "";
-                $finalizar = $row['faCE_Finalizada'] == 'Si' ? "<button style='margin: 0 5px;' class='btn btn-danger btn-sm abrir-finalizar'><i class='fas fa-check-circle'></i> Finalizar</button>" : "";
-                $acciones = "<div class='text-center'>" . $editar . $imprimir . $finalizar . "</div>";
+                $editar = $row['faCE_Finalizada'] == 'Si' ? "<a class='dropdown-item abrir-editar' href='#'><i class='fas fa-pencil-alt'></i> Editar</a>" : "";
+            $imprimir = $row['faCE_Finalizada'] == 'No' ? "<a class='dropdown-item abrir-imprimir' href='#'><i class='fas fa-print'></i> Imprimir</a>" : "";
+            $finalizar = $row['faCE_Finalizada'] == 'Si' ? "<a class='dropdown-item abrir-finalizar' href='#'><i class='fas fa-check-circle'></i> Finalizar</a>" : "";
+            
+            $acciones = "
+                <div class='dropdown text-center'>
+                    <button class='btn btn-default dropdown-toggle dropdown-icon' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        Acciones
+                    </button>
+                    <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>
+                        $editar
+                        $imprimir
+                        $finalizar
+                    </div>
+                </div>
+            ";
                 $data[] = array(
                     'FaCE_Id' => $row['FaCE_Id'],
                     'nombreProveedor' => $row['nombreProveedor'],
