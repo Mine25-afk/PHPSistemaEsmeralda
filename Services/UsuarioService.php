@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
-session_start();
+
 
 class UsuarioService
 {
@@ -55,18 +55,17 @@ class UsuarioService
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Usua_Usuario', $Usua_Usuario, PDO::PARAM_STR);
             $stmt->bindParam(':Usua_Contraseña', $Usua_Contraseña, PDO::PARAM_STR);
-            $stmt->bindParam(':Usua_Administrador', $Usua_Administrador, PDO::PARAM_INT);
+            $stmt->bindParam(':Usua_Administrador', $Usua_Administrador, PDO::PARAM_BOOL);
             $stmt->bindParam(':Empl_Id', $Empl_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Role_Id', $Role_Id, PDO::PARAM_INT);
-            $stmt->bindParam(':Usua_UsuarioCreacion', $_SESSION['Usua_Id'], PDO::PARAM_INT);
+            $stmt->bindParam(':Usua_UsuarioCreacion',$Usua_UsuarioCreacion,PDO::PARAM_INT);
             $stmt->bindParam(':Usua_FechaCreacion', $Usua_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
 
             $result = $stmt->fetchColumn();
-            return $result;
-        } catch (Exception $e) {
-            error_log('Error al insertar Usuario: ' . $e->getMessage());
-            return 0; 
+            return $result; // 1 si es exitoso, 0 si no
+        } catch (PDOException $e) {
+            throw new Exception('Error al insertar el Proveedor: ' . $e->getMessage());
         }
     }
 
@@ -77,7 +76,7 @@ class UsuarioService
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Usua_Id', $Usua_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Usua_Usuario', $Usua_Usuario, PDO::PARAM_STR);
-            $stmt->bindParam(':Usua_Administrador', $Usua_Administrador, PDO::PARAM_INT);
+            $stmt->bindParam(':Usua_Administrador', $Usua_Administrador, PDO::PARAM_BOOL);
             $stmt->bindParam(':Empl_Id', $Empl_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Role_Id', $Role_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Usua_UsuarioModificacion', $Usua_UsuarioModificacion, PDO::PARAM_INT);
@@ -150,10 +149,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         case 'insertar':
             $Usua_Usuario = $_POST['Usua_Usuario'];
             $Usua_Contraseña = $_POST['Usua_Contraseña'];
-            $Usua_Administrador = $_POST['Usua_Administrador'];
+            $Usua_Administrador = $_POST['Usua_Administrador']=== "true" ? 1 : 0;
             $Empl_Id = $_POST['Empl_Id'];
             $Role_Id = $_POST['Role_Id'];
-            $Usua_UsuarioCreacion = $_FILES['Usua_UsuarioCreacion'];
+            $Usua_UsuarioCreacion = $_POST['Usua_UsuarioCreacion'];
             $Usua_FechaCreacion = $_POST['Usua_FechaCreacion'];
           
 
@@ -164,10 +163,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $Usua_Id = $_POST['Usua_Id'];
             $Usua_Usuario = $_POST['Usua_Usuario'];
             $Usua_Contraseña = $_POST['Usua_Contraseña'];
-            $Usua_Administrador = $_POST['Usua_Administrador'];
+            $Usua_Administrador = $_POST['Usua_Administrador']=== "true" ? 1 : 0;
             $Empl_Id = $_POST['Empl_Id'];
             $Role_Id = $_POST['Role_Id'];
-            $Usua_UsuarioCreacion = $_FILES['Usua_UsuarioCreacion'];
+            $Usua_UsuarioCreacion = $_POST['Usua_UsuarioCreacion'];
             $Usua_FechaCreacion = $_POST['Usua_FechaCreacion'];
 
             $resultado = $controller->actualizarUsuario($Usua_Id, $Usua_Usuario, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioModificacion, $Usua_FechaModificacion);

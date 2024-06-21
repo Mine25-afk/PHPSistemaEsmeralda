@@ -87,7 +87,7 @@ class RestablecerContraServices {
             $mail->addAddress($correo);                                
 
             $mail->isHTML(true);                                      
-            $mail->Subject = $asunto;
+            $mail->Subject = 'Verificacion de Codigo';
             $mail->Body    = $mensaje;
 
             $mail->send();

@@ -295,14 +295,14 @@
             async function cargarDropdowns(selectedData = {}) {
                 try {
                     const municipios = await $.ajax({
-                        url: 'Services/UsuarioService.php',
+                        url: '/PHPSistemaEsmeralda/Services/UsuarioService.php',
                         type: 'POST',
                         data: {
                             action: 'listarEmpleados'
                         }
                     });
                     const estadosCiviles = await $.ajax({
-                        url: 'Services/UsuarioService.php',
+                        url: '/PHPSistemaEsmeralda/Services/UsuarioService.php',
                         type: 'POST',
                         data: {
                             action: 'listarRoles'
@@ -389,6 +389,7 @@
                 }
 
                 var administrador = $('#Administrador').prop('checked') ? 1 : 0;
+                 var esMayorista = $('input[name="Usua_Administrador"]:checked').val() === "true";
 
                 if (isValid) {
                     var UsuaData = new FormData();
@@ -396,7 +397,7 @@
                     UsuaData.append('Usua_Id', $('#Usua_Id').val());
                     UsuaData.append('Usua_Usuario', $('#Usua_Usuario').val());
                     UsuaData.append('Usua_Contraseña', $('#Usua_Contraseña').val());
-                    UsuaData.append('Usua_Administrador', administrador);
+                    UsuaData.append('Usua_Administrador', esMayorista);
                     UsuaData.append('Empl_Id', $('#Empl_Id').val());
                     UsuaData.append('Role_Id', $('#Role_Id').val());
                     UsuaData.append('Usua_UsuarioCreacion', 1);
@@ -405,8 +406,11 @@
                     UsuaData.append('Usua_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
                     console.log('Datos a enviar:', UsuaData);
 
+    
+
+        
                     $.ajax({
-                        url: 'Services/UsuarioService.php',
+                        url: '/PHPSistemaEsmeralda/Services/UsuarioService.php',
                         type: 'POST',
                         data: UsuaData,
                         contentType: false,
@@ -475,7 +479,7 @@
             $('#confirmarEliminarBtn').click(function () {
                 var Usua_Id = sessionStorage.getItem('Usua_Id');
                 $.ajax({
-                    url: 'Services/UsuarioService.php',
+                    url: '/PHPSistemaEsmeralda/Services/UsuarioService.php',
                     type: 'POST',
                     data: {
                         action: 'eliminar',
