@@ -41,7 +41,7 @@
   <div class="container-fluid">
   <?php 
 
-include_once realpath('Services/validarAcceso.php');
+set_include_path(get_include_path() . PATH_SEPARATOR . 'Services/validarAcceso.php');
 
 
     if (isset($_GET["Pages"])) {
