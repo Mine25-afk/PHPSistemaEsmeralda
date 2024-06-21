@@ -341,8 +341,28 @@
                             Pant_Descripcion: "Roles"
                         },
                         {
+                            Pant_Id: 3,
+                            Pant_Descripcion: "reportecaja"
+                        },
+                        {
+                            Pant_Id: 4,
+                            Pant_Descripcion: "ventasmetodo"
+                        },
+                        {
+                            Pant_Id: 6,
+                            Pant_Descripcion: "ventasmayorista"
+                        },
+                        {
+                            Pant_Id: 7,
+                            Pant_Descripcion: "facturaApartado"
+                        },
+                        {
                             Pant_Id: 9,
                             Pant_Descripcion: "Marcas"
+                        },
+                        {
+                            Pant_Id: 10,
+                            Pant_Descripcion: "dashboard"
                         },
                         {
                             Pant_Id: 13,
@@ -392,31 +412,31 @@
                             Pant_Id: 35,
                             Pant_Descripcion: "Reparaciones"
                         },
-                        {
-                            Pant_Id: 37,
-                            Pant_Descripcion: "dashboard"
-                        },
-                        {
-                            Pant_Id: 36,
-                            Pant_Descripcion: "facturaApartado"
-                        }
+                       
                     ];
 
                     var categorias = {
                         "Acceso": [],
                         "Generales": [],
-                        "Ventas": []
+                        "Ventas": [],
+                        "Reporte": []
                     };
 
                     pantallas.forEach(function(pantalla) {
                         if (pantalla.Pant_Descripcion.includes("Usuarios") || pantalla.Pant_Descripcion.includes("Roles")) {
                             categorias["Acceso"].push(pantalla);
-                        } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados") || pantalla.Pant_Descripcion.includes("dashboard")) {
+                        } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") 
+                        || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados") ||
+                         pantalla.Pant_Descripcion.includes("dashboard")) {
                             categorias["Generales"].push(pantalla);
                         } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") ||
                             pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") ||
-                            pantalla.Pant_Descripcion.includes("Control de stock") || pantalla.Pant_Descripcion.includes("facturaApartado") || pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") || pantalla.Pant_Descripcion.includes("Reparaciones")) {
+                            pantalla.Pant_Descripcion.includes("Control de stock")  ||
+                             pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") ||
+                              pantalla.Pant_Descripcion.includes("Reparaciones") || pantalla.Pant_Descripcion.includes("facturaApartado")) {
                             categorias["Ventas"].push(pantalla);
+                        } else if (pantalla.Pant_Descripcion.includes("reportecaja") || pantalla.Pant_Descripcion.includes("ventasmetodo") || pantalla.Pant_Descripcion.includes("ventasmayorista") ) {
+                            categorias["Reporte"].push(pantalla);
                         }
                     });
 
@@ -442,7 +462,7 @@
                         pantallasTreeView.append(categoriaItem);
                         categorias[categoria].forEach(function(pantalla) {
                             categoriaItem.find('ul').append(
-                                <li><input type="checkbox" class="pantalla-checkbox" data-id="${pantalla.Pant_Id}" data-categoria="${categoria}"><label>${pantalla.Pant_Descripcion}</label></li>
+                                `<li><input type="checkbox" class="pantalla-checkbox" data-id="${pantalla.Pant_Id}" data-categoria="${categoria}"><label>${pantalla.Pant_Descripcion}</label></li>`
                             );
                         });
                     });

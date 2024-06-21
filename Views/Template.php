@@ -45,7 +45,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . 'Services/validarAcceso.p
 
 
     if (isset($_GET["Pages"])) {
-        $pages = array("facturas", "inventario", "marcas", "joyas", "clientes", "Proveedores", "empleados", "usuarios", "usuariosagregar", "facturacompra", "usuarioss/nuevo", "maquillajes", "Reparaciones", "Roles", "FacturaVenta", "Controldestock","dashboard","ventasmayorista","ventasmetodo","reportecaja");
+        $pages = array("facturas", "inventario", "marcas", "joyas", "clientes", "Proveedores", "empleados", "usuarios", "usuariosagregar", "facturacompra", "usuarioss/nuevo", "maquillajes", "Reparaciones", "Roles", "FacturaVenta", "Controldestock","dashboard","ventasmayorista","ventasmetodo","reportecaja","facturaApartado");
 
         if (in_array($_GET["Pages"], $pages)) {
             include "Pages/" . $_GET["Pages"] . ".php";
