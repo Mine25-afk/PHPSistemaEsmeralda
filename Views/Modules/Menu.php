@@ -209,44 +209,7 @@ h2{
                 </div>
             </div>
         </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <div style="text-align: center;">
-                    <h2>Ingresos</h1>
-                </div>
-                <div class="row">
-                    <div class="col-md-6" style="text-align: center;">
-                        <label for="" >Ventas Efectivo:</label>
-                    </div>
-                    <div class="col-md-6">
-                       <input type="text" style="form-control" id="txtVentasEfectivo">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6" style="text-align: center;">
-                        <label for="" >Ventas en transferencia:</label>
-                    </div>
-                    <div class="col-md-6">
-                       <input type="text" style="form-control" id="txtVentasTransferencias">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6" style="text-align: center;">
-                        <label for="" >Ventas en tarjeta credito:</label>
-                    </div>
-                    <div class="col-md-6">
-                       <input type="text" style="form-control" id="txtVentasCredito">
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div style="text-align: center;">
-                    <h2 style="font-size: 30px;">Egresos</h1>
-                </div>
-            </div>
-        </div>
+        
                 <form id="CerrarCajaForm" enctype="multipart/form-data">
                     <div class="form-row">
                         <div class="col-md-6">

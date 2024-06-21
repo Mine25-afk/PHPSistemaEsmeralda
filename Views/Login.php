@@ -264,55 +264,65 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#sign-in-form').validate({
-            rules: {
-                Usuario: {
-                    required: true
-                },
-                Contraseña: {
-                    required: true
-                }
-            },
-            messages: {
-                Usuario: {
-                    required: "Por favor ingrese su usuario"
-                },
-                Contraseña: {
-                    required: "Por favor ingrese su contraseña"
-                }
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.input-group').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
-
-        $('#sign-in-form').on('submit', function(e) {
-            e.preventDefault();
-            if ($(this).valid()) {
-                var Usuario = $('#Usuario').val();
-                var Contraseña = $('#Contraseña').val();
-                $.ajax({
-                    url: 'LoginService.php',
-                    type: 'POST',
-                    data: {
-                        action: 'Login',
-                        Usuario: Usuario,
-                        Contra: Contraseña
+        $(document).ready(function () {
+            $('#sign-in-form').validate({
+                rules: {
+                    Usuario: {
+                        required: true
                     },
                     Contraseña: {
                         required: true
                     }
-                });
-            }
+                },
+                messages: {
+                    Usuario: {
+                        required: "Por favor ingrese su usuario"
+                    },
+                    Contraseña: {
+                        required: "Por favor ingrese su contraseña"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.input-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            $('#sign-in-form').on('submit', function(e) {
+                e.preventDefault();
+                if ($(this).valid()) {
+                    var Usuario = $('#Usuario').val();
+                    var Contraseña = $('#Contraseña').val();
+                    $.ajax({
+                        url: 'LoginService.php',
+                        type: 'POST',
+                        data: {
+                            action: 'Login',
+                            Usuario: Usuario,
+                            Contra: Contraseña
+                        },
+                        success: function(response) {
+                            var data = JSON.parse(response);
+                            if (data.data.length > 0) {
+                                window.location.href = '../index.php';
+                            } else {
+                                $('.invalid-feedback').remove();
+                                $('#Usuario').addClass('is-invalid').after('<span class="invalid-feedback">Usuario incorrecto</span>');
+                                $('#Contraseña').addClass('is-invalid').after('<span class="invalid-feedback">Contraseña incorrecta</span>');
+                            }
+                        },
+                        error: function() {
+                            alert('Error en la comunicación con el servidor.');
+                        }
+                    });
+                }
+            });
         });
-    });
-</script>
+    </script>
