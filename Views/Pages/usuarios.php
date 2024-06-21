@@ -23,6 +23,9 @@
                         </div>
                     </div>
                     <div class="CrearMostrar">
+                    <div class="d-flex justify-content-end">
+                        <a href="#" id="Regresar" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                         <form id="quickForm">
                             <div class="form-row">
                                 <div class="col-md-6">
@@ -72,6 +75,9 @@
                     </div>
                 </div>
                 <div id="Detalles">
+                <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                     <div class="row" style="padding: 10px;">
                         <div class="col-md-4">
                             <strong>Usuario</strong>
@@ -142,8 +148,9 @@
                 ¿Estás seguro de que deseas eliminar este Usuario?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+                <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
+     
             </div>
         </div>
     </div>
@@ -365,6 +372,14 @@
                     alert('Error en la comunicación con el servidor.');
                 }
             });
+        });
+
+        $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
         });
 
         $('#guardarBtn').click(function() {

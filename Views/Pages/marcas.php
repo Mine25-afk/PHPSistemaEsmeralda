@@ -22,10 +22,14 @@
         </div>
 
         <div class="CrearMostrar">
+        <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarModal" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
         <form id="quickForm">
 
 
         <div class="form-row d-flex justify-content-center">
+
             <div class="col-md-6">
                 <label class="control-label"></label>
                 <input name="Marca" class="form-control letras" id="Marca"/>
@@ -69,14 +73,18 @@
                 ¿Estás seguro de que deseas eliminar esta Marca?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+                <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
+             
             </div>
         </div>
     </div>
 </div>
 
 <div id="Detalles">
+<div class="d-flex justify-content-end">
+                        <a href="#" id="VolverDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
     <div class="row" style="padding: 10px;">
         <div class="col" style="font-weight:700">
             ID
@@ -96,6 +104,7 @@
 
 
     <div class="card mt-2">
+        
         <div class="card-body">
             <h5>Auditoria</h5>
             <hr>
@@ -293,6 +302,14 @@
             }
         });
     });   
+
+    $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
     
     $('#guardarBtn').click(function() {
     if ($('#quickForm').valid()) {

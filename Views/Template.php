@@ -37,8 +37,11 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper" style="padding: 0px 20px;">
+  <section class="content">
+  <div class="container-fluid">
   <?php 
-set_include_path(get_include_path() . PATH_SEPARATOR . '/Services/validarAcceso.php');
+
+set_include_path(get_include_path() . PATH_SEPARATOR . 'Services/validarAcceso.php');
 
 
     if (isset($_GET["Pages"])) {
@@ -50,8 +53,9 @@ set_include_path(get_include_path() . PATH_SEPARATOR . '/Services/validarAcceso.
     }
 ?>
 
-
- 
+</div>
+      <!-- /.container-fluid -->
+    </section>
   </div>
   <!-- /.content-wrapper -->
 

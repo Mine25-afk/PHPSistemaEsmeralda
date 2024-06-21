@@ -65,6 +65,38 @@ class MenuService {
         }
     }
 
+    public function Validacion($FechaHoy) {
+        global $pdo;
+        try {
+            $sql = 'CALL SP_Cajas_Validar(:FechaHoy, :Sucu_Codigo)';
+            $stmt = $pdo->prepare($sql);
+           
+            $stmt->bindParam(':FechaHoy', $FechaHoy, PDO::PARAM_STR);
+            $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_STR);
+    
+            $stmt->execute();
+            
+            // Fetch all rows
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            if (empty($rows)) {
+                // No data for today
+                return 0;
+            }
+    
+            foreach ($rows as $row) {
+                if ($row['caja_Finalizado'] == 0) {
+                    // If any caja_Finalizado is 0, return 0
+                    return 0;
+                }
+            }
+            
+            // If all caja_Finalizado are not 0, return 1
+            return 1;
+        } catch (PDOException $e) {
+            return 0; // Return 0 in case of an error
+        }
+    }
 
 }
 
@@ -94,6 +126,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $cadi_Observaciones = $_POST['cadi_Observaciones'];
         $FechaHoy = $_POST['FechaHoy'];
         $resultado = $controller->RetiroDinero($cadi_Dinero,$cadi_Observaciones,$FechaHoy);
+        echo $resultado;
+    }elseif ($_POST['action'] === 'validacion') {
+        $FechaHoy = $_POST['FechaHoy'];
+        $resultado = $controller->Validacion($FechaHoy);
         echo $resultado;
     }
 }

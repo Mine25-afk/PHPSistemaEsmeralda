@@ -120,7 +120,7 @@ h2{
 </aside>
 
 <div class="modal fade" id="AbrirCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #5d9e3e;">
                 <h5 class="modal-title" id="eliminarModalLabel" style="color: #000000;">Deseas abrir la caja?</h5>
@@ -129,7 +129,29 @@ h2{
                 </button>
             </div>
             <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" id="txtFecha">Fecha</span>
+                <span class="info-box-text">Usuario:  <?php echo $_SESSION['Usua_Usuario']; ?></span>
+                <span class="info-box-text">Sucursal: <?php echo $_SESSION['Sucu_Nombre']; ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+         
+         
+              
+
+             
+              <!-- /.info-box-content -->
+         
+            <!-- /.info-box -->
+          
                 <form id="CajaForm" enctype="multipart/form-data">
+
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Monto Inicial</label>
@@ -148,7 +170,7 @@ h2{
 </div>
 
 <div class="modal fade" id="CerrarCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #5d9e3e;">
                 <h5 class="modal-title" id="eliminarModalLabel" style="color: #000000;">Deseas cerrar la caja?</h5>
@@ -157,6 +179,37 @@ h2{
                 </button>
             </div>
             <div class="modal-body">
+            <div class="row">
+            <div class="col-md-4 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" style="font-weight: 800;">Fecha Cierre</span>
+                <span class="info-box-text" id="txtFechaCierre"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" style="font-weight: 800;">Usuario</span>
+                <span class="info-box-text"> <?php echo $_SESSION['Usua_Usuario']; ?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" style="font-weight: 800;">Sucursal</span>
+                <span class="info-box-text"><?php echo $_SESSION['Sucu_Nombre']; ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
                 <form id="CerrarCajaForm" enctype="multipart/form-data">
                     <div class="form-row">
                         <div class="col-md-6">
@@ -190,6 +243,20 @@ h2{
                 </button>
             </div>
             <div class="modal-body">
+
+            <div class="row">
+            <div class="col-md-12 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" id="txtFechaRetiro">Fecha</span>
+                <span class="info-box-text">Usuario:  <?php echo $_SESSION['Usua_Usuario']; ?></span>
+                <span class="info-box-text">Sucursal: <?php echo $_SESSION['Sucu_Nombre']; ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
                 <form id="RetiroCajaForm" enctype="multipart/form-data">
                     <div class="form-row">
                         <div class="col-md-6">
@@ -219,9 +286,48 @@ h2{
 <script>
 
     $(document).ready(function () {
+        $("#AbrirLink").hide()
+        $("#CerrarLink").hide()
+        $("#RetiroLink").hide()
+
+        $("#txtFechaCierre").text(  new Date().toISOString().slice(0, 11).replace('T', ' '))
+        $("#txtFechaRetiro").text("Fecha: " + new Date().toISOString().slice(0, 11).replace('T', ' '))
+        $("#txtFecha").text("Fecha: " + new Date().toISOString().slice(0, 11).replace('T', ' '))
+        validar()
+        function validar() {
+            $.ajax({
+            url: 'Views/Modules/ServicesModules/MenuService.php',
+            type: 'POST',
+            data: {
+                action: 'validacion',
+                FechaHoy: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            },
+            success: function(response) {
+                console.log(response)
+                if (response == 0) {
+                    $("#AbrirLink").show()
+                    $("#CerrarLink").hide()
+                    $("#RetiroLink").hide()
+                }else{
+                    $("#CerrarLink").show()
+                    $("#RetiroLink").show()
+                    $("#AbrirLink").hide()
+                }
+               
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+        }
+       
+
+
       $('#AbrirCajas').click(function() {
         $('#AbrirCajaModal').modal('show');
       });
+
+
 
       $('#CajaForm').validate({
         rules: {
@@ -266,6 +372,7 @@ h2{
                   $('#AbrirCajaModal').modal('hide');
                   $('#CajaForm').trigger('reset');
                   $('#CajaForm').validate().resetForm();
+                  validar()
                     iziToast.success({
             title: 'Éxito',
             message: 'Subido con exito',
@@ -301,6 +408,10 @@ h2{
         $('#CerrarCajaModal').modal('show');
   });
 
+
+  $('#FacturaLink').click(function() {
+       sessionStorage.setItem("CrearOEditar", "Crear")
+  });
 
   $('#CerrarCajaForm').validate({
         rules: {
@@ -470,40 +581,4 @@ h2{
     });
 </script> 
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const menuItems = document.querySelectorAll(".nav-item > .nav-link");
-
-    menuItems.forEach(item => {
-        item.addEventListener("click", function(event) {
-            event.stopPropagation();
-
-            const parent = item.parentElement;
-            const submenu = parent.querySelector(".nav-treeview");
-
-            // Si el menú ya está abierto, simplemente se cierra
-            if (parent.classList.contains("menu-open")) {
-                parent.classList.remove("menu-open");
-            } else {
-                // Cierra otros submenús
-                document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("menu-open"));
-                // Abre el submenú del elemento seleccionado
-                parent.classList.add("menu-open");
-            }
-        });
-    });
-
-    // Gestionar enlaces del submenú
-    const subMenuLinks = document.querySelectorAll(".nav-treeview .nav-link");
-
-    subMenuLinks.forEach(link => {
-        link.addEventListener("click", function() {
-            // Mantiene el submenú abierto
-            const parent = link.closest(".nav-item");
-            document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("menu-open"));
-            parent.classList.add("menu-open");
-        });
-    });
-});
-</script>
 

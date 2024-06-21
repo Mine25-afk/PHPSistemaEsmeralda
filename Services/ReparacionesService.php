@@ -28,11 +28,10 @@ class ReparacionesController {
         }
     }
 
-    public function insertarReparacion($Repa_Codigo, $Repa_Tipo_Reparacion, $Repa_UsuarioCreacion, $Repa_FechaCreacion) {
+    public function insertarReparacion($Repa_Tipo_Reparacion, $Repa_UsuarioCreacion, $Repa_FechaCreacion) {
         try {
-            $sql = 'CALL sp_Reparaciones_insertar(:Repa_Codigo, :Repa_Tipo_Reparacion, :Repa_UsuarioCreacion, :Repa_FechaCreacion)';
+            $sql = 'CALL sp_Reparaciones_insertar(:Repa_Tipo_Reparacion, :Repa_UsuarioCreacion, :Repa_FechaCreacion)';
             $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':Repa_Codigo', $Repa_Codigo, PDO::PARAM_STR);
             $stmt->bindParam(':Repa_Tipo_Reparacion', $Repa_Tipo_Reparacion, PDO::PARAM_STR);
             $stmt->bindParam(':Repa_UsuarioCreacion', $Repa_UsuarioCreacion, PDO::PARAM_INT);
             $stmt->bindParam(':Repa_FechaCreacion', $Repa_FechaCreacion, PDO::PARAM_STR);
@@ -45,12 +44,11 @@ class ReparacionesController {
         }
     }
 
-    public function actualizarReparacion($Repa_Id, $Repa_Codigo, $Repa_Tipo_Reparacion, $Repa_UsuarioModifica, $Repa_FechaModifica) {
+    public function actualizarReparacion($Repa_Id, $Repa_Tipo_Reparacion, $Repa_UsuarioModifica, $Repa_FechaModifica) {
         try {
-            $sql = 'CALL SP_reparaciones_actualizar(:Repa_Id, :Repa_Codigo, :Repa_Tipo_Reparacion, :Repa_UsuarioModifica, :Repa_FechaModifica)';
+            $sql = 'CALL SP_reparaciones_actualizar(:Repa_Id, :Repa_Tipo_Reparacion, :Repa_UsuarioModifica, :Repa_FechaModifica)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Repa_Id', $Repa_Id, PDO::PARAM_INT);
-            $stmt->bindParam(':Repa_Codigo', $Repa_Codigo, PDO::PARAM_STR);
             $stmt->bindParam(':Repa_Tipo_Reparacion', $Repa_Tipo_Reparacion, PDO::PARAM_STR);
             $stmt->bindParam(':Repa_UsuarioModifica', $Repa_UsuarioModifica, PDO::PARAM_INT);
             $stmt->bindParam(':Repa_FechaModifica', $Repa_FechaModifica, PDO::PARAM_STR);
@@ -97,21 +95,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $controller = new ReparacionesController($pdo);
 
     if ($_POST['action'] === 'insertar') {
-        $Repa_Codigo = $_POST['Repa_Codigo'];
+  
         $Repa_Tipo_Reparacion = $_POST['Repa_Tipo_Reparacion'];
         $Repa_UsuarioCreacion = $_POST['Repa_UsuarioCreacion'];
         $Repa_FechaCreacion = $_POST['Repa_FechaCreacion'];
         
-        $resultado = $controller->insertarReparacion($Repa_Codigo, $Repa_Tipo_Reparacion, $Repa_UsuarioCreacion, $Repa_FechaCreacion);
+        $resultado = $controller->insertarReparacion($Repa_Tipo_Reparacion, $Repa_UsuarioCreacion, $Repa_FechaCreacion);
         echo $resultado;
     } elseif ($_POST['action'] === 'actualizar') {
         $Repa_Id = $_POST['Repa_Id'];
-        $Repa_Codigo = $_POST['Repa_Codigo'];
+
         $Repa_Tipo_Reparacion = $_POST['Repa_Tipo_Reparacion'];
         $Repa_UsuarioModifica = $_POST['Repa_UsuarioModifica'];
         $Repa_FechaModifica = $_POST['Repa_FechaModifica'];
 
-        $resultado = $controller->actualizarReparacion($Repa_Id, $Repa_Codigo, $Repa_Tipo_Reparacion, $Repa_UsuarioModifica, $Repa_FechaModifica);
+        $resultado = $controller->actualizarReparacion($Repa_Id, $Repa_Tipo_Reparacion, $Repa_UsuarioModifica, $Repa_FechaModifica);
         echo $resultado;
     } elseif ($_POST['action'] === 'listarReparaciones') {
         $controller->listarReparaciones();
@@ -136,3 +134,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     echo json_encode($resultado);
 }
 ?>
+
