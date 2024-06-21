@@ -123,7 +123,7 @@
                                             <input type="hidden" id="metodoPagoSeleccionado" name="metodoPagoSeleccionado" value="1" />
                                             <button type="button" class="btn btn-secondary metodo-pago btn-selected-info" data-value="1"><i class="fas fa-dollar-sign"></i> Efectivo</button>
                                             <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="4"><i class="fas fa-credit-card"></i> Tarjeta de Crédito</button>
-                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="7"><i class="fas fa-donate"></i> Pago en Línea</button>
+                                            <button type="button" class="btn btn-secondary metodo-pago deselected" data-value="7" id="btnTransferencias"><i class="fas fa-donate"></i> Pago en Línea</button>
                                         </div>
                                     </div>
                                 </div>
@@ -200,18 +200,15 @@
             <div class="collapse" id="collapseNuevoProducto">
                 <h2 class="text-center" style="font-size: 90px !important">Productos</h2>
                 <form id="NuevoProductoForm" style="width: 100%">
-                    <div class="form-row" id="productTypeSelection">
-
-                        <div class="col-sm-12">
-                            <div class="d-flex align-items-center">
-                                <div class="custom-control custom-radio mr-3">
-                                    <input class="custom-control-input" type="radio" id="radioMaquillaje" name="productType" value="maquillaje" checked>
-                                    <label for="radioMaquillaje" class="custom-control-label">Maquillaje</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" type="radio" id="radioJoya" name="productType" value="joya">
-                                    <label for="radioJoya" class="custom-control-label">Joya</label>
-                                </div>
+                    <div class="form-row justify-content-center" id="productTypeSelection">
+                        <div class="col-auto text-center">
+                            <div class="custom-control custom-radio d-inline-block mr-3">
+                                <input class="custom-control-input" type="radio" id="radioMaquillaje" name="productType" value="maquillaje" checked>
+                                <label for="radioMaquillaje" class="custom-control-label">Maquillaje</label>
+                            </div>
+                            <div class="custom-control custom-radio d-inline-block">
+                                <input class="custom-control-input" type="radio" id="radioJoya" name="productType" value="joya">
+                                <label for="radioJoya" class="custom-control-label">Joya</label>
                             </div>
                         </div>
                     </div>
@@ -247,45 +244,79 @@
                             <label>Categoría</label>
                             <select name="Cate_Id" class="form-control" id="Cate_Id"></select>
                         </div>
-                        <div class="custom-file col-md-6">
-                            <label>Imagen</label>
-                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen" />
-                            <label class="custom-file-label"></label>
-                        </div>
                         <div class="col-md-6">
-                            <br>
-                            <label>Imagen Actual</label>
-                            <div id="imagenActualContainer">
-                                <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
+                            <label>Imagen</label>
+                            <div class="custom-file">
+                                <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
+                                <label class="custom-file-label" for="Imagen">Seleccionar archivo</label>
                             </div>
                         </div>
-                    </div>
-                    <br>
-                    <div class="card-body">
-                        <div class="form-row d-flex justify-content-end">
-                            <div class="col-auto">
-
-
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                            <div class="col-auto">
-                                <button type="button" class="btn btn-secondary" style="color:white" id="btnVolverFacturaCompra">Cancelar</button>
-                            </div>
+                        <div class="col-md-6" id="imagenActualContainer" style="display: none;">
+                            <label></label>
+                            <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
                         </div>
                     </div>
-
-                </form>
             </div>
+            <br>
+            <div class="card-body">
+                <div class="form-row d-flex justify-content-end">
+                    <div class="col-auto">
+
+
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-secondary" style="color:white" id="btnVolverFacturaCompra">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
+            </form>
         </div>
     </div>
     </div>
     </div>
     </div>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <div class="modal fade" id="ModalTransferencias" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Add modal-lg class here -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarModalLabel">Tarjeta de banco</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div style="padding: 10px 10px;">
+                    <form id="Tarjeta_Form">
+                        <div class="form-row ">
+                            <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Tarjeta</label>
+                                            <select id="Tarjeta" name="Tarjeta" class="form-control" style="width: 100%;">
+                                                <option value="">--Seleccione--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Codigo</label>
+                                <input name="CodigoTransferencia" class="form-control letras" id="CodigoTransferencia" />
+                                <span class="text-danger"></span>
+                            </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="ConfirmarTarjeta">Enviar</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
     <script>
         function validateNumber(input) {
             input.value = input.value.replace(/[^0-9.,]/g, '');
@@ -305,6 +336,42 @@
             }
         });
 
+        $("#ConfirmarTarjeta").click(function() {
+                $.ajax({
+                    url: 'Services/FacturaService.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'finalizarFacturaCompra',
+                        FaCE_Id: FaCE_Id,
+                        fechaFinal: new Date().toISOString(),
+                        Tarj_Id: $("#Tarj_Id").val(),
+                        Tarj_Codigo: $("#CodigoTransferencia").val(),
+                    },
+                    success: function(response) {
+                        if (response == 1) {
+                            iziToast.success({
+                                title: 'Éxito',
+                                message: 'Confirmado con éxito',
+                                position: 'topRight',
+                                transitionIn: 'flipInX',
+                                transitionOut: 'flipOutX'
+                            });
+
+                            $('#ModalTransferencias').modal('hide');
+                            PdfFactura();
+                            resetForm();
+
+                        } else {
+
+                        }
+                    },
+                    error: function() {
+
+                    }
+                });
+            
+        })
 
         $(document).on('click', '#btnVolverFacturaCompra', function() {
             $('#collapseNuevoProducto').collapse('hide');
@@ -365,6 +432,20 @@
             $('.metodo-pago').removeClass('disabled-button');
         }
         $(document).ready(function() {
+           
+
+            $("#btnTransferencias").click(function() {
+                sessionStorage.setItem("Mepa_Metodo", "7")
+                $("#btnTransferencias").removeClass("btn-secondary")
+                $("#btnTransferencias").addClass("btn-primary")
+
+                $("#btnEfectivo").removeClass("btn-primary")
+                $("#btnEfectivo").addClass("btn-secondary")
+
+                $("#btnTarjeta").removeClass("btn-primary")
+                $("#btnTarjeta").addClass("btn-secondary")
+
+            })
 
             var temporizadorinactividad;
             var inactividadmaxima = 60000;
@@ -391,6 +472,8 @@
                 $('#FacturaCompraForm').validate().resetForm();
                 $('#Proveedor').val('').trigger('change');
                 $('#Sucursal').val('').trigger('change');
+                $("#btnTransferencias").removeClass("btn-primary").addClass("btn-secondary");
+
                 FaCE_Id = 0;
             }
 
@@ -406,6 +489,37 @@
             });
             $('#NuevoProductoForm').on('input click', function() {
                 reseteartemp();
+            });
+            $('#Tarjeta_Form').validate({
+                rules: {
+                    Tarj_Id: {
+                        required: true,
+                    },
+                    CodigoTransferencia: {
+                        required: true,
+                    }
+
+
+                },
+                messages: {
+                    Tarj_Id: {
+                        required: "Por favor ingrese una tarjeta",
+                    },
+                    CodigoTransferencia: {
+                        required: "Por favor ingrese el codigo de transferencia"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.col-md-6').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
             });
             $('#FacturaCompraForm').validate({
                 rules: {
@@ -612,99 +726,99 @@
             }
 
 
-                    // $(document).on('blur', 'input[name="producto"]', function() {
-                    //     var term = $(this).val();
-                    //     var row = $(this).closest('tr');
-                    //     var numeroo = /^[0-9]+$/.test(term);
-                    //     var alfanumerico = /^[a-zA-Z]+$/.test(term);
-                    //     console.log('Term:', term);
+            // $(document).on('blur', 'input[name="producto"]', function() {
+            //     var term = $(this).val();
+            //     var row = $(this).closest('tr');
+            //     var numeroo = /^[0-9]+$/.test(term);
+            //     var alfanumerico = /^[a-zA-Z]+$/.test(term);
+            //     console.log('Term:', term);
 
-                    //     if (numeroo || alfanumerico) {
-                    //         console.log('entra al numeroalfa');
-                    //         var ajaxData = {
-                    //             action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
-                    //             codigo: term
-                    //         };
+            //     if (numeroo || alfanumerico) {
+            //         console.log('entra al numeroalfa');
+            //         var ajaxData = {
+            //             action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
+            //             codigo: term
+            //         };
 
-                    //         $.ajax({
-                    //             url: 'Services/FacturaCompraService.php',
-                    //             type: 'POST',
-                    //             dataType: 'json',
-                    //             data: ajaxData,
-                    //             success: function(data) {
-                    //                 if (data.length > 0) {
-                    //                     var item = data[0];
-                    //                     console.log('Item:', item);
-                    //                     var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
-                    //                     var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
-                    //                     var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
+            //         $.ajax({
+            //             url: 'Services/FacturaCompraService.php',
+            //             type: 'POST',
+            //             dataType: 'json',
+            //             data: ajaxData,
+            //             success: function(data) {
+            //                 if (data.length > 0) {
+            //                     var item = data[0];
+            //                     console.log('Item:', item);
+            //                     var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
+            //                     var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
+            //                     var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
 
-                    //                     row.find('#precio_mayorista').text(precioMayorista);
-                    //                     row.find('#precio_venta').text(precioVenta);
-                    //                     row.find('input[name="precio_compra"]').val(precioCompra);
+            //                     row.find('#precio_mayorista').text(precioMayorista);
+            //                     row.find('#precio_venta').text(precioVenta);
+            //                     row.find('input[name="precio_compra"]').val(precioCompra);
 
-                    //                     if (item.Joya_Codigo) {
-                    //                         row.find('#categoria').text('Joya');
-                    //                     } else {
-                    //                         row.find('#categoria').text('Maquillaje');
-                    //                     }
+            //                     if (item.Joya_Codigo) {
+            //                         row.find('#categoria').text('Joya');
+            //                     } else {
+            //                         row.find('#categoria').text('Maquillaje');
+            //                     }
 
-                    //                     // Inserta o actualiza la factura con la información obtenida
-                     //                     // insertarActualizarFactura(row, item.Nombre);
-                    //                 } else {
-                    //                     row.find('#precio_mayorista').text('0.00');
-                    //                     row.find('#precio_venta').text('0.00');
-                    //                     row.find('input[name="precio_compra"]').val('0.00');
-                    //                 }
-                    //             },
-                    //             error: function() {
-                    //                 row.find('#precio_mayorista').text('0.00');
-                    //                 row.find('#precio_venta').text('0.00');
-                    //                 row.find('input[name="precio_compra"]').val('0.00');
-                    //             }
-                    //         });
-                    //     }  else  {
-                    //         console.log('entra a solo joya');
-                    //         var ajaxData = {
-                    //             action:  'buscarJoyaPorCodigo',
-                    //             codigo: term
-                    //         };
+            //                     // Inserta o actualiza la factura con la información obtenida
+            //                     // insertarActualizarFactura(row, item.Nombre);
+            //                 } else {
+            //                     row.find('#precio_mayorista').text('0.00');
+            //                     row.find('#precio_venta').text('0.00');
+            //                     row.find('input[name="precio_compra"]').val('0.00');
+            //                 }
+            //             },
+            //             error: function() {
+            //                 row.find('#precio_mayorista').text('0.00');
+            //                 row.find('#precio_venta').text('0.00');
+            //                 row.find('input[name="precio_compra"]').val('0.00');
+            //             }
+            //         });
+            //     }  else  {
+            //         console.log('entra a solo joya');
+            //         var ajaxData = {
+            //             action:  'buscarJoyaPorCodigo',
+            //             codigo: term
+            //         };
 
-                    //         $.ajax({
-                    //             url: 'Services/FacturaCompraService.php',
-                    //             type: 'POST',
-                    //             dataType: 'json',
-                    //             data: ajaxData,
-                    //             success: function(data) {
-                    //                 if (data.length > 0) {
-                    //                     var item = data[0];
-                    //                     console.log('Item:', item);
-                    //                     var precioCompra = item.Joya_PrecioCompra;
-                    //                     var precioMayorista = item.Joya_PrecioMayor;
-                    //                     var precioVenta = item.Joya_PrecioVenta;
+            //         $.ajax({
+            //             url: 'Services/FacturaCompraService.php',
+            //             type: 'POST',
+            //             dataType: 'json',
+            //             data: ajaxData,
+            //             success: function(data) {
+            //                 if (data.length > 0) {
+            //                     var item = data[0];
+            //                     console.log('Item:', item);
+            //                     var precioCompra = item.Joya_PrecioCompra;
+            //                     var precioMayorista = item.Joya_PrecioMayor;
+            //                     var precioVenta = item.Joya_PrecioVenta;
 
-                    //                     row.find('#precio_mayorista').text(precioMayorista);
-                    //                     row.find('#precio_venta').text(precioVenta);
-                    //                     row.find('input[name="precio_compra"]').val(precioCompra);
+            //                     row.find('#precio_mayorista').text(precioMayorista);
+            //                     row.find('#precio_venta').text(precioVenta);
+            //                     row.find('input[name="precio_compra"]').val(precioCompra);
 
-                //                     row.find('#categoria').text('Joya');
+            //                     row.find('#categoria').text('Joya');
 
-                    //                     // Inserta o actualiza la factura con la información obtenida
-                     //                     // insertarActualizarFactura(row, item.Nombre);
-                    //                 } else {
-                    //                     row.find('#precio_mayorista').text('0.00');
-                    //                     row.find('#precio_venta').text('0.00');
-                    //                     row.find('input[name="precio_compra"]').val('0.00');
-                    //                 }
-                    //             },
-                    //             error: function() {
-                    //                 row.find('#precio_mayorista').text('0.00');
-                    //                 row.find('#precio_venta').text('0.00');
-                    //                 row.find('input[name="precio_compra"]').val('0.00');
-                    //             }
-                    //         });
-                    //     }
-                    // });
+            //                     // Inserta o actualiza la factura con la información obtenida
+            //                     // insertarActualizarFactura(row, item.Nombre);
+            //                 } else {
+            //                     row.find('#precio_mayorista').text('0.00');
+            //                     row.find('#precio_venta').text('0.00');
+            //                     row.find('input[name="precio_compra"]').val('0.00');
+            //                 }
+            //             },
+            //             error: function() {
+            //                 row.find('#precio_mayorista').text('0.00');
+            //                 row.find('#precio_venta').text('0.00');
+            //                 row.find('input[name="precio_compra"]').val('0.00');
+            //             }
+            //         });
+            //     }
+            // });
 
             $(document).on('blur', 'input[name="precio_compra"]', function() {
                 var row = $(this).closest('tr');
@@ -725,6 +839,21 @@
 
 
             function cargarDatos() {
+                $.ajax({
+                    url: 'Services/FacturaService.php',
+                    type: 'POST',
+                    data: {
+                        action: 'listartarjetas'
+                    },
+                    success: function(response) {
+                        var proveedores = JSON.parse(response);
+                        var provseleccionado = $('#Proveedor');
+                        provseleccionado.empty().append('<option selected="selected" value="">--Seleccione--</option>');
+                        proveedores.forEach(function(proveedor) {
+                            provseleccionado.append('<option value="' + proveedor.Prov_Id + '">' + proveedor.Prov_Proveedor + '</option>');
+                        });
+                    }
+                });
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
                     type: 'POST',
@@ -859,7 +988,7 @@
                 }
 
                 var proveedorSeleccionado = $('#Proveedor').val();
-                console.log('prov',proveedorSeleccionado);
+                console.log('prov', proveedorSeleccionado);
 
                 if (tipoProducto == 'joya') {
                     console.log('entra a joya');
@@ -871,7 +1000,7 @@
                     formData.append('Joya_PrecioMayor', $('#precioMayoristaProducto').val());
                     formData.append('Joya_Imagen', $('#Imagen')[0].files[0]);
                     formData.append('Joya_Stock', 1);
-                formData.append('Prov_Id',  $('#Proveedor').val());
+                    formData.append('Prov_Id', $('#Proveedor').val());
                     formData.append('Mate_Id', $('#Mate_Id').val());
                     formData.append('Cate_Id', $('#Cate_Id').val());
                     formData.append('Joya_UsuarioCreacion', 1);
@@ -885,7 +1014,7 @@
                     formData.append('Maqu_PrecioVenta', $('#precioVentaProducto').val());
                     formData.append('Maqu_PrecioMayor', $('#precioMayoristaProducto').val());
                     formData.append('Maqu_Imagen', $('#Imagen')[0].files[0]);
-                formData.append('Prov_Id', $('#Proveedor').val());
+                    formData.append('Prov_Id', $('#Proveedor').val());
                     formData.append('Marc_Id', $('#Marc_Id').val());
                     formData.append('Maqu_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
@@ -897,11 +1026,10 @@
                     data: formData,
                     contentType: false,
                     processData: false,
-                    success: function(response) {
-                        console.log('repuesta',response);
+                    success: function(responsee) {
+                        console.log('repuesta', responsee);
 
-                        try {
-                            response = JSON.parse(response);
+                            response = JSON.parse(responsee);
                             if (response.result == 1) {
                                 iziToast.success({
                                     title: 'Éxito',
@@ -912,7 +1040,7 @@
                                 });
 
                                 var actualFaceId = sessionStorage.getItem('actualFaceId');
-                                if (actualFaceId) {
+                                if (actualFaceId != 0) {
                                     FaCE_Id = actualFaceId;
 
                                     var nuevoProductoNombre = $('#nombreProducto').val();
@@ -926,12 +1054,29 @@
                                     sessionStorage.setItem('nuevoProductoPrecioMayorista', nuevoProductoPrecioMayorista);
 
                                     editarFactura(FaCE_Id);
+                                } else {
+                                    var nuevoProductoNombre = $('#nombreProducto').val();
+                                    var nuevoProductoPrecioCompra = $('#precioCompraProducto').val();
+                                    var nuevoProductoPrecioVenta = $('#precioVentaProducto').val();
+                                    var nuevoProductoPrecioMayorista = $('#precioMayoristaProducto').val();
+
+                                    $('input[name="producto"]:last').val(nuevoProductoNombre);
+                                    $('input[name="precio_compra"]:last').val(nuevoProductoPrecioCompra);
+                                    $('#precio_venta:last').text(nuevoProductoPrecioVenta);
+                                    $('#precio_mayorista:last').text(nuevoProductoPrecioMayorista);
+
+                                    $('.metodo-pago').removeClass('btn-selected-info').addClass('deselected');
+
+                                    //$('#detalleFactura').empty();
+
+                                   
+                                    //agregarNuevaFila();
+
+                                    $('.CrearOcultar').hide();
+                                    $('.CrearMostrar').show();
+
                                 }
 
-                                $('#collapseNuevoProducto').collapse('hide');
-                                $('.CrearOcultar').show();
-                                $('.CrearMostrar').hide();
-                                $('#NuevoProductoForm')[0].reset();
                             } else {
                                 iziToast.error({
                                     title: 'Error',
@@ -941,15 +1086,6 @@
                                     transitionOut: 'flipOutX'
                                 });
                             }
-                        } catch (e) {
-                            iziToast.error({
-                                title: 'Error',
-                                message: 'Error al insertar el producto. La respuesta del servidor no es válida.',
-                                position: 'topRight',
-                                transitionIn: 'flipInX',
-                                transitionOut: 'flipOutX'
-                            });
-                        }
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         iziToast.error({
@@ -1184,7 +1320,9 @@
                         data: {
                             action: 'finalizarFacturaCompra',
                             FaCE_Id: FaCE_Id,
-                            fechaFinal: new Date().toISOString()
+                            fechaFinal: new Date().toISOString(),
+                            Tarj_Id: null,
+                            Tarj_Codigo: null,
                         },
                         success: function(response) {
                             if (response.success) {
@@ -1222,7 +1360,9 @@
                     data: {
                         action: 'finalizarFacturaCompra',
                         FaCE_Id: FaCE_Id,
-                        fechaFinal: new Date().toISOString()
+                        fechaFinal: new Date().toISOString(),
+                        Tarj_Id: null,
+                        Tarj_Codigo: null,
                     },
                     success: function(response) {
                         if (response.success) {
