@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . '/../../../config.php';
+    require_once _DIR_ . '/../../../config.php';
 session_start();
 class MenuService {
 
@@ -142,11 +142,12 @@ class MenuService {
         }
     }
 
+
 }
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    require_once __DIR__ . '/../../../config.php';
+    require_once _DIR_ . '/../../../config.php';
     $controller = new MenuService();
 
   if ($_POST['action'] === 'insertar') {
@@ -174,10 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }elseif ($_POST['action'] === 'validacion') {
         $FechaHoy = $_POST['FechaHoy'];
         $resultado = $controller->Validacion($FechaHoy);
-        echo $resultado;
-    }elseif ($_POST['action'] === 'totales') {
-        $FechaHoy = $_POST['FechaHoy'];
-        $resultado = $controller->SP_Caja_Totales($FechaHoy);
         echo $resultado;
     }
     elseif ($_POST['action'] === 'totalesSucu') {
