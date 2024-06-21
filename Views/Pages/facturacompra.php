@@ -858,7 +858,11 @@
                     codigoProducto = codigoMaterial + codigoAleatorio;
                 }
 
+                var proveedorSeleccionado = $('#Proveedor').val();
+                console.log('prov',proveedorSeleccionado);
+
                 if (tipoProducto == 'joya') {
+                    console.log('entra a joya');
                     formData.append('action', 'insertarJoyas');
                     formData.append('Joya_Codigo', codigoProducto);
                     formData.append('Joya_Nombre', $('#nombreProducto').val());
@@ -867,21 +871,23 @@
                     formData.append('Joya_PrecioMayor', $('#precioMayoristaProducto').val());
                     formData.append('Joya_Imagen', $('#Imagen')[0].files[0]);
                     formData.append('Joya_Stock', 1);
-                    formData.append('Prov_Id', proveedorSeleccionado);
+                formData.append('Prov_Id',  $('#Proveedor').val());
                     formData.append('Mate_Id', $('#Mate_Id').val());
                     formData.append('Cate_Id', $('#Cate_Id').val());
-                    joyaData.append('Joya_UsuarioCreacion', 1);
-                    joyaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+                    formData.append('Joya_UsuarioCreacion', 1);
+                    formData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
                 } else {
-                    MaquillajeData.append('action', 'insertarMaquillajes');
-                    MaquillajeData.append('Maqu_Nombre', $('#nombreProducto').val());
-                    MaquillajeData.append('Maqu_PrecioCompra', $('#precioCompraProducto').val());
-                    MaquillajeData.append('Maqu_PrecioVenta', $('#precioVentaProducto').val());
-                    MaquillajeData.append('Maqu_PrecioMayor', $('#precioMayoristaProducto').val());
-                    MaquillajeData.append('Maqu_Imagen', $('#Imagen')[0].files[0]);
-                    MaquillajeData.append('Prov_Id', proveedorSeleccionado);
-                    MaquillajeData.append('Marc_Id', $('#Marc_Id').val());
-                    MaquillajeData.append('Maqu_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+                    console.log('entra a maqui');
+
+                    formData.append('action', 'insertarMaquillajes');
+                    formData.append('Maqu_Nombre', $('#nombreProducto').val());
+                    formData.append('Maqu_PrecioCompra', $('#precioCompraProducto').val());
+                    formData.append('Maqu_PrecioVenta', $('#precioVentaProducto').val());
+                    formData.append('Maqu_PrecioMayor', $('#precioMayoristaProducto').val());
+                    formData.append('Maqu_Imagen', $('#Imagen')[0].files[0]);
+                formData.append('Prov_Id', $('#Proveedor').val());
+                    formData.append('Marc_Id', $('#Marc_Id').val());
+                    formData.append('Maqu_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
                 }
 
@@ -892,6 +898,8 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
+                        console.log('repuesta',response);
+
                         try {
                             response = JSON.parse(response);
                             if (response.result == 1) {
