@@ -60,6 +60,7 @@
             <div class="CrearOcultar" style="position:relative; top:-30px">
                 <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
                 <div class="table-responsive">
+                    
                     <br>
                     <table class="table table-striped table-hover" id="TablaUsuario">
                         <thead>

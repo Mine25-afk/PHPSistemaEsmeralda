@@ -149,7 +149,7 @@ Reportes<i class="fas fa-angle-left right"></i></p></a>';
         echo '</ul>';
         echo '</li>';
     }
-    echo '<li class="nav-item" id="AbrirCajas">';
+
 
     echo '</li>';
     if (!empty($menu['Dashboards'])) {
@@ -165,7 +165,7 @@ Reportes<i class="fas fa-angle-left right"></i></p></a>';
         echo '<a href="?Pages=FacturaVenta" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>factura Apartado</p></a>';
         echo '</li>';
     }
-    echo '<li class="nav-item" id="AbrirCajas">';
+    echo '<li class="nav-item" id="AbrirLink">';
     echo ' <a class="nav-link" id="AbrirCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Abrir Caja</p></a>';
     echo '</li>';
 

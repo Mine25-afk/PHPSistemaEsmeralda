@@ -10,7 +10,7 @@
 
         #pdf-frame2 {
             width: 100%;
-            height: 100%;
+            height: 100vh;
             border: none; /* Optional: remove border */
         }
 </style>
@@ -33,11 +33,13 @@
    
 
   
-    <iframe id="pdf-frame2"></iframe>
+    
     <!-- Cierre de CrearMostrar -->
   </div>
   <!-- Cierre de card-body -->
+
 </div>
+<iframe id="pdf-frame2"></iframe>
 <script>
             $(document).ready(function() {
             // Obtener el valor de Sucu_Id desde PHP
@@ -74,9 +76,13 @@
                sessionStorage.setItem("Caja_Id", data.data[0].Caja_Id)
                sessionStorage.setItem("MontoInicial", data.data[0].MontoInicial)
         
-
-
-            
+                const efectivo = data.data[0].Efectivo.toString()
+                const transferencia = data.data[0].Transferencias.toString()
+                const credito = data.data[0].Tarjeta_Credito.toString()
+                const caja_Id = data.data[0].Caja_Id.toString()
+    
+                ReporteCaja(efectivo,transferencia,credito,totalEfectivo.toString(),caja_Id,)
+              
                
             },
             error: function() {
@@ -106,9 +112,75 @@
                         var selected = sucursal.Sucu_Id == sucuIdPredeterminado ? ' selected' : '';
                         sucuseleccionada.append('<option value="' + sucursal.Sucu_Id + '"' + selected + '>' + sucursal.Sucu_Nombre + '</option>');
                     });
+
+                    
                 }
             });
-        });
+            
+      function ReporteCaja(Efectivo,Transferencia,Credito,TotalEfectivo) {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: 'letter'
+  });
+  var img = new Image();
+  img.src = 'Views/Logo.png';
+  let pageNumber = 1;
+  const footer = () => {
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text(String(pageNumber), 444, 580, { align: 'right' });
+  
+  };
+  doc.addImage(img, 'PNG', 10, 5, 200, 50);
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'bold');
+  doc.text('Esmeraldas HN', 270, 30);
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text('Dirección :', 270, 40);
+  doc.text("Tegucigalpa: Los dolores, calle buenos aires", 270, 50);
+
+  doc.setFontSize(20);
+  doc.setFont(undefined, 'bold');
+
+  doc.text("Ingresos", 90, 80);
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'normal'); 
+  doc.text("Efectivo:", 50, 95);
+  doc.text(Efectivo + ".lps", 95, 95);
+  doc.text("Transferencia" + ".lps", 50, 110);
+  doc.text(Transferencia + ".lps", 160, 110);
+  doc.text("Tarjeta Credito" + ".lps", 50, 125);
+  doc.text(Credito + ".lps", 160, 125);
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'bold');
+  doc.text("Egresos", 340, 80);
+  doc.text(TotalEfectivo, 280, 80);
+  doc.text("Egresos", 340, 90);
+
+
+  doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text(String(pageNumber), 444, 580, { align: 'right' });
+        doc.text('Usuario:' + "Eduardo", 10,570);
+        doc.text('Fecha:' + "2024-12-12", 10,580);
+        pageNumber++;
+  
+
+  
+
+
+
+  const pdfBlob = doc.output('blob');
+  const url = URL.createObjectURL(pdfBlob);
+  const iframe = document.getElementById('pdf-frame2');
+  iframe.src = url;
+}
+   });
+
+
     </script>
 
 

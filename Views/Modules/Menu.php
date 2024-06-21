@@ -363,7 +363,7 @@ h2{
             type: 'POST',
             data: {
                 action: 'validacion',
-                FechaHoy: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                FechaHoy: new Date().toISOString().slice(0, 11).replace('T', ' ')
             },
             success: function(response) {
                 console.log(response)
@@ -585,8 +585,9 @@ h2{
 
 
         });
+        
             validar()
-            location.reload();
+  
  
             $('#AbrirCajaModal').hide();
             } else {
