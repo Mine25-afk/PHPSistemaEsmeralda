@@ -308,18 +308,8 @@
                         Usuario: Usuario,
                         Contra: Contraseña
                     },
-                    success: function(response) {
-                        var data = JSON.parse(response);
-                        if (data.data.length > 0) {
-                            window.location.href = '../index.php';
-                        } else {
-                            $('.invalid-feedback').remove();
-                            $('#Usuario').addClass('is-invalid').after('<span class="invalid-feedback">Usuario incorrecto</span>');
-                            $('#Contraseña').addClass('is-invalid').after('<span class="invalid-feedback">Contraseña incorrecta</span>');
-                        }
-                    },
-                    error: function() {
-                        alert('Error en la comunicación con el servidor.');
+                    Contraseña: {
+                        required: true
                     }
                 });
             }
