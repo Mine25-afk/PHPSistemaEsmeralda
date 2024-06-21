@@ -610,32 +610,32 @@
             }
 
             if (isValid) {
-                var joyaData = new FormData();
-                joyaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
-                joyaData.append('Joya_Id', $('#Joya_Id').val());
-                joyaData.append('Joya_Codigo', joyaCodigo);
-                joyaData.append('Joya_Nombre', $('#Joya_Nombre').val());
-                joyaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
-                joyaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
-                joyaData.append('Joya_PrecioMayor', $('#Joya_PrecioMayor').val());
-                joyaData.append('Joya_Imagen', $('#Joya_Imagen')[0].files[0]);
-                joyaData.append('Joya_Stock', 1);
-                joyaData.append('Prov_Id', $('#Prov_Id').val());
-                joyaData.append('Mate_Id', $('#Mate_Id').val());
-                joyaData.append('Cate_Id', $('#Cate_Id').val());
-                joyaData.append('Joya_UsuarioCreacion', 1);
-                joyaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-                joyaData.append('Joya_UsuarioModificacion', 1);
-                joyaData.append('Joya_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+                var UsuaData = new FormData();
+                UsuaData.append('action', $('#Joya_Id').val() ? 'actualizar' : 'insertar');
+                UsuaData.append('Joya_Id', $('#Joya_Id').val());
+                UsuaData.append('Joya_Codigo', joyaCodigo);
+                UsuaData.append('Joya_Nombre', $('#Joya_Nombre').val());
+                UsuaData.append('Joya_PrecioCompra', $('#Joya_PrecioCompra').val());
+                UsuaData.append('Joya_PrecioVenta', $('#Joya_PrecioVenta').val());
+                UsuaData.append('Joya_PrecioMayor', $('#Joya_PrecioMayor').val());
+                UsuaData.append('Joya_Imagen', $('#Joya_Imagen')[0].files[0]);
+                UsuaData.append('Joya_Stock', 1);
+                UsuaData.append('Prov_Id', $('#Prov_Id').val());
+                UsuaData.append('Mate_Id', $('#Mate_Id').val());
+                UsuaData.append('Cate_Id', $('#Cate_Id').val());
+                UsuaData.append('Joya_UsuarioCreacion', 1);
+                UsuaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+                UsuaData.append('Joya_UsuarioModificacion', 1);
+                UsuaData.append('Joya_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
-                for (var pair of joyaData.entries()) {
+                for (var pair of UsuaData.entries()) {
                     console.log(pair[0] + ', ' + pair[1]);
                 }
 
                 $.ajax({
                     url: 'Services/JoyasServices.php',
                     type: 'POST',
-                    data: joyaData,
+                    data: UsuaData,
                     contentType: false,
                     processData: false,
                     success: function(response) {
