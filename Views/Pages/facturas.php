@@ -387,11 +387,11 @@
                  
                   
                 } else {
-                    alert('Error al eliminar joya.');
+         
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+     
             }
         });
           }else{
@@ -500,11 +500,11 @@
             
                   
                 } else {
-                    alert('Error al eliminar joya.');
+        
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+            
             }
         });
           }else{

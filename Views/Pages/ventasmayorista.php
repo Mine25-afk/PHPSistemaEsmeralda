@@ -67,7 +67,7 @@
             if (data.status === 'success') {
                 generarPDF(data.data, fechaInicio, fechaFinal);
             } else {
-                alert(data.message);
+       
             }
         }
 

@@ -14,7 +14,7 @@
         <div class="card-body">
         <h2 class="text-center" style="font-size: 90px !important">Reparaciones</h2>
         <div class="CrearOcultar" style="position:relative; top:-30px">
-            <p class="btn btn-primary" id="AbrirModal" style="background-color:#FFA2DB; border-color:#FFA2DB; color:black;">Nuevo</p>
+            <p class="btn btn-primary" id="AbrirModal" style="background-color:#5d9e3e; border-color:#5d9e3e; color:white;">Nuevo</p>
 
             <hr>
             <div class="table-responsive">
@@ -44,7 +44,7 @@
         <div class="card-body">
             <div class="form-row d-flex justify-content-center">
                 <div class="col-auto">
-                    <input type="button" style="background-color:#FFA2DB; border-color:#FFA2DB; color:black;" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+                    <input type="button" style="background-color:#5d9e3e; border-color:#5d9e3e; color:white;" value="Guardar" class="btn btn-primary" id="guardarBtn" />
                 </div>
                 <div class="col-auto">
                     <a id="CerrarModal" style="background-color:#000000; border-color:#000000; color:white;" class="btn btn-secondary">Cancelar</a>
@@ -234,7 +234,7 @@ $('#Repa_Tipo_Reparacion').on('input', function () {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                alert('Error al guardar el proveedor.');
+ 
             }
         });
     });
@@ -279,11 +279,11 @@ $('#Repa_Tipo_Reparacion').on('input', function () {
                     $('.CrearOcultar').hide();
                     $('.CrearMostrar').show();
                 } catch (e) {
-                    alert('Error parsing JSON response.');
+              
                 }
             },
             error: function () {
-                alert('Error fetching or parsing the response.');
+             
             }
         });
     });
@@ -304,11 +304,11 @@ $('#Repa_Tipo_Reparacion').on('input', function () {
                     mostrarDetalles(detalles);
                     $('.CrearOcultar').hide();
                 } catch (e) {
-                    alert('Error parsing JSON response.');
+
                 }
             },
             error: function () {
-                alert('Error fetching or parsing the response.');
+
             }
         });
     });

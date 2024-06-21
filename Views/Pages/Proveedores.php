@@ -277,7 +277,7 @@ $(document).ready(function () {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log('Error:', errorThrown);
-                alert('Error al guardar el proveedor.');
+    
             }
         });
     });
@@ -339,12 +339,12 @@ $(document).on('click', '.abrir-editar', function () {
                 $('.CrearMostrar').show();
             } catch (e) {
                 console.error('Error parsing JSON:', e);
-                alert('Error parsing JSON response.');
+     
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log('Error:', errorThrown);
-            alert('Error fetching or parsing the response.');
+     
         }
     });
 });
@@ -373,12 +373,12 @@ $(document).on('click', '.abrir-editar', function () {
                 $('.CrearOcultar').hide();
             } catch (e) {
                 console.error('Error parsing JSON:', e);
-                alert('Error parsing JSON response.');
+          
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log('Error:', errorThrown);
-            alert('Error fetching or parsing the response.');
+       
         }
     });
 });

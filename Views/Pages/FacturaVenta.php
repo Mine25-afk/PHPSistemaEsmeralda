@@ -495,7 +495,7 @@
                     }
                   },
                   error: function() {
-                    alert('Error en la comunicación con el servidor.');
+             
                   }
                 });
               } else {
@@ -521,7 +521,7 @@
 
 
             } else {
-              alert("No hay datos")
+
             }
 
           },
@@ -728,7 +728,7 @@
             }
           },
           error: function() {
-            alert('Error en la comunicación con el servidor.');
+      
           }
         });
 
@@ -790,11 +790,11 @@
               resetForm();
 
             } else {
-              alert('Error al eliminar joya.');
+     
             }
           },
           error: function() {
-            alert('Error en la comunicación con el servidor.');
+   
           }
         });
       }
@@ -890,7 +890,7 @@
             }
           },
           error: function() {
-            alert('Error en la comunicación con el servidor.');
+
           }
         });
 
@@ -994,7 +994,7 @@
               }
             },
             error: function() {
-              alert('Error en la comunicación con el servidor.');
+  
             }
           });
 
@@ -1046,7 +1046,7 @@
             }
           },
           error: function() {
-            alert('Error en la comunicación con el servidor.');
+    
           }
         });
 
@@ -1088,7 +1088,7 @@
             }
           },
           error: function() {
-            alert('Error en la comunicación con el servidor.');
+   
           }
         });
       }
@@ -1182,11 +1182,11 @@
                 resetForm();
 
               } else {
-                alert('Error al eliminar joya.');
+     
               }
             },
             error: function() {
-              alert('Error en la comunicación con el servidor.');
+
             }
           });
         } else {
@@ -1270,11 +1270,11 @@
               resetForm();
 
             } else {
-              alert('Error al eliminar joya.');
+   
             }
           },
           error: function() {
-            alert('Error en la comunicación con el servidor.');
+     
           }
         });
       } else {

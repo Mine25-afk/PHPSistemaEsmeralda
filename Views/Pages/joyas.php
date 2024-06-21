@@ -683,7 +683,7 @@
 
             // Verificar si el código es válido y no está vacío
             if (!codigo || codigo.length < 1) {
-                alert("El código es demasiado corto para generar un código de barras válido.");
+        
                 return;
             }
 

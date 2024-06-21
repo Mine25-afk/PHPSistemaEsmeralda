@@ -518,7 +518,7 @@
 
 
             if (!codigo || codigo.length < 1) {
-                alert("El código es demasiado corto para generar un código de barras válido.");
+
                 return;
             }
 
@@ -653,7 +653,7 @@
                         }
                     },
                     error: function() {
-                        alert('Error en la comunicación con el servidor.');
+      
                     }
                 });
             }
@@ -756,11 +756,11 @@
                         $('#eliminarModal').modal('hide');
                         sessionStorage.setItem('Maqu_Id', "0");
                     } else {
-                        alert('Error al eliminar joya.');
+            
                     }
                 },
                 error: function() {
-                    alert('Error en la comunicación con el servidor.');
+            
                 }
             });
         });
