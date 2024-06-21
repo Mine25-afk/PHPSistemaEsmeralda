@@ -191,7 +191,7 @@
 </div>
 <script>
   $(document).ready(function() {
-    $('#AbrirCajaModal').modal('show');
+   
     cargarDropdowns({ Tarj_Id: 0 });
   async function cargarDropdowns(selectedData = {}) {
     try {

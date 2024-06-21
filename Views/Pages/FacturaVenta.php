@@ -320,7 +320,28 @@
 
 <script>
   $(document).ready(function() {
-
+    sessionStorage.getItem("Validacion","1")
+    $.ajax({
+            url: 'Views/Modules/ServicesModules/MenuService.php',
+            type: 'POST',
+            data: {
+                action: 'validacion',
+                FechaHoy: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            },
+            success: function(response) {
+                console.log(response)
+                if (response == 0) {
+                  $('#AbrirCajaModal').modal('show');
+                }else{
+                 
+                }
+      
+               
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
     sessionStorage.setItem("Fact_Id", "0")
     sessionStorage.setItem("Total", "0")
     sessionStorage.setItem("Cantidad", "1")
