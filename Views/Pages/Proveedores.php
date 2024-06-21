@@ -28,6 +28,9 @@
             </div>
         </div>
         <div class="CrearMostrar">
+        <div class="d-flex justify-content-end">
+                        <a href="#" id="Regresar" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
             <form id="proveedorForm">
                 <input type="hidden" name="Prov_Id" id="Prov_Id">
                 <div class="form-row">
@@ -69,6 +72,9 @@
 
             <!-- Collapse Detalles -->
             <div class="CrearDetalles collapse" id="detallesCollapse">
+            <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                 <div class="card card-body">
                     <h5>Detalles del Proveedor</h5>
                     <p id="detallesContenido"></p>
@@ -85,24 +91,21 @@
 </div>
 
 <!-- Modal Eliminar -->
-
-</body>
-</html>
 <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
+            <div class="modal-header">
                 <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p class="text-center">¿Estás seguro de que deseas eliminar este proveedor?</p>
+                ¿Estás seguro de que deseas eliminar estE pROVEEDOR?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+            <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
             </div>
         </div>
     </div>
@@ -147,7 +150,7 @@ $(document).ready(function () {
                             <i class='fas fa-eye'></i> Detalles
                         </a>
                         <button class="dropdown-item eliminar" data-id='${data.Prov_Id}' data-toggle='modal' data-target='#eliminarModal'>
-                            <i class='fas fa-eraser'></i> Eliminar
+                            <i class='fas fa-trash-alt'></i> Eliminar
                         </button>
                     </div>
                 </div>
@@ -477,6 +480,14 @@ $('#confirmarEliminarBtn').click(function() {
         });
     }
 });
+
+$('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
 
 function cargarMunicipios() {
         $.ajax({

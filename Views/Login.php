@@ -9,7 +9,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-        @import url('https://css.glass');
 
         body {
             font-family: 'Great Vibes', cursive;
@@ -19,10 +18,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: rgb(135,135,135);
-            background: radial-gradient(circle, rgba(135,135,135,1) 0%, rgba(71,71,71,1) 100%);
-
-  
+            background: rgb(135, 135, 135);
+            background: radial-gradient(circle, rgba(135, 135, 135, 1) 0%, rgba(71, 71, 71, 1) 100%);
         }
 
         @keyframes fadeIn {
@@ -49,8 +46,8 @@
 
         .container {
             display: flex;
-            background: rgb(255,255,255);
-            background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 35%, rgba(255,255,255,1) 100%);
+            background: rgb(255, 255, 255);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 35%, rgba(255, 255, 255, 1) 100%);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -74,12 +71,32 @@
         }
 
         .form-section {
-            background: rgb(0,0,0);
-            background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 35%, rgba(0,0,0,1) 100%);
+            background: rgb(0, 0, 0);
+            background: linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 35%, rgba(0, 0, 0, 1) 100%);
             padding: 30px;
             border-radius: 0 20px 20px 0;
             animation: slideIn 2s ease-in-out;
         }
+
+        .invalid-feedback {
+            position: absolute;
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 5px;
+            display: none;
+            font-family: 'Roboto', sans-serif; 
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 30px;
+            /* Increased to allow space for error messages */
+        }
+
+        .input-group input.is-invalid+.invalid-feedback {
+            display: block;
+        }
+
 
         .toggle-buttons {
             display: flex;
@@ -188,8 +205,8 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        .aaa{
-            background: rgba(186,5,5, 0.2);
+        .aaa {
+            background: rgba(186, 5, 5, 0.2);
             border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(5px);
@@ -202,46 +219,48 @@
 <body>
     <div class="aaa">
         <div class="container">
+
             <div class="image-section">
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-                <img src="Logo.png" alt="Logo" style="width: 320px; height: 100;">
-             
-             
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <img src="Logo.png" alt="Logo" style="width: 320px; height: auto;">
             </div>
             <div class="form-section">
-                <div class="toggle-buttons">
-
-                </div>
+                <div class="toggle-buttons"></div>
                 <form id="sign-in-form">
                     <h1 style="color: #fff;">Iniciar Sesion</h1>
                     <div class="input-group">
                         <input type="text" name="Usuario" placeholder="Usuario" required id="Usuario">
+                        <br>
                     </div>
                     <div class="input-group">
+                        <br>
                         <input type="password" name="Contraseña" placeholder="Contraseña" required id="Contraseña">
                     </div>
+                    <br>
+                  
                     <div class="forgot-password" style="font-size: 12px;">
-                        <a href="#"  >Olvidaste tu Contraseña?</a>
+                        <a href="/PHPSistemaEsmeralda/Views/Pages/RestablecerContra.php">¿Olvidaste tu Contraseña?</a>
                     </div>
-                    <button type="submit" class="sign-in-button" style="background-color: #ebb22a;">Iniciar Sesion</button>
+                    <button type="submit" class="sign-in-button" style="background-color: #5d9e3e;">Iniciar Sesion</button>
                     <div class="social-icons">
                         <a href="https://accounts.google.com/signin"><img src="Google__G__logo.svg.webp" alt="Google"></a>
                         <a href="https://www.facebook.com/login/"><img src="images-removebg-preview.png" alt="Facebook"></a>
                         <a href="https://github.com/login"><img src="GitHub_Invertocat_Logo.svg" alt="GitHub"></a>
                     </div>
-                </form> 
+                </form>
             </div>
         </div>
     </div>
 </body>
 
 </html>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
 <script>

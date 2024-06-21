@@ -28,6 +28,9 @@
                     </div>
 
                     <div class="CrearMostrar">
+                    <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarModal" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                         <form id="quickForm">
                             <div class="form-row">
                                 <div class="col-md-6">
@@ -122,6 +125,9 @@
                         </form>
                     </div>
                     <div id="Detalles">
+                    <div class="d-flex justify-content-end">
+                        <a href="#" id="VolverDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                         <div class="row" style="padding: 10px;">
                             <div class="col-md-4">
                                 <strong>DNI</strong>
@@ -217,8 +223,9 @@
                 ¿Estás seguro de que deseas eliminar este Empleado?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+                <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
+           
             </div>
         </div>
     </div>
@@ -591,7 +598,13 @@
                 });
             }
         });
-
+        $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
 
         $('#TablaMarca tbody').on('click', '.abrir-editar', function() {
             var data = table.row($(this).parents('tr')).data();

@@ -88,6 +88,9 @@
 
                 <div class="CrearMostrar">
                     <div class="card-body">
+                    <div class="d-flex justify-content-end">
+                        <a href="#" id="Regresar" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                         <form id="clienteForm">
                             <hr>
                             <input type="hidden" name="Clie_Id" id="Clie_Id">
@@ -185,6 +188,9 @@
                 </div>
                 <!-- Collapse Detalles -->
                 <div class="CrearDetalles collapse" id="detallesCollapse">
+                <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                     <div class="card card-body">
                         <h5>Detalles de Clientes</h5>
                         <div id="Detalles">
@@ -311,8 +317,9 @@
                                 ¿Estás seguro de que deseas eliminar este CLiente?
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+                            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+                                <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
+                              
                             </div>
                         </div>
                     </div>
@@ -497,7 +504,14 @@
 
         });
 
-
+        $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+   
+            
+        });
 
         $('#CerrarModal').click(function() {
             limpiarFormulario();

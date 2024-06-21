@@ -33,7 +33,7 @@
   <?php 
     if (isset($_GET["Pages"])) {
 
-      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles"|| $_GET["Pages"] == "FacturaVenta"|| $_GET["Pages"] == "transferencias") {
+      if ($_GET["Pages"] == "facturas" || $_GET["Pages"] == "inventario" || $_GET["Pages"] == "marcas"|| $_GET["Pages"] == "joyas"|| $_GET["Pages"] == "clientes" || $_GET["Pages"] == "Proveedores" || $_GET["Pages"] == "empleados" || $_GET["Pages"] == "usuarios" || $_GET["Pages"] == "usuariosagregar" || $_GET["Pages"] == "facturacompra" || $_GET["Pages"] == "usuarioss/nuevo" || $_GET["Pages"] == "maquillajes" || $_GET["Pages"] == "Reparaciones" || $_GET["Pages"] == "Roles"|| $_GET["Pages"] == "FacturaVenta"|| $_GET["Pages"] == "transferencias"|| $_GET["Pages"] == "RestablecerContra") {
 
         include "Pages/". $_GET["Pages"] . ".php";
       }
