@@ -380,3 +380,106 @@ BEGIN
         V.Fact_Id DESC
     LIMIT 1;
 END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Reparaciones_insertar`(
+    IN `Repa_Tipo_Reparacion` VARCHAR(100),
+    IN `Repa_UsuarioCreacion` INT,
+    IN `Repa_FechaCreacion` DATETIME
+)
+BEGIN
+    DECLARE v_max_codigo INT DEFAULT 0;
+    DECLARE v_nuevo_codigo VARCHAR(14);
+    DECLARE v_padding_length INT;
+    DECLARE success INT DEFAULT 0;
+
+    -- Declarar el manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+    BEGIN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    -- Obtener el máximo valor numérico del código de reparación existente
+    SELECT MAX(CAST(SUBSTRING(Repa_Codigo, 3, LENGTH(Repa_Codigo) - 2) AS UNSIGNED))
+    INTO v_max_codigo
+    FROM vent_tbreparaciones
+    WHERE Repa_Codigo LIKE 'Re%';
+
+    -- Incrementar el valor del código
+    SET v_max_codigo = IFNULL(v_max_codigo, 0) + 1;
+
+    -- Determinar la longitud del padding basado en el valor del código
+    SET v_padding_length = CASE
+        WHEN v_max_codigo < 10 THEN 2
+        WHEN v_max_codigo < 100 THEN 3
+        ELSE 4
+    END;
+
+    -- Generar el nuevo código de reparación con padding
+    SET v_nuevo_codigo = CONCAT('Re', LPAD(v_max_codigo, v_padding_length, '0'));
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    -- Insertar la nueva reparación con el código generado
+    INSERT INTO vent_tbreparaciones 
+    (
+        `Repa_Codigo`, 
+        `Repa_Tipo_Reparacion`, 
+        `Repa_Estado`, 
+        `Repa_UsuarioCreacion`, 
+        `Repa_FechaCreacion`
+    )
+    VALUES 
+    (
+        v_nuevo_codigo, 
+        Repa_Tipo_Reparacion, 
+        1, 
+        Repa_UsuarioCreacion, 
+        Repa_FechaCreacion
+    );
+
+    -- Verificar si la inserción fue exitosa
+    IF ROW_COUNT() = 0 THEN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    ELSE
+        COMMIT;
+        SELECT 1 AS Resultado;
+    END IF;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_reparaciones_actualizar`(
+    IN r_Repa_Id INT,
+    IN r_Repa_Tipo_Reparacion VARCHAR(100),
+    IN r_Repa_UsuarioModifica INT,
+    IN r_Repa_FechaModifica DATETIME
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+    BEGIN
+        -- Manejo de errores
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    END;
+
+    START TRANSACTION;
+
+    -- Actualizar los campos según el Repa_Id sin modificar el Repa_Codigo
+    UPDATE vent_tbreparaciones 
+    SET
+        Repa_Tipo_Reparacion = r_Repa_Tipo_Reparacion,
+        Repa_UsuarioModifica = r_Repa_UsuarioModifica,
+        Repa_FechaModifica = r_Repa_FechaModifica      
+    WHERE
+        Repa_Id = r_Repa_Id;
+
+    IF ROW_COUNT() = 0 THEN
+        ROLLBACK;
+        SELECT 0 AS Resultado;
+    ELSE
+        COMMIT;
+        SELECT 1 AS Resultado;
+    END IF;
+
+END
