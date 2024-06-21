@@ -16,7 +16,7 @@
         }
 
         .navbar-custom .nav-link:hover {
-            color: #ffb3ce; /* Cambia el color de los enlaces al pasar el ratón */
+            color: #FFFFFF; /* Cambia el color de los enlaces al pasar el ratón */
         }
 
         .navbar-custom .fa-bars,
@@ -26,7 +26,7 @@
 
         .navbar-custom .fa-bars:hover,
         .navbar-custom .fa-arrow-right:hover {
-            color: #ffb3ce; /* Cambia el color de los iconos al pasar el ratón */
+            color: #FFFFFF; /* Cambia el color de los iconos al pasar el ratón */
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
