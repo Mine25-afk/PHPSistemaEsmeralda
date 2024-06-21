@@ -184,7 +184,7 @@ h2{
             <div class="row">
             <div class="col-md-4 col-sm-8 col-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <span class="info-box-icon bg-info"><i class="far fa-calendar-alt"></i></span>
                     <div class="info-box-content">
                 <span class="info-box-text" style="font-weight: 800;">Fecha Cierre</span>
                 <span class="info-box-text" id="txtFechaCierre"></span>
@@ -194,7 +194,7 @@ h2{
 
             <div class="col-md-4 col-sm-8 col-12">
                 <div class="info-box" style="height: 80px !important;">
-                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <span class="info-box-icon bg-info"><i class="far fa-money-bill-alt"></i></span>
                     <div class="info-box-content">
                 <span class="info-box-text" style="font-weight: 800;">Diferencia</span>
                 <span class="info-box-text"><p id="txtDiferencia"></p></span>
@@ -203,7 +203,7 @@ h2{
             </div>
             <div class="col-md-4 col-sm-8 col-12">
                 <div class="info-box" style="height: 80px !important;">
-                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <span class="info-box-icon bg-info"><i class="fas fa-dollar-sign"></i></span>
                     <div class="info-box-content">
                 <span class="info-box-text" style="font-weight: 800;">Monto Inicial</span>
                 <span class="info-box-text"><p id="txtMontoInicial"></p></span>

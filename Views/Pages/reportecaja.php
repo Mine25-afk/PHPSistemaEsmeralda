@@ -154,11 +154,15 @@
   doc.text(Transferencia + ".lps", 160, 110);
   doc.text("Tarjeta Credito" + ".lps", 50, 125);
   doc.text(Credito + ".lps", 160, 125);
-  doc.setFontSize(16);
+  doc.setFontSize(20);
   doc.setFont(undefined, 'bold');
-  doc.text("Egresos", 340, 80);
-  doc.text(TotalEfectivo, 280, 80);
-  doc.text("Egresos", 340, 90);
+  doc.text("Egresos", 280, 80)
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'normal');
+  doc.text("Total retiro:", 280, 95)
+  doc.text(TotalEfectivo, 340, 95);
+
+
 
 
   doc.setFontSize(10);
