@@ -80,8 +80,10 @@
                 const transferencia = data.data[0].Transferencias.toString()
                 const credito = data.data[0].Tarjeta_Credito.toString()
                 const caja_Id = data.data[0].Caja_Id.toString()
-    
-                ReporteCaja(efectivo,transferencia,credito,totalEfectivo.toString(),caja_Id,)
+                const retiro = data.data[0].TotalRetiro.toString()
+                const inicio = data.data[0].MontoInicial.toString()
+                const Final = data.data[0].Caja_MontoFinal.toString()
+                ReporteCaja(efectivo,transferencia,credito,retiro,inicio,Final,totalEfectivo.toString(),caja_Id,)
               
                
             },
@@ -93,7 +95,48 @@
         $('#reservationdate, #Sucursal').change(function() {
                 console.log($("#reservationdate").val())
                 console.log($("#Sucursal").val())
-            
+                $.ajax({
+            url: 'Views/Modules/ServicesModules/MenuService.php',
+            type: 'POST',
+            data: {
+                action: 'totalesSucu',
+                FechaHoy: $("#reservationdate").val(),
+                Sucu_Id: $("#Sucursal").val()
+            },
+            success: function(response) {
+                console.log(response)
+                data = JSON.parse(response)
+                console.log(data);
+
+               $("#txtVentasEfectivo").val(data.data[0].Efectivo + " .Lps")
+               $("#txtVentasTransferencias").val(data.data[0].Transferencias + " .Lps")
+               $("#txtVentasCredito").val(data.data[0].Tarjeta_Credito + " .Lps")
+               $("#txtRetiros").val(data.data[0].TotalRetiro + " .Lps")
+               $("#txtDiferencia").text("0.00" + " .Lps")
+               $("#txtMontoInicial").text(data.data[0].MontoInicial + " .Lps")
+                const totalEfectivo = (parseFloat(data.data[0].MontoInicial) + parseFloat(data.data[0].Efectivo)) - parseFloat(data.data[0].TotalRetiro)
+               $("#txtTotalEfectivo").val(totalEfectivo.toFixed(2) + " .Lps")
+               
+               sessionStorage.setItem("TotalEfectivo", totalEfectivo.toFixed(2).toString())
+               sessionStorage.setItem("Caja_Id", data.data[0].Caja_Id)
+               sessionStorage.setItem("MontoInicial", data.data[0].MontoInicial)
+        
+                const efectivo = data.data[0].Efectivo.toString()
+                const transferencia = data.data[0].Transferencias.toString()
+                const credito = data.data[0].Tarjeta_Credito.toString()
+                const caja_Id = data.data[0].Caja_Id.toString()
+                const retiro = data.data[0].TotalRetiro.toString()
+                const inicio = data.data[0].MontoInicial.toString()
+                const Final = data.data[0].Caja_MontoFinal.toString()
+                ReporteCaja(efectivo,transferencia,credito,retiro,inicio,Final,totalEfectivo.toString(),caja_Id,)
+              
+               
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+
             });
 
             // Realizar la llamada AJAX para obtener las sucursales
@@ -117,7 +160,7 @@
                 }
             });
             
-      function ReporteCaja(Efectivo,Transferencia,Credito,TotalEfectivo) {
+      function ReporteCaja(Efectivo,Transferencia,Credito,TotalRetiro,Inicial,Final,Total) {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'px',
@@ -147,20 +190,44 @@
 
   doc.text("Ingresos", 90, 80);
   doc.setFontSize(16);
-  doc.setFont(undefined, 'normal'); 
-  doc.text("Efectivo:", 50, 95);
-  doc.text(Efectivo + ".lps", 95, 95);
-  doc.text("Transferencia" + ".lps", 50, 110);
-  doc.text(Transferencia + ".lps", 160, 110);
-  doc.text("Tarjeta Credito" + ".lps", 50, 125);
-  doc.text(Credito + ".lps", 160, 125);
+  doc.setFont(undefined, 'bold'); 
+  doc.text("Efectivo:", 50, 100);
+  doc.setFont(undefined, 'normal');
+  doc.text(Efectivo + ".lps", 150, 100);
+  doc.setFont(undefined, 'bold');
+  doc.text("Transferencia:", 50, 120);
+  doc.setFont(undefined, 'normal');
+  doc.text(Transferencia + ".lps", 150, 120);
+  doc.setFont(undefined, 'bold');
+  doc.text("Tarjeta Credito:", 50, 140);
+  doc.setFont(undefined, 'normal');
+  doc.text(Credito + ".lps", 160, 140);
   doc.setFontSize(20);
   doc.setFont(undefined, 'bold');
   doc.text("Egresos", 280, 80)
   doc.setFontSize(16);
+  doc.setFont(undefined, 'bold');
+  doc.text("Total retiro:", 260, 100)
   doc.setFont(undefined, 'normal');
-  doc.text("Total retiro:", 280, 95)
-  doc.text(TotalEfectivo, 340, 95);
+  doc.text(TotalRetiro, 340, 100);
+  doc.setFont(undefined, 'bold');
+  doc.text("Caja", 290,120)
+  doc.setFont(undefined, 'bold');
+  doc.text("Monto Inicial:", 260, 140)
+  doc.setFont(undefined, 'normal');
+  doc.text(Inicial, 360, 140);
+  doc.setFont(undefined, 'bold');
+  doc.text("Monto Final:", 260, 160)
+  doc.setFont(undefined, 'normal');
+  doc.text(Final, 360, 160);
+
+  doc.setFont(undefined, 'bold');
+  doc.text("Total Efectivo:", 50, 160)
+  doc.setFont(undefined, 'normal');
+  doc.text(Total, 160, 160);
+  
+  
+
 
 
 

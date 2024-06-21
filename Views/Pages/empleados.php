@@ -644,6 +644,8 @@
             });
         });
 
+
+
         $('#TablaMarca tbody').on('click', '.abrir-detalles', function() {
             var data = table.row($(this).parents('tr')).data();
             var Empl_Id = data.Empl_Id;

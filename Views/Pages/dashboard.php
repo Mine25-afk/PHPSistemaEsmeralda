@@ -10,14 +10,16 @@ try {
     // echo json_encode($ventasPorMes);
     $top5Clientes = $service->top5JClieentesActuales();
     $Caja = $service->Inciodecaja();
-    if (is_array($Caja) && isset($Caja[0]['MontoInicial'])) {
+    if (is_array($Caja) && isset($Caja[0]['caja_MontoInicial'])) {
       // Acceder al valor 'MontoInicial' dentro del array
-      $montoInicial = $Caja[0]['MontoInicial'];
+      $montoInicial = $Caja[0]['caja_MontoInicial'];
   } else {
       // En caso de no obtener un valor válido, asignar un valor por defecto
       $montoInicial = 'No disponible';
   }
+
     $CajaCierre = $service->CajaCierre();
+
     $TransaccionesReciente = $service->TransaccionesReciente();
     $EfectivoVendido = $service->EfectivoVendido();
     
@@ -194,24 +196,7 @@ if ($primerElementoVentaTarjeta && is_array($primerElementoVentaTarjeta)) {
                 </a>
             </div>
         </div>
-        <div class="col-lg-4 col-md-6 mb-3 d-flex align-items-stretch">
-        <div class="small-box card shadow-sm border-0">
-            <div class="card-header bg-success text-white">
-                <h4 class="card-title">productos más vendidos</h4>
-            </div>
-            <div class="card-body">
-                <ul id="top5-productos" class="list-group">
-                    <?php foreach ($ProductosMes as $prod): ?>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><i class="fas fa-user"></i> <?php echo $prod['Producto']; ?></span>
-                            <span class="badge badge-<?php echo isset($prod['Cantidad']) ? 'success' : 'secondary'; ?> badge-pill"><i class=""></i> <?php echo isset($prod['Cantidad']) ? $prod['Cantidad'] : 'Sin total'; ?> Total</span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        </div>
-    </div>
-
+   
         <div class="col-lg-4 col-md-6 mb-3 d-flex align-items-stretch">
             <div class="small-box bg-success flex-fill">
                 <div class="inner">
@@ -253,6 +238,23 @@ if ($primerElementoVentaTarjeta && is_array($primerElementoVentaTarjeta)) {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-user"></i> <?php echo $Cliente['Cliente']; ?></span>
                             <span class="badge badge-<?php echo isset($Cliente['TotalCompra']) ? 'success' : 'secondary'; ?> badge-pill"><i class="fas fa-dollar-sign"></i> <?php echo isset($Cliente['TotalCompra']) ? $Cliente['TotalCompra'] : 'Sin total'; ?> Total</span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="small-box card shadow-sm border-0">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title">productos más vendidos</h4>
+            </div>
+            <div class="card-body">
+                <ul id="top5-productos" class="list-group">
+                    <?php foreach ($ProductosMes as $prod): ?>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-user"></i> <?php echo $prod['Producto']; ?></span>
+                            <span class="badge badge-<?php echo isset($prod['Cantidad']) ? 'success' : 'secondary'; ?> badge-pill"><i class=""></i> <?php echo isset($prod['Cantidad']) ? $prod['Cantidad'] : 'Sin total'; ?> Total</span>
                         </li>
                     <?php endforeach; ?>
                 </ul>

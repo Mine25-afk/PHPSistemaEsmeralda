@@ -198,7 +198,7 @@
             </div>
 
             <div class="collapse" id="collapseNuevoProducto">
-                <h2 class="text-center" style="font-size: 90px !important">Agregar Producto</h2>
+                <h2 class="text-center" style="font-size: 90px !important">Productos</h2>
                 <form id="NuevoProductoForm" style="width: 100%">
                     <div class="form-row" id="productTypeSelection">
 
