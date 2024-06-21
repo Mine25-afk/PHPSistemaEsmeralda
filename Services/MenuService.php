@@ -52,8 +52,9 @@ function generarMenu($conn) {
                 break;
             case 'Compras':
             case 'Ventas':
-            case 'Reporte de caja':
+            case 'reportecaja':
             case 'Control de stock':
+                case 'Control de stock':
                 $menu['Reportes'][] = $row;
                 break;
             case 'Empleados':
@@ -139,6 +140,7 @@ Ventas<i class="fas fa-angle-left right"></i></p></a>';
         echo '<li class="nav-item" id="EsquemaReportes">';
         echo '<a href="#" class="nav-link" id="LinkReportes">     <i class="nav-icon fas fa-chart-line" style="color: #5d9e3e;"></i>  <p style="color: #5d9e3e;">
 Reportes<i class="fas fa-angle-left right"></i></p></a>';
+           
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Reportes'] as $item) {
             echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
