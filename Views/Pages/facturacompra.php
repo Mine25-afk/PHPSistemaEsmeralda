@@ -862,29 +862,17 @@
                     joyaData.append('Joya_UsuarioCreacion', 1);
                     joyaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
                 } else {
-                    accion = 'insertarMaquillajes'
+                    MaquillajeData.append('action', 'insertarMaquillajes');
+                    MaquillajeData.append('Maqu_Nombre', $('#nombreProducto').val());
+                    MaquillajeData.append('Maqu_PrecioCompra', $('#precioCompraProducto').val());
+                    MaquillajeData.append('Maqu_PrecioVenta', $('#precioVentaProducto').val());
+                    MaquillajeData.append('Maqu_PrecioMayor', $('#precioMayoristaProducto').val());
+                    MaquillajeData.append('Maqu_Imagen', $('#Imagen')[0].files[0]);
+                    MaquillajeData.append('Prov_Id', proveedorSeleccionado);
+                    MaquillajeData.append('Marc_Id', $('#Marc_Id').val());
+                    MaquillajeData.append('Maqu_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+
                 }
-
-                formData.append('action', accion);
-                formData.append('nombre', $('#nombreProducto').val());
-                formData.append('precio_compra', $('#precioCompraProducto').val());
-                formData.append('precio_venta', $('#precioVentaProducto').val());
-                formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
-                formData.append('imagen', $('#Imagen')[0].files[0]);
-                formData.append('stock', 1);
-                formData.append('usuario_creacion', 1);
-                formData.append('fecha_creacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-
-                if (tipoProducto === 'joya') {
-
-                } else if (tipoProducto === 'maquillaje') {
-                    formData.append('marca', $('#Marc_Id').val());
-                }
-
-                var proveedorSeleccionado = $('#Proveedor').val();
-
-
-
 
                 $.ajax({
                     url: 'Services/FacturaCompraService.php',
