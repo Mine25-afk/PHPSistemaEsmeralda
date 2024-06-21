@@ -176,7 +176,7 @@
         </div>
         <div class="col-md-2">
           <button type="button" class="btn btn-secondary btn-block" id="btnCancelar">
-            <i class="fas fa-reply"></i> Cancelar
+            <i class="fas fa-reply"></i> Listar
           </button>
         </div>
       </div>
