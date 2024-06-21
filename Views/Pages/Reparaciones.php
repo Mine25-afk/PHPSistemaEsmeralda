@@ -31,38 +31,30 @@
             </div>
         </div>
         <div class="CrearMostrar">
-        <div class="d-flex justify-content-end">
-                        <a href="#" id="Regresar" style="color: black;" class="btn btn-link">Regresar</a>
-                    </div>
-            <form id="ReparacionForm">
-                <input type="hidden" name="Repa_Id" id="Repa_Id">
-                <div class="form-row">
-                    <div class="col-md-6">
-                        <label class="control-label">Codigo</label>
-                        <input name="Repa_Codigo" id="Repa_Codigo" class="form-control letras" required />
-                        <span class="text-danger" id="ProveedorError"></span>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="control-label">Reparacion</label>
-                        <input name="Repa_Tipo_Reparacion" id="Repa_Tipo_Reparacion" class="form-control" required />
-                        <span class="text-danger" id="TelefonoError"></span>
-                    </div>
+            <div class="d-flex justify-content-center align-items-center">
+    <form id="ReparacionForm" class="w-50">
+        <input type="hidden" name="Repa_Id" id="Repa_Id">
+        <div class="form-row justify-content-center">
+            <div class="col-md-8">
+                <label class="control-label">Reparacion</label>
+                <input name="Repa_Tipo_Reparacion" id="Repa_Tipo_Reparacion" class="form-control" required />
+                <span class="text-danger" id="TelefonoError"></span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form-row d-flex justify-content-center">
+                <div class="col-auto">
+                    <input type="button" style="background-color:#FFA2DB; border-color:#FFA2DB; color:black;" value="Guardar" class="btn btn-primary" id="guardarBtn" />
                 </div>
-                <div class="card-body">
-                <div class="form-row d-flex justify-content-end">
-                    <div class="col-auto">
-                        <input type="button" style="background-color:#FFA2DB; border-color:#FFA2DB; color:black;" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-                    </div>
-                    <div class="col-auto">
-                        <a id="CerrarModal" style="background-color:#000000; border-color:#000000; color:white;" class="btn btn-secondary" style="color:white">Cancelar</a>
-                    </div>
+                <div class="col-auto">
+                    <a id="CerrarModal" style="background-color:#000000; border-color:#000000; color:white;" class="btn btn-secondary">Cancelar</a>
                 </div>
+            </div>
+        </div>
+    </form>
     </div>
-
 </div>
 
-            </form>
-        </div>
 
             <!-- Collapse Detalles -->
             <div class="CrearDetalles collapse" id="detallesCollapse">
@@ -190,21 +182,14 @@ $('#Repa_Tipo_Reparacion').on('input', function () {
 });
 
 // Limitar el campo Codigo a 12 caracteres
-$('#Repa_Codigo').on('input', function () {
-    var codigo = $(this).val();
-
-    if (codigo.length > 12) {
-        $(this).val(codigo.slice(0, 12)); // Limitar a 12 caracteres
-    }
-});
 
 
     // Guardar o actualizar reparación
     $('#guardarBtn').click(function() {
-        var Codigo = $('#Repa_Codigo').val().trim();
+   
         var TipoReparacion = $('#Repa_Tipo_Reparacion').val().trim();
         var RepaId = $('#Repa_Id').val(); // Obtener el ID del campo oculto
-        var isValid = validarFormulario(Codigo, TipoReparacion);
+        var isValid = validarFormulario( TipoReparacion);
 
         if (!isValid) {
             return;
@@ -219,12 +204,11 @@ $('#Repa_Codigo').on('input', function () {
         console.log('Repa_Id:', RepaId);
 
         $.ajax({
-            url: 'Services/ReparacionesController.php',
+            url: 'Services/ReparacionesService.php',
             type: 'POST',
             data: {
                 action: action,
                 Repa_Id: RepaId,
-                Repa_Codigo: Codigo,
                 Repa_Tipo_Reparacion: TipoReparacion,
                 Repa_UsuarioCreacion: usuarioId,
                 Repa_FechaCreacion: fecha,
@@ -291,7 +275,6 @@ $('#Repa_Codigo').on('input', function () {
                     var Reparaciones = JSON.parse(response);
                     console.log('Fetched Reparaciones:', Reparaciones); // Añadir console.log para depurar
                     $('#Repa_Id').val(RepaId); // Establecer el ID en el campo oculto
-                    $('#Repa_Codigo').val(Reparaciones.Repa_Codigo);
                     $('#Repa_Tipo_Reparacion').val(Reparaciones.Repa_Tipo_Reparacion);
                     $('.CrearOcultar').hide();
                     $('.CrearMostrar').show();
@@ -476,7 +459,7 @@ function eliminarProveedor() {
 
     // Validación del formulario
     function validarFormulario(Codigo, TipoReparacion) {
-        if (Codigo === '' || TipoReparacion === '') {
+        if ( TipoReparacion === '') {
             iziToast.error({
                     title: 'Error',
                     message: 'Por favor, complete todos los campos requeridos.',
