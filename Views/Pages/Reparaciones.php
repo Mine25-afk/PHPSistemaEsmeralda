@@ -31,6 +31,9 @@
             </div>
         </div>
         <div class="CrearMostrar">
+        <div class="d-flex justify-content-end">
+                        <a href="#" id="Regresar" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
             <form id="ReparacionForm">
                 <input type="hidden" name="Repa_Id" id="Repa_Id">
                 <div class="form-row">
@@ -63,6 +66,9 @@
 
             <!-- Collapse Detalles -->
             <div class="CrearDetalles collapse" id="detallesCollapse">
+            <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                 <div class="card card-body">
                     <h5>Detalles de la Reparaciones</h5>
                     <p id="detallesContenido"></p>
@@ -97,8 +103,9 @@
                 ¿Estás seguro de que deseas eliminar este proveedor?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Sí, Eliminar</button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+                <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
+            
             </div>
         </div>
     </div>
@@ -143,7 +150,7 @@ $(document).ready(function () {
                             <i class="fas fa-eye"></i> Detalles
                         </a>
                         <button class="dropdown-item eliminar" data-id='${data.Repa_Id}' data-toggle="modal" data-target="#eliminarModal">
-                            <i class="fas fa-eraser"></i> Eliminar
+                            <i class="fas fa-trash-alt"></i> Eliminar
                         </button>
                     </div>
                 </div>
@@ -164,7 +171,13 @@ $(document).ready(function () {
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
 
-
+    $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
 
 // Limitar el campo Reparacion a solo letras
 $('#Repa_Tipo_Reparacion').on('input', function () {
