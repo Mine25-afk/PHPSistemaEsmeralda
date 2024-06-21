@@ -316,91 +316,42 @@
                         ]
                     });
 
-                    $('#AbrirCollapse').click(function() {
-                        $('#tablaContainer').toggle();
-                        $('#nuevoRolCollapse').collapse('toggle');
-                        $('#Detalles').hide();
-                    });
-                    $('#CerrarModal').click(function() {
-                        $('#tablaContainer').toggle();
-                        $('#nuevoRolCollapse').collapse('hide');
-                        limpiarFormulario();
-                    });
-                    $('#CerrarDetalles').click(function() {
-                        $('#tablaContainer').toggle();
-                        $('.CrearOcultar').show();
-                        $('.detallesContenido').hide();
-                    });
-                    // Datos estáticos de las pantallas
-                    var pantallas = [{
-                            Pant_Id: 1,
-                            Pant_Descripcion: "Usuarios"
-                        },
-                        {
-                            Pant_Id: 2,
-                            Pant_Descripcion: "Roles"
-                        },
-                        {
-                            Pant_Id: 9,
-                            Pant_Descripcion: "Marcas"
-                        },
-                        {
-                            Pant_Id: 13,
-                            Pant_Descripcion: "Proveedores"
-                        },
-                        {
-                            Pant_Id: 5,
-                            Pant_Descripcion: "Clientes"
-                        },
-                        {
-                            Pant_Id: 28,
-                            Pant_Descripcion: "Empleados"
-                        },
-                        {
-                            Pant_Id: 15,
-                            Pant_Descripcion: "Facturas"
-                        },
-                        {
-                            Pant_Id: 18,
-                            Pant_Descripcion: "Facturas de compra"
-                        },
-                        {
-                            Pant_Id: 16,
-                            Pant_Descripcion: "Joyas"
-                        },
-                        {
-                            Pant_Id: 17,
-                            Pant_Descripcion: "Maquillajes"
-                        },
-                        {
-                            Pant_Id: 31,
-                            Pant_Descripcion: "Transferencias"
-                        },
-                        {
-                            Pant_Id: 20,
-                            Pant_Descripcion: "Control de stock"
-                        },
-                        {
-                            Pant_Id: 30,
-                            Pant_Descripcion: "Reporte de caja"
-                        },
-                        {
-                            Pant_Id: 32,
-                            Pant_Descripcion: "Ventas por pago"
-                        },
-                        {
-                            Pant_Id: 35,
-                            Pant_Descripcion: "Reparaciones"
-                        },
-                        {
-                            Pant_Id: 37,
-                            Pant_Descripcion: "dashboard"
-                        },
-                        {
-                            Pant_Id: 36,
-                            Pant_Descripcion: "facturaApartado"
-                        }
-                    ];
+    $('#AbrirCollapse').click(function() {
+        $('#tablaContainer').toggle();
+        $('#nuevoRolCollapse').collapse('toggle');
+        $('#Detalles').hide();
+    });
+    $('#CerrarModal').click(function() {
+        $('#tablaContainer').toggle();
+        $('#nuevoRolCollapse').collapse('hide');
+        limpiarFormulario();
+    });
+    $('#CerrarDetalles').click(function() {
+        $('#tablaContainer').toggle();
+        $('.CrearOcultar').show();
+        $('.detallesContenido').hide();
+    });
+    // Datos estáticos de las pantallas
+    var pantallas = [
+            { Pant_Id: 1, Pant_Descripcion: "Usuarios" },
+            { Pant_Id: 2, Pant_Descripcion: "Roles" },
+            { Pant_Id: 9, Pant_Descripcion: "Marcas" },
+            { Pant_Id: 13, Pant_Descripcion: "Proveedores" },
+            { Pant_Id: 5, Pant_Descripcion: "Clientes" },
+            { Pant_Id: 28, Pant_Descripcion: "Empleados" },
+            { Pant_Id: 15, Pant_Descripcion: "Facturas" },
+            { Pant_Id: 18, Pant_Descripcion: "Facturas de compra" },
+            { Pant_Id: 16, Pant_Descripcion: "Joyas" },
+            { Pant_Id: 17, Pant_Descripcion: "Maquillajes" },
+            { Pant_Id: 31, Pant_Descripcion: "Transferencias" },
+            { Pant_Id: 20, Pant_Descripcion: "Control de stock" },
+            { Pant_Id: 30, Pant_Descripcion: "Reporte de caja" },
+            { Pant_Id: 32, Pant_Descripcion: "Ventas por pago" },
+            { Pant_Id: 35, Pant_Descripcion: "Reparaciones" },
+            { Pant_Id: 37, Pant_Descripcion: "dashboard" },
+            { Pant_Id: 36, Pant_Descripcion: "facturaApartado" },
+            { Pant_Id: 40, Pant_Descripcion: "reportecaja" },
+        ];
 
                     var categorias = {
                         "Acceso": [],
