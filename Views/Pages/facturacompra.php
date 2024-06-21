@@ -74,10 +74,11 @@
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card">
-                    <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
+
 
                     <div class="card-body">
                         <div class="CrearOcultar" style="position:relative; top:-30px">
+                            <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
                             <p class="btn btn-primary" id="AbrirModal"> Nuevo</p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover" id="TablaFacturaCompra">
@@ -94,6 +95,7 @@
                         </div>
 
                         <div class="CrearMostrar">
+                            <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
                             <form id="FacturaCompraForm" style="width: 100%">
                                 <div class="form-row" style="justify-content: center; margin: 0px 10px">
                                     <div class="col-md-6">
@@ -196,7 +198,7 @@
             </div>
 
             <div class="collapse" id="collapseNuevoProducto">
-                <h5 class="text-center">Agregar Producto</h5>
+                <h2 class="text-center" style="font-size: 90px !important">Agregar Producto</h2>
                 <form id="NuevoProductoForm" style="width: 100%">
                     <div class="form-row" id="productTypeSelection">
 
@@ -231,6 +233,7 @@
                         <div class="col-md-6">
                             <label>Precio Mayorista</label>
                             <input type="text" class="form-control" id="precioMayoristaProducto" name="precioMayoristaProducto" required />
+                            <br>
                         </div>
                         <div class="col-md-6" id="marcaField">
                             <label>Marca</label>
@@ -244,12 +247,18 @@
                             <label>Categoría</label>
                             <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
                         </div>
-                        <div class="custom-file col-md-6">
-                            <label>Imagen</label>
-                            <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
-                            <label class="custom-file-label"></label>
-                        </div>
+                
+                            <div class="custom-file col-md-6">
+                                <label>Imagen</label>
+                                <input type="file" name="Imagen" class="custom-file-input" id="Imagen" required />
+                                <label class="custom-file-label"></label>
+                            </div>
+                  
+
+                        <div class="col-md-4"></div>
+                        <br>
                         <div class="col-md-6">
+                            <br>
                             <label>Imagen Actual</label>
                             <div id="imagenActualContainer">
                                 <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
@@ -257,12 +266,19 @@
                         </div>
                     </div>
                     <br>
-                    <div class="form-row d-flex justify-content-start">
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                    <div class="card-body">
+                        <div class="form-row d-flex justify-content-end">
+                            <div class="col-auto">
+
+
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-secondary" style="color:white" id="btnVolverFacturaCompra">Cancelar</button>
+                            </div>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -470,188 +486,188 @@
 
             function aplicarAutocompletado() {
 
-$('input[name="producto"]').autocomplete({
-    source: function(request, response) {
-        var term = request.term.toLowerCase();
-        var ajaxDataJoyas = {
-            action: 'listarJoyasAutoCompletado',
-            term: term
-        };
-        var ajaxDataMaquillajes = {
-            action: 'listarMaquillajesAutoCompletado',
-            term: term
-        };
-
-        if (/^[a-zA-Z]+/.test(term)) {
-            $.when(
-                $.ajax({
-                    url: 'Services/FacturaCompraService.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: ajaxDataJoyas
-                }),
-                $.ajax({
-                    url: 'Services/FacturaCompraService.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: ajaxDataMaquillajes
-                })
-            ).then(function(joyasData, maquillajesData) {
-                var combinedData = joyasData[0].concat(maquillajesData[0]);
-                var filteredData = combinedData.filter(function(item) {
-                    var codigo = (item.Joya_Codigo || item.Maqu_Codigo).toLowerCase();
-                    var nombre = (item.Joya_Nombre || item.Maqu_Nombre).toLowerCase();
-                    return codigo.indexOf(term) !== -1 || nombre.indexOf(term) !== -1;
-                });
-
-                response($.map(filteredData, function(item) {
-                    return {
-                        label: item.Joya_Nombre ? item.Joya_Nombre + ' - ' + item.Joya_Codigo : item.Maqu_Nombre + ' - ' + item.Maqu_Codigo,
-                        value: item.Joya_Codigo || item.Maqu_Codigo,
-                        data: item
-                    };
-                }));
-            }).catch(function(error) {
-                console.error('Error en la petición AJAX de autocompletado:', error);
-            });
-        } else if (/^[0-9]+/.test(term)) {
-            $(this).closest('tr').find('#categoria').text('Maquillaje');
-            $.ajax({
-                url: 'Services/FacturaCompraService.php',
-                type: 'POST',
-                dataType: 'json',
-                data: ajaxDataMaquillajes,
-                success: function(data) {
-                    var filteredData = data.filter(function(item) {
-                        var codigo = (item.Maqu_Codigo).toLowerCase();
-                        return codigo.indexOf(term) !== -1;
-                    });
-
-                    response($.map(filteredData, function(item) {
-                        return {
-                            label: item.Maqu_Nombre + ' - ' + item.Maqu_Codigo,
-                            value: item.Maqu_Codigo,
-                            data: item
+                $('input[name="producto"]').autocomplete({
+                    source: function(request, response) {
+                        var term = request.term.toLowerCase();
+                        var ajaxDataJoyas = {
+                            action: 'listarJoyasAutoCompletado',
+                            term: term
                         };
-                    }));
-                },
-            });
-        }
-    },
-    minLength: 1,
-    select: function(event, ui) {
-        var seleccionadoitem = ui.item.data;
-        let nombreProducto = seleccionadoitem.Joya_Nombre || seleccionadoitem.Maqu_Nombre;
-        var preciom = seleccionadoitem.Mayor;
-        var preciov = seleccionadoitem.Venta;
-        $(this).closest('tr').find('#precio_mayorista').text(preciom);
-        $(this).closest('tr').find('#precio_venta').text(preciov);
-        $(this).closest('tr').find('input[name="precio_compra"]').val(seleccionadoitem.Joya_PrecioCompra || seleccionadoitem.Maqu_PrecioCompra);
-        if (seleccionadoitem.Joya_Codigo) {
-            $(this).closest('tr').find('#categoria').text('Joya');
-        } else {
-            $(this).closest('tr').find('#categoria').text('Maquillaje');
-        }
-    }
+                        var ajaxDataMaquillajes = {
+                            action: 'listarMaquillajesAutoCompletado',
+                            term: term
+                        };
 
-});
-}
+                        if (/^[a-zA-Z]+/.test(term)) {
+                            $.when(
+                                $.ajax({
+                                    url: 'Services/FacturaCompraService.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: ajaxDataJoyas
+                                }),
+                                $.ajax({
+                                    url: 'Services/FacturaCompraService.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: ajaxDataMaquillajes
+                                })
+                            ).then(function(joyasData, maquillajesData) {
+                                var combinedData = joyasData[0].concat(maquillajesData[0]);
+                                var filteredData = combinedData.filter(function(item) {
+                                    var codigo = (item.Joya_Codigo || item.Maqu_Codigo).toLowerCase();
+                                    var nombre = (item.Joya_Nombre || item.Maqu_Nombre).toLowerCase();
+                                    return codigo.indexOf(term) !== -1 || nombre.indexOf(term) !== -1;
+                                });
 
+                                response($.map(filteredData, function(item) {
+                                    return {
+                                        label: item.Joya_Nombre ? item.Joya_Nombre + ' - ' + item.Joya_Codigo : item.Maqu_Nombre + ' - ' + item.Maqu_Codigo,
+                                        value: item.Joya_Codigo || item.Maqu_Codigo,
+                                        data: item
+                                    };
+                                }));
+                            }).catch(function(error) {
+                                console.error('Error en la petición AJAX de autocompletado:', error);
+                            });
+                        } else if (/^[0-9]+/.test(term)) {
+                            $(this).closest('tr').find('#categoria').text('Maquillaje');
+                            $.ajax({
+                                url: 'Services/FacturaCompraService.php',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: ajaxDataMaquillajes,
+                                success: function(data) {
+                                    var filteredData = data.filter(function(item) {
+                                        var codigo = (item.Maqu_Codigo).toLowerCase();
+                                        return codigo.indexOf(term) !== -1;
+                                    });
 
-
-    $(document).on('blur', 'input[name="producto"]', function() {
-        var term = $(this).val();
-        var row = $(this).closest('tr');
-        var numeroo = /^[0-9]+$/.test(term);
-        var alfanumerico = /^[a-zA-Z]+$/.test(term);
-        console.log('Term:', term);
-
-        if (numeroo || alfanumerico) {
-            console.log('entra al numeroalfa');
-            var ajaxData = {
-                action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
-                codigo: term
-            };
-
-            $.ajax({
-                url: 'Services/FacturaCompraService.php',
-                type: 'POST',
-                dataType: 'json',
-                data: ajaxData,
-                success: function(data) {
-                    if (data.length > 0) {
-                        var item = data[0];
-                        console.log('Item:', item);
-                        var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
-                        var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
-                        var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
-
-                        row.find('#precio_mayorista').text(precioMayorista);
-                        row.find('#precio_venta').text(precioVenta);
-                        row.find('input[name="precio_compra"]').val(precioCompra);
-
-                        if (item.Joya_Codigo) {
-                            row.find('#categoria').text('Joya');
-                        } else {
-                            row.find('#categoria').text('Maquillaje');
+                                    response($.map(filteredData, function(item) {
+                                        return {
+                                            label: item.Maqu_Nombre + ' - ' + item.Maqu_Codigo,
+                                            value: item.Maqu_Codigo,
+                                            data: item
+                                        };
+                                    }));
+                                },
+                            });
                         }
-
-                        // Inserta o actualiza la factura con la información obtenida
-                       // insertarActualizarFactura(row, item.Nombre);
-                    } else {
-                        row.find('#precio_mayorista').text('0.00');
-                        row.find('#precio_venta').text('0.00');
-                        row.find('input[name="precio_compra"]').val('0.00');
+                    },
+                    minLength: 1,
+                    select: function(event, ui) {
+                        var seleccionadoitem = ui.item.data;
+                        let nombreProducto = seleccionadoitem.Joya_Nombre || seleccionadoitem.Maqu_Nombre;
+                        var preciom = seleccionadoitem.Mayor;
+                        var preciov = seleccionadoitem.Venta;
+                        $(this).closest('tr').find('#precio_mayorista').text(preciom);
+                        $(this).closest('tr').find('#precio_venta').text(preciov);
+                        $(this).closest('tr').find('input[name="precio_compra"]').val(seleccionadoitem.Joya_PrecioCompra || seleccionadoitem.Maqu_PrecioCompra);
+                        if (seleccionadoitem.Joya_Codigo) {
+                            $(this).closest('tr').find('#categoria').text('Joya');
+                        } else {
+                            $(this).closest('tr').find('#categoria').text('Maquillaje');
+                        }
                     }
-                },
-                error: function() {
-                    row.find('#precio_mayorista').text('0.00');
-                    row.find('#precio_venta').text('0.00');
-                    row.find('input[name="precio_compra"]').val('0.00');
+
+                });
+            }
+
+
+
+            $(document).on('blur', 'input[name="producto"]', function() {
+                var term = $(this).val();
+                var row = $(this).closest('tr');
+                var numeroo = /^[0-9]+$/.test(term);
+                var alfanumerico = /^[a-zA-Z]+$/.test(term);
+                console.log('Term:', term);
+
+                if (numeroo || alfanumerico) {
+                    console.log('entra al numeroalfa');
+                    var ajaxData = {
+                        action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
+                        codigo: term
+                    };
+
+                    $.ajax({
+                        url: 'Services/FacturaCompraService.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: ajaxData,
+                        success: function(data) {
+                            if (data.length > 0) {
+                                var item = data[0];
+                                console.log('Item:', item);
+                                var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
+                                var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
+                                var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
+
+                                row.find('#precio_mayorista').text(precioMayorista);
+                                row.find('#precio_venta').text(precioVenta);
+                                row.find('input[name="precio_compra"]').val(precioCompra);
+
+                                if (item.Joya_Codigo) {
+                                    row.find('#categoria').text('Joya');
+                                } else {
+                                    row.find('#categoria').text('Maquillaje');
+                                }
+
+                                // Inserta o actualiza la factura con la información obtenida
+                                // insertarActualizarFactura(row, item.Nombre);
+                            } else {
+                                row.find('#precio_mayorista').text('0.00');
+                                row.find('#precio_venta').text('0.00');
+                                row.find('input[name="precio_compra"]').val('0.00');
+                            }
+                        },
+                        error: function() {
+                            row.find('#precio_mayorista').text('0.00');
+                            row.find('#precio_venta').text('0.00');
+                            row.find('input[name="precio_compra"]').val('0.00');
+                        }
+                    });
+                } else {
+                    console.log('entra a solo joya');
+                    var ajaxData = {
+                        action: 'buscarJoyaPorCodigo',
+                        codigo: term
+                    };
+
+                    $.ajax({
+                        url: 'Services/FacturaCompraService.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: ajaxData,
+                        success: function(data) {
+                            if (data.length > 0) {
+                                var item = data[0];
+                                console.log('Item:', item);
+                                var precioCompra = item.Joya_PrecioCompra;
+                                var precioMayorista = item.Joya_PrecioMayor;
+                                var precioVenta = item.Joya_PrecioVenta;
+
+                                row.find('#precio_mayorista').text(precioMayorista);
+                                row.find('#precio_venta').text(precioVenta);
+                                row.find('input[name="precio_compra"]').val(precioCompra);
+
+                                row.find('#categoria').text('Joya');
+
+                                // Inserta o actualiza la factura con la información obtenida
+                                // insertarActualizarFactura(row, item.Nombre);
+                            } else {
+                                row.find('#precio_mayorista').text('0.00');
+                                row.find('#precio_venta').text('0.00');
+                                row.find('input[name="precio_compra"]').val('0.00');
+                            }
+                        },
+                        error: function() {
+                            row.find('#precio_mayorista').text('0.00');
+                            row.find('#precio_venta').text('0.00');
+                            row.find('input[name="precio_compra"]').val('0.00');
+                        }
+                    });
                 }
             });
-        }else{
-            console.log('entra a solo joya');
-            var ajaxData = {
-                action:'buscarJoyaPorCodigo',
-                codigo: term
-            };
-
-            $.ajax({
-                url: 'Services/FacturaCompraService.php',
-                type: 'POST',
-                dataType: 'json',
-                data: ajaxData,
-                success: function(data) {
-                    if (data.length > 0) {
-                        var item = data[0];
-                        console.log('Item:', item);
-                        var precioCompra = item.Joya_PrecioCompra;
-                        var precioMayorista = item.Joya_PrecioMayor;
-                        var precioVenta = item.Joya_PrecioVenta;
-
-                        row.find('#precio_mayorista').text(precioMayorista);
-                        row.find('#precio_venta').text(precioVenta);
-                        row.find('input[name="precio_compra"]').val(precioCompra);
-
-                            row.find('#categoria').text('Joya');
-
-                        // Inserta o actualiza la factura con la información obtenida
-                       // insertarActualizarFactura(row, item.Nombre);
-                    } else {
-                        row.find('#precio_mayorista').text('0.00');
-                        row.find('#precio_venta').text('0.00');
-                        row.find('input[name="precio_compra"]').val('0.00');
-                    }
-                },
-                error: function() {
-                    row.find('#precio_mayorista').text('0.00');
-                    row.find('#precio_venta').text('0.00');
-                    row.find('input[name="precio_compra"]').val('0.00');
-                }
-            });
-        }
-    });
 
             $(document).on('blur', 'input[name="precio_compra"]', function() {
                 var row = $(this).closest('tr');
@@ -1129,7 +1145,7 @@ $('input[name="producto"]').autocomplete({
 
                         },
                         error: function() {
-      
+
                         }
                     });
                 }
