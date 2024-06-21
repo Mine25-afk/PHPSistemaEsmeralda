@@ -1,164 +1,3 @@
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Roles_insertar`(
-    IN p_Role_Rol VARCHAR(60),
-    IN p_Role_UsuarioCreacion INT,
-    IN p_Role_FechaCreacion DATETIME
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 0;  -- Cambiado a SELECT 0; en caso de error
-    END;
-    
-    START TRANSACTION;
-    
-    INSERT INTO acce_tbroles (
-        Role_Rol, 
-        Role_UsuarioCreacion, 
-        Role_FechaCreacion
-    ) 
-    VALUES (
-        p_Role_Rol, 
-        p_Role_UsuarioCreacion, 
-        p_Role_FechaCreacion
-    );
-    
-    COMMIT;
-    SELECT LAST_INSERT_ID() AS id;  -- Devuelve el ID del último insertado
-END
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Roles_eliminar`(
-    IN p_Role_Id INT
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 0 AS Resultado;
-    END;
-    
-    START TRANSACTION;
-    
-    DELETE FROM tbRoles
-    WHERE Role_Id = p_Role_Id;
-    
-    COMMIT;
-    SELECT 1 AS Resultado;
-END
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Roles_buscar`(
-    IN p_Role_Id INT
-)
-BEGIN
-    SELECT 
-        c.Role_Id,
-        Role_Rol,
-        Role_UsuarioCreacion,
-        Role_UsuarioModificacion,
-        DATE_FORMAT(Role_FechaCreacion, '%Y-%m-%d') AS FechaCreacion,
-        DATE_FORMAT(Role_FechaModificacion, '%Y-%m-%d') AS FechaModificacion,
-        uCreacion.Usua_Usuario AS UsuarioCreacion,
-        uModificador.Usua_Usuario AS UsuarioModificacion,
-        Role_Estado
-    FROM 
-        acce_tbroles c
-        LEFT JOIN acce_tbusuarios uCreacion ON uCreacion.Usua_Id = c.Role_UsuarioCreacion
-        LEFT JOIN acce_tbusuarios uModificador ON uModificador.Usua_Id = c.Role_UsuarioModificacion
-    WHERE
-        c.Role_Id = p_Role_Id;
-END
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Roles_actualizar`(
-    IN p_Role_Id INT,
-    IN p_Role_Rol VARCHAR(60),
-    IN p_Role_UsuarioModificacion INT,
-    IN p_Role_FechaModificacion DATETIME
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 0;
-    END;
-    
-    START TRANSACTION;
-    
-    UPDATE acce_tbroles
-    SET
-        Role_Rol = p_Role_Rol,
-        Role_UsuarioModificacion = p_Role_UsuarioModificacion,
-        Role_FechaModificacion = p_Role_FechaModificacion
-    WHERE
-        Role_Id = p_Role_Id;
-    
-    COMMIT;
-    SELECT 1;
-END
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_PantallasPorRoles_insertar`(
-    IN p_Role_Id INT,
-    IN p_Pant_Id INT
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 0;
-    END;
-    
-    START TRANSACTION;
-    
-    INSERT INTO acce_tbpantallasporroles (
-        Role_Id, 
-        Pant_Id
-    ) 
-    VALUES (
-        p_Role_Id, 
-        p_Pant_Id
-    );
-    
-    COMMIT;
-    SELECT 1;
-END
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_PantallasPorRoles_eliminar`(
-    IN p_Role_Id INT,
-    IN p_Pantallas TEXT
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 0 AS Resultado;
-    END;
-    
-    START TRANSACTION;
-    
-    DELETE FROM acce_tbpantallasporroles
-    WHERE Role_Id = p_Role_Id
-    AND FIND_IN_SET(Pant_Id, p_Pantallas);
-    
-    COMMIT;
-    SELECT 1 AS Resultado;
-END
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_PantallasPorRol2_buscar`(
-    IN p_Role_Id INT
-)
-BEGIN
-    SELECT 
-        Paxr_Id,
-        Pant_Id,
-        paro.Role_Id,
-        Role_Rol,
-        'SI' AS Agregado 
-    FROM 
-        acce_tbpantallasporroles paro
-        JOIN acce_tbroles r ON paro.Role_Id = r.Role_Id
-    WHERE
-        paro.Role_Id = p_Role_Id;
-END
-
 
 -------------------------------------------------------------------
 
@@ -320,4 +159,224 @@ LEFT JOIN acce_tbroles AS ro ON ro.Role_Id = usu.Role_Id
 WHERE
 usu.Usua_Usuario = p_Usuario
 AND usu.Usua_Contraseña = p_Contra;
+END
+------------------------------------------------------------------20/6/2024
+DELIMITER ;;
+CREATE  PROCEDURE `SP_Ventas_Del_Mes`()
+BEGIN
+    SELECT COUNT(*) AS VentasDelMes
+    FROM dbSistemaEsmeralda.vent_tbfactura
+    WHERE YEAR(Fact_FechaFinalizado) = YEAR(CURDATE())
+      AND MONTH(Fact_FechaFinalizado) = MONTH(CURDATE())
+      AND Fact_Finalizado = 1; -- Ajusta según tu lógica de negocio
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Ventas_Del_Mes_FacturaCompra`()
+BEGIN
+    SELECT COUNT(*) AS VentasDelMes
+    FROM dbSistemaEsmeralda.vent_tbfacturacompraencabezado
+    WHERE YEAR(FaCE_fechafinalizacion) = YEAR(CURDATE())
+      AND MONTH(FaCE_fechafinalizacion) = MONTH(CURDATE())
+      AND FaCE_Finalizada = 1; -- Ajusta según tu lógica de negocio
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Top6_Mejores_Clientes_Actual`()
+BEGIN
+    SELECT CONCAT(cl.Clie_DNI, ' ', cl.Clie_Nombre, ' ', cl.Clie_Apellido) AS Cliente,
+           FORMAT(SUM(fe.Fact_Cambio), 2) AS TotalCompra
+    FROM dbSistemaEsmeralda.vent_tbfactura fe
+    JOIN dbSistemaEsmeralda.gral_tbclientes cl ON fe.Clie_Id = cl.Clie_Id
+    WHERE YEAR(fe.Fact_FechaCreacion) = YEAR(CURDATE()) AND MONTH(fe.Fact_FechaCreacion) = MONTH(CURDATE())
+    GROUP BY cl.Clie_Id
+    ORDER BY TotalCompra DESC
+    LIMIT 6;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Productos_Del_Mes`()
+BEGIN
+    SELECT COUNT(DISTINCT Producto_Id) AS ProductosDelMes
+    FROM (
+        SELECT Joya_Id AS Producto_Id
+        FROM dbSistemaEsmeralda.vent_tbjoyas
+        WHERE (YEAR(Joya_FechaCreacion) = YEAR(CURDATE()) AND MONTH(Joya_FechaCreacion) = MONTH(CURDATE()))
+           OR (YEAR(Joya_FechaModificacion) = YEAR(CURDATE()) AND MONTH(Joya_FechaModificacion) = MONTH(CURDATE()))
+        
+        UNION ALL
+        
+        SELECT Maqu_Id AS Producto_Id
+        FROM dbSistemaEsmeralda.vent_tbmaquillajes
+        WHERE (YEAR(Maqu_FechaCreacion) = YEAR(CURDATE()) AND MONTH(Maqu_FechaCreacion) = MONTH(CURDATE()))
+           OR (YEAR(Maqu_FechaModificacion) = YEAR(CURDATE()) AND MONTH(Maqu_FechaModificacion) = MONTH(CURDATE()))
+        
+        UNION ALL
+        
+        SELECT Repa_Id AS Producto_Id
+        FROM dbSistemaEsmeralda.vent_tbreparaciones
+        WHERE (YEAR(Repa_FechaCreacion) = YEAR(CURDATE()) AND MONTH(Repa_FechaCreacion) = MONTH(CURDATE()))
+           OR (YEAR(Repa_FechaModifica) = YEAR(CURDATE()) AND MONTH(Repa_FechaModifica) = MONTH(CURDATE()))
+    ) AS Productos;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_Clientes_Nuevos_Activos`()
+BEGIN
+    -- Contar clientes nuevos o activos basados en las facturas del mes actual
+    SELECT COUNT(DISTINCT Clie_Id) AS ClientesNuevosActivos
+    FROM dbSistemaEsmeralda.vent_tbfactura
+    WHERE YEAR(Fact_FechaCreacion) = YEAR(CURDATE()) AND MONTH(Fact_FechaCreacion) = MONTH(CURDATE());
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Dash_CantidadProducto_anual`()
+BEGIN
+    SELECT 'Joyas' AS Producto, COUNT(*) AS Cantidad
+    FROM vent_tbfacturadetalles D
+    INNER JOIN vent_tbfactura F ON D.Fact_Id = F.Fact_Id
+    INNER JOIN vent_tbjoyas J ON D.Prod_Id = J.Joya_Id
+    WHERE FaxD_Dif = 0
+    
+    UNION ALL
+    
+    SELECT 'Maquillaje' AS Producto, COUNT(*) AS Cantidad
+    FROM vent_tbfacturadetalles D
+    INNER JOIN vent_tbfactura F ON D.Fact_Id = F.Fact_Id
+    INNER JOIN vent_tbmaquillajes M ON D.Prod_Id = M.Maqu_Id
+    WHERE FaxD_Dif = 1 AND Fact_Finalizado = 0;
+END ;;
+DELIMITER ;
+
+
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_SumaMontosFinalesMesActual`()
+BEGIN
+    SELECT 
+        SUM(caja_MontoFinal) AS TotalMontoFinal
+    FROM 
+        vent_tbcajas
+    WHERE
+        MONTH(caja_FechaCierre) = MONTH(CURRENT_DATE()) AND 
+        YEAR(caja_FechaCierre) = YEAR(CURRENT_DATE()) AND
+        caja_Finalizado = 1;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_CajaMontoInicialMesActual`()
+BEGIN
+    SELECT 
+        caja_MontoInicial
+    FROM 
+       vent_tbcajas 
+    WHERE 
+        MONTH(caja_FechaApertura) = MONTH(CURRENT_DATE()) AND 
+        YEAR(caja_FechaApertura) = YEAR(CURRENT_DATE())
+    ORDER BY 
+        caja_FechaApertura ASC
+    LIMIT 1;
+END ;;
+DELIMITER ;
+
+-- Crear el procedimiento almacenado para ventas con efectivo
+DELIMITER ;;
+
+CREATE PROCEDURE sp_VentasPorEfectivo()
+BEGIN
+    SELECT 
+        'Efectivo' AS MetodoPago,
+        CONCAT('Lps. ', FORMAT(SUM(Fact_Pago), 2)) AS TotalEnLempiras
+    FROM 
+        vent_tbfactura F
+    JOIN 
+        gral_tbmetodospago MP ON F.Mepa_Id = MP.Mepa_Id
+    WHERE 
+        MP.Mepa_Metodo = 'Efectivo';
+END ;;
+
+DELIMITER ;
+
+-- Crear el procedimiento almacenado para ventas con tarjeta de crédito
+DELIMITER ;;
+
+CREATE PROCEDURE sp_VentasPorTarjeta()
+BEGIN
+    SELECT 
+        'Tarjeta de Crédito' AS MetodoPago,
+        CONCAT('Lps. ', FORMAT(SUM(Fact_Pago), 2)) AS TotalEnLempiras
+    FROM 
+        vent_tbfactura F
+    JOIN 
+        gral_tbmetodospago MP ON F.Mepa_Id = MP.Mepa_Id
+    WHERE 
+        MP.Mepa_Metodo = 'Tarjeta de Crédito';
+END ;;
+
+DELIMITER ;
+
+-- Crear el procedimiento almacenado para ventas con pago en línea
+DELIMITER ;;
+
+CREATE PROCEDURE sp_VentasPorPagoEnLinea()
+BEGIN
+    SELECT 
+        'Pago en Línea' AS MetodoPago,
+        CONCAT('Lps. ', FORMAT(SUM(Fact_Pago), 2)) AS TotalEnLempiras
+    FROM 
+        vent_tbfactura F
+    JOIN 
+        gral_tbmetodospago MP ON F.Mepa_Id = MP.Mepa_Id
+    WHERE 
+        MP.Mepa_Metodo = 'Pago en Línea';
+END ;;
+
+DELIMITER ;;
+
+CREATE PROCEDURE sp_Dash_CantidadProducto_Mes()
+BEGIN
+   SELECT 'Joyas' AS Producto, SUM(D.FaxD_Cantidad) AS Cantidad
+FROM vent_tbfacturadetalles D
+INNER JOIN vent_tbfactura F ON D.Fact_Id = F.Fact_Id
+INNER JOIN vent_tbjoyas J ON D.Prod_Codigo = J.Joya_Codigo
+WHERE MONTH(F.Fact_FechaCreacion) = MONTH(CURRENT_DATE())
+AND YEAR(F.Fact_FechaCreacion) = YEAR(CURRENT_DATE()) AND D.FaxD_Dif = 1
+UNION ALL
+SELECT 'Maquillaje' AS Producto, SUM(D.FaxD_Cantidad) AS Cantidad
+FROM vent_tbfacturadetalles D
+INNER JOIN vent_tbfactura F ON D.Fact_Id = F.Fact_Id
+INNER JOIN vent_tbmaquillajes M ON D.Prod_Codigo = M.Maqu_Codigo
+WHERE MONTH(F.Fact_FechaCreacion) = MONTH(CURRENT_DATE())
+AND YEAR(F.Fact_FechaCreacion) = YEAR(CURRENT_DATE()) AND D.FaxD_Dif = 0 AND F.Fact_Finalizado = 0;
+
+END //
+
+DELIMITER ;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_TransaccionesRecientes`()
+BEGIN
+    -- Obtener la factura de venta más reciente junto con sus detalles y nombre del cliente
+    SELECT 
+        V.Fact_Id AS Transaccion, 
+        C.Clie_Nombre AS Cliente, -- Nombre del cliente
+        DV.Prod_Codigo AS ProductoCodigo, 
+        DV.FaxD_Cantidad AS Cantidad, 
+        DV.FaxD_Precio AS Precio
+    FROM 
+        vent_tbfactura V
+    JOIN 
+        vent_tbfacturadetalles DV ON V.Fact_Id = DV.Fact_Id
+    JOIN
+        gral_tbclientes C ON V.Clie_Id = C.Clie_Id -- Unir con la tabla de clientes
+    WHERE 
+        V.Fact_Id = (SELECT MAX(Fact_Id) FROM vent_tbfactura) -- Factura más reciente
+    ORDER BY 
+        V.Fact_Id DESC
+    LIMIT 1;
 END

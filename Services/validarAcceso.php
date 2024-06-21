@@ -41,8 +41,10 @@ if ($es_admin == 1) {
     // Los usuarios con roles específicos
     if (!in_array($url_actual, $pantallas)) {
         // Loguear si la página solicitada no está permitida
+   
+
         error_log('Acceso denegado. La página no está en las pantallas permitidas: ' . $url_actual);
-        //header("Location: ../index.php");
+  
         exit();
     }
     $sql = "SELECT * FROM acce_tbpantallas p
@@ -63,4 +65,5 @@ if (count($result) == 0) {
     //header("Location: ../index.php");
     exit();
 }
+ob_end_flush(); 
 ?>
