@@ -442,7 +442,7 @@
                         pantallasTreeView.append(categoriaItem);
                         categorias[categoria].forEach(function(pantalla) {
                             categoriaItem.find('ul').append(
-                                `<li><input type="checkbox" class="pantalla-checkbox" data-id="${pantalla.Pant_Id}" data-categoria="${categoria}"><label>${pantalla.Pant_Descripcion}</label></li>`
+                                <li><input type="checkbox" class="pantalla-checkbox" data-id="${pantalla.Pant_Id}" data-categoria="${categoria}"><label>${pantalla.Pant_Descripcion}</label></li>
                             );
                         });
                     });
