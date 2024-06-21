@@ -1262,3 +1262,118 @@ END;
 //
 
 DELIMITER ;
+
+
+
+
+----------------------------------------------------------------------------------------
+CREATE VIEW VW_VentasMayoristas AS
+WITH Pricing AS (
+    SELECT
+        fd.FaxD_Dif,
+        fd.Prod_Codigo,
+        fd.Fact_Id,
+        cl.Clie_esMayorista,
+        CASE WHEN fd.FaxD_Dif = 1 THEN j.Joya_Nombre ELSE m.Maqu_Nombre END AS Prod_Nombre,
+        fd.FaxD_Cantidad,
+        CASE WHEN fd.FaxD_Dif = 1 THEN 'Joyas' ELSE 'Maquillajes' END AS Categoria,
+        CASE 
+            WHEN fd.FaxD_Cantidad > 5 AND fd.FaxD_Dif = 1 AND j.Joya_PrecioMayor IS NOT NULL THEN j.Joya_PrecioMayor
+            WHEN fd.FaxD_Cantidad <= 5 AND fd.FaxD_Dif = 1 AND j.Joya_PrecioVenta IS NOT NULL THEN j.Joya_PrecioVenta
+            WHEN fd.FaxD_Cantidad > 5 AND fd.FaxD_Dif = 2 AND m.Maqu_PrecioMayor IS NOT NULL THEN m.Maqu_PrecioMayor
+            ELSE m.Maqu_PrecioVenta
+        END AS Price,
+        f.Fact_FechaFinalizado
+    FROM
+        Vent_tbFacturaDetalles AS fd
+    INNER JOIN
+        Vent_tbFactura AS f ON fd.Fact_Id = f.Fact_Id
+	INNER JOIN gral_tbclientes as cl on f.Clie_Id = cl.Clie_Id
+    LEFT JOIN
+        Vent_tbJoyas AS j ON fd.Prod_Codigo = j.Joya_Codigo AND fd.FaxD_Dif = 1
+    LEFT JOIN
+        Vent_tbMaquillajes AS m ON fd.Prod_Codigo = m.Maqu_Codigo AND fd.FaxD_Dif = 2
+    WHERE
+        f.Fact_Finalizado = 0
+),
+Consolidated AS (
+    SELECT
+        Fact_Id,
+        Clie_esMayorista,
+        Prod_Nombre,
+        Categoria,
+        SUM(FaxD_Cantidad) AS Total_Cantidad,
+        MAX(Price) AS Prod_Precio,
+        YEAR(Fact_FechaFinalizado) AS Año,
+        MONTH(Fact_FechaFinalizado) AS Mes,
+        DATE_FORMAT(Fact_FechaFinalizado, '%Y-%m-%d') AS FechaFinalizado
+    FROM
+        Pricing
+    GROUP BY
+        Fact_Id, Prod_Nombre, Categoria, Año, Mes, FechaFinalizado
+)
+SELECT
+    Fact_Id,
+    Prod_Nombre AS Producto,
+    Total_Cantidad AS Cantidad,
+    Prod_Precio AS Precio_Unitario,
+    Total_Cantidad * Prod_Precio AS Total,
+    Clie_esMayorista,
+    Categoria,
+    Año,
+    FechaFinalizado AS Fact_FechaFinalizado
+FROM
+    Consolidated;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ReporteVentasMayoristas`(
+    IN FechaInicio DATE,
+    IN FechaFinal DATE
+)
+BEGIN
+    SELECT * 
+    FROM VW_VentasMayoristas
+    WHERE Fact_FechaFinalizado >= FechaInicio 
+      AND Fact_FechaFinalizado <= FechaFinal 
+      AND (Clie_esMayorista = 1 OR Cantidad > 5);
+END;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ReporteVentaspPorPago`(
+    IN Mepa_Id INT,
+    IN FechaInicio DATE,
+    IN FechaFinal DATE
+)
+BEGIN
+    IF Mepa_Id = 0 THEN
+        SELECT 
+            V.Fact_Id,
+            SUM(V.Total) * 1.15 AS Total,
+            M.Mepa_Metodo,
+            V.Fact_FechaFinalizado
+        FROM VW_VentasMayoristas V
+        INNER JOIN Vent_tbFactura F ON F.Fact_Id = V.Fact_Id
+        INNER JOIN Gral_tbMetodosPago M ON M.Mepa_Id = F.Mepa_Id
+        WHERE V.Fact_FechaFinalizado >= FechaInicio 
+          AND V.Fact_FechaFinalizado <= FechaFinal
+        GROUP BY V.Fact_Id, M.Mepa_Metodo, V.Fact_FechaFinalizado;
+    ELSE
+        SELECT 
+            V.Fact_Id,
+            SUM(V.Total) * 1.15 AS Total,
+            M.Mepa_Metodo,
+            V.Fact_FechaFinalizado
+        FROM VW_VentasMayoristas V
+        INNER JOIN Vent_tbFactura F ON F.Fact_Id = V.Fact_Id
+        INNER JOIN Gral_tbMetodosPago M ON M.Mepa_Id = F.Mepa_Id
+        WHERE M.Mepa_Id = Mepa_Id
+          AND V.Fact_FechaFinalizado >= FechaInicio 
+          AND V.Fact_FechaFinalizado <= FechaFinal
+        GROUP BY V.Fact_Id, M.Mepa_Metodo, V.Fact_FechaFinalizado;
+    END IF;
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_MetodosPago_listar`()
+BEGIN
+  select * from gral_tbmetodospago;
+END
