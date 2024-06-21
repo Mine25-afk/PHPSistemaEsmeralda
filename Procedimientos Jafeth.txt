@@ -483,3 +483,204 @@ BEGIN
     END IF;
 
 END
+
+
+
+----------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE sp_Dash_CantidadProducto_RangoFechas(
+    IN FechaInicio DATE,
+    IN FechaFin DATE
+)
+BEGIN
+    SELECT 'Joyas' AS Producto, SUM(FaxD_Cantidad) AS Cantidad
+    FROM vent_tbfacturadetalles D
+    INNER JOIN vent_tbfactura F ON D.Fact_Id = F.Fact_Id
+    INNER JOIN vent_tbjoyas J ON D.Prod_Id = J.Joya_Id
+    WHERE F.Fact_FechaCreacion BETWEEN FechaInicio AND FechaFin
+    AND FaxD_Dif = 1
+    UNION ALL
+    SELECT 'Maquillaje' AS Producto, SUM(FaxD_Cantidad) AS Cantidad
+    FROM vent_tbfacturadetalles D
+    INNER JOIN vent_tbfactura F ON D.Fact_Id = F.Fact_Id
+    INNER JOIN  vent_tbmaquillajes M ON D.Prod_Id = M.Maqu_Id
+    WHERE F.Fact_FechaCreacion BETWEEN FechaInicio AND FechaFin
+    AND FaxD_Dif = 0 AND Fact_FechaFinalizado = 0;
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_TotalFinal_JoyasMes(
+    IN MesActual INT,
+    IN AñoActual INT
+)
+BEGIN
+    DECLARE TotalFinal NUMERIC(18, 2);
+    SELECT SUM(Total) INTO TotalFinal
+    FROM v_Dash_JoyasMes;
+
+    SELECT TotalFinal AS TotalFinal;
+END//
+
+DELIMITER ;
+
+CREATE VIEW v_Dash_JoyasMes AS
+SELECT J.Joya_Nombre AS NombreProducto, 
+       SUM(D.FaxD_Cantidad) AS TotalVendido, 
+       SUM(D.FaxD_Cantidad * J.Joya_PrecioVenta) AS Total
+FROM vent_tbfacturadetalles AS D 
+INNER JOIN vent_tbfactura AS F ON D.Fact_Id = F.Fact_Id 
+INNER JOIN vent_tbjoyas AS J ON D.Prod_Codigo = J.Joya_Codigo 
+WHERE F.Fact_Finalizado = 0
+GROUP BY J.Joya_Nombre
+ORDER BY TotalVendido DESC, J.Joya_Nombre
+LIMIT 5;
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE sp_VentasPorMetodoPago(
+    IN MesActual INT,
+    IN AñoActual INT
+)
+BEGIN
+    SELECT 
+        'Efectivo' AS MetodoPago,
+        CONCAT('Lps. ', FORMAT(SUM(F.Fact_Pago), 2)) AS TotalEnLempiras
+    FROM 
+        vent_tbfactura F
+    JOIN 
+        gral_tbmetodospago MP ON F.Mepa_Id = MP.Mepa_Id
+    WHERE 
+        MP.Mepa_Metodo = 'Efectivo' AND 
+        MONTH(F.Fact_Fecha) = MesActual AND 
+        YEAR(F.Fact_Fecha) = AñoActual
+    UNION ALL
+    SELECT 
+        'Tarjeta de Crédito' AS MetodoPago,
+        CONCAT('Lps. ', FORMAT(SUM(F.Fact_Pago), 2)) AS TotalEnLempiras
+    FROM 
+        vent_tbfactura F
+    JOIN 
+        gral_tbmetodospago MP ON F.Mepa_Id = MP.Mepa_Id
+    WHERE 
+        MP.Mepa_Metodo = 'Tarjeta de Crédito' AND 
+        MONTH(F.Fact_Fecha) = MesActual AND 
+        YEAR(F.Fact_Fecha) = AñoActual
+    UNION ALL
+    SELECT 
+        'Pago en Línea' AS MetodoPago,
+        CONCAT('Lps. ', FORMAT(SUM(F.Fact_Pago), 2)) AS TotalEnLempiras
+    FROM 
+        vent_tbfactura F
+    JOIN 
+        gral_tbmetodospago MP ON F.Mepa_Id = MP.Mepa_Id
+    WHERE 
+        MP.Mepa_Metodo = 'Pago en Línea' AND 
+        MONTH(F.Fact_Fecha) = MesActual AND 
+        YEAR(F.Fact_Fecha) = AñoActual;
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_DashGeneroMes(
+    IN MesActual INT,
+    IN AñoActual INT
+)
+BEGIN
+    SELECT
+        CASE WHEN C.Clie_Sexo = 'M' THEN 'Masculino' ELSE 'Femenino' END AS Genero,
+        COUNT(*) AS TotalCompras
+    FROM 
+       vent_tbfactura  F
+    INNER JOIN 
+        gral_tbclientes C ON F.Clie_Id = C.Clie_Id
+    WHERE 
+        MONTH(F.Fact_FechaCreacion) = MesActual
+        AND YEAR(F.Fact_FechaCreacion) = AñoActual
+    GROUP BY 
+        C.Clie_Sexo;
+END//
+
+DELIMITER ;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Reporte_ControlStock`(
+    IN TipoProducto INT,
+    IN Sucu_Id INT
+)
+BEGIN
+    -- Desactivar el comportamiento de no contar filas afectadas
+    SET SESSION sql_mode = '';
+
+    IF TipoProducto = 2 AND Sucu_Id = 0 THEN
+        SELECT
+            CASE 
+                WHEN j.Joya_Nombre IS NOT NULL THEN j.Joya_Nombre
+                ELSE m.Maqu_Nombre
+            END AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,
+            CASE 
+                WHEN j.Joya_Nombre IS NOT NULL THEN 'Joya'
+                ELSE 'Maquillaje'
+            END AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbJoyas j ON p.Prod_Codigo = j.Joya_Codigo AND p.Prxs_Dif = 1
+        LEFT JOIN Vent_tbMaquillajes m ON p.Prod_Codigo = m.Maqu_Codigo AND p.Prxs_Dif = 0
+        WHERE (j.Joya_Estado = 1 OR m.Maqu_Estado = 1)
+        AND (Sucu_Id = 2 OR p.Sucu_Id = Sucu_Id)
+        GROUP BY Producto, Categoria;
+
+    ELSEIF TipoProducto = 1 AND Sucu_Id = 0 THEN
+        SELECT
+            j.Joya_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Joya' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbJoyas j ON p.Prod_Codigo = j.Joya_Codigo AND p.Prxs_Dif = 1
+        WHERE j.Joya_Estado = 1
+        AND p.Prxs_Dif = 1
+        GROUP BY j.Joya_Nombre;
+
+    ELSEIF TipoProducto = 0 AND Sucu_Id = 0 THEN
+        SELECT
+            m.Maqu_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Maquillaje' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbMaquillajes m ON p.Prod_Codigo = m.Maqu_Codigo AND p.Prxs_Dif = 0
+        WHERE m.Maqu_Estado = 1
+        AND p.Prxs_Dif = 0
+        GROUP BY m.Maqu_Nombre;
+
+    ELSEIF TipoProducto = 1 THEN
+        SELECT
+            j.Joya_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Joya' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbJoyas j ON p.Prod_Codigo = j.Joya_Codigo AND p.Prxs_Dif = 1
+        WHERE j.Joya_Estado = 1
+        AND p.Prxs_Dif = 1
+        AND (Sucu_Id = 2 OR p.Sucu_Id = Sucu_Id)
+        GROUP BY j.Joya_Nombre;
+
+    ELSEIF TipoProducto = 0 THEN
+        SELECT
+            m.Maqu_Nombre AS Producto,
+            SUM(p.Prsx_Stock) AS Stock,  
+            'Maquillaje' AS Categoria
+        FROM Gral_tbProductosPorSucurales p
+        LEFT JOIN Vent_tbMaquillajes m ON p.Prod_Codigo = m.Maqu_Codigo AND p.Prxs_Dif = 0
+        WHERE m.Maqu_Estado = 1
+        AND p.Prxs_Dif = 0
+        AND (Sucu_Id = 2 OR p.Sucu_Id = Sucu_Id)
+        GROUP BY m.Maqu_Nombre;
+
+    END IF;
+
+END

@@ -56,7 +56,8 @@
         <hr>
 
         <div id="reportContent" class="mt-4">
-            <embed id="pdfEmbed" src="" type="application/pdf" width="100%" height="600px" />
+        <iframe id="pdfViewer" style="width:100%; height:600px;"></iframe>
+
         </div>
     </div>
 
@@ -163,70 +164,90 @@
         }
 
         function generatePDF(data) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'px',
+            format: 'letter'
+        });
 
-    const logoBase64 = 'Views/Logo.png';
+        const img = new Image();
+        img.src = 'Views/Logo.png';
 
-    // Agregar el logo
-    doc.addImage(logoBase64, 'PNG', 10, 10, 50, 20); 
+        doc.addImage(img, 'PNG', 10, 10, 200, 50);
 
-    // Descripción de la sucursal, empleado y fecha
-    const sucursal = 'Sucursal: Centro';
-    const empleado = 'Empleado: Juan Pérez';
-    const fecha = `Fecha: ${new Date().toLocaleDateString()}`;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        doc.text('Esmeraldas HN', 280, 30);
 
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text(sucursal, 70, 15); // Ajusta las posiciones según sea necesario
-    doc.text(empleado, 70, 20);
-    doc.text(fecha, 70, 25);
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text('Dirección :', 280, 40);
+        doc.text("Tegucigalpa: Los dolores, calle buenos aires", 280, 50);
 
-    // Título del reporte
-    doc.setFontSize(18);
-    doc.setTextColor(255, 255, 255);
-    doc.setFillColor(0, 123, 255); // Azul
-    doc.rect(10, 40, 190, 10, 'F'); // Ajusta la posición del rectángulo
-    doc.text('Reporte de Control de Stock', 105, 47, null, null, 'center'); // Ajusta la posición del texto
+        const fechaActual = new Date().toLocaleDateString();
 
-    // Encabezado de la tabla
-    doc.setFontSize(12);
-    doc.setTextColor(255, 255, 255);
-    doc.setFillColor(108, 117, 125); // Gris
-    doc.rect(10, 60, 190, 10, 'F'); // Ajusta la posición del encabezado
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text("Fecha Inicio: " + fechaActual, 32, 120);
+        doc.text("Fecha Final: " + fechaActual, 32, 135);
 
-    doc.rect(10, 60, 60, 10, 'F'); // Categoría
-    doc.text('Categoría', 12, 67);
-    doc.rect(70, 60, 70, 10, 'F'); // Producto
-    doc.text('Producto', 72, 67);
-    doc.rect(140, 60, 60, 10, 'F'); // Stock
-    doc.text('Stock', 142, 67);
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'bold');
+        doc.text("Reporte de Control de Stock", 105, 90, null, null, 'center');
 
-    let yPosition = 77;
-    doc.setTextColor(0, 0, 0); // Negro
+        let yPosition = 160;
+        doc.setFontSize(12);
+        doc.setTextColor(255, 255, 255);
+        doc.setFillColor(108, 117, 125); // Gris para el encabezado
+        doc.rect(10, yPosition - 10, 580, 10, 'F');
+        doc.text('Categoría', 20, yPosition);
+        doc.text('Producto', 200, yPosition);
+        doc.text('Stock', 400, yPosition);
 
-    doc.setLineWidth(0.1);
-    data.forEach(row => {
-        doc.line(10, yPosition - 7, 200, yPosition - 7);
-        doc.line(10, yPosition + 3, 200, yPosition + 3);
-        doc.line(10, yPosition - 7, 10, yPosition + 3);
-        doc.line(70, yPosition - 7, 70, yPosition + 3);
-        doc.line(140, yPosition - 7, 140, yPosition + 3);
-        doc.line(200, yPosition - 7, 200, yPosition + 3);
+        yPosition += 20;
+        doc.setTextColor(0, 0, 0); // Negro para el contenido
 
-        doc.text(`${row.Categoria}`, 12, yPosition);
-        doc.text(`${row.Producto}`, 72, yPosition);
-        doc.text(`${row.Stock}`, 142, yPosition);
-        yPosition += 10;
-        if (yPosition > 280) {
-            doc.addPage();
-            yPosition = 20;
+        data.forEach(row => {
+            doc.line(10, yPosition - 10, 580, yPosition - 10);
+            doc.line(10, yPosition + 10, 580, yPosition + 10);
+            doc.line(10, yPosition - 10, 10, yPosition + 10);
+            doc.line(200, yPosition - 10, 200, yPosition + 10);
+            doc.line(400, yPosition - 10, 400, yPosition + 10);
+            doc.line(580, yPosition - 10, 580, yPosition + 10);
+
+            doc.text(`${row.Categoria}`, 20, yPosition);
+            doc.text(`${row.Producto}`, 200, yPosition);
+            doc.text(`${row.Stock}`, 400, yPosition);
+            yPosition += 20;
+            if (yPosition > 700) {
+                doc.addPage();
+                yPosition = 20;
+            }
+        });
+
+        const user = "<?php echo $_SESSION['Empl_Nombre']; ?>"; // Obtén el nombre del empleado de alguna manera
+        const currentDate = new Date().toISOString().split('T')[0];
+        const pageHeight = doc.internal.pageSize.height;
+        doc.text(`Emitido por: ${user}`, 32, pageHeight - 30);
+        doc.text(`Fecha: ${currentDate}`, 32, pageHeight - 15);
+
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            doc.setFontSize(10);
+            doc.text(`Página ${i} de ${totalPages}`, doc.internal.pageSize.width - 80, pageHeight - 15);
         }
-    });
 
-    const pdfData = doc.output('datauristring');
-    $('#pdfEmbed').attr('src', pdfData);
-}
+        const string = doc.output('datauristring');
+        const iframe = document.getElementById('pdfViewer');
+        if (iframe) {
+            iframe.src = string;
+        } else {
+            console.error("El elemento 'pdfViewer' no se encontró en el DOM.");
+        }
+    }
+</script>
 
 
     </script>
