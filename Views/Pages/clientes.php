@@ -50,6 +50,13 @@
                 opacity: 1;
             }
         }
+
+        .btn-secondary:focus, .btn-secondary.focus{
+    background-color: #5d9e3e;
+    border-color: #5d9e3e;
+    color: #FFFFFF;
+    background:#5d9e3e;
+}
     </style>
 </head>
 

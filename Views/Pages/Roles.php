@@ -130,8 +130,8 @@
         <div class="card-body">
             <h2 class="text-center" style="font-size:80px !important;">Roles</h2>
             <div class="CrearOcultar" style="position:relative; top:-30px">
-            <button class="btn btn-primary" id="AbrirCollapse" style="background-color:#5d9e3e;border-color:#5d9e3e">Nuevo</button>
-           
+                <button class="btn btn-primary" id="AbrirCollapse" style="background-color:#5d9e3e;border-color:#5d9e3e">Nuevo</button>
+
                 <div class="table-responsive" id="tablaContainer">
                     <br>
                     <table class="table table-striped table-hover" id="tablaRol">
@@ -147,9 +147,15 @@
             </div>
             <div class="collapse" id="nuevoRolCollapse">
                 <div class="card">
-                    <div class="card-header text-white" style="background-color:#5d9e3e;">
+
+                    <div class="card-header text-white" style="background-color:#5d9e3e; height:50px">
+
                         <h5>Crear Nuevo Rol</h5>
+                        <div class="d-flex justify-content-end">
+                            <a href="#" id="VolverDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                        </div>
                     </div>
+
                     <div class="card-body">
                         <form id="formNuevoRol">
                             <input type="hidden" id="Role_Id" name="Role_Id">
@@ -182,6 +188,7 @@
             </div>
 
             <div id="Detalles">
+                
                 <div class="row" style="padding: 10px;">
                     <div class="col" style="font-weight:700">
                         ID
@@ -412,7 +419,7 @@
                             Pant_Id: 35,
                             Pant_Descripcion: "Reparaciones"
                         },
-                       
+
                     ];
 
                     var categorias = {
@@ -425,17 +432,17 @@
                     pantallas.forEach(function(pantalla) {
                         if (pantalla.Pant_Descripcion.includes("Usuarios") || pantalla.Pant_Descripcion.includes("Roles")) {
                             categorias["Acceso"].push(pantalla);
-                        } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") 
-                        || pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados") ||
-                         pantalla.Pant_Descripcion.includes("dashboard")) {
+                        } else if (pantalla.Pant_Descripcion.includes("Marcas") || pantalla.Pant_Descripcion.includes("Proveedores") ||
+                            pantalla.Pant_Descripcion.includes("Clientes") || pantalla.Pant_Descripcion.includes("Empleados") ||
+                            pantalla.Pant_Descripcion.includes("dashboard")) {
                             categorias["Generales"].push(pantalla);
                         } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") ||
                             pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") ||
-                            pantalla.Pant_Descripcion.includes("Control de stock")  ||
-                             pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") ||
-                              pantalla.Pant_Descripcion.includes("Reparaciones") || pantalla.Pant_Descripcion.includes("facturaApartado")) {
+                            pantalla.Pant_Descripcion.includes("Control de stock") ||
+                            pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") ||
+                            pantalla.Pant_Descripcion.includes("Reparaciones") || pantalla.Pant_Descripcion.includes("facturaApartado")) {
                             categorias["Ventas"].push(pantalla);
-                        } else if (pantalla.Pant_Descripcion.includes("reportecaja") || pantalla.Pant_Descripcion.includes("ventasmetodo") || pantalla.Pant_Descripcion.includes("ventasmayorista") ) {
+                        } else if (pantalla.Pant_Descripcion.includes("reportecaja") || pantalla.Pant_Descripcion.includes("ventasmetodo") || pantalla.Pant_Descripcion.includes("ventasmayorista")) {
                             categorias["Reporte"].push(pantalla);
                         }
                     });

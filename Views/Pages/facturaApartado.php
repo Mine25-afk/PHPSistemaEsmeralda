@@ -70,7 +70,7 @@
     </script>
 <div class="card">
   <div class="card-body">
-    <h2 class="text-center" style="font-size: 90px !important">Facturas</h2>
+    <h2 class="text-center" style="font-size: 90px !important">Apartados</h2>
 
     <div class="form-row">
     <div class="col-md-8">

@@ -74,10 +74,11 @@
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card">
-                    <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
+
 
                     <div class="card-body">
                         <div class="CrearOcultar" style="position:relative; top:-30px">
+                            <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
                             <p class="btn btn-primary" id="AbrirModal"> Nuevo</p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover" id="TablaFacturaCompra">
@@ -94,6 +95,7 @@
                         </div>
 
                         <div class="CrearMostrar">
+                            <h2 class="text-center" style="font-size: 90px !important">Factura Compra</h2>
                             <form id="FacturaCompraForm" style="width: 100%">
                                 <div class="form-row" style="justify-content: center; margin: 0px 10px">
                                     <div class="col-md-6">
@@ -196,7 +198,7 @@
             </div>
 
             <div class="collapse" id="collapseNuevoProducto">
-                <h5 class="text-center">Agregar Producto</h5>
+                <h2 class="text-center" style="font-size: 90px !important">Agregar Producto</h2>
                 <form id="NuevoProductoForm" style="width: 100%">
                     <div class="form-row" id="productTypeSelection">
 
@@ -231,6 +233,7 @@
                         <div class="col-md-6">
                             <label>Precio Mayorista</label>
                             <input type="text" class="form-control" id="precioMayoristaProducto" name="precioMayoristaProducto" required />
+                            <br>
                         </div>
                         <div class="col-md-6" id="marcaField">
                             <label>Marca</label>
@@ -250,6 +253,7 @@
                             <label class="custom-file-label"></label>
                         </div>
                         <div class="col-md-6">
+                            <br>
                             <label>Imagen Actual</label>
                             <div id="imagenActualContainer">
                                 <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
@@ -257,12 +261,19 @@
                         </div>
                     </div>
                     <br>
-                    <div class="form-row d-flex justify-content-start">
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-secondary" id="btnVolverFacturaCompra">Volver</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                    <div class="card-body">
+                        <div class="form-row d-flex justify-content-end">
+                            <div class="col-auto">
+
+
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-secondary" style="color:white" id="btnVolverFacturaCompra">Cancelar</button>
+                            </div>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -601,99 +612,99 @@
             }
 
 
-            // $(document).on('blur', 'input[name="producto"]', function() {
-            //     var term = $(this).val();
-            //     var row = $(this).closest('tr');
-            //     var numeroo = /^[0-9]+$/.test(term);
-            //     var alfanumerico = /^[a-zA-Z]+$/.test(term);
-            //     console.log('Term:', term);
+                    // $(document).on('blur', 'input[name="producto"]', function() {
+                    //     var term = $(this).val();
+                    //     var row = $(this).closest('tr');
+                    //     var numeroo = /^[0-9]+$/.test(term);
+                    //     var alfanumerico = /^[a-zA-Z]+$/.test(term);
+                    //     console.log('Term:', term);
 
-            //     if (numeroo || alfanumerico) {
-            //         console.log('entra al numeroalfa');
-            //         var ajaxData = {
-            //             action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
-            //             codigo: term
-            //         };
+                    //     if (numeroo || alfanumerico) {
+                    //         console.log('entra al numeroalfa');
+                    //         var ajaxData = {
+                    //             action: numeroo ? 'buscarJoyaPorCodigo' : 'buscarMaquillajePorCodigo',
+                    //             codigo: term
+                    //         };
 
-            //         $.ajax({
-            //             url: 'Services/FacturaCompraService.php',
-            //             type: 'POST',
-            //             dataType: 'json',
-            //             data: ajaxData,
-            //             success: function(data) {
-            //                 if (data.length > 0) {
-            //                     var item = data[0];
-            //                     console.log('Item:', item);
-            //                     var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
-            //                     var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
-            //                     var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
+                    //         $.ajax({
+                    //             url: 'Services/FacturaCompraService.php',
+                    //             type: 'POST',
+                    //             dataType: 'json',
+                    //             data: ajaxData,
+                    //             success: function(data) {
+                    //                 if (data.length > 0) {
+                    //                     var item = data[0];
+                    //                     console.log('Item:', item);
+                    //                     var precioCompra = item.Joya_PrecioCompra || item.Maqu_PrecioCompra || 0;
+                    //                     var precioMayorista = item.Joya_PrecioMayor || item.Maqu_PrecioMayor;
+                    //                     var precioVenta = item.Joya_PrecioVenta || item.Maqu_PrecioVenta;
 
-            //                     row.find('#precio_mayorista').text(precioMayorista);
-            //                     row.find('#precio_venta').text(precioVenta);
-            //                     row.find('input[name="precio_compra"]').val(precioCompra);
+                    //                     row.find('#precio_mayorista').text(precioMayorista);
+                    //                     row.find('#precio_venta').text(precioVenta);
+                    //                     row.find('input[name="precio_compra"]').val(precioCompra);
 
-            //                     if (item.Joya_Codigo) {
-            //                         row.find('#categoria').text('Joya');
-            //                     } else {
-            //                         row.find('#categoria').text('Maquillaje');
-            //                     }
+                    //                     if (item.Joya_Codigo) {
+                    //                         row.find('#categoria').text('Joya');
+                    //                     } else {
+                    //                         row.find('#categoria').text('Maquillaje');
+                    //                     }
 
-            //                     // Inserta o actualiza la factura con la información obtenida
-            //                     // insertarActualizarFactura(row, item.Nombre);
-            //                 } else {
-            //                     row.find('#precio_mayorista').text('0.00');
-            //                     row.find('#precio_venta').text('0.00');
-            //                     row.find('input[name="precio_compra"]').val('0.00');
-            //                 }
-            //             },
-            //             error: function() {
-            //                 row.find('#precio_mayorista').text('0.00');
-            //                 row.find('#precio_venta').text('0.00');
-            //                 row.find('input[name="precio_compra"]').val('0.00');
-            //             }
-            //         });
-            //     } else {
-            //         console.log('entra a solo joya');
-            //         var ajaxData = {
-            //             action: 'buscarJoyaPorCodigo',
-            //             codigo: term
-            //         };
+                    //                     // Inserta o actualiza la factura con la información obtenida
+                     //                     // insertarActualizarFactura(row, item.Nombre);
+                    //                 } else {
+                    //                     row.find('#precio_mayorista').text('0.00');
+                    //                     row.find('#precio_venta').text('0.00');
+                    //                     row.find('input[name="precio_compra"]').val('0.00');
+                    //                 }
+                    //             },
+                    //             error: function() {
+                    //                 row.find('#precio_mayorista').text('0.00');
+                    //                 row.find('#precio_venta').text('0.00');
+                    //                 row.find('input[name="precio_compra"]').val('0.00');
+                    //             }
+                    //         });
+                    //     }  else  {
+                    //         console.log('entra a solo joya');
+                    //         var ajaxData = {
+                    //             action:  'buscarJoyaPorCodigo',
+                    //             codigo: term
+                    //         };
 
-            //         $.ajax({
-            //             url: 'Services/FacturaCompraService.php',
-            //             type: 'POST',
-            //             dataType: 'json',
-            //             data: ajaxData,
-            //             success: function(data) {
-            //                 if (data.length > 0) {
-            //                     var item = data[0];
-            //                     console.log('Item:', item);
-            //                     var precioCompra = item.Joya_PrecioCompra;
-            //                     var precioMayorista = item.Joya_PrecioMayor;
-            //                     var precioVenta = item.Joya_PrecioVenta;
+                    //         $.ajax({
+                    //             url: 'Services/FacturaCompraService.php',
+                    //             type: 'POST',
+                    //             dataType: 'json',
+                    //             data: ajaxData,
+                    //             success: function(data) {
+                    //                 if (data.length > 0) {
+                    //                     var item = data[0];
+                    //                     console.log('Item:', item);
+                    //                     var precioCompra = item.Joya_PrecioCompra;
+                    //                     var precioMayorista = item.Joya_PrecioMayor;
+                    //                     var precioVenta = item.Joya_PrecioVenta;
 
-            //                     row.find('#precio_mayorista').text(precioMayorista);
-            //                     row.find('#precio_venta').text(precioVenta);
-            //                     row.find('input[name="precio_compra"]').val(precioCompra);
+                    //                     row.find('#precio_mayorista').text(precioMayorista);
+                    //                     row.find('#precio_venta').text(precioVenta);
+                    //                     row.find('input[name="precio_compra"]').val(precioCompra);
 
-            //                     row.find('#categoria').text('Joya');
+                //                     row.find('#categoria').text('Joya');
 
-            //                     // Inserta o actualiza la factura con la información obtenida
-            //                     // insertarActualizarFactura(row, item.Nombre);
-            //                 } else {
-            //                     row.find('#precio_mayorista').text('0.00');
-            //                     row.find('#precio_venta').text('0.00');
-            //                     row.find('input[name="precio_compra"]').val('0.00');
-            //                 }
-            //             },
-            //             error: function() {
-            //                 row.find('#precio_mayorista').text('0.00');
-            //                 row.find('#precio_venta').text('0.00');
-            //                 row.find('input[name="precio_compra"]').val('0.00');
-            //             }
-            //         });
-            //     }
-            // });
+                    //                     // Inserta o actualiza la factura con la información obtenida
+                     //                     // insertarActualizarFactura(row, item.Nombre);
+                    //                 } else {
+                    //                     row.find('#precio_mayorista').text('0.00');
+                    //                     row.find('#precio_venta').text('0.00');
+                    //                     row.find('input[name="precio_compra"]').val('0.00');
+                    //                 }
+                    //             },
+                    //             error: function() {
+                    //                 row.find('#precio_mayorista').text('0.00');
+                    //                 row.find('#precio_venta').text('0.00');
+                    //                 row.find('input[name="precio_compra"]').val('0.00');
+                    //             }
+                    //         });
+                    //     }
+                    // });
 
             $(document).on('blur', 'input[name="precio_compra"]', function() {
                 var row = $(this).closest('tr');

@@ -45,6 +45,7 @@
 
 
 
+
 .hover{
   background-color: #5d9e3e;
 }
@@ -101,7 +102,7 @@ h2{
       <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-        <img src="Views/Resources/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+        <img src="/PHPSistemaEsmeralda/Views/xd.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="#" class="d-block" style="color:white">

@@ -90,21 +90,21 @@
               <i class="fas fa-dollar-sign"></i> Efectivo
             </button>
           </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnTarjeta">
-              <i class="fas fa-credit-card"></i>Tarjeta de credito
+          <div class="col-md-5">
+            <button type="button" class="btn btn-secondary btn-block" id="btnTarjeta" style="color: white;">
+              <i class="fas fa-credit-card"></i> Tarjeta de credito
             </button>
           </div>
           <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnTransferencias">
+            <button type="button" class="btn btn-secondary btn-block" id="btnTransferencias" style="color: white;">
               <i class="fas fa-donate"></i> Transferencias
             </button>
           </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div style="height:100%; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
-          <span style="color:#FFF;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
+        <div style="height:100%; background-color: #5d9e3e;display:flex;justify-content:center; align-items:center">
+          <span style="color:#FFF;font-size:40px; text-shadow:0px 10px 10px #000000;font-weight:900" id="txtTotal">00.0</h2>
         </div>
       </div>
     </div>
@@ -122,7 +122,7 @@
               </div>
               <input type="text" class="form-control" id="auto">
               <div class="input-group-append">
-                <button type="button" class="btn btn-secondary btn-block btn-sm" id="btnSeleccionarProducto">
+                <button type="button" class="btn btn-secondary btn-block btn-sm" id="btnSeleccionarProducto" style="color: white;">
                   <i class="fas fa-plus"></i> Seleccione producto
                 </button>
               </div>
@@ -165,18 +165,18 @@
 
       <div class="form-row" style="justify-content: end; margin: 0px 10px">
         <div class="col-md-2">
-          <button type="button" class="btn btn-secondary btn-block" id="btnNuevo">
+          <button type="button" class="btn btn-secondary btn-block" style="color: white;" id="btnNuevo">
             <i class="fas fa-plus"></i> Nuevo
           </button>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-secondary btn-block" id="btnConfirmar">
+          <button type="button" class="btn btn-secondary btn-block" style="color: white;" id="btnConfirmar">
             <i class="far fa-check-circle"></i>Confirmar
           </button>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-secondary btn-block" id="btnCancelar">
-            <i class="fas fa-reply"></i> Cancelar
+          <button type="button" class="btn btn-secondary btn-block" style="color: white;" id="btnCancelar">
+            <i class="fas fa-reply"></i> Listar
           </button>
         </div>
       </div>
@@ -549,9 +549,11 @@
           console.log(json.data);
           return json.data;
         }
+    
       },
       "pageLength": 5, // Establece el número de filas por página
-      "lengthChange": false, // Deshabilita la opción de cambiar el número de filas por página
+      "lengthChange": false, 
+     // Deshabilita la opción de cambiar el número de filas por página
       "columns": [{
           "data": "Categoria"
         },

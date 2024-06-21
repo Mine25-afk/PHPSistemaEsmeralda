@@ -66,7 +66,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Usua_Usuario</th>
+                                <th>Usuario</th>
                                 <th>Administrador</th>
                                 <th>Empleado</th>
                                 <th>Rol</th>
@@ -88,12 +88,12 @@
                         <input type="hidden" name="Usua_Id" id="Usua_Id">
                         <div class="form-row">
                             <div class="col-md-6">
-                                <label class="control-label">Usua_Usuario</label>
+                                <label class="control-label">Usuario</label>
                                 <input name="Usua_Usuario" class="form-control letras" id="Usua_Usuario" required />
                                 <span class="text-danger"></span>
                             </div>
                             <div class="col-md-6 contraseña-container">
-                                <label class="control-label">Usua_Contraseña</label>
+                                <label class="control-label">Contraseña</label>
                                 <input name="Usua_Contraseña" type="password" class="form-control letras" id="Usua_Contraseña" required />
                                 <span class="text-danger"></span>
                             </div>
