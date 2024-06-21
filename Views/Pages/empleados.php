@@ -2,11 +2,12 @@
     <div class="row mt-2">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center"><b>Empleados</b></h3>
-                </div>
+        
+                <h2 class="text-center" style="font-size: 90px !important"> Empleados</h2>
+       
+           
                 <div class="card-body">
-                    <div class="CrearOcultar">
+                <div class="CrearOcultar" style="position:relative; top:-30px">
                         <p class="btn btn-primary" id="AbrirModal">Nuevo</p>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="TablaMarca">
@@ -27,6 +28,9 @@
                     </div>
 
                     <div class="CrearMostrar">
+                    <div class="d-flex justify-content-end">
+                        <a href="#" id="CerrarModal" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                         <form id="quickForm">
                             <div class="form-row">
                                 <div class="col-md-6">
@@ -121,6 +125,9 @@
                         </form>
                     </div>
                     <div id="Detalles">
+                    <div class="d-flex justify-content-end">
+                        <a href="#" id="VolverDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                    </div>
                         <div class="row" style="padding: 10px;">
                             <div class="col-md-4">
                                 <strong>DNI</strong>
@@ -216,8 +223,9 @@
                 ¿Estás seguro de que deseas eliminar este Empleado?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+                <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
+           
             </div>
         </div>
     </div>
@@ -590,7 +598,13 @@
                 });
             }
         });
-
+        $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
 
         $('#TablaMarca tbody').on('click', '.abrir-editar', function() {
             var data = table.row($(this).parents('tr')).data();

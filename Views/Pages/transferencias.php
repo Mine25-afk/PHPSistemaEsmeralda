@@ -123,9 +123,8 @@
 <body>
     <div class="container">
         <div class="card">
-            <div class="card-header">
-                <h1 class="text-center">Transferencias</h1>
-            </div>
+        <h2 class="text-center" style="font-size: 90px !important">Transeferencias</h2>
+     <hr>
             <div class="card-body">
                 <form id="FacturaForm">
                     <div class="form-row">
@@ -343,6 +342,14 @@
                 });
             }
         }
+
+        $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
 
         function llenarFormularioProducto(producto) {
             $('#Prod_Id').val(producto.Codigo);

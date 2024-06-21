@@ -52,6 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $_SESSION['Empl_Correo'] = $user['Empl_Correo'];
         }
         echo $resultado;
-    }
-}
+    }   
 
+}

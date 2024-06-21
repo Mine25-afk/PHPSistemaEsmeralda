@@ -66,6 +66,7 @@ function generarMenu($conn) {
             case 'Facturas de Compra':
             case 'Transferencias':
                 case 'Maquillajes':
+                    case 'facturaApartado':
                     case 'Joyas':
                         case 'Reparaciones':
                 $menu['Ventas'][] = $row;
@@ -156,21 +157,20 @@ Reportes<i class="fas fa-angle-left right"></i></p></a>';
     }
     if (!empty($menu['Facturas'])) {
         echo '<li class="nav-item">';
-        echo '<a href="?Pages=FacturaVenta" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i> <p style="color: #5d9e3e;">Factura</p></a>';
-        echo '</li>';
-        echo '<li class="nav-item">';
-        echo ' <a class="nav-link" id="AbrirCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i> <p style="color: #5d9e3e;">Abrir Caja</p></a>';
-        echo '</li>';
-    
-      echo '<li class="nav-item">';
-        echo '<a class="nav-link" id="CerrarCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i> <p style="color: #5d9e3e;">Cerrar caja</p></a>';
-        echo '</li>';
-    
-        echo '<li class="nav-item">';
-        echo ' <a class="nav-link" id="AbrirRetiro"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i> <p style="color: #5d9e3e;">Retiro caja</p></a>';
+        echo '<a href="FacturaVenta" id="FacturaLink" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Factura</p></a>';
         echo '</li>';
     }
+    echo '<li class="nav-item" id="AbrirLink">';
+    echo ' <a class="nav-link" id="AbrirCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Abrir Caja</p></a>';
+    echo '</li>';
 
+  echo '<li class="nav-item" id="CerrarLink">';
+    echo '<a class="nav-link" id="CerrarCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Cerrar caja</p></a>';
+    echo '</li>';
+
+    echo '<li class="nav-item" id="RetiroLink">';
+    echo ' <a class="nav-link" id="AbrirRetiro"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Retiro caja</p></a>';
+    echo '</li>';
     
     echo '</ul>';
 }

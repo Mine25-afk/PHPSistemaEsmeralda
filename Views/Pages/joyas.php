@@ -39,299 +39,314 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="card-body">
-                <h2 class="text-center" style="font-size:34px !important">Joyas</h2>
-                <div class="CrearOcultar">
-                    <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
-                    <hr>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover" id="TablaJoya">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Codigo</th>
-                                    <th>Descripción</th>
 
-                                    <th>Precio Venta</th>
-                                    <th>Stock</th>
-                                    <th>Precio Mayorista</th>
-                                    <th>Imagen</th>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="text-center" style="font-size: 90px !important">Joyas</h2>
+            <div class="CrearOcultar" style="position:relative; top:-30px">
+                <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
 
-                                    <th>Proveedor</th>
-                                    <th>Categoría</th>
-                                    <th class="text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+                <div class="table-responsive">
+                    <br>
+                    <table class="table table-striped table-hover" id="TablaJoya">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Codigo</th>
+                                <th>Descripción</th>
+
+                                <th>Precio Venta</th>
+                                <th>Stock</th>
+                                <th>Precio Mayorista</th>
+                                <th>Imagen</th>
+
+                                <th>Proveedor</th>
+                                <th>Categoría</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
-
-                <div class="CrearMostrar">
-                    <form id="joyaForm" enctype="multipart/form-data">
-                        <hr>
-                        <input type="hidden" name="Joya_Id" id="Joya_Id">
-                        <div class="form-row">
-                            <div class="col-md-6">
-                                <label class="control-label">Nombre</label>
-                                <input name="Joya_Nombre" class="form-control" id="Joya_Nombre" required />
-                                <div class="error-message" id="Joya_Nombre_error"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="control-label">Precio Compra</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">LPS</span>
-                                    </div>
-                                    <input name="Joya_PrecioCompra" type="number" min="0" class="form-control" id="Joya_PrecioCompra" required />
-                                </div>
-                                <div class="error-message" id="Joya_PrecioCompra_error"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="control-label">Precio Venta</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">LPS</span>
-                                    </div>
-                                    <input name="Joya_PrecioVenta" type="number" min="0" class="form-control" id="Joya_PrecioVenta" required />
-                                </div>
-                                <div class="error-message" id="Joya_PrecioVenta_error"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="control-label">Precio Mayorista</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">LPS</span>
-                                    </div>
-                                    <input name="Joya_PrecioMayor" type="number" min="0" class="form-control" id="Joya_PrecioMayor" required />
-                                </div>
-                                <div class="error-message" id="Joya_PrecioMayor_error"></div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="control-label">Proveedor</label>
-                                <select name="Prov_Id" class="form-control" id="Prov_Id" required></select>
-                                <div class="error-message" id="Prov_Id_error"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="control-label">Material</label>
-                                <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
-
-                                <div class="error-message" id="Mate_Id_error"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="control-label">Categoría</label>
-                                <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
-                                <div class="error-message" id="Cate_Id_error"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="control-label">Imagen</label>
-                                <input type="file" name="Joya_Imagen" class="form-control" id="Joya_Imagen" required />
-                                <div class="error-message" id="Joya_Imagen_error"></div>
-
-
-                                <label class="control-label">Imagen Actual</label>
-                                <div id="imagenActualContainer">
-                                    <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="card-body">
-                            <div class="form-row d-flex justify-content-end">
-                                <div class="col-auto">
-                                    <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-                                </div>
-                                <div class="col-auto">
-                                    <a id="CerrarModal" class="btn btn-secondary" style="color:white">Cancelar</a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-
-
-                <!-- Collapse Detalles -->
-                <div class="CrearDetalles collapse" id="detallesCollapse">
-                    <div class="card card-body">
-                        <h5>Detalles de la Joya</h5>
-                        <div id="Detalles">
-                            <div class="row" style="padding: 10px;">
-                                <div class="col" style="font-weight:700">
-                                    Código
-                                </div>
-                                <div class="col" style="font-weight:700">
-                                    Nombre
-                                </div>
-                                <div class="col" style="font-weight:700">
-                                    Precio Compra
-                                </div>
-                            </div>
-                            <div class="row" style="padding: 10px;">
-                                <div class="col">
-                                    <label for="" id="detallesCodigo"></label>
-                                </div>
-                                <div class="col">
-                                    <label for="" id="detallesNombre"></label>
-                                </div>
-                                <div class="col">
-                                    <label for="" id="detallesPrecioCompra"></label>
-                                </div>
-                            </div>
-
-                            <div class="row" style="padding: 10px;">
-                                <div class="col" style="font-weight:700">
-                                    Imagen
-                                </div>
-                                <div class="col" style="font-weight:700">
-                                    Material
-                                </div>
-                                <div class="col" style="font-weight:700">
-                                    Categoria
-                                </div>
-                            </div>
-                            <div class="row" style="padding: 10px;">
-                                <div class="col">
-                                    <label for="" id="detallesImagen"></label>
-                                </div>
-                                <div class="col">
-                                    <label for="" id="detallesMaterial"></label>
-                                </div>
-                                <div class="col">
-                                    <label for="" id="detallesCategoria"></label>
-                                </div>
-                            </div>
-
-                            <div class="row" style="padding: 10px;">
-                                <div class="col" style="font-weight:700">
-                                    Precio Venta
-                                </div>
-                                <div class="col" style="font-weight:700">
-                                    Precio Mayor
-                                </div>
-                                <div class="col" style="font-weight:700">
-                                    Proveedor
-                                </div>
-                            </div>
-                            <div class="row" style="padding: 10px;">
-                                <div class="col">
-                                    <label for="" id="detallesPrecioVenta"></label>
-                                </div>
-                                <div class="col">
-                                    <label for="" id="detallesPrecioMayor"></label>
-                                </div>
-                                <div class="col">
-                                    <label for="" id="detallesProveedor"></label>
-                                </div>
-                            </div>
-                            <div class="card mt-2">
-                                <div class="card-body">
-                                    <h5>Auditoria</h5>
-                                    <hr>
-                                    <table class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Acciones</th>
-                                                <th>Usuario</th>
-                                                <th>Fecha</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Insertar</td>
-                                                <td>
-                                                    <label for="" id="detallesUsuarioCreacion"></label>
-                                                </td>
-                                                <td>
-                                                    <label for="" id="detallesFechaCreacion"></label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Modificar</td>
-                                                <td>
-                                                    <label for="" id="detallesUsuarioModificacion"></label>
-                                                </td>
-                                                <td>
-                                                    <label for="" id="detallesFechaModificacion"></label>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row d-flex justify-content-end">
-                            <div class="col-md-3">
-                                <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Cancelar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <!-- Modal Eliminar -->
-                <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                ¿Estás seguro de que deseas eliminar esta joya?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal Código de Barras -->
-                <div class="modal fade" id="codigoBarrasModal" tabindex="-1" aria-labelledby="codigoBarrasModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content d-flex justify-content-center align-items-center">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="codigoBarrasModalLabel">Código de Barras</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group text-center">
-                                    <label for="cantidadCodigos">Cantidad de Códigos a Imprimir:</label>
-                                    <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
-                                </div>
-                                <div class="barcode-container text-center" id="barcodeContainer">
-
-                                </div>
-                                <div class="joya-nombre mt-3 text-center">
-
-                                    <h5 id="nombreJoya"></h5>
-
-                                </div>
-                            </div>
-                            <div class="modal-footer justify-content-center">
-                                <button type="button" class="btn btn-primary" id="generarCodigos">Generar</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-success" id="imprimirCodigos">Imprimir</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <div class="CrearMostrar">
+                <div class="d-flex justify-content-end">
+                    <a href="#" id="Regresar" style="color: black;" class="btn btn-link">Regresar</a>
+                </div>
+                <form id="joyaForm" enctype="multipart/form-data">
+                    <hr>
+                    <input type="hidden" name="Joya_Id" id="Joya_Id">
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <label class="control-label">Nombre</label>
+                            <input name="Joya_Nombre" class="form-control" id="Joya_Nombre" required />
+                            <div class="error-message" id="Joya_Nombre_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Precio Compra</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">LPS</span>
+                                </div>
+                                <input name="Joya_PrecioCompra" type="number" min="0" class="form-control" id="Joya_PrecioCompra" required />
+                            </div>
+                            <div class="error-message" id="Joya_PrecioCompra_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Precio Venta</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">LPS</span>
+                                </div>
+                                <input name="Joya_PrecioVenta" type="number" min="0" class="form-control" id="Joya_PrecioVenta" required />
+                            </div>
+                            <div class="error-message" id="Joya_PrecioVenta_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Precio Mayorista</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">LPS</span>
+                                </div>
+                                <input name="Joya_PrecioMayor" type="number" min="0" class="form-control" id="Joya_PrecioMayor" required />
+                            </div>
+                            <div class="error-message" id="Joya_PrecioMayor_error"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="control-label">Proveedor</label>
+                            <select name="Prov_Id" class="form-control" id="Prov_Id" required></select>
+                            <div class="error-message" id="Prov_Id_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Material</label>
+                            <select name="Mate_Id" class="form-control" id="Mate_Id" required></select>
+
+                            <div class="error-message" id="Mate_Id_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Categoría</label>
+                            <select name="Cate_Id" class="form-control" id="Cate_Id" required></select>
+                            <div class="error-message" id="Cate_Id_error"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Imagen</label>
+                            <input type="file" name="Joya_Imagen" class="form-control" id="Joya_Imagen" required />
+                            <div class="error-message" id="Joya_Imagen_error"></div>
+
+
+                        </div>
+
+                        <div class="col-md-5"></div>
+                        <div class="col-md-3">
+                            <br>
+                            <label class="control-label">Imagen Actual</label>
+                            <div id="imagenActualContainer" class="d-flex justify-content-center align-items-center">
+                                <img id="imagenActual" src="#" alt="Imagen Actual" style="max-width: 100%;" />
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="form-row d-flex justify-content-end">
+                            <div class="col-auto">
+                                <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
+                            </div>
+                            <div class="col-auto">
+                                <a id="CerrarModal" class="btn btn-secondary" style="color:white">Cancelar</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+
+            <!-- Collapse Detalles -->
+            <div class="CrearDetalles collapse" id="detallesCollapse">
+                <div class="d-flex justify-content-end">
+                    <a href="#" id="CerrarDetalles" style="color: black;" class="btn btn-link">Regresar</a>
+                </div>
+                <div class="card card-body">
+                    <h5>Detalles de la Joya</h5>
+                    <div id="Detalles">
+                        <div class="row" style="padding: 10px;">
+                            <div class="col" style="font-weight:700">
+                                Código
+                            </div>
+                            <div class="col" style="font-weight:700">
+                                Nombre
+                            </div>
+                            <div class="col" style="font-weight:700">
+                                Precio Compra
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 10px;">
+                            <div class="col">
+                                <label for="" id="detallesCodigo"></label>
+                            </div>
+                            <div class="col">
+                                <label for="" id="detallesNombre"></label>
+                            </div>
+                            <div class="col">
+                                <label for="" id="detallesPrecioCompra"></label>
+                            </div>
+                        </div>
+
+                        <div class="row" style="padding: 10px;">
+                            <div class="col" style="font-weight:700">
+                                Imagen
+                            </div>
+                            <div class="col" style="font-weight:700">
+                                Material
+                            </div>
+                            <div class="col" style="font-weight:700">
+                                Categoria
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 10px;">
+                            <div class="col">
+                                <label for="" id="detallesImagen"></label>
+                            </div>
+                            <div class="col">
+                                <label for="" id="detallesMaterial"></label>
+                            </div>
+                            <div class="col">
+                                <label for="" id="detallesCategoria"></label>
+                            </div>
+                        </div>
+
+                        <div class="row" style="padding: 10px;">
+                            <div class="col" style="font-weight:700">
+                                Precio Venta
+                            </div>
+                            <div class="col" style="font-weight:700">
+                                Precio Mayor
+                            </div>
+                            <div class="col" style="font-weight:700">
+                                Proveedor
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 10px;">
+                            <div class="col">
+                                <label for="" id="detallesPrecioVenta"></label>
+                            </div>
+                            <div class="col">
+                                <label for="" id="detallesPrecioMayor"></label>
+                            </div>
+                            <div class="col">
+                                <label for="" id="detallesProveedor"></label>
+                            </div>
+                        </div>
+                        <div class="card mt-2">
+                            <div class="card-body">
+                                <h5>Auditoria</h5>
+                                <hr>
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Acciones</th>
+                                            <th>Usuario</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Insertar</td>
+                                            <td>
+                                                <label for="" id="detallesUsuarioCreacion"></label>
+                                            </td>
+                                            <td>
+                                                <label for="" id="detallesFechaCreacion"></label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Modificar</td>
+                                            <td>
+                                                <label for="" id="detallesUsuarioModificacion"></label>
+                                            </td>
+                                            <td>
+                                                <label for="" id="detallesFechaModificacion"></label>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row d-flex justify-content-end">
+                        <div class="col-md-3">
+                            <a id="CerrarDetalles" class="btn btn-secondary" style="color:white">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Modal Eliminar -->
+            <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ¿Estás seguro de que deseas eliminar esta joya?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">SI</button>
+                            <button type="button" class="btn btn-secondary" style="color: white;" data-dismiss="modal">NO</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Código de Barras -->
+            <div class="modal fade" id="codigoBarrasModal" tabindex="-1" aria-labelledby="codigoBarrasModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content d-flex justify-content-center align-items-center">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="codigoBarrasModalLabel">Código de Barras</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group text-center">
+                                <label for="cantidadCodigos">Cantidad de Códigos a Imprimir:</label>
+                                <input type="number" class="form-control form-control-sm" id="cantidadCodigos" min="1" value="1">
+                            </div>
+                            <div class="barcode-container text-center" id="barcodeContainer">
+
+                            </div>
+                            <div class="joya-nombre mt-3 text-center">
+
+                                <h5 id="nombreJoya"></h5>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-primary" id="generarCodigos">Generar</button>
+
+                            <button type="button" class="btn btn-success" id="imprimirCodigos">Imprimir</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
+
 </body>
 
 </html>
@@ -394,7 +409,7 @@
                 <div class="dropdown-menu">
                     <a class="dropdown-item abrir-editar" href="#"><i class="fas fa-edit"></i> Editar</a>
                     <a class="dropdown-item abrir-detalles" href="#"><i class="fas fa-eye"></i> Detalles</a>
-                    <button class="dropdown-item abrir-eliminar"><i class="fas fa-eraser"></i> Eliminar</button>
+                    <button class="dropdown-item abrir-eliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>
                     <button class="dropdown-item abrir-generar-codigo"><i class="fas fa-barcode"></i>Etiquetas</button>
                 </div>
             </div>
@@ -422,6 +437,13 @@
             $('.error-message').text('');
             $('#Joya_Id').val('');
         }
+        $('#Regresar').click(function() {
+            limpiarFormulario();
+
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
 
         function cargarImagenActual(imagen) {
             var imagenActual = $('#imagenActual');

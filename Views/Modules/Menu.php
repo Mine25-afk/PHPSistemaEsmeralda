@@ -1,7 +1,10 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=The+Nautigal:wght@400;700&display=swap" rel="stylesheet">
 <style>
 .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active, 
 .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
-    background-color: #FFECF8;
+    background-color: #E1FEE0;
     color: #000000;
 }
 
@@ -10,38 +13,43 @@
 }
 
 .brand-link .brand-text {
-    color: #FFA2DB;
+    color: #5d9e3e;
 }
 
 .form-control-sidebar {
     background-color: #000000;
-    border: 1px solid #FFA2DB;
-    color: #FFA2DB;
+    border: 1px solid #5d9e3e;
+    color: #5d9e3e;
 }
 
 .input-group-append .btn-sidebar {
-    background-color: #FFA2DB;
+    background-color: #5d9e3e;
     color: #000000;
 }
 
 .modal-header {
-    background-color: #FFA2DB;
+    background-color: #5d9e3e;
 }
 
 .modal-title {
     color: #000000;
 }
 
-.btn-primary {
-    background-color: #FFA2DB;
-    border-color: #FFA2DB;
-    color: #000000;
+.btn-primary:hover, .btn-primary {
+    background-color: #5d9e3e;
+    border-color: #5d9e3e;
+    color: #FFFFFF;
+    background:#5d9e3e;
+    
+}
+.hover{
+  background-color: #5d9e3e;
 }
 
 .btn-secondary {
     background-color: #000000;
     border-color: #000000;
-    color: #FFA2DB;
+    color: #5d9e3e;
 }
 
 .nav-item > .nav-treeview {
@@ -51,13 +59,26 @@
 .nav-item.menu-open > .nav-treeview {
     display: block;
 }
+
+h2{
+  font-family: "The Nautigal", cursive;
+  font-weight: 100;
+  font-style: normal;
+  font-weight: 1000;
+
+}
+
+
+
+
+
 </style>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #000000;">
     <!-- Brand Logo -->
     <a href="Views/Resources/index3.html" class="brand-link" style="text-align: center;">
-      <img src="Views/diamante.png" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8; width: 50px;">
-      <span class="brand-text font-weight-light" style="color: #FFA2DB;">Sistema Esmeralda</span>
+     
+      <img src="/PHPSistemaEsmeralda/Views/Logo3.png" alt="Logo" style="width: 230px; height: 100;">
     </a>
 
  
@@ -86,6 +107,9 @@
         </div>
       </div>
 
+
+
+
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <?php generarMenu($pdo); ?>
@@ -96,20 +120,42 @@
 </aside>
 
 <div class="modal fade" id="AbrirCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog ">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #FFA2DB;">
+            <div class="modal-header" style="background-color: #5d9e3e;">
                 <h5 class="modal-title" id="eliminarModalLabel" style="color: #000000;">Deseas abrir la caja?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" id="txtFecha">Fecha</span>
+                <span class="info-box-text">Usuario:  <?php echo $_SESSION['Usua_Usuario']; ?></span>
+                <span class="info-box-text">Sucursal: <?php echo $_SESSION['Sucu_Nombre']; ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+         
+         
+              
+
+             
+              <!-- /.info-box-content -->
+         
+            <!-- /.info-box -->
+          
                 <form id="CajaForm" enctype="multipart/form-data">
+
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Monto Inicial</label>
-                            <input name="Inicial" class="form-control letras" id="Inicial" style="border: 1px solid #FFA2DB;"/>
+                            <input name="Inicial" class="form-control letras" id="Inicial" style="border: 1px solid #5d9e3e;"/>
                             <span class="text-danger"></span>
                         </div>
                     </div>
@@ -124,25 +170,56 @@
 </div>
 
 <div class="modal fade" id="CerrarCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #FFA2DB;">
+            <div class="modal-header" style="background-color: #5d9e3e;">
                 <h5 class="modal-title" id="eliminarModalLabel" style="color: #000000;">Deseas cerrar la caja?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+            <div class="row">
+            <div class="col-md-4 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" style="font-weight: 800;">Fecha Cierre</span>
+                <span class="info-box-text" id="txtFechaCierre"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" style="font-weight: 800;">Usuario</span>
+                <span class="info-box-text"> <?php echo $_SESSION['Usua_Usuario']; ?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" style="font-weight: 800;">Sucursal</span>
+                <span class="info-box-text"><?php echo $_SESSION['Sucu_Nombre']; ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
                 <form id="CerrarCajaForm" enctype="multipart/form-data">
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Monto Final</label>
-                            <input name="Final" class="form-control letras" id="Final" style="border: 1px solid #FFA2DB;"/>
+                            <input name="Final" class="form-control letras" id="Final" style="border: 1px solid #5d9e3e;"/>
                             <span class="text-danger"></span>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Observaciones</label>
-                            <input name="Observaciones" class="form-control letras" id="Observaciones" style="border: 1px solid #FFA2DB;"/>
+                            <input name="Observaciones" class="form-control letras" id="Observaciones" style="border: 1px solid #5d9e3e;"/>
                             <span class="text-danger"></span>
                         </div>
                     </div>
@@ -159,23 +236,37 @@
 <div class="modal fade" id="RetiroCajaModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #FFA2DB;">
+            <div class="modal-header" style="background-color: #5d9e3e;">
                 <h5 class="modal-title" id="eliminarModalLabel" style="color: #000000;">Deseas retirar efectivo?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+
+            <div class="row">
+            <div class="col-md-12 col-sm-8 col-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                    <div class="info-box-content">
+                <span class="info-box-text" id="txtFechaRetiro">Fecha</span>
+                <span class="info-box-text">Usuario:  <?php echo $_SESSION['Usua_Usuario']; ?></span>
+                <span class="info-box-text">Sucursal: <?php echo $_SESSION['Sucu_Nombre']; ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
                 <form id="RetiroCajaForm" enctype="multipart/form-data">
                     <div class="form-row">
                         <div class="col-md-6">
                             <label class="control-label">Efectivo a retirar</label>
-                            <input name="Efectivo" class="form-control letras" id="Efectivo" style="border: 1px solid #FFA2DB;"/>
+                            <input name="Efectivo" class="form-control letras" id="Efectivo" style="border: 1px solid #5d9e3e;"/>
                             <span class="text-danger"></span>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Observaciones</label>
-                            <input name="ObservacionesRe" class="form-control letras" id="ObservacionesRe" style="border: 1px solid #FFA2DB;"/>
+                            <input name="ObservacionesRe" class="form-control letras" id="ObservacionesRe" style="border: 1px solid #5d9e3e;"/>
                             <span class="text-danger"></span>
                         </div>
                     </div>
@@ -188,61 +279,55 @@
         </div>
     </div>
 </div>
-<script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    // Obtener todos los elementos nav-item que tienen submenús
-    const navItems = document.querySelectorAll('.nav-item');
 
-    navItems.forEach((navItem) => {
-      // Obtener el enlace dentro del nav-item
-      const navLink = navItem.querySelector('.nav-link');
-
-      // Añadir un evento de clic al enlace
-      navLink.addEventListener('click', (e) => {
-        // Prevenir el comportamiento predeterminado del enlace solo si tiene submenú
-        const subMenu = navItem.querySelector('.nav-treeview');
-        if (subMenu) {
-          e.preventDefault();
-
-          // Alternar la clase menu-open en el nav-item para abrir o cerrar el submenú
-          if (navItem.classList.contains('menu-open')) {
-            navItem.classList.remove('menu-open');
-            subMenu.style.display = 'none';
-          } else {
-            // Cerrar cualquier otro submenú abierto antes de abrir el seleccionado
-            const openItems = document.querySelectorAll('.nav-item.menu-open');
-            openItems.forEach((openItem) => {
-              openItem.classList.remove('menu-open');
-              const openSubMenu = openItem.querySelector('.nav-treeview');
-              if (openSubMenu) {
-                openSubMenu.style.display = 'none';
-              }
-            });
-            navItem.classList.add('menu-open');
-            subMenu.style.display = 'block';
-          }
-        }
-      });
-
-      // Añadir eventos de clic a los enlaces dentro del submenú para evitar que se cierre
-      const subMenuLinks = navItem.querySelectorAll('.nav-treeview .nav-link');
-      subMenuLinks.forEach((subMenuLink) => {
-        subMenuLink.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-      });
-    });
-  });
-</script>
 
 
 
 <script>
 
     $(document).ready(function () {
+        $("#AbrirLink").hide()
+        $("#CerrarLink").hide()
+        $("#RetiroLink").hide()
+
+        $("#txtFechaCierre").text(  new Date().toISOString().slice(0, 11).replace('T', ' '))
+        $("#txtFechaRetiro").text("Fecha: " + new Date().toISOString().slice(0, 11).replace('T', ' '))
+        $("#txtFecha").text("Fecha: " + new Date().toISOString().slice(0, 11).replace('T', ' '))
+        validar()
+        function validar() {
+            $.ajax({
+            url: 'Views/Modules/ServicesModules/MenuService.php',
+            type: 'POST',
+            data: {
+                action: 'validacion',
+                FechaHoy: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            },
+            success: function(response) {
+                console.log(response)
+                if (response == 0) {
+                    $("#AbrirLink").show()
+                    $("#CerrarLink").hide()
+                    $("#RetiroLink").hide()
+                }else{
+                    $("#CerrarLink").show()
+                    $("#RetiroLink").show()
+                    $("#AbrirLink").hide()
+                }
+               
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+        }
+       
+
+
       $('#AbrirCajas').click(function() {
         $('#AbrirCajaModal').modal('show');
       });
+
+
 
       $('#CajaForm').validate({
         rules: {
@@ -287,6 +372,7 @@
                   $('#AbrirCajaModal').modal('hide');
                   $('#CajaForm').trigger('reset');
                   $('#CajaForm').validate().resetForm();
+                  validar()
                     iziToast.success({
             title: 'Éxito',
             message: 'Subido con exito',
@@ -322,6 +408,10 @@
         $('#CerrarCajaModal').modal('show');
   });
 
+
+  $('#FacturaLink').click(function() {
+       sessionStorage.setItem("CrearOEditar", "Crear")
+  });
 
   $('#CerrarCajaForm').validate({
         rules: {
@@ -491,40 +581,4 @@
     });
 </script> 
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const menuItems = document.querySelectorAll(".nav-item > .nav-link");
-
-    menuItems.forEach(item => {
-        item.addEventListener("click", function(event) {
-            event.stopPropagation();
-
-            const parent = item.parentElement;
-            const submenu = parent.querySelector(".nav-treeview");
-
-            // Si el menú ya está abierto, simplemente se cierra
-            if (parent.classList.contains("menu-open")) {
-                parent.classList.remove("menu-open");
-            } else {
-                // Cierra otros submenús
-                document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("menu-open"));
-                // Abre el submenú del elemento seleccionado
-                parent.classList.add("menu-open");
-            }
-        });
-    });
-
-    // Gestionar enlaces del submenú
-    const subMenuLinks = document.querySelectorAll(".nav-treeview .nav-link");
-
-    subMenuLinks.forEach(link => {
-        link.addEventListener("click", function() {
-            // Mantiene el submenú abierto
-            const parent = link.closest(".nav-item");
-            document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("menu-open"));
-            parent.classList.add("menu-open");
-        });
-    });
-});
-</script>
 

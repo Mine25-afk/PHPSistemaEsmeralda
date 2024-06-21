@@ -3,13 +3,27 @@ require_once __DIR__ . '/../config.php';
 session_start(); 
 
 class ReportesServices {
-
-    public function ReporteVentasPorMetodoPago($mepaId) {
+    public function ReporteVentasMayoristas($fechaInicio, $fechaFinal) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_ReporteVentaspPorPago`(?)';
+            $sql = 'CALL `dbsistemaesmeralda`.`sp_ReporteVentasMayoristas`(?, ?)';
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$mepaId]);
+            $stmt->execute([$fechaInicio, $fechaFinal]);
+            
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception('Error al obtener datos: ' . $e->getMessage());
+        }
+    }
+
+    public function ReporteVentasMetodo($metodo,$fechaInicio, $fechaFinal) {
+        global $pdo;
+        try {
+            $sql = 'CALL `dbsistemaesmeralda`.`sp_ReporteVentaspPorPago`(?, ?, ?)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$metodo, $fechaInicio, $fechaFinal]);
             
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -72,16 +86,7 @@ class ReportesServices {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['accion']) && $_POST['accion'] === 'reportedemetodopago' && isset($_POST['Mepa_Id'])) {
-        $mepaId = $_POST['Mepa_Id'];
-        try {
-            $reportService = new ReportesServices();
-            $resultado = $reportService->ReporteVentasPorMetodoPago($mepaId);
-            echo json_encode(['status' => 'success', 'data' => $resultado]);
-        } catch (Exception $e) {
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-        }
-    } elseif (isset($_POST['accion']) && $_POST['accion'] === 'listarmetodospago') {
+    if (isset($_POST['accion']) && $_POST['accion'] === 'listarmetodospago') {
         try {
             $reportService = new ReportesServices();
             $resultado = $reportService->listarMetodosPago();
@@ -95,6 +100,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $reportService = new ReportesServices();
             $resultado = $reportService->ReporteControlStock($tipoProducto, $sucuId);
+            echo json_encode(['status' => 'success', 'data' => $resultado]);
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    } else if (isset($_POST['accion']) && $_POST['accion'] === 'reporteventasmayoristas' && isset($_POST['FechaInicio']) && isset($_POST['FechaFinal'])) {
+        $fechaInicio = $_POST['FechaInicio'];
+        $fechaFinal = $_POST['FechaFinal'];
+        try {
+            $reportService = new ReportesServices();
+            $resultado = $reportService->ReporteVentasMayoristas($fechaInicio, $fechaFinal);
+            echo json_encode(['status' => 'success', 'data' => $resultado]);
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    } else if (isset($_POST['accion']) && $_POST['accion'] === 'reporteventasmetodo' && isset($_POST['Metodo']) && isset($_POST['FechaInicio']) && isset($_POST['FechaFinal'])) {
+        $metodo = $_POST['Metodo'];
+        $fechaInicio = $_POST['FechaInicio'];
+        $fechaFinal = $_POST['FechaFinal'];
+        try {
+            $reportService = new ReportesServices();
+            $resultado = $reportService->ReporteVentasMetodo($metodo,$fechaInicio, $fechaFinal);
             echo json_encode(['status' => 'success', 'data' => $resultado]);
         } catch (Exception $e) {
             echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
