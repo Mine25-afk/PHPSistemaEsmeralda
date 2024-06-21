@@ -66,6 +66,7 @@ function generarMenu($conn) {
             case 'Facturas de Compra':
             case 'Transferencias':
                 case 'Maquillajes':
+                    case 'facturaApartado':
                     case 'Joyas':
                 $menu['Ventas'][] = $row;
                 break;
