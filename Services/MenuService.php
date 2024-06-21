@@ -1,4 +1,3 @@
-
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -34,6 +33,7 @@ function generarMenu($conn) {
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
    
+
     // Agrupar pantallas por categoría
     $menu = [
         'Inicio' => [],
@@ -54,7 +54,6 @@ function generarMenu($conn) {
             case 'reportecaja':
             case 'ventasmetodo':
             case 'Control de stock':
-            case 'reportecaja':
                 $menu['Reportes'][] = $row;
                 break;
             case 'Empleados':
@@ -182,4 +181,47 @@ Reportes<i class="fas fa-angle-left right"></i></p></a>';
 
 
 ?>
+
+<script>
+   $(document).ready(function () {
+    // Mantener el menú abierto al hacer clic en un enlace del menú
+    $('.nav-item').on('click', function (e) {
+        var $this = $(this);
+
+        // Si el menú actual ya está abierto, ciérralo
+        if ($this.parent().hasClass('menu-open')) {
+            $this.parent().removeClass('menu-open');
+            $this.siblings('.nav-treeview').slideUp();
+        } else {
+            // Cerrar otros menús abiertos
+            $('.nav-item.menu-open').removeClass('menu-open');
+            $('.nav-item.menu-open .nav-treeview').slideUp();
+
+            // Abrir el menú actual
+            $this.parent().addClass('menu-open');
+            $this.siblings('.nav-treeview').slideDown();
+        }
+    });
+
+    // Guardar el estado de los menús en el localStorage
+    $('.nav-link').on('click', function () {
+        var openMenus = [];
+        $('.nav-item.menu-open').each(function () {
+            openMenus.push($(this).attr('id'));
+        });
+        localStorage.setItem('openMenus', JSON.stringify(openMenus));
+    });
+
+    // Restaurar el estado de los menús desde el localStorage
+    var openMenus = JSON.parse(localStorage.getItem('openMenus'));
+    if (openMenus) {
+        openMenus.forEach(function (menuId) {
+            var $menu = $('#' + menuId);
+            $menu.addClass('menu-open');
+            $menu.children('.nav-treeview').slideDown();
+        });
+    }
+});
+
+</script>
 
