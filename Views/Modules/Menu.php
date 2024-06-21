@@ -35,13 +35,16 @@
     color: #000000;
 }
 
-.btn-primary:hover, .btn-primary {
+.btn-primary:hover, .btn-primary, .btn:active {
     background-color: #5d9e3e;
     border-color: #5d9e3e;
     color: #FFFFFF;
     background:#5d9e3e;
     
 }
+
+
+
 .hover{
   background-color: #5d9e3e;
 }
@@ -316,7 +319,7 @@ h2{
                
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+  
             }
         });
         }
@@ -397,7 +400,7 @@ h2{
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+    
             }
         });
   }
@@ -489,7 +492,7 @@ h2{
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+      
             }
         });
   }
@@ -573,7 +576,7 @@ h2{
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+        
             }
         });
   }

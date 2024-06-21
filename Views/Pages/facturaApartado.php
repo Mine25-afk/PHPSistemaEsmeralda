@@ -498,7 +498,7 @@ $(document).ready(function() {
                 }
             },
             error: function() {
-                alert('Error en la comunicación con el servidor.');
+    
             }
         });
                   }else{

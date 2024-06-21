@@ -85,7 +85,7 @@
                     select.add(option);
                 });
             } else {
-                alert(data.message);
+   
             }
         }
 
@@ -106,7 +106,7 @@
             if (data.status === 'success') {
                 generarPDF(data.data, fechaInicio, fechaFinal, metodoPago);
             } else {
-                alert(data.message);
+       
             }
         }
 

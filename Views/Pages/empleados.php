@@ -520,11 +520,11 @@
                         $('#eliminarModal').modal('hide');
                         sessionStorage.setItem('Empl_Id', "0");
                     } else {
-                        alert('Error al eliminar empleado.');
+                  
                     }
                 },
                 error: function() {
-                    alert('Error en la comunicación con el servidor.');
+          
                 }
             });
         });
@@ -593,7 +593,7 @@
                         }
                     },
                     error: function() {
-                        alert('Error en la comunicación con el servidor.');
+             
                     }
                 });
             }

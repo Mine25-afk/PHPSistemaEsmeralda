@@ -1129,7 +1129,7 @@ $('input[name="producto"]').autocomplete({
 
                         },
                         error: function() {
-                            alert('Error en la comunicación con el servidor.');
+      
                         }
                     });
                 }
