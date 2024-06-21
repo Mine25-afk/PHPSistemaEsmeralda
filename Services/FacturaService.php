@@ -11,16 +11,20 @@ class FacturaController {
             $result = $stmt->fetchAll();
             $data = array();
             foreach ($result as $row) {
-                $confirmar = $row['Fact_Finalizado'] == 1 ? "<button style='margin: 0 5px;' class='btn btn-danger btn-sm abrir-confirmar'><i class='fas fa-eraser'></i> Confirmar</button>" : "";
-                $editar = $row['Fact_Finalizado'] == 1 ? "<button style='margin: 0 5px;' class='btn btn-primary btn-sm abrir-editar'><i class='fas fa-edit'></i>Editar</button>" : "";
-                $detalles = $row['Fact_Finalizado'] == 0 ? "<button style='margin: 0 5px;' class='btn btn-secondary btn-sm abrir-detalles'><i class='fas fa-eye'></i>Detalles</button>" : "";
-                $acciones = "<div class='text-center'>" . $detalles . $editar . $confirmar . "</div>";
+                $confirmar = $row['Fact_Finalizado'] == 1 ? " <a class='dropdown-item abrir-confirmar'><i class='fas fa-trash-alt'></i> Confirmar</a>" : "";
+                $editar = $row['Fact_Finalizado'] == 1 ? "<a class='dropdown-item abrir-editar'><i class='fas fa-edit'></i> Editar</a>" : "";
+                $detalles = $row['Fact_Finalizado'] == 0 ? "<a class='dropdown-item abrir-detalles'><i class='fas fa-info-circle'></i> Detalles</a>" : "";
+                $acciones = "<div class='text-center'> <div class='btn-group'> <button type='button' class='btn btn-default dropdown-toggle dropdown-icon' data-toggle='dropdown'><i class='fas fa-cogs'></i> Acciones</button><div class='dropdown-menu'>" . $detalles . $editar . $confirmar . "</div> </div></div>";
                 $data[] = array(
                     'Fact_Id' => $row['Fact_Id'],
                     'Clie_Nombre'=> $row['Clie_Nombre'],
                     'Empl_Nombre'=> $row['Empl_Nombre'],
                     'Mepa_Metodo'=> $row['Mepa_Metodo'],
                     'Fact_Finalizado'=> $row['Fact_Finalizado'],
+                    'Clie_EsMayorista'=> $row['Clie_EsMayorista'],
+                    'Fact_Impuesto'=> $row['Fact_Impuesto'],
+                    'Clie_DNI'=> $row['Clie_DNI'],
+
                     'Acciones' => $acciones
                 );
             }

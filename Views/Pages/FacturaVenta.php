@@ -25,8 +25,7 @@
     </style>
  <script>
         $(document).ready(function() {
-          sessionStorage.setItem("Clie_Id","1")
-          sessionStorage.setItem("Mayorista","0")
+ 
             var availableTags = [];
             
             // Cargar datos de la base de datos
@@ -183,7 +182,7 @@
           </div>
           <div class="col-md-2">
             <button type="button" class="btn btn-secondary btn-block" id="btnCancelar">
-              <i class="fas fa-reply"></i> Cancelar
+              <i class="fas fa-bars"></i> Lista
             </button>
           </div>
         </div>
@@ -327,10 +326,32 @@
 
 <script>
 $(document).ready(function() {
-
+  if (sessionStorage.getItem("CrearOEditar") == "Crear") {
   sessionStorage.setItem("Fact_Id","0")
   sessionStorage.setItem("Total","0")
   sessionStorage.setItem("Cantidad","1")
+  sessionStorage.setItem("Clie_Id","1")
+  sessionStorage.setItem("Mayorista","0")
+  }else{
+    console.log("ESTOY ACA ABAJO LOCO")
+    console.log(sessionStorage.getItem("Fact_Id"))
+    $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'listarFacturaId',
+                "FactId": sessionStorage.getItem("Fact_Id")
+            },
+            success: function(response) {
+                data = JSON.parse(response)
+                sessionStorage.setItem("Encabezado", JSON.stringify(data));
+                console.log("Es cliente mayorista? " + data.data[0].Clie_EsMayorista)
+                sessionStorage.setItem("Mayorista",data.data[0].Clie_EsMayorista)
+            }
+    });
+
+  }
+
 
   cargarDropdowns({ Tarj_Id: 0 });
   async function cargarDropdowns(selectedData = {}) {
@@ -461,7 +482,7 @@ $(document).ready(function() {
         sessionStorage.setItem("Fact_Id", data[0].TotalStock)
         console.log(sessionStorage.getItem("Fact_Id"));
 
-$('#TablaProductos_Factura').DataTable().ajax.reload(); 
+        $('#TablaProductos_Factura').DataTable().ajax.reload(); 
         $('#tablaProductos').DataTable().ajax.reload();
 
                 } else {
@@ -721,7 +742,7 @@ $('#TablaProductos_Factura').DataTable().ajax.reload();
   $("#btnConfirmar").click(function () {
     if (sessionStorage.getItem("Mepa_Metodo") == "1") {
       $("#ModalConfirmar").modal("show");
-    }else if(sessionStorage.getItem("Mepa_Metodo") == "7"){
+    }else if(sessionStorage.getItem("Mepa_Metodo") == "7" ){
       $("#ModalTransferencias").modal("show")
 
     }else{
@@ -1075,10 +1096,32 @@ $('#tablaProductos').DataTable().ajax.reload();
     $('#TablaProductos_Factura').DataTable().ajax.reload(); 
     $('#tablaProductos').DataTable().ajax.reload();
 
-    $("#txtTotal").text("00.0");
-    $("#txtTotal2").text("Total: 00.0");
-    $("#txtSubtotal").text("Subtotal: 00.0");
-    $("#txtImpuesto").text("Impuesto: 00.0");
+    $("#txtTotal").text("Lps:00.0");
+    $("#txtTotal2").text("Total:Lps.00.0 ");
+    $("#txtSubtotal").text("Subtotal:Lps.00.0");
+    $("#txtImpuesto").text("Impuesto:Lps.00.0");
+}
+
+function resetFormSinFact() {
+    sessionStorage.setItem("Mepa_Metodo", "1");
+    $("#btnEfectivo").removeClass("btn-secondary").addClass("btn-primary");
+    $("#btnTarjeta").removeClass("btn-primary").addClass("btn-secondary");
+    $("#btnTransferencias").removeClass("btn-primary").addClass("btn-secondary");
+
+    $("#tags").val(null);
+    $("#auto").val(null);
+    sessionStorage.setItem("Cantidad", "1");
+    sessionStorage.setItem("Clie_Id", "1");
+    sessionStorage.setItem("Mayorista", "0");
+    sessionStorage.setItem("Total", "0");
+
+    $('#TablaProductos_Factura').DataTable().ajax.reload(); 
+    $('#tablaProductos').DataTable().ajax.reload();
+
+    $("#txtTotal").text("Lps:00.0");
+    $("#txtTotal2").text("Total:Lps.00.0 ");
+    $("#txtSubtotal").text("Subtotal:Lps.00.0");
+    $("#txtImpuesto").text("Impuesto:Lps.00.0");
 }
     $("#btnNuevo").click(function () {
       resetForm();
@@ -1253,7 +1296,7 @@ $('#tablaProductos').DataTable().ajax.reload();
     })
 
     $("#btnCancelar").click(function () {
-        // Redirigir a la página facturas
+     
         window.location.href = 'facturas';
 
 

@@ -302,6 +302,10 @@ h2{
   });
 
 
+  $('#FacturaLink').click(function() {
+       sessionStorage.setItem("CrearOEditar", "Crear")
+  });
+
   $('#CerrarCajaForm').validate({
         rules: {
           Final: {

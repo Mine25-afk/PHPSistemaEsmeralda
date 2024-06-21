@@ -1,3 +1,8 @@
+<style>
+      #pdf-frame {
+            display: none; /* Ocultar el iframe */
+        }
+</style>
 <script>
   $(document).ready(function() {
     var availableTags = [{
@@ -58,111 +63,7 @@
       </div>
     </div>
 
-    <div class="CrearMostrar">
-      <form id="FacturaForm" style="width: 100%">
-        <div class="form-row" style="justify-content: center; margin: 0px 10px">
-          <div class="col-md-6">
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-address-book"></i></span>
-              </div>
-              <input id="tags" placeholder="DNI" class="form-control">
-
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-child"></i></span>
-              </div>
-              <input type="email" class="form-control" placeholder="Consumidor Final" />
-            </div>
-          </div>
-        </div>
-        <div class="form-row" style="justify-content: space-between; margin: 0px 10px">
-          <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnEfectivo">
-              <i class="fas fa-dollar-sign"></i> Efectivo
-            </button>
-          </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnTarjeta">
-              <i class="fas fa-credit-card"></i>Tarjeta de credito
-            </button>
-          </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-secondary btn-block" id="btnTransferencias">
-              <i class="fas fa-donate"></i> Transferencias
-            </button>
-          </div>
-        </div>
-        <div class="form-row" style="justify-content: space-between; margin: 0px 10px">
-          <div class="col-md-12" style="margin-top:10px">
-            <div class="table-responsive">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>Categoria</th>
-                    <th>Codigo</th>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
-                    <th>Total</th>
-                    <th class="text-center">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Maquillaje</td>
-                    <td>M1004</td>
-                    <td>Labial</td>
-                    <td>300.34</td>
-                    <td>3</td>
-                    <td>1000</td>
-                    <td>
-                      <button type="button" class="btn btn-secondary btn-block">
-                        <i class="fas fa-eraser"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td>Categoria</td>
-                    <td>
-                      <input name="Marca" class="form-control letras" id="Marca" />
-                    </td>
-                    <td>
-                      <input name="Marca" class="form-control letras" id="Marca" />
-                    </td>
-                    <td>100</td>
-                    <td>3</td>
-                    <td>300</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-      </form>
-      <div class="form-row" style="justify-content: end; margin: 0px 10px">
-        <div class="col-md-2">
-          <button type="button" class="btn btn-secondary btn-block" id="btnNuevo">
-            <i class="fas fa-plus"></i> Nuevo
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-secondary btn-block" id="btnConfirmar">
-            <i class="far fa-check-circle"></i>Confirmar
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-secondary btn-block" id="btnCancelar">
-            <i class="fas fa-reply"></i> Cancelar
-          </button>
-        </div>
-      </div>
-    </div>
+  
 
     <!-- Cierre de CrearMostrar -->
   </div>
@@ -199,11 +100,74 @@
 </div>
 
 
+<div class="modal fade" id="ModalConfirmar" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <!-- Add modal-lg class here -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Total a pagar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+          <div style="padding: 10px 10px;">
+            <form id="Form_Efectivo">
+              <div class="form-row ">
+                <div class="col-md-6">
+                  <label class="control-label">Monto Recibido</label>
+                  <input name="MontoEfectivo" class="form-control letras" id="MontoEfectivo"/>
+                  <span class="text-danger"></span>
+                </div>
+                <div class="col-md-6" style="display:flex;justify-content: center; align-items:center">
+                  <label class="control-label" id="Cambio" style="font-size: 30px;">00.0</label>
+                  <span class="text-danger"></span>
+                </div>
+            </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="ConfirmarEfectivo">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="modal fade" id="ModalTransferencias" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <!-- Add modal-lg class here -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Tarjeta de banco</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+          <div style="padding: 10px 10px;">
+            <form id="Tarjeta_Form">
+              <div class="form-row ">
+                <div class="col-md-6">
+                  <label class="control-label">Tarjeta</label>
+                  <select name="Tarj_Id" class="form-control" id="Tarj_Id" required></select>
+                  <span class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                  <label class="control-label">Codigo</label>
+                  <input name="CodigoTransferencia" class="form-control letras" id="CodigoTransferencia"/>
+                  <span class="text-danger"></span>
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="ConfirmarTarjeta">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<iframe id="pdf-frame"></iframe>
 <script>
   $(document).ready(function() {
-    $('.CrearOcultar').show();
-    $('.CrearMostrar').hide();
     var table = $('#tablaFactura').DataTable({
       "ajax": {
         "url": "Services/FacturaService.php",
@@ -233,132 +197,291 @@
     $('#tablaFactura tbody').on('click', '.abrir-confirmar', function() {
       var data = table.row($(this).parents('tr')).data();
       var Fact_Id = data.Fact_Id;
+
+      console.log(data.Clie_EsMayorista)
       sessionStorage.setItem('Fact_Id', Fact_Id);
-      $('#ConfirmarModal').modal('show');
-    });
-
-    $('#confirmarFacturaBTN').click(function() {
-      var Fact_Id = sessionStorage.getItem('Fact_Id');
+      sessionStorage.setItem("Clie_DNI", data.Clie_DNI)
+              sessionStorage.setItem("Clie_Nombre", data.Clie_Nombre)
+      sessionStorage.setItem('Mayorista', data.Clie_EsMayorista);
       $.ajax({
-        url: 'Services/FacturaService.php',
-        type: 'POST',
-        data: {
-          action: 'confirmar',
-          Fact_Codigo: Fact_Id,
-          Fact_FechaFinalizado: new Date().toISOString().slice(0, 19).replace('T', ' '),
-          Fact_Pago: $("#Pago").val(),
-          Fact_Cambio: $("#Pago").val()
-        },
-        success: function(response) {
-          if (response == 1) {
-            iziToast.success({
-              title: 'Éxito',
-              message: 'Confirmado con éxito',
-              position: 'topRight',
-              transitionIn: 'flipInX',
-              transitionOut: 'flipOutX'
-            });
-            $('#tablaFactura').DataTable().ajax.reload();
-            $('#ConfirmarModal').modal('hide');
-            sessionStorage.setItem('Fact_Id', "0");
-          } else {
-            alert('Error al eliminar joya.');
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            "data": {
+            'action': 'listarproductos_Factura',
+            'fact_Id' : sessionStorage.getItem("Fact_Id"),
+            'mayorista' :sessionStorage.getItem("Mayorista"),
+            },
+            success: function(response) {
+          
+              console.log("los datos son:")
+              datos = JSON.parse(response)
+              console.log(datos)
+           
+              var subtotal = 0;
+              var total = 0;
+              console.log(data.Fact_Impuesto)
+              var tax = parseFloat(data.Fact_Impuesto) / 100;
+              
+              sessionStorage.getItem("Mayorista")
+
+              datos.data.forEach(function(item) {
+                var itemTotal = parseFloat(item.Total);
+                subtotal += itemTotal;
+            })
+            var taxAmount = subtotal * tax;
+            total = subtotal + taxAmount;
+            sessionStorage.setItem("Total",total)
+            sessionStorage.setItem("SubTotal", subtotal)
+            sessionStorage.setItem("taxAmount", taxAmount)
+            console.log(total)
           }
-        },
-        error: function() {
-          alert('Error en la comunicación con el servidor.');
-        }
-      });
+         
+          
+          });
+      
+
+      if (data.Mepa_Metodo != "Efectivo") {
+        $("#ModalTransferencias").modal("show")
+      }else{
+        $("#ModalConfirmar").modal("show");
+      }
+      
+
     });
 
-    sessionStorage.setItem("Mepa_Metodo", "1")
-    $("#btnEfectivo").removeClass("btn-secondary")
-    $("#btnEfectivo").addClass("btn-primary")
+    $('#Form_Efectivo').validate({
+        rules: {
+          MontoEfectivo: {
+                required: true
+            }
+        },
+        messages: {
+          MontoEfectivo: {
+                required: "Por favor ingrese un monto"
+            }
 
-    //Seleccionado de btn
-    $("#btnEfectivo").click(function() {
-      sessionStorage.setItem("Mepa_Metodo", "1")
-      $("#btnEfectivo").removeClass("btn-secondary")
-      $("#btnEfectivo").addClass("btn-primary")
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.col-md-6').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+    $('#MontoEfectivo').on('input', function() {
+        let montoEfectivo = parseFloat($(this).val()) || 0;
+        let cambio = montoEfectivo -  parseFloat(sessionStorage.getItem("Total"));
+        $('#Cambio').text(cambio.toFixed(2));
+    });
 
-      $("#btnTarjeta").removeClass("btn-primary")
-      $("#btnTarjeta").addClass("btn-secondary")
+    $("#ConfirmarEfectivo").click(function () {
+      if ($('#Form_Efectivo').valid()) {
+          if (parseFloat($('#Cambio').text()) > 0)  {
+            $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'confirmar',
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
+                Fact_FechaFinalizado:  new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Pago: $("#MontoEfectivo").val(),
+                Fact_Cambio: $('#Cambio').text(),
+                Tarj_Id: "3",
+                Tarj_Codigo: "Efectivo",
+                Fact_Total: sessionStorage.getItem("Total")
+            },
+            success: function(response) {
+                if (response == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Confirmado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                    $.ajax({
+    url: 'Services/FacturaService.php',
+    type: 'POST',
+    data: {
+        'action': 'listarproductos_Factura',
+        'fact_Id': sessionStorage.getItem("Fact_Id"),
+        'mayorista': sessionStorage.getItem("Mayorista"),
+    },
+        success: function(json) {
+        data = json
+        sessionStorage.setItem("ProductosFactura", JSON.stringify(data));
 
-      $("#btnTransferencias").removeClass("btn-primary")
-      $("#btnTransferencias").addClass("btn-secondary")
+
+
+        $("#tablaFactura").DataTable().ajax.reload();
+        $('#ModalConfirmar').modal('hide');
+        PdfFactura();
+      
+    }
+                   
+  });
+
+                    
+
+
+         
+                 
+                  
+                } else {
+                    alert('Error al eliminar joya.');
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+          }else{
+            iziToast.error({
+            title: 'Error',
+            message: 'Es menor no puede confirmar',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+        });
+          }
+
+
+      }
     })
 
-    $("#btnTarjeta").click(function() {
-      sessionStorage.setItem("Mepa_Metodo", "4")
-      $("#btnTarjeta").removeClass("btn-secondary")
-      $("#btnTarjeta").addClass("btn-primary")
 
-      $("#btnEfectivo").removeClass("btn-primary")
-      $("#btnEfectivo").addClass("btn-secondary")
+    $('#Tarjeta_Form').validate({
+        rules: {
+          Tarj_Id: {
+                required: true,
+                notZero: true 
+            },
+            CodigoTransferencia: {
+                required: true,
+                notZero: true 
+            }
+       
 
-      $("#btnTransferencias").removeClass("btn-primary")
-      $("#btnTransferencias").addClass("btn-secondary")
+        },
+        messages: {
+          Tarj_Id: {
+                required: "Por favor ingrese una tarjeta",
+                notZero: "Por favor seleccione una tarjeta válida"
+            },
+            CodigoTransferencia: {
+                required: "Por favor ingrese el codigo de transferencia"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.col-md-6').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+
+
+    $("#ConfirmarTarjeta").click(function(){
+      if ($('#Tarjeta_Form').valid()) {
+        $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'confirmar',
+                Fact_Codigo: sessionStorage.getItem("Fact_Id"),
+                Fact_FechaFinalizado:  new Date().toISOString().slice(0, 19).replace('T', ' '),
+                Fact_Pago: sessionStorage.getItem("Total"),
+                Fact_Cambio: sessionStorage.getItem("Total"),
+                Tarj_Id: $("#Tarj_Id").val(),
+                Tarj_Codigo: $("#CodigoTransferencia").val(),
+                Fact_Total: sessionStorage.getItem("Total")
+            },
+            success: function(response) {
+                if (response == 1) {
+                    iziToast.success({
+                        title: 'Éxito',
+                        message: 'Confirmado con éxito',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
+                    });
+                   
+                    
+
+                    $.ajax({
+    url: 'Services/FacturaService.php',
+    type: 'POST',
+    data: {
+        'action': 'listarproductos_Factura',
+        'fact_Id': sessionStorage.getItem("Fact_Id"),
+        'mayorista': sessionStorage.getItem("Mayorista"),
+    },
+        success: function(json) {
+        console.log("Los datos son:");
+        console.log(json.data);
+        sessionStorage.setItem("ProductosFactura", JSON.stringify(json.data));
+
+      
+        
+    }
+  });
+
+
+
+                    $('#ModalTransferencias').modal('hide');
+                    PdfFactura();
+            
+                  
+                } else {
+                    alert('Error al eliminar joya.');
+                }
+            },
+            error: function() {
+                alert('Error en la comunicación con el servidor.');
+            }
+        });
+          }else{
+            iziToast.error({
+            title: 'Error',
+            message: 'No se pudo subir',
+            position: 'topRight',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+        });
+      }
     })
 
-    $("#btnTransferencias").click(function() {
-      sessionStorage.setItem("Mepa_Metodo", "7")
-      $("#btnTransferencias").removeClass("btn-secondary")
-      $("#btnTransferencias").addClass("btn-primary")
 
-      $("#btnEfectivo").removeClass("btn-primary")
-      $("#btnEfectivo").addClass("btn-secondary")
+    $('#tablaFactura tbody').on('click', '.abrir-editar', function() {
+      var data = table.row($(this).parents('tr')).data();
+      var Fact_Id = data.Fact_Id;
+      sessionStorage.setItem('Fact_Id', Fact_Id);
+      sessionStorage.setItem("CrearOEditar","Editar")
+      window.location.href = 'index.php?Pages=FacturaVenta';
 
-      $("#btnTarjeta").removeClass("btn-primary")
-      $("#btnTarjeta").addClass("btn-secondary")
-    })
+    });
 
-    $("#btnNuevo").click(function() {
-      //Metodo
-      sessionStorage.setItem("Mepa_Metodo", "1")
-      $("#btnEfectivo").removeClass("btn-secondary")
-      $("#btnEfectivo").addClass("btn-primary")
-      $("#btnTarjeta").removeClass("btn-primary")
-      $("#btnTarjeta").addClass("btn-secondary")
-      $("#btnTransferencias").removeClass("btn-primary")
-      $("#btnTransferencias").addClass("btn-secondary")
+ 
+    
 
-      //
-    })
+  
 
-    $("#btnCancelar").click(function() {
-      //Metodo
-      sessionStorage.setItem("Mepa_Metodo", "1")
-      $("#btnEfectivo").removeClass("btn-secondary")
-      $("#btnEfectivo").addClass("btn-primary")
-      $("#btnTarjeta").removeClass("btn-primary")
-      $("#btnTarjeta").addClass("btn-secondary")
-      $("#btnTransferencias").removeClass("btn-primary")
-      $("#btnTransferencias").addClass("btn-secondary")
+  
 
-      //Collapase
-      $('.CrearOcultar').show();
-      $('.CrearMostrar').hide();
-    })
+    
 
 
-    $("#btnConfirmar").click(function() {
-      //Metodo
-      sessionStorage.setItem("Mepa_Metodo", "1")
-      $("#btnEfectivo").removeClass("btn-secondary")
-      $("#btnEfectivo").addClass("btn-primary")
-      $("#btnTarjeta").removeClass("btn-primary")
-      $("#btnTarjeta").addClass("btn-secondary")
-      $("#btnTransferencias").removeClass("btn-primary")
-      $("#btnTransferencias").addClass("btn-secondary")
-
-      //Collapase
-      $('.CrearOcultar').show();
-      $('.CrearMostrar').hide();
-
-      var doc = new jsPDF();
-      doc.text('Hola, este es un PDF generado desde JavaScript con JsPdf', 10, 10);
-      doc.save('archivo.pdf');
-    })
+  
 
 
 
@@ -379,9 +502,200 @@
 
 
     $('#AbrirModal').click(function() {
-      $('.CrearOcultar').hide();
-      $('.CrearMostrar').show();
-      sessionStorage.setItem('Fact_Id', "0");
+      sessionStorage.setItem("CrearOEditar","Crear")
+      window.location.href = 'index.php?Pages=FacturaVenta';
     });
+
+
+    function PdfFacturaNumero() {
+      
+   
+
+      var doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: [190,400]  // 100px wide and 600px tall
+    });
+
+var img = new Image();
+img.src = 'Views/Logo.png';
+
+var cuerpo = JSON.parse(sessionStorage.getItem("ProductosFactura"));
+    
+var data  = JSON.parse(cuerpo)
+console.log("MAPEADO A")
+console.log(data.data)
+
+doc.addImage(img, 'PNG', 10, 5, 100, 20);
+
+doc.setFontSize(10);
+doc.setFont(undefined, 'normal');
+doc.text("Francisco Morazan, Tegucigalpa", 60, 30, { align: 'center' });
+doc.text("Los dolores, calle buenos aires", 60, 40, { align: 'center' });
+doc.setFontSize(9);
+doc.text("email: esmeraldashn2014@gmail.com", 60, 50, { align: 'center' });
+
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'bold');
+  doc.text("Factura:", 53, 70, { align: 'center' });
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text("Fecha: " + new Date().toISOString().slice(0, 10).replace('T', ' ') + "   Hora: " + new Date().toISOString().slice(11, 16).replace('T', ' ') , 5, 80, { align: 'left' });
+  doc.text(sessionStorage.getItem("Fact_Id") , 77, 70, { align: 'center' });
+  doc.text("Cliente: " + sessionStorage.getItem("Clie_Nombre") ,  5, 90, { align: 'left' });
+  doc.text("RTN: "+ sessionStorage.getItem("Clie_DNI"),  5, 100, { align: 'left' });
+  doc.text("-------------------------------------------", 5, 110, { align: 'left' });
+  doc.setFontSize(8);
+  doc.text("  Descripción     Cantidad           Precio ", 5, 120, { align: 'left' });
+  doc.setFontSize(10);
+  doc.text("-------------------------------------------", 5, 130, { align: 'left' });
+  const tableData = data.data.map(item => [item.Producto, item.Cantidad, item.Precio_Unitario]);
+  const yPosition = 130; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+  doc.autoTable({
+    body: tableData,
+    startY: yPosition,
+    margin: { left: 5},
+    styles: {
+      fontSize: 8,
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    headStyles: {
+      halign: 'center',
+      valign: 'middle',
+      fontStyle: 'normal',
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    columnStyles: {
+      0: { halign: 'left', cellWidth: 47 },  // Ancho personalizado para la columna 0
+      1: { halign: 'center', cellWidth: 20 },  // Ancho personalizado para la columna 1
+      2: { halign: 'center', cellWidth: 60 }   // Ancho personalizado para la columna 2
+    },
+    theme: 'plain' // Sin líneas de borde, solo blanco
+  });
+  var total = parseFloat(sessionStorage.getItem("Total"))
+  var Impuesto = parseFloat(sessionStorage.getItem("taxAmount"))
+  var subtotal = parseFloat(sessionStorage.getItem("SubTotal"))
+  const borderYPosition = (doc).previousAutoTable.finalY + 10;
+  doc.text("-------------------------------------------", 5, borderYPosition, { align: 'left' });
+  doc.setFontSize(12);
+  doc.text("Subtotal", 5, borderYPosition + 10, { align: 'left' });
+  doc.text("Impuesto", 5, borderYPosition + 25, { align: 'left' });
+  doc.text("Total", 5, borderYPosition + 40 , { align: 'left' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 10, { align: 'right' });
+  doc.text(Impuesto.toFixed(2).toString(), 110, borderYPosition + 25, { align: 'right' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 40, { align: 'right' });
+
+  doc.setFontSize(10);
+  doc.text("-------------------------------------------", 5, borderYPosition + 50, { align: 'left' });
+doc.setFontSize(14);
+doc.text("Gracias por su compra", 60, borderYPosition + 60 , { align: 'center' });
+console.log(borderYPosition + 70)
+return borderYPosition + 70
+            }
+   
+    function PdfFactura() {
+      
+      var largo = PdfFacturaNumero()
+
+      var doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: [160,largo + 90]  // 100px wide and 600px tall
+    });
+
+var img = new Image();
+img.src = 'Views/Logo.png';
+
+var cuerpo = JSON.parse(sessionStorage.getItem("ProductosFactura"));
+    
+var data  = JSON.parse(cuerpo)
+console.log("MAPEADO A")
+console.log(data.data)
+
+doc.addImage(img, 'PNG', 10, 5, 100, 20);
+
+doc.setFontSize(10);
+doc.setFont(undefined, 'normal');
+doc.text("Francisco Morazan, Tegucigalpa", 60, 30, { align: 'center' });
+doc.text("Los dolores, calle buenos aires", 60, 40, { align: 'center' });
+doc.setFontSize(9);
+doc.text("email: esmeraldashn2014@gmail.com", 60, 50, { align: 'center' });
+
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'bold');
+  doc.text("Factura:", 53, 70, { align: 'center' });
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text("Fecha: " + new Date().toISOString().slice(0, 10).replace('T', ' ') + "   Hora: " + new Date().toISOString().slice(11, 16).replace('T', ' ') , 5, 80, { align: 'left' });
+  doc.text(sessionStorage.getItem("Fact_Id") , 77, 70, { align: 'center' });
+  doc.text("Cliente: " + sessionStorage.getItem("Clie_Nombre") ,  5, 90, { align: 'left' });
+  doc.text("RTN: "+ sessionStorage.getItem("Clie_DNI"),  5, 100, { align: 'left' });
+  doc.text("-------------------------------------------", 5, 110, { align: 'left' });
+  doc.setFontSize(8);
+  doc.text("  Descripción     Cantidad           Precio ", 5, 120, { align: 'left' });
+  doc.setFontSize(10);
+  doc.text("-------------------------------------------", 5, 130, { align: 'left' });
+  const tableData = data.data.map(item => [item.Producto, item.Cantidad, item.Precio_Unitario]);
+  const yPosition = 130; // Ajustar esta posición para que la tabla inicie justo debajo de la cabecera
+  doc.autoTable({
+    body: tableData,
+    startY: yPosition,
+    margin: { left: 5},
+    styles: {
+      fontSize: 8,
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    headStyles: {
+      halign: 'center',
+      valign: 'middle',
+      fontStyle: 'normal',
+      fillColor: [255, 255, 255], // Fondo blanco
+      textColor: [0, 0, 0]       // Texto negro
+    },
+    columnStyles: {
+      0: { halign: 'left', cellWidth: 47 },  // Ancho personalizado para la columna 0
+      1: { halign: 'center', cellWidth: 20 },  // Ancho personalizado para la columna 1
+      2: { halign: 'center', cellWidth: 60 }   // Ancho personalizado para la columna 2
+    },
+    theme: 'plain' // Sin líneas de borde, solo blanco
+  });
+  var total = parseFloat(sessionStorage.getItem("Total"))
+  var Impuesto = parseFloat(sessionStorage.getItem("taxAmount"))
+  var subtotal = parseFloat(sessionStorage.getItem("SubTotal"))
+  const borderYPosition = (doc).previousAutoTable.finalY + 10;
+  doc.text("-------------------------------------------", 5, borderYPosition, { align: 'left' });
+  doc.setFontSize(12);
+  doc.text("Subtotal", 5, borderYPosition + 10, { align: 'left' });
+  doc.text("Impuesto", 5, borderYPosition + 25, { align: 'left' });
+  doc.text("Total", 5, borderYPosition + 40 , { align: 'left' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 10, { align: 'right' });
+  doc.text(Impuesto.toFixed(2).toString(), 110, borderYPosition + 25, { align: 'right' });
+  doc.text(total.toFixed(2).toString(), 110, borderYPosition + 40, { align: 'right' });
+
+  doc.setFontSize(10);
+  doc.text("-------------------------------------------", 5, borderYPosition + 50, { align: 'left' });
+doc.setFontSize(14);
+doc.text("Gracias por su compra", 60, borderYPosition + 60 , { align: 'center' });
+console.log(borderYPosition + 70)
+
+  
+           
+            
+
+// Generar PDF como blob
+const pdfBlob = doc.output('blob');
+const url = URL.createObjectURL(pdfBlob);
+const iframe = document.getElementById('pdf-frame');
+iframe.src = url;
+
+iframe.onload = function() {
+    iframe.contentWindow.print();
+};
+            }
   });
 </script>

@@ -150,7 +150,7 @@ function generarMenu($conn) {
     }
     if (!empty($menu['Facturas'])) {
         echo '<li class="nav-item">';
-        echo '<a href="?Pages=FacturaVenta" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Factura</p></a>';
+        echo '<a href="FacturaVenta" id="FacturaLink" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Factura</p></a>';
         echo '</li>';
     }
     echo '<li class="nav-item">';
