@@ -343,6 +343,14 @@
             }
         }
 
+        $('#Regresar').click(function() {
+            limpiarFormulario();
+       
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('.CrearDetalles').hide();
+        });
+
         function llenarFormularioProducto(producto) {
             $('#Prod_Id').val(producto.Codigo);
             $('#Prod_Nombre_').val(producto.Producto);

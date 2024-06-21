@@ -341,8 +341,9 @@ $(document).ready(function () {
             { Pant_Id: 20, Pant_Descripcion: "Control de stock" },
             { Pant_Id: 30, Pant_Descripcion: "Reporte de caja" },
             { Pant_Id: 32, Pant_Descripcion: "Ventas por pago" },
-            { Pant_Id: 36, Pant_Descripcion: "Reparaciones" },
-            { Pant_Id: 37, Pant_Descripcion: "dashboard" }
+            { Pant_Id: 35, Pant_Descripcion: "Reparaciones" },
+            { Pant_Id: 37, Pant_Descripcion: "dashboard" },
+            { Pant_Id: 36, Pant_Descripcion: "facturaApartado" }
         ];
 
         var categorias = {
@@ -358,7 +359,7 @@ $(document).ready(function () {
                 categorias["Generales"].push(pantalla) ;
             } else if (pantalla.Pant_Descripcion.includes("Facturas") || pantalla.Pant_Descripcion.includes("Facturas de compra") || pantalla.Pant_Descripcion.includes("Joyas") 
             || pantalla.Pant_Descripcion.includes("Maquillajes") || pantalla.Pant_Descripcion.includes("Transferencias") 
-            || pantalla.Pant_Descripcion.includes("Control de stock") || pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") || pantalla.Pant_Descripcion.includes("Reparaciones")) {
+            || pantalla.Pant_Descripcion.includes("Control de stock")|| pantalla.Pant_Descripcion.includes("facturaApartado") || pantalla.Pant_Descripcion.includes("Reporte de caja") || pantalla.Pant_Descripcion.includes("Ventas por pago") || pantalla.Pant_Descripcion.includes("Reparaciones")) {
                 categorias["Ventas"].push(pantalla);
             }
         });
