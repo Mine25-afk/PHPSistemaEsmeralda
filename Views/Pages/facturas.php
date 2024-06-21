@@ -2,6 +2,19 @@
       #pdf-frame {
             display: none; /* Ocultar el iframe */
         }
+        .Mostrar {
+            width: 100%;
+            height: 100vh; /* Adjust the height to 100% of the viewport height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #pdf-frame2 {
+            width: 100%;
+            height: 100%;
+            border: none; /* Optional: remove border */
+        }
 </style>
 <script>
   $(document).ready(function() {
@@ -166,8 +179,47 @@
 </div>
 
 <iframe id="pdf-frame"></iframe>
+<div class="Mostrar" style="display: flex; flex-direction:column">
+<div class="form-row">
+            <div class="col-md-2">
+            <button type="button" class="btn btn-secondary" id="RegresarDetalles">Regresar</button>
+            </div>
+  </div>
+
+    <iframe id="pdf-frame2"></iframe>
+
+</div>
 <script>
   $(document).ready(function() {
+    $('#AbrirCajaModal').modal('show');
+    cargarDropdowns({ Tarj_Id: 0 });
+  async function cargarDropdowns(selectedData = {}) {
+    try {
+        const response = await $.ajax({ 
+            url: 'Services/FacturaService.php', 
+            type: 'POST', 
+            data: { action: 'listartarjetas' } 
+        });
+
+        const tarjetas = JSON.parse(response).data;
+        const tarjetaDropdown = $('#Tarj_Id');
+        
+        tarjetaDropdown.empty();
+        tarjetaDropdown.append('<option value="0">Seleccione una opción</option>');
+        
+        tarjetas.forEach(tarjeta => {
+            tarjetaDropdown.append(`<option value="${tarjeta.tarj_id}">${tarjeta.tarj_Descripcion}</option>`);
+        });
+
+        // Si hay datos seleccionados previamente, seleccionarlos
+        if (selectedData.Tarj_Id) {
+            tarjetaDropdown.val(selectedData.Tarj_Id);
+        }
+    } catch (error) {
+        console.error('Error cargando dropdowns:', error);
+    }
+}
+    $(".Mostrar").hide()
     var table = $('#tablaFactura').DataTable({
       "ajax": {
         "url": "Services/FacturaService.php",
@@ -248,7 +300,9 @@
       
 
     });
-
+    $.validator.addMethod("notZero", function(value, element) {
+    return value !== "0" && value !== "";
+}, "La cantidad no puede ser 0 o vacía.");
     $('#Form_Efectivo').validate({
         rules: {
           MontoEfectivo: {
@@ -427,19 +481,22 @@
         'mayorista': sessionStorage.getItem("Mayorista"),
     },
         success: function(json) {
-        console.log("Los datos son:");
-        console.log(json.data);
-        sessionStorage.setItem("ProductosFactura", JSON.stringify(json.data));
+        data = json
+        sessionStorage.setItem("ProductosFactura", JSON.stringify(data));
 
+
+
+        $("#tablaFactura").DataTable().ajax.reload();
+        $('#ModalTransferencias').modal('hide');
+        PdfFactura();
       
-        
     }
+                   
   });
 
 
 
-                    $('#ModalTransferencias').modal('hide');
-                    PdfFactura();
+                  
             
                   
                 } else {
@@ -488,13 +545,80 @@
 
 
 
-
+$("#RegresarDetalles").click(function () {
+  $(".CrearOcultar").show()
+    
+    $(".Mostrar").hide()
+})
 
     $('#tablaFactura tbody').on('click', '.abrir-detalles', function() {
-      console.log("HOLA")
-      var doc = new jsPDF();
-      doc.text('Hola, este es un PDF generado desde JavaScript con JsPdf', 10, 10);
-      doc.save('archivo.pdf');
+      var data = table.row($(this).parents('tr')).data();
+      var Fact_Id = data.Fact_Id;
+
+      $.ajax({
+            url: 'Services/FacturaService.php',
+            type: 'POST',
+            data: {
+                action: 'listarFacturaId',
+                "FactId": Fact_Id
+            },
+            success: function(response) {
+              data = JSON.parse(response)
+  
+              $.ajax({
+    url: 'Services/FacturaService.php',
+    type: 'POST',
+    data: {
+        'action': 'listarproductos_Factura',
+        'fact_Id': sessionStorage.getItem("Fact_Id"),
+        'mayorista': sessionStorage.getItem("Mayorista"),
+    },
+        success: function(json) {
+                const DNI  = data.data[0].Clie_DNI;
+                const Cliente = data.data[0].Clie_Nombre;
+                const Departamento = data.data[0].Depa_Departamento;
+                const Municipio = data.data[0].Muni_Municipio;
+                const FechaPedido = data.data[0].FechaCreacion;
+                const CodigoPedido = data.data[0].Fact_Id;
+                const MetodoPago = data.data[0].Mepa_Metodo;
+                const Sucursal  = data.data[0].Sucu_Nombre;
+                const Usuario = data.data[0].UsuarioCreacion;
+                const Fecha = data.data[0].FechaCreacion;
+                var tax = parseFloat(data.data[0].Fact_Impuesto) / 100;
+        data = json
+        sessionStorage.setItem("ProductosFactura", JSON.stringify(data));
+        datos = JSON.parse(json)
+            
+           
+              var subtotal = 0;
+              var total = 0;
+              console.log(data.Fact_Impuesto)
+              
+              
+              sessionStorage.getItem("Mayorista")
+
+              datos.data.forEach(function(item) {
+                var itemTotal = parseFloat(item.Total);
+                subtotal += itemTotal;
+            })
+            var taxAmount = subtotal * tax;
+            total = subtotal + taxAmount;
+
+            console.log(total)
+
+      
+        Reporte(DNI,Cliente,Departamento,Municipio,FechaPedido,CodigoPedido,MetodoPago,Sucursal,Usuario,Fecha,total,subtotal,taxAmount)
+    }
+                   
+  });
+                
+              
+                
+            }
+    });
+      $(".CrearOcultar").hide()
+    
+      $(".Mostrar").show()
     });
 
 
@@ -608,14 +732,14 @@ return borderYPosition + 70
 
 var img = new Image();
 img.src = 'Views/Logo.png';
-
+doc.addImage(img, 'PNG', 10, 5, 100, 20);
 var cuerpo = JSON.parse(sessionStorage.getItem("ProductosFactura"));
     
 var data  = JSON.parse(cuerpo)
 console.log("MAPEADO A")
 console.log(data.data)
 
-doc.addImage(img, 'PNG', 10, 5, 100, 20);
+
 
 doc.setFontSize(10);
 doc.setFont(undefined, 'normal');
@@ -697,5 +821,119 @@ iframe.onload = function() {
     iframe.contentWindow.print();
 };
             }
+
+
+function Reporte(DNI,Cliente,Muni,Depa,Fecha,Pedido,Metodo,Sucursal,Usuario,FechaCreacion,Total,SubTotal,Impuesto) {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: 'letter'
+  });
+  var img = new Image();
+  img.src = 'Views/Logo.png';
+  let pageNumber = 1;
+  const footer = () => {
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text(String(pageNumber), 444, 580, { align: 'right' });
+  
+  };
+  doc.addImage(img, 'PNG', 10, 5, 200, 50);
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'bold');
+  doc.text('Esmeraldas HN', 270, 30);
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text('Dirección :', 270, 40);
+  doc.text("Tegucigalpa: Los dolores, calle buenos aires", 270, 50);
+
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'bold');
+  doc.text("PEDIDO", 32, 100);
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text(DNI, 32, 110);
+  doc.text("Cliente: " + Cliente, 32, 120);
+  doc.text("Municipio: " + Muni, 32, 130);
+  doc.text("Departamento: " + Depa, 32, 140);
+
+  doc.text("Fecha Pedido: " + Fecha, 270, 110);
+  doc.text("Codigo Pedido: " + Pedido, 270, 120);
+
+  doc.text("Metodo Pago: " + Metodo, 270, 130);
+  doc.text("Sucursal: " + Sucursal, 270, 140);
+  var cuerpo = JSON.parse(sessionStorage.getItem("ProductosFactura"));
+    
+var data  = JSON.parse(cuerpo)
+console.log("MAPEADO A")
+console.log(data.data)
+const tableData = data.data.map(item => [item.Row,item.Producto, item.Cantidad, item.Precio_Unitario,item.Total]);
+const yPosition = 130
+  doc.autoTable({
+    
+    head: [['Codigo','Producto', 'Cantidad', 'Precio', 'Subtotal']],
+    body: tableData,
+    startY:  yPosition + 20,
+    styles: {
+      fontSize: 8,
+    },
+    headStyles: {
+      fillColor: [180, 180, 180],
+      textColor: [0, 0, 0],
+      halign: 'center',
+      valign: 'middle',
+      fontStyle: 'normal',
+    }, columnStyles: {
+      0: { halign: 'center' },  
+      1: { halign: 'center' }, 
+      2: { halign: 'center' }, 
+      3: { halign: 'center' },  
+      4: { halign: 'center' }  
+    },
+    theme: 'grid',
+   
+ 
+      
+      didDrawPage: (data) => {
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text(String(pageNumber), 444, 580, { align: 'right' });
+        doc.text('Usuario:' + Usuario, 10,570);
+        doc.text('Fecha:' + FechaCreacion, 10,580);
+        pageNumber++;
+      }
+      
+
+  });
+
+  const borderYPosition = (doc).previousAutoTable.finalY + 10;
+  const borderHeight = 50;
+  const borderXPosition = doc.internal.pageSize.getWidth() - 120;
+
+  doc.setDrawColor(0);
+  doc.setLineWidth(1);
+  doc.rect(borderXPosition - 10, borderYPosition, 100, borderHeight + 40);
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.text("Impuesto: " + Impuesto, borderXPosition + -5, borderYPosition + 30);
+  doc.text("Subtotal: " + SubTotal, borderXPosition + -5, borderYPosition + 15);
+  doc.setFont(undefined, 'normal');
+  doc.text("Total: " + Total, borderXPosition + -5, borderYPosition + 45);
+ 
+  if (borderYPosition + borderHeight > doc.internal.pageSize.getHeight()) {
+    doc.addPage();
+    pageNumber++;
+  }
+
+
+
+  const pdfBlob = doc.output('blob');
+  const url = URL.createObjectURL(pdfBlob);
+  const iframe = document.getElementById('pdf-frame2');
+  iframe.src = url;
+}
   });
 </script>

@@ -153,15 +153,15 @@ function generarMenu($conn) {
         echo '<a href="FacturaVenta" id="FacturaLink" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Factura</p></a>';
         echo '</li>';
     }
-    echo '<li class="nav-item">';
+    echo '<li class="nav-item" id="AbrirLink">';
     echo ' <a class="nav-link" id="AbrirCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Abrir Caja</p></a>';
     echo '</li>';
 
-  echo '<li class="nav-item">';
+  echo '<li class="nav-item" id="CerrarLink">';
     echo '<a class="nav-link" id="CerrarCajas"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Cerrar caja</p></a>';
     echo '</li>';
 
-    echo '<li class="nav-item">';
+    echo '<li class="nav-item" id="RetiroLink">';
     echo ' <a class="nav-link" id="AbrirRetiro"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>Retiro caja</p></a>';
     echo '</li>';
     
