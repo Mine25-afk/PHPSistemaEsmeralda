@@ -851,13 +851,16 @@
                     formData.append('action', 'insertarJoyas');
                     formData.append('Joya_Codigo', codigoProducto);
                     formData.append('Joya_Nombre', $('#nombreProducto').val());
-                    formData.append('precio_compra', $('#precioCompraProducto').val());
-                    formData.append('precio_venta', $('#precioVentaProducto').val());
-                    formData.append('precio_mayorista', $('#precioMayoristaProducto').val());
-                    formData.append('imagen', $('#Imagen')[0].files[0]);
-                    formData.append('stock', 1);
-                    formData.append('usuario_creacion', 1);
-                    formData.append('fecha_creacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+                    formData.append('Joya_PrecioCompra', $('#precioCompraProducto').val());
+                    formData.append('Joya_PrecioVenta', $('#precioVentaProducto').val());
+                    formData.append('Joya_PrecioMayor', $('#precioMayoristaProducto').val());
+                    formData.append('Joya_Imagen', $('#Imagen')[0].files[0]);
+                    formData.append('Joya_Stock', 1);
+                    formData.append('Prov_Id', proveedorSeleccionado);
+                    formData.append('Mate_Id', $('#Mate_Id').val());
+                    formData.append('Cate_Id', $('#Cate_Id').val());
+                    joyaData.append('Joya_UsuarioCreacion', 1);
+                    joyaData.append('Joya_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
                 } else {
                     accion = 'insertarMaquillajes'
                 }
@@ -873,14 +876,13 @@
                 formData.append('fecha_creacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
 
                 if (tipoProducto === 'joya') {
-                    formData.append('material', $('#Mate_Id').val());
-                    formData.append('categoria', $('#Cate_Id').val());
+
                 } else if (tipoProducto === 'maquillaje') {
                     formData.append('marca', $('#Marc_Id').val());
                 }
 
                 var proveedorSeleccionado = $('#Proveedor').val();
-                formData.append('proveedor', proveedorSeleccionado);
+
 
 
 
