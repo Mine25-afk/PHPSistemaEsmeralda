@@ -103,8 +103,8 @@
         </div>
       </div>
       <div class="col-md-4">
-        <div style="height:100%; background-color: #4e7ed4;display:flex;justify-content:center; align-items:center">
-          <span style="color:#FFF;font-size:40px; text-shadow:0px 10px 10px #17358D;font-weight:900" id="txtTotal">00.0</h2>
+        <div style="height:100%; background-color: #5d9e3e;display:flex;justify-content:center; align-items:center">
+          <span style="color:#FFF;font-size:40px; text-shadow:0px 10px 10px #000000;font-weight:900" id="txtTotal">00.0</h2>
         </div>
       </div>
     </div>
@@ -549,9 +549,11 @@
           console.log(json.data);
           return json.data;
         }
+    
       },
       "pageLength": 5, // Establece el número de filas por página
-      "lengthChange": false, // Deshabilita la opción de cambiar el número de filas por página
+      "lengthChange": false, 
+     // Deshabilita la opción de cambiar el número de filas por página
       "columns": [{
           "data": "Categoria"
         },
