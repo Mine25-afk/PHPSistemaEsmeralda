@@ -80,7 +80,7 @@ h2{
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #000000;">
     <!-- Brand Logo -->
-    <a href="Views/Resources/index3.html" class="brand-link" style="text-align: center;">
+    <a href="/PHPSistemaEsmeralda/index.php?Pages=dashboard" class="brand-link" style="text-align: center;">
      
       <img src="/PHPSistemaEsmeralda/Views/Logo3.png" alt="Logo" style="width: 230px; height: 100;">
     </a>
