@@ -133,7 +133,7 @@
                         success: function(response) {
                             var data = JSON.parse(response);
                             if (data.data.length > 0) {
-                                window.location.href = 'http://localhost/PHPSistemaEsmeralda/index.php?Pages=dashboard';
+                                window.location.href = '/PHPSistemaEsmeralda/index.php?Pages=dashboard';
                             } else {
                                 $('.invalid-feedback').remove();
                                 $('#Usuario').addClass('is-invalid').after('<span class="invalid-feedback">Usuario incorrecto</span>');
