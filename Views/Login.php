@@ -8,7 +8,23 @@
     <link rel="stylesheet" href="login.css">
    
 </head>
+<style>
+    #sign-in-form {
+        position: relative;
+        z-index: 1;
+    }
 
+    .forgot-password a {
+        position: relative;
+        z-index: 2; 
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .forgot-password a:hover {
+        text-decoration: underline;
+    }
+</style>
 <body>
 
         <div class="container">
