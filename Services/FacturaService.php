@@ -277,7 +277,7 @@ class FacturaController {
     public function TablaProductoFactura($FactId, $Mayorista) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaDetalles_ProductosVentas`(:FactId, :Mayorista)';
+            $sql = 'CALL `SP_FacturaDetalles_ProductosVentas`(:FactId, :Mayorista)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':FactId', $FactId, PDO::PARAM_INT);
             $stmt->bindParam(':Mayorista', $Mayorista, PDO::PARAM_BOOL);
@@ -313,7 +313,7 @@ class FacturaController {
     public function buscarProductoPorCodigo($Codigo) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursalesPorCodigo`(:Codigo)';
+            $sql = 'CALL `SP_ObtenerProductosPorSucursalesPorCodigo`(:Codigo)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Codigo', $Codigo, PDO::PARAM_STR);
             $stmt->execute();
@@ -327,7 +327,7 @@ class FacturaController {
     public function buscarFacturaPorCodigo($FactId) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_Factura_buscar`(:FactId)';
+            $sql = 'CALL `sp_Factura_buscar`(:FactId)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':FactId', $FactId, PDO::PARAM_INT);
             $stmt->execute();
@@ -342,7 +342,7 @@ class FacturaController {
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Tarjetas_Listar`()';
+            $sql = 'CALL `SP_Tarjetas_Listar`()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

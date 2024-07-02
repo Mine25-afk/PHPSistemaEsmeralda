@@ -289,7 +289,7 @@ class FacturaApartadoServices {
     public function TablaProductoFactura($FacPId, $Mayorista) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaDetallesApartado_ProductosVentas`(:FacPId, :Mayorista)';
+            $sql = 'CALL `SP_FacturaDetallesApartado_ProductosVentas`(:FacPId, :Mayorista)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':FacPId', $FacPId, PDO::PARAM_INT);
             $stmt->bindParam(':Mayorista', $Mayorista, PDO::PARAM_BOOL);

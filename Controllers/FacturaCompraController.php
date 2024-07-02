@@ -8,7 +8,7 @@ class FacturaCompraController
 {
     global $pdo;
     try {
-        $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Listar`()';
+        $sql = 'CALL `SP_FacturaCompra_Listar`()';
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -35,7 +35,7 @@ class FacturaCompraController
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Sucursales_Listar`()';
+            $sql = 'CALL `SP_Sucursales_Listar`()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -47,7 +47,7 @@ class FacturaCompraController
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedor_listar`()';
+            $sql = 'CALL `SP_Proveedor_listar`()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -59,7 +59,7 @@ class FacturaCompraController
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Buscar`(:FaCE_Id)';
+            $sql = 'CALL `SP_FacturaCompra_Buscar`(:FaCE_Id)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
             $stmt->execute();
@@ -74,7 +74,7 @@ class FacturaCompraController
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_listarAutoCompletado1`()';
+            $sql = 'CALL `SP_Joyas_listarAutoCompletado1`()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -88,7 +88,7 @@ class FacturaCompraController
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Maquillajes_listarAutoCompletado1`()';
+            $sql = 'CALL `SP_Maquillajes_listarAutoCompletado1`()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -102,7 +102,7 @@ class FacturaCompraController
 {
     global $pdo;
     try {
-        $sql = 'CALL `dbsistemaesmeralda`.`SP_Maquillajes_Buscarr`(:codigo)';
+        $sql = 'CALL `SP_Maquillajes_Buscarr`(:codigo)';
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
         $stmt->execute();
@@ -117,7 +117,7 @@ public function buscarJoyaPorCodigo($codigo)
 {
     global $pdo;
     try {
-        $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_Buscarr`(:codigo)';
+        $sql = 'CALL `SP_Joyas_Buscarr`(:codigo)';
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
         $stmt->execute();

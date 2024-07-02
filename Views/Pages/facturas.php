@@ -228,6 +228,8 @@
           "action": 'listarFactura'
         },
         "dataSrc": function(json) {
+          console.log("Hola")
+          console.log(json)
           return json.data;
         }
       },
