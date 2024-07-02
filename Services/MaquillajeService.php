@@ -8,7 +8,7 @@ class MaquillajeService {
     public function listarMaquillaje() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Maquillajes_listar`()';
+            $sql = 'CALL SP_Maquillajes_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll();
@@ -36,7 +36,7 @@ class MaquillajeService {
     public function listarMarcas() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Marcas_Listar`()';
+            $sql = 'CALL SP_Marcas_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

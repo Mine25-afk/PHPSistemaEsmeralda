@@ -104,7 +104,7 @@ Accesos   <i class="fas fa-angle-left right"></i>
 </i></p></a>';
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Accesos'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link">    <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
+            echo '<li class="nav-item"><a href="index.php?Pages=' . $item['Pant_Identificador'] . '" class="nav-link">    <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
         }
         echo '</ul>';
         echo '</li>';
@@ -117,7 +117,7 @@ Accesos   <i class="fas fa-angle-left right"></i>
 Generales<i class="fas fa-angle-left right"></i></p></a>';
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Generales'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link">    <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
+            echo '<li class="nav-item"><a href="index.php?Pages=' . $item['Pant_Identificador'] . '" class="nav-link">    <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
         }
         echo '</ul>';
         echo '</li>';
@@ -130,7 +130,7 @@ Generales<i class="fas fa-angle-left right"></i></p></a>';
 Ventas<i class="fas fa-angle-left right"></i></p></a>';
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Ventas'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
+            echo '<li class="nav-item"><a href="index.php?Pages=' . $item['Pant_Identificador'] . '" class="nav-link">  <i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
         }
         echo '</ul>';
         echo '</li>';
@@ -143,7 +143,7 @@ Ventas<i class="fas fa-angle-left right"></i></p></a>';
 Reportes<i class="fas fa-angle-left right"></i></p></a>';
         echo '<ul class="nav nav-treeview">';
         foreach ($menu['Reportes'] as $item) {
-            echo '<li class="nav-item"><a href="?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
+            echo '<li class="nav-item"><a href="index.php?Pages=' . $item['Pant_Identificador'] . '" class="nav-link"><i class="far fa-circle nav-icon" style="color: #5d9e3e;"></i><p>' . $item['Pant_Descripcion'] . '</p></a></li>';
         }
         echo '</ul>';
         echo '</li>';

@@ -10,7 +10,7 @@ class ProveedoresController {
 
     public function listarProveedores() {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedor_listar`()';
+            $sql = 'CALL SP_Proveedor_listar()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll();

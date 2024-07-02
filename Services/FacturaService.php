@@ -5,7 +5,7 @@ class FacturaController {
     public function listarFactura() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Factura_Listar`()';
+            $sql = 'CALL SP_Factura_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll();
@@ -64,7 +64,7 @@ class FacturaController {
     public function ListarProductos() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursalesFiltrado`(:Sucu_Codigo)';
+            $sql = 'CALL SP_ObtenerProductosPorSucursalesFiltrado(:Sucu_Codigo)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
             $stmt->execute();

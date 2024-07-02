@@ -8,7 +8,7 @@ class EmpleadoService
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Empleado_Listar`()';
+            $sql = 'CALL SP_Empleado_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -32,11 +32,12 @@ class EmpleadoService
             throw new Exception('Error al listar empleados: ' . $e->getMessage());
         }
     }
+
     public function listarSucursales()
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Sucursales_Listar`()';
+            $sql = 'CALL SP_Sucursales_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -44,23 +45,25 @@ class EmpleadoService
             throw new Exception('Error al listar sucursales: ' . $e->getMessage());
         }
     }
+
     public function listarEstadosCiviles()
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_EstadosCiviles_Listar`()';
+            $sql = 'CALL SP_EstadosCiviles_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Exception $e) {
-            throw new Exception('Error al listar estadosciviles: ' . $e->getMessage());
+            throw new Exception('Error al listar estados civiles: ' . $e->getMessage());
         }
     }
+
     public function listarCargos()
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Cargos_Listar`()';
+            $sql = 'CALL SP_Cargos_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -68,23 +71,25 @@ class EmpleadoService
             throw new Exception('Error al listar cargos: ' . $e->getMessage());
         }
     }
+
     public function listarDepartamentos()
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Departamentos_Listar`()';
+            $sql = 'CALL SP_Departamentos_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Exception $e) {
-            throw new Exception('Error al listar departaments: ' . $e->getMessage());
+            throw new Exception('Error al listar departamentos: ' . $e->getMessage());
         }
     }
+
     public function listarMunicipiosPorDepartamento($depaCodigo)
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Municipios_MostrarPorDepartamento`(:Depa_Codigo)';
+            $sql = 'CALL SP_Municipios_MostrarPorDepartamento(:Depa_Codigo)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Depa_Codigo', $depaCodigo, PDO::PARAM_STR);
             $stmt->execute();
@@ -98,7 +103,7 @@ class EmpleadoService
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Empleados_insertar`(:Empl_Nombre, :Empl_Apellido, :Empl_Sexo, :Empl_FechaNac, :Empl_DNI, :Muni_Codigo, :Sucu_Id, :Esta_Id, :Carg_Id, :Empl_Correo, :Empl_UsuarioCreacion, :Empl_FechaCreacion)';
+            $sql = 'CALL SP_Empleados_Insertar(:Empl_Nombre, :Empl_Apellido, :Empl_Sexo, :Empl_FechaNac, :Empl_DNI, :Muni_Codigo, :Sucu_Id, :Esta_Id, :Carg_Id, :Empl_Correo, :Empl_UsuarioCreacion, :Empl_FechaCreacion)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Empl_Nombre', $Empl_Nombre, PDO::PARAM_STR);
             $stmt->bindParam(':Empl_Apellido', $Empl_Apellido, PDO::PARAM_STR);
@@ -149,7 +154,6 @@ class EmpleadoService
         }
     }
 
-
     public function eliminarEmpleado($Empl_Id)
     {
         global $pdo;
@@ -171,17 +175,20 @@ class EmpleadoService
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Empleados_buscar`(:Empl_Id)';
+            $sql = 'CALL SP_Empleados_BuscarPorCodigo(:Empl_Id)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Empl_Id', $Empl_Id, PDO::PARAM_INT);
+
             $stmt->execute();
+
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return json_encode(array('data' => $result));
+            return json_encode($result);
         } catch (Exception $e) {
-            throw new Exception('Error al buscar el empleado: ' . $e->getMessage());
+            throw new Exception('Error al buscar empleado: ' . $e->getMessage());
         }
     }
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $service = new EmpleadoService();

@@ -10,7 +10,7 @@ class ReparacionesController {
 
     public function listarReparaciones() {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Reparaciones_listar`()';
+            $sql = 'CALL SP_Reparaciones_listar()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll();
@@ -89,6 +89,7 @@ class ReparacionesController {
         }
     }
 }
+
 
 // Aquí comienza tu código existente
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {

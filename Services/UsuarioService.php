@@ -1,79 +1,84 @@
 <?php
 require_once __DIR__ . '/../config.php';
 
-
 class UsuarioService
 {
-    public function listarUsuarios() {
-        global $pdo;
+    private $pdo;
+
+    public function __construct($pdo)
+    {
+        $this->pdo = $pdo;
+    }
+
+    public function listarUsuarios()
+    {
         try {
             $sql = 'CALL `SP_Usuario_Listar`()';
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(array('data' => $result));
-        } catch (Exception $e) {
-            error_log('Error al listar clientes: ' . $e->getMessage());
-            echo json_encode(array('error' => 'Error al listar clientes: ' . $e->getMessage()));
+            return $result;
+        } catch (PDOException $e) {
+            error_log('Error al listar usuarios: ' . $e->getMessage());
+            return null;
         }
     }
 
-
-
-    public function listarRoles() {
-        global $pdo;
+    public function listarRoles()
+    {
         try {
             $sql = 'CALL `SP_Roles_Listar`()';
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(array('data' => $result));
-        } catch (Exception $e) {
-            error_log('Error al listar estados civiles: ' . $e->getMessage());
-            echo json_encode(array('error' => 'Error al listar ROles: ' . $e->getMessage()));
+            return $result;
+        } catch (PDOException $e) {
+            error_log('Error al listar roles: ' . $e->getMessage());
+            return null;
         }
     }
 
-    public function listarEmpleados() {
-        global $pdo;
+    public function listarEmpleados()
+    {
         try {
             $sql = 'CALL `SP_Empleado_Listar`()';
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(array('data' => $result));
-        } catch (Exception $e) {
-            error_log('Error al empleado: ' . $e->getMessage());
-            echo json_encode(array('error' => 'Error al listar ROles: ' . $e->getMessage()));
+            return $result;
+        } catch (PDOException $e) {
+            error_log('Error al listar empleados: ' . $e->getMessage());
+            return null;
         }
     }
 
-    public function insertarUsuario($Usua_Usuario, $Usua_Contraseña, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioCreacion, $Usua_FechaCreacion) {
-        global $pdo;
+    public function insertarUsuario($Usua_Usuario, $Usua_Contraseña, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioCreacion, $Usua_FechaCreacion)
+    {
         try {
             $sql = 'CALL SP_Usuario_insertar(:Usua_Usuario, :Usua_Contraseña, :Usua_Administrador, :Empl_Id, :Role_Id, :Usua_UsuarioCreacion, :Usua_FechaCreacion)';
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Usua_Usuario', $Usua_Usuario, PDO::PARAM_STR);
             $stmt->bindParam(':Usua_Contraseña', $Usua_Contraseña, PDO::PARAM_STR);
             $stmt->bindParam(':Usua_Administrador', $Usua_Administrador, PDO::PARAM_BOOL);
             $stmt->bindParam(':Empl_Id', $Empl_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Role_Id', $Role_Id, PDO::PARAM_INT);
-            $stmt->bindParam(':Usua_UsuarioCreacion',$Usua_UsuarioCreacion,PDO::PARAM_INT);
+            $stmt->bindParam(':Usua_UsuarioCreacion', $Usua_UsuarioCreacion, PDO::PARAM_INT);
             $stmt->bindParam(':Usua_FechaCreacion', $Usua_FechaCreacion, PDO::PARAM_STR);
             $stmt->execute();
 
             $result = $stmt->fetchColumn();
             return $result; // 1 si es exitoso, 0 si no
         } catch (PDOException $e) {
-            throw new Exception('Error al insertar el Proveedor: ' . $e->getMessage());
+            error_log('Error al insertar el usuario: ' . $e->getMessage());
+            return 0;
         }
     }
 
-    public function actualizarUsuario($Usua_Id, $Usua_Usuario, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioModificacion, $Usua_FechaModificacion) {
-        global $pdo;
+    public function actualizarUsuario($Usua_Id, $Usua_Usuario, $Usua_Administrador, $Empl_Id, $Role_Id, $Usua_UsuarioModificacion, $Usua_FechaModificacion)
+    {
         try {
             $sql = 'CALL SP_Usuarios_Actualizar(:Usua_Id, :Usua_Usuario, :Usua_Administrador, :Empl_Id, :Role_Id, :Usua_UsuarioModificacion, :Usua_FechaModificacion)';
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Usua_Id', $Usua_Id, PDO::PARAM_INT);
             $stmt->bindParam(':Usua_Usuario', $Usua_Usuario, PDO::PARAM_STR);
             $stmt->bindParam(':Usua_Administrador', $Usua_Administrador, PDO::PARAM_BOOL);
@@ -85,52 +90,45 @@ class UsuarioService
 
             $result = $stmt->fetchColumn();
             return $result;
-        } catch (Exception $e) {
-            error_log('Error al insertar Usuario: ' . $e->getMessage());
-            return 0; 
+        } catch (PDOException $e) {
+            error_log('Error al actualizar usuario: ' . $e->getMessage());
+            return 0;
         }
     }
 
-
-
-
-
-    public function eliminarUsuario($Usua_Id) {
-        global $pdo;
+    public function eliminarUsuario($Usua_Id)
+    {
         try {
             $sql = 'CALL SP_Usuarios_Eliminar(:Usua_Id)';
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Usua_Id', $Usua_Id, PDO::PARAM_INT);
             $stmt->execute();
 
             $result = $stmt->fetchColumn();
             return $result;
         } catch (PDOException $e) {
-            error_log('Error al eliminar Usuario: ' . $e->getMessage());
+            error_log('Error al eliminar usuario: ' . $e->getMessage());
             return 0;
         }
     }
 
-
-
-    public function buscarUsuarioPorId($Usua_Id) {
-        global $pdo;
+    public function buscarUsuarioPorId($Usua_Id)
+    {
         try {
             $sql = 'CALL SP_Usuarios_Buscar(:Usua_Id)';
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Usua_Id', $Usua_Id, PDO::PARAM_INT);
             $stmt->execute();
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result;
         } catch (PDOException $e) {
-            error_log('Error al buscar USuario: ' . $e->getMessage());
+            error_log('Error al buscar usuario: ' . $e->getMessage());
             return null;
         }
     }
-    
-    
 }
+?>
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $controller = new UsuarioService();

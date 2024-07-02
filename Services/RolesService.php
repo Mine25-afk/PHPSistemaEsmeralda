@@ -10,7 +10,7 @@ class RolesController {
 
     public function listarRoles() {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_Roles_listar`()';
+            $sql = 'CALL sp_Roles_listar()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -20,7 +20,6 @@ class RolesController {
         }
     }
 
- 
     public function insertarRol($Role_Rol, $Role_UsuarioCreacion, $Role_FechaCreacion) {
         try {
             // Preparar la consulta
@@ -29,14 +28,14 @@ class RolesController {
             $stmt->bindParam(':Role_Rol', $Role_Rol, PDO::PARAM_STR);
             $stmt->bindParam(':Role_UsuarioCreacion', $Role_UsuarioCreacion, PDO::PARAM_INT);
             $stmt->bindParam(':Role_FechaCreacion', $Role_FechaCreacion, PDO::PARAM_STR);
-    
+
             // Ejecutar la consulta
             $stmt->execute();
-    
+
             // Obtener el valor del ID recién insertado
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $nuevoId = $result['id']; // 'id' corresponde al alias usado en SELECT LAST_INSERT_ID() AS id
-            
+
             // Cerrar el cursor
             $stmt->closeCursor();
             return $nuevoId; // Devuelve el nuevo ID del rol
@@ -44,7 +43,6 @@ class RolesController {
             throw new Exception('Error al insertar el rol: ' . $e->getMessage());
         }
     }
-    
 
     public function actualizarRol($Role_Id, $Role_Rol, $Role_UsuarioModificacion, $Role_FechaModificacion) {
         try {
@@ -81,13 +79,12 @@ class RolesController {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':Role_Id', $Role_Id, PDO::PARAM_INT);
             $stmt->execute();
-    
-            return $stmt->fetchColumn(); 
+
+            return $stmt->fetchColumn();
         } catch (PDOException $e) {
             throw new Exception('Error al eliminar el rol: ' . $e->getMessage());
         }
     }
-    
 
     public function listarPantallasRoles() {
         try {
@@ -106,7 +103,7 @@ class RolesController {
             if (!is_array($Pantallas)) {
                 throw new Exception('Pantallas debe ser un array.');
             }
-    
+
             foreach ($Pantallas as $pantallaId) {
                 $sql = 'CALL sp_PantallasPorRoles_insertar(:Role_Id, :Pant_Id)';
                 $stmt = $this->pdo->prepare($sql);
@@ -120,12 +117,6 @@ class RolesController {
             throw new Exception('Error al insertar la pantalla por rol: ' . $e->getMessage());
         }
     }
-    
-    
-    
-    
-    
-    
 
     public function eliminarPantallaPorRol($roleId, $pantallas) {
         try {
@@ -137,7 +128,7 @@ class RolesController {
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return isset($result['Resultado']) && $result['Resultado'] == 1;
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             return false;
         }
     }
@@ -148,13 +139,12 @@ class RolesController {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':p_Role_Id', $Role_Id, PDO::PARAM_INT);
             $stmt->execute();
-    
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC); // Cambiado a fetchAll para obtener todas las pantallas
         } catch (PDOException $e) {
             throw new Exception('Error al buscar pantalla por rol: ' . $e->getMessage());
         }
     }
-    
 
     public function actualizarPantallaPorRol($Paxr_Id, $Role_Id, $Pant_Id) {
         try {
@@ -183,6 +173,7 @@ class RolesController {
         }
     }
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $controller = new RolesController($pdo);

@@ -15,7 +15,7 @@ class FacturaCompraService
     public function listarFacturaCompras()
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Listar`()';
+            $sql = 'CALL SP_FacturaCompra_Listar()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -55,7 +55,8 @@ class FacturaCompraService
     public function listarSucursales()
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Sucursales_Listar`()';
+            $sql = 'CALL SP_Sucursales_Listar()';
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -68,7 +69,7 @@ class FacturaCompraService
     public function listarProveedores()
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedor_listar`()';
+            $sql = 'CALL SP_Proveedor_listar()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -81,7 +82,7 @@ class FacturaCompraService
     public function buscarFacturaCompraPorCodigo($FaCE_Id)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Buscar`(:FaCE_Id)';
+            $sql = 'CALL SP_FacturaCompra_Buscar(:FaCE_Id)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
             $stmt->execute();
@@ -96,7 +97,7 @@ class FacturaCompraService
     public function listarJoyasAutoCompletado($term)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_listarAutoCompletado1`()';
+            $sql = 'CALL SP_Joyas_listarAutoCompletado1()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -110,7 +111,7 @@ class FacturaCompraService
     public function listarMaquillajesAutoCompletado($term)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Maquillajes_listarAutoCompletado1`()';
+            $sql = 'CALL SP_Maquillajes_listarAutoCompletado1()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -124,7 +125,7 @@ class FacturaCompraService
     public function buscarMaquillajePorCodigo($codigo)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Maquillajes_Buscarr`(:codigo)';
+            $sql = 'CALL SP_Maquillajes_Buscarr(:codigo)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
             $stmt->execute();
@@ -139,7 +140,7 @@ class FacturaCompraService
     public function buscarJoyaPorCodigo($codigo)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_Buscarr`(:codigo)';
+            $sql = 'CALL SP_Joyas_Buscarr(:codigo)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
             $stmt->execute();
@@ -154,7 +155,7 @@ class FacturaCompraService
     public function insertarFacturaEncabezado($proveedor, $sucursal, $metodoPago, $usuarioCreacion, $fechaCreacion)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Insertar`(:proveedor, :metodoPago, :sucursal, :usuarioCreacion, :fechaCreacion, null, null, 0, @p_ID)';
+            $sql = 'CALL SP_FacturaCompra_Insertar(:proveedor, :metodoPago, :sucursal, :usuarioCreacion, :fechaCreacion, null, null, 0, @p_ID)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':proveedor', $proveedor, PDO::PARAM_INT);
             $stmt->bindParam(':metodoPago', $metodoPago, PDO::PARAM_INT);
@@ -180,7 +181,7 @@ class FacturaCompraService
     public function insertarDetalleFactura($FaCE_Id, $producto, $cantidad, $precioCompra, $precioVenta, $precioMayorista, $categoria)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompraDetalle_Insertar`(:FaCE_Id, :categoria, :producto, :cantidad, :precioCompra, :precioVenta, :precioMayorista)';
+            $sql = 'CALL SP_FacturaCompraDetalle_Insertar(:FaCE_Id, :categoria, :producto, :cantidad, :precioCompra, :precioVenta, :precioMayorista)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
             $stmt->bindParam(':categoria', $categoria, PDO::PARAM_INT);
@@ -200,7 +201,7 @@ class FacturaCompraService
     public function obtenerFacturaCompraDetalleId($FaCE_Id, $producto, $FaCD_Dif)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerFacturaCompraDetalleId`(:FaCE_Id, :producto, :FaCD_Dif)';
+            $sql = 'CALL SP_ObtenerFacturaCompraDetalleId(:FaCE_Id, :producto, :FaCD_Dif)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
             $stmt->bindParam(':producto', $producto, PDO::PARAM_STR);
@@ -218,7 +219,7 @@ class FacturaCompraService
     public function eliminarDetalleFactura($FaCD_Id)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompraDetalle_Eliminar`(:FaCD_Id)';
+            $sql = 'CALL SP_FacturaCompraDetalle_Eliminar(:FaCD_Id)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':FaCD_Id', $FaCD_Id, PDO::PARAM_INT);
             $stmt->execute();
@@ -232,7 +233,7 @@ class FacturaCompraService
     public function buscarFacturaDetalle($FaCE_Id)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompraDetalle_Listar`(:FaCE_Id)';
+            $sql = 'CALL SP_FacturaCompraDetalle_Listar(:FaCE_Id)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_STR);
             $stmt->execute();
@@ -247,7 +248,7 @@ class FacturaCompraService
     public function finalizarFacturaCompra($FaCE_Id, $fechaFinal, $Tarj_Id, $Tarj_Codigo)
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaCompra_Finalizar`(:FaCE_Id, :fechaFinal,:Tarj_Id, :Tarj_Codigo)';
+            $sql = 'CALL SP_FacturaCompra_Finalizar(:FaCE_Id, :fechaFinal,:Tarj_Id, :Tarj_Codigo)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':FaCE_Id', $FaCE_Id, PDO::PARAM_INT);
             $stmt->bindParam(':fechaFinal', $fechaFinal, PDO::PARAM_STR);
@@ -265,7 +266,7 @@ class FacturaCompraService
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Materiales_listar`()';
+            $sql = 'CALL SP_Materiales_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -280,7 +281,7 @@ class FacturaCompraService
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Categorias_listar`()';
+            $sql = 'CALL SP_Categorias_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -294,7 +295,7 @@ class FacturaCompraService
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Marcas_Listar`()';
+            $sql = 'CALL SP_Marcas_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -397,7 +398,7 @@ class FacturaCompraService
     public function listartarjetas()
     {
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Tarjetas_Listar`()';
+            $sql = 'CALL SP_Tarjetas_Listar()';
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));

@@ -3,13 +3,11 @@ require_once __DIR__ . '/../config.php';
 
 class DashboardsServices {
 
-
     public function cantidadVentas() {
         global $pdo;
 
         try {
-
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Ventas_Del_Mes`();';
+            $sql = 'CALL SP_Ventas_Del_Mes();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -17,7 +15,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
             $result = $stmt->fetch(PDO::FETCH_COLUMN);
 
             if ($result === false) {
@@ -35,8 +32,7 @@ class DashboardsServices {
         global $pdo;
 
         try {
-            
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Productos_Del_Mes`();';
+            $sql = 'CALL SP_Productos_Del_Mes();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -44,7 +40,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
             $result = $stmt->fetch(PDO::FETCH_COLUMN);
 
             if ($result === false) {
@@ -62,8 +57,7 @@ class DashboardsServices {
         global $pdo;
 
         try {
-            
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Ventas_Del_Mes_FacturaCompra`();';
+            $sql = 'CALL SP_Ventas_Del_Mes_FacturaCompra();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -71,7 +65,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-           
             $result = $stmt->fetch(PDO::FETCH_COLUMN);
 
             if ($result === false) {
@@ -89,8 +82,7 @@ class DashboardsServices {
         global $pdo;
 
         try {
-            
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Compras_Cantidad`();';
+            $sql = 'CALL SP_Compras_Cantidad();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -98,7 +90,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
             $result = $stmt->fetch(PDO::FETCH_COLUMN);
 
             if ($result === false) {
@@ -116,8 +107,7 @@ class DashboardsServices {
         global $pdo;
 
         try {
-            
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Clientes_Nuevos_Activos`();';
+            $sql = 'CALL SP_Clientes_Nuevos_Activos();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -125,7 +115,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
             $result = $stmt->fetch(PDO::FETCH_COLUMN);
 
             if ($result === false) {
@@ -138,11 +127,12 @@ class DashboardsServices {
             throw new Exception('Error al listar: ' . $e->getMessage());
         }
     }
+
     public function top5JClieentesActuales() {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Top6_Mejores_Clientes_Actual`();';
+            $sql = 'CALL SP_Top6_Mejores_Clientes_Actual();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -150,8 +140,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -169,7 +157,7 @@ class DashboardsServices {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_CajaMontoInicialMesActual`();';
+            $sql = 'CALL sp_CajaMontoInicialMesActual();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -177,8 +165,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -191,11 +177,12 @@ class DashboardsServices {
             throw new Exception('Error al listar: ' . $e->getMessage());
         }
     }
+
     public function CajaCierre() {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_SumaMontosFinalesMesActual`();';
+            $sql = 'CALL sp_SumaMontosFinalesMesActual();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -203,8 +190,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -217,11 +202,12 @@ class DashboardsServices {
             throw new Exception('Error al listar: ' . $e->getMessage());
         }
     }
+
     public function TransaccionesReciente() {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_TransaccionesRecientes`();';
+            $sql = 'CALL sp_TransaccionesRecientes();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -229,8 +215,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -243,11 +227,12 @@ class DashboardsServices {
             throw new Exception('Error al listar: ' . $e->getMessage());
         }
     }
+
     public function EfectivoVendido() {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_VentasPorEfectivo`();';
+            $sql = 'CALL sp_VentasPorEfectivo();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -255,8 +240,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -274,7 +257,7 @@ class DashboardsServices {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_VentasPorTarjeta`();';
+            $sql = 'CALL sp_VentasPorTarjeta();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -282,8 +265,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -301,7 +282,7 @@ class DashboardsServices {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_VentasPorPagoEnLinea`();';
+            $sql = 'CALL sp_VentasPorPagoEnLinea();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -309,8 +290,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -323,11 +302,12 @@ class DashboardsServices {
             throw new Exception('Error al listar: ' . $e->getMessage());
         }
     }
+
     public function ProductosMes() {
         global $pdo;
 
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_Dash_CantidadProducto_Mes`();';
+            $sql = 'CALL sp_Dash_CantidadProducto_Mes();';
             $stmt = $pdo->prepare($sql);
 
             if ($stmt === false) {
@@ -335,8 +315,6 @@ class DashboardsServices {
             }
 
             $stmt->execute();
-            
-            
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($result === false) {
@@ -350,8 +328,78 @@ class DashboardsServices {
         }
     }
 
+    public function ClientesNuevos() {
+        global $pdo;
 
+        try {
+            $sql = 'CALL sp_Dash_ClientesNuevosActivos();';
+            $stmt = $pdo->prepare($sql);
 
+            if ($stmt === false) {
+                throw new Exception('Error al preparar la declaración: ' . implode(", ", $pdo->errorInfo()));
+            }
 
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($result === false) {
+                throw new Exception('Error al obtener resultados: ' . implode(", ", $stmt->errorInfo()));
+            }
+
+            return $result;
+
+        } catch (Exception $e) {
+            throw new Exception('Error al listar: ' . $e->getMessage());
+        }
+    }
+
+    public function VentasDelMes() {
+        global $pdo;
+
+        try {
+            $sql = 'CALL sp_Dash_Ventas_Mes();';
+            $stmt = $pdo->prepare($sql);
+
+            if ($stmt === false) {
+                throw new Exception('Error al preparar la declaración: ' . implode(", ", $pdo->errorInfo()));
+            }
+
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($result === false) {
+                throw new Exception('Error al obtener resultados: ' . implode(", ", $stmt->errorInfo()));
+            }
+
+            return $result;
+
+        } catch (Exception $e) {
+            throw new Exception('Error al listar: ' . $e->getMessage());
+        }
+    }
+
+    public function CierreCaja() {
+        global $pdo;
+
+        try {
+            $sql = 'CALL sp_Dash_Caja_Cierre();';
+            $stmt = $pdo->prepare($sql);
+
+            if ($stmt === false) {
+                throw new Exception('Error al preparar la declaración: ' . implode(", ", $pdo->errorInfo()));
+            }
+
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($result === false) {
+                throw new Exception('Error al obtener resultados: ' . implode(", ", $stmt->errorInfo()));
+            }
+
+            return $result;
+
+        } catch (Exception $e) {
+            throw new Exception('Error al listar: ' . $e->getMessage());
+        }
+    }
 }
-?>

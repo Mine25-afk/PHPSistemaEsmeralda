@@ -6,7 +6,7 @@ class FacturaApartadoServices {
     public function listarFacturaApartado() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_FacturaApartado_Listar`()';
+            $sql = 'CALL SP_FacturaApartado_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll();
@@ -35,7 +35,8 @@ class FacturaApartadoServices {
     public function buscarFacturaPorCodigo($FacPId) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_FacturaApartado_buscar`(:FacPId)';
+            $sql = 'CALL sp_FacturaApartado_buscar(:FacPId)';
+
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':FacPId', $FacPId, PDO::PARAM_INT);
             $stmt->execute();
@@ -50,7 +51,8 @@ class FacturaApartadoServices {
     public function buscarProductoPorCodigo($Codigo) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursalesPorCodigoApartado`(:Codigo)';
+            $sql = 'CALL SP_ObtenerProductosPorSucursalesPorCodigoApartado(:Codigo)';
+
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Codigo', $Codigo, PDO::PARAM_STR);
             $stmt->execute();
@@ -64,7 +66,8 @@ class FacturaApartadoServices {
     public function ListarProductos() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_ObtenerProductosPorSucursalesFacturaApartado`(:Sucu_Codigo)';
+            $sql = 'CALL SP_ObtenerProductosPorSucursalesFacturaApartado(:Sucu_Codigo)';
+
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Sucu_Codigo', $_SESSION['Sucu_Id'], PDO::PARAM_INT);
             $stmt->execute();
@@ -118,7 +121,7 @@ class FacturaApartadoServices {
     {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Tarjetas_Listar`()';
+            $sql = 'CALL SP_Tarjetas_Listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -394,7 +394,7 @@ h2{
         $('#AbrirCajaModal').modal('show');
       });
       $('#SalirCaja').click(function() {
-         window.location.href = 'index';
+         window.location.href = 'Index';
         $('#AbrirCajaModal').modal('show');
       });
    

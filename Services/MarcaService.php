@@ -5,7 +5,7 @@ class MarcaController {
    public function listarMarcas() {
     global $pdo;
     try {
-        $sql = 'CALL `dbsistemaesmeralda`.`SP_Marcas_Listar`()';
+        $sql = 'CALL SP_Marcas_Listar()';
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
@@ -76,7 +76,7 @@ class MarcaController {
     public function buscarMarcaPorCodigo($Marc_Id) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Marcas_buscar`(:Marc_Codigo)';
+            $sql = 'CALL SP_Marcas_buscar(:Marc_Codigo)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Marc_Codigo', $Marc_Id, PDO::PARAM_INT);
             $stmt->execute();

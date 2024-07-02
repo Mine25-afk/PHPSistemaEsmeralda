@@ -7,7 +7,7 @@ class JoyasServices {
     public function listarJoyas() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Joyas_listar`()';
+            $sql = 'CALL SP_Joyas_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -21,7 +21,7 @@ class JoyasServices {
     public function listarProveedores() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Proveedor_listar`()';
+            $sql = 'CALL SP_Proveedor_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -35,7 +35,7 @@ class JoyasServices {
     public function listarMateriales() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Materiales_listar`()';
+            $sql = 'CALL SP_Materiales_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -49,7 +49,7 @@ class JoyasServices {
     public function listarCategorias() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`SP_Categorias_listar`()';
+            $sql = 'CALL SP_Categorias_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
