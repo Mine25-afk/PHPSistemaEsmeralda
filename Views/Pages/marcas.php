@@ -46,7 +46,7 @@
         </div>
 
         <div class="col-auto">
-            <a id="CerrarModal" class="btn btn-secondary" style="color:white">Cancelar</a>
+            <a id="Cerrar" class="btn btn-secondary" style="color:white">Cancelar</a>
         </div>
     </div>
 </div>
@@ -253,6 +253,11 @@
     });
 
     $('#CerrarModal').click(function() {
+    $('.CrearOcultar').show();
+    $('.CrearMostrar').hide();
+    });
+
+    $('#Cerrar').click(function() {
     $('.CrearOcultar').show();
     $('.CrearMostrar').hide();
     });

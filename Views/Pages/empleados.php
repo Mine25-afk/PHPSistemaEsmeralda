@@ -117,7 +117,7 @@
                                 <div class="form-row d-flex justify-content-end">
                                     <div class="col-auto">
                                         <input type="button" value="Guardar" class="btn btn-primary" id="guardarBtn" />
-                                        <a id="CerrarModal" class="btn btn-secondary" style="color: white;">Cancelar</a>
+                                        <a id="Cerrar" class="btn btn-secondary" style="color: white;">Cancelar</a>
                                     </div>
                                 </div>
                             </div>
@@ -388,6 +388,12 @@
         });
 
         $('#CerrarModal').click(function() {
+            $('.CrearOcultar').show();
+            $('.CrearMostrar').hide();
+            $('#quickForm')[0].reset();
+        });
+
+        $('#Cerrar').click(function() {
             $('.CrearOcultar').show();
             $('.CrearMostrar').hide();
             $('#quickForm')[0].reset();

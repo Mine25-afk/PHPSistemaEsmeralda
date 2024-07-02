@@ -175,18 +175,17 @@ class EmpleadoService
     {
         global $pdo;
         try {
-            $sql = 'CALL SP_Empleados_BuscarPorCodigo(:Empl_Id)';
+            $sql = 'CALL SP_Empleados_buscar(:Empl_Id)';
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':Empl_Id', $Empl_Id, PDO::PARAM_INT);
-
             $stmt->execute();
-
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return json_encode($result);
+            return json_encode(array('data' => $result));
         } catch (Exception $e) {
-            throw new Exception('Error al buscar empleado: ' . $e->getMessage());
+            throw new Exception('Error al buscar el empleado: ' . $e->getMessage());
         }
     }
+
 }
 
 
