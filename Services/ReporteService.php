@@ -6,7 +6,7 @@ class ReportesServices {
     public function ReporteVentasMayoristas($fechaInicio, $fechaFinal) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_ReporteVentasMayoristas`(?, ?)';
+            $sql = 'CALL sp_ReporteVentasMayoristas(?, ?)';
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$fechaInicio, $fechaFinal]);
             
@@ -21,7 +21,7 @@ class ReportesServices {
     public function ReporteVentasMetodo($metodo,$fechaInicio, $fechaFinal) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_ReporteVentaspPorPago`(?, ?, ?)';
+            $sql = 'CALL sp_ReporteVentaspPorPago(?, ?, ?)';
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$metodo, $fechaInicio, $fechaFinal]);
             
@@ -36,7 +36,7 @@ class ReportesServices {
     public function listarMetodosPago() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_MetodosPago_listar`()';
+            $sql = 'CALL sp_MetodosPago_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -50,7 +50,7 @@ class ReportesServices {
     public function ReporteControlStock($tipoProducto, $sucuId) {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_Reporte_ControlStock`(?, ?)';
+            $sql = 'CALL sp_Reporte_ControlStock(?, ?)';
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$tipoProducto, $sucuId]);
             
@@ -65,7 +65,7 @@ class ReportesServices {
     public function listarSucursales() {
         global $pdo;
         try {
-            $sql = 'CALL `dbsistemaesmeralda`.`sp_Sucursales_listar`()';
+            $sql = 'CALL sp_Sucursales_listar()';
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
