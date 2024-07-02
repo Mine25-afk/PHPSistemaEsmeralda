@@ -60,7 +60,6 @@
             <div class="CrearOcultar" style="position:relative; top:-30px">
                 <button class="btn btn-primary" id="AbrirModal">Nuevo</button>
                 <div class="table-responsive">
-                    
                     <br>
                     <table class="table table-striped table-hover" id="TablaUsuario">
                         <thead>
@@ -358,115 +357,110 @@
             });
 
             $('#guardarBtn').click(function () {
-                console.log('Botón Guardar clickeado');
-                $('.error-message').text('');
-                var isValid = true;
+    console.log('Botón Guardar clickeado');
+    $('.error-message').text('');
+    var isValid = true;
 
-                var nombre = $('#Usua_Usuario').val();
-                console.log('Valor de Usua_Usuario:', nombre);
-                if (!nombre || nombre.trim() === '') {
-                    $('#Usua_Usuario_error').text('Este campo es requerido');
-                    isValid = false;
-                }
+    var nombre = $('#Usua_Usuario').val();
+    console.log('Valor de Usua_Usuario:', nombre);
+    if (!nombre || nombre.trim() === '') {
+        $('#Usua_Usuario_error').text('Este campo es requerido');
+        isValid = false;
+    }
 
-                var contraseña = $('#Usua_Contraseña').val();
-                console.log('Valor de Usua_Contraseña:', contraseña);
-                if (!contraseña || contraseña.trim() === '') {
-                    $('#Usua_Contraseña_error').text('Este campo es requerido');
-                    isValid = false;
-                }
+    var contraseña = $('#Usua_Contraseña').val();
+    console.log('Valor de Usua_Contraseña:', contraseña);
+    if (!contraseña || contraseña.trim() === '') {
+        $('#Usua_Contraseña_error').text('Este campo es requerido');
+        isValid = false;
+    }
 
-                var municipio = $('#Empl_Id').val();
-                if (!municipio) {
-                    $('#Empl_Id_error').text('Este campo es requerido');
-                    isValid = false;
-                }
+    var municipio = $('#Empl_Id').val();
+    if (!municipio) {
+        $('#Empl_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
 
-                var estado = $('#Role_Id').val();
-                if (!estado) {
-                    $('#Role_Id_error').text('Este campo es requerido');
-                    isValid = false;
-                }
+    var estado = $('#Role_Id').val();
+    if (!estado) {
+        $('#Role_Id_error').text('Este campo es requerido');
+        isValid = false;
+    }
 
-                var administrador = $('#Administrador').prop('checked') ? 1 : 0;
-                 var esMayorista = $('input[name="Usua_Administrador"]:checked').val() === "true";
+    var administrador = $('#Administrador').prop('checked') ? 1 : 0;
 
-                if (isValid) {
-                    var UsuaData = new FormData();
-                    UsuaData.append('action', $('#Usua_Id').val() ? 'actualizar' : 'insertar');
-                    UsuaData.append('Usua_Id', $('#Usua_Id').val());
-                    UsuaData.append('Usua_Usuario', $('#Usua_Usuario').val());
-                    UsuaData.append('Usua_Contraseña', $('#Usua_Contraseña').val());
-                    UsuaData.append('Usua_Administrador', esMayorista);
-                    UsuaData.append('Empl_Id', $('#Empl_Id').val());
-                    UsuaData.append('Role_Id', $('#Role_Id').val());
-                    UsuaData.append('Usua_UsuarioCreacion', 1);
-                    UsuaData.append('Usua_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-                    UsuaData.append('Usua_UsuarioModificacion', 1);
-                    UsuaData.append('Usua_FechaModificacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
-                    console.log('Datos a enviar:', UsuaData);
+    if (isValid) {
+        var UsuaData = new FormData();
+        UsuaData.append('action', 'insertar');
+        UsuaData.append('Usua_Usuario', $('#Usua_Usuario').val());
+        UsuaData.append('Usua_Contraseña', $('#Usua_Contraseña').val());
+        UsuaData.append('Usua_Administrador', administrador);
+        UsuaData.append('Empl_Id', $('#Empl_Id').val());
+        UsuaData.append('Role_Id', $('#Role_Id').val());
+        UsuaData.append('Usua_UsuarioCreacion', 1);
+        UsuaData.append('Usua_FechaCreacion', new Date().toISOString().slice(0, 19).replace('T', ' '));
+        console.log('Datos a enviar:', UsuaData);
 
-    
-
-        
-                    $.ajax({
-                        url: '/PHPSistemaEsmeralda/Services/UsuarioService.php',
-                        type: 'POST',
-                        data: UsuaData,
-                        contentType: false,
-                        processData: false,
-                        success: function (response) {
-                            console.log('Respuesta del servidor:', response);
-                            try {
-                                response = JSON.parse(response);
-                                if (response.result == 1) {
-                                    iziToast.success({
-                                        title: 'Éxito',
-                                        message: 'Subido con éxito',
-                                        position: 'topRight',
-                                        transitionIn: 'flipInX',
-                                        transitionOut: 'flipOutX'
-                                    });
-                                    table.ajax.reload();
-                                    limpiarFormulario();
-                                    $('.CrearOcultar').show();
-                                    $('.CrearMostrar').hide();
-                                    setTimeout(function () {
-                                        location.reload();
-                                    }, 1000);
-                                } else {
-                                    iziToast.error({
-                                        title: 'Error',
-                                        message: 'Error al insertar/actualizar Usuario. ' + (response.error ? response.error : ''),
-                                        position: 'topRight',
-                                        transitionIn: 'flipInX',
-                                        transitionOut: 'flipOutX'
-                                    });
-                                }
-                            } catch (e) {
-                                console.log('Error al analizar la respuesta del servidor:', e);
-                                iziToast.error({
-                                    title: 'Error',
-                                    message: 'Respuesta inválida del servidor',
-                                    position: 'topRight',
-                                    transitionIn: 'flipInX',
-                                    transitionOut: 'flipOutX'
-                                });
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.log('Error en la comunicación con el servidor:', error);
-                            iziToast.error({
-                                title: 'Error',
-                                message: 'Error en la comunicación con el servidor.',
-                                position: 'topRight',
-                                transitionIn: 'flipInX',
-                                transitionOut: 'flipOutX'
-                            });
-                        }
+        $.ajax({
+            url: '/PHPSistemaEsmeralda/Services/UsuarioService.php',
+            type: 'POST',
+            data: UsuaData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                console.log('Respuesta del servidor:', response);
+                try {
+                    response = JSON.parse(response);
+                    if (response.result == 1) {
+                        iziToast.success({
+                            title: 'Éxito',
+                            message: 'Subido con éxito',
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
+                        table.ajax.reload();
+                        limpiarFormulario();
+                        $('.CrearOcultar').show();
+                        $('.CrearMostrar').hide();
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Error al insertar/actualizar Usuario. ' + (response.error ? response.error : ''),
+                            position: 'topRight',
+                            transitionIn: 'flipInX',
+                            transitionOut: 'flipOutX'
+                        });
+                    }
+                } catch (e) {
+                    console.log('Error al analizar la respuesta del servidor:', e);
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Respuesta inválida del servidor',
+                        position: 'topRight',
+                        transitionIn: 'flipInX',
+                        transitionOut: 'flipOutX'
                     });
                 }
-            });
+            },
+            error: function (xhr, status, error) {
+                console.log('Error en la comunicación con el servidor:', error);
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Error en la comunicación con el servidor.',
+                    position: 'topRight',
+                    transitionIn: 'flipInX',
+                    transitionOut: 'flipOutX'
+                });
+            }
+        });
+    }
+});
+
+
 
             $('#TablaUsuario tbody').on('click', '.abrir-eliminar', function () {
                 var data = table.row($(this).parents('tr')).data();
