@@ -93,7 +93,7 @@ h2{
           session_start();
       }
       require_once __DIR__ . '/../../config.php';// Asegúrate de incluir la conexión a la base de datos.
-      include 'C:\xampp\htdocs\PHPSistemaEsmeralda\Services\MenuService.php';
+      include 'Services\MenuService.php';
       $nombreCompleto = isset($_SESSION['Empl_Nombre']) ? $_SESSION['Empl_Nombre'] : 'Usuario invitado';
     ?>
     
