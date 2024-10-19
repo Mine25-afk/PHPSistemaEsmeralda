@@ -477,7 +477,11 @@
                         depaCodigo: depaCodigo
                     },
                     success: function(response) {
+                        
                         var municipios = JSON.parse(response);
+                        console.log(municipios)
+                     
+
                         var selectMunicipio = $('#Municipio');
                         selectMunicipio.empty().append('<option selected="selected" value="">--Seleccione un Municipio--</option>');
                         municipios.forEach(function(municipio) {
@@ -486,7 +490,7 @@
                     }
                 });
             } else {
-                $('#Municipio').empty().append('<option selected="selected" value="">--Seleccione un Municipio--</option>');
+                $('#Municipio').empty().append('<option selected="selected" value="0">--Seleccione un Municipio--</option>');
             }
         }
 
